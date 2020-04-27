@@ -737,6 +737,7 @@ MPlayer& get_mario(int number)
 	return *Mario.begin();
 }
 
+//player interaction with other players, for now it's just mario combat
 void PlayerInteraction()
 {
 	for (std::list<MPlayer>::iterator curr_p = Mario.begin(); curr_p != Mario.end(); ++curr_p)
