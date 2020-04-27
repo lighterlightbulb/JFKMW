@@ -141,7 +141,7 @@ void player_code()
 
 		//We quit the game go back to the ZSNES ui
 		if (networking) { socketG.disconnect();  thread->terminate(); }
-		cout << green << "Quitting game...." << white << endl;
+		cout << green << "Returning to main screen..." << white << endl;
 		Sleep(1000);
 		quit = true;
 	}

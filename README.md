@@ -10,3 +10,6 @@ A remake of super mario world in C++, can be considered a engine. for mario game
 * Unfinished soon to be level editor, Solar Energy (currently just a level viewer)
 * No limitations. When it's complete, we aim to have zero limitations (other than the .bin files, etc)
 * 4bpp gfx rendering, OAM with more features, rotation, etc
+
+## Social
+You can join the official discord for the game (and other projects) here : https://discord.gg/fD5QQK3
