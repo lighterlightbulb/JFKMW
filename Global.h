@@ -50,6 +50,7 @@ int resolution_x = 320;
 int resolution_y = 240;
 int sp_offset_x = 32;
 int sp_offset_y = 28;
+int my_skin = 0;
 uint_fast32_t global_frame_counter = 0;
 
 std::chrono::duration<double> total_time_ticks;

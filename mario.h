@@ -35,6 +35,8 @@ public:
 
 	int player_index = 0;
 
+	int skin = 0;
+
 	int STATE = 1;
 
 	bool DEAD = false;

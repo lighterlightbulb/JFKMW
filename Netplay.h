@@ -66,6 +66,8 @@ void put_mario_data_in(MPlayer& CurrentMario)
 	CurrentPacket << CurrentMario.COINS; CurrentPacket << CurrentMario.player_index;
 
 	CurrentPacket << CurrentMario.CAMERA_X; CurrentPacket << CurrentMario.CAMERA_Y;
+
+	CurrentPacket << CurrentMario.skin;
 	for (int inputs = 0; inputs < total_inputs; inputs++)
 	{
 		CurrentPacket << CurrentMario.pad[inputs];
@@ -88,6 +90,8 @@ void take_mario_data(MPlayer& CurrentMario)
 	CurrentPacket >> CurrentMario.COINS; CurrentPacket >> CurrentMario.player_index;
 
 	CurrentPacket >> CurrentMario.CAMERA_X; CurrentPacket >> CurrentMario.CAMERA_Y;
+
+	CurrentPacket >> CurrentMario.skin;
 	for (int inputs = 0; inputs < total_inputs; inputs++)
 	{
 		CurrentPacket >> CurrentMario.pad[inputs];

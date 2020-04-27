@@ -128,6 +128,11 @@ public:
 		{
 			ServerRAM.RAM[ram_level_low + index] = 0x32;
 		}
+		if (t == 0x002B)
+		{
+			replace_map_tile(0x0025, x, y);
+			ServerRAM.RAM[0x1DFC] = 1;
+		}
 
 	}
 

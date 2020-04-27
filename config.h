@@ -27,6 +27,7 @@ void load_configuration()
 			if (name == "renderer_accelerated") { renderer_accelerated = value == "true"; }
 			if (name == "v_sync") { v_sync = value == "true"; }
 			if (name == "username") { username = value; }
+			if (name == "skin") { my_skin = stoi(value); }
 			if (name == "port") { PORT = stoi(value); }
 
 			if (value == "LeftShift") value = "Left Shift";
