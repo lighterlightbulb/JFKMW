@@ -30,9 +30,9 @@ sf::Socket::Status receiveWithTimeout(sf::TcpSocket& socket, sf::Packet& packet,
 //Netcode
 bool validated_connection = false;
 
-int GetAmountOfPlayers()
+uint_fast8_t GetAmountOfPlayers()
 {
-	PlayerAmount = int(clients.size()); CheckForPlayers();
+	PlayerAmount = uint_fast8_t(clients.size()); CheckForPlayers();
 	return PlayerAmount;
 }
 
@@ -257,7 +257,7 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool ignore_status = false)
 		*/
 		if (CurrentPacket_header == Header_UpdatePlayerData)
 		{
-			int PlrNum = 1; CurrentPacket >> PlrNum; 
+			uint_fast8_t PlrNum = 1; CurrentPacket >> PlrNum; 
 			if (PlrNum > PlayerAmount)
 			{
 				PlayerAmount = PlrNum;
@@ -286,7 +286,7 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool ignore_status = false)
 
 
 
-			int num = 1;
+			uint_fast8_t num = 1;
 			for (std::list<MPlayer>::iterator item = Mario.begin(); item != Mario.end(); ++item) {
 				if (num != SelfPlayerNumber) { 
 					take_mario_data(*item); 
@@ -345,9 +345,9 @@ void PendingConnection()
 	sf::TcpSocket* client = new sf::TcpSocket;
 	if (listener.accept(*client) == sf::Socket::Done)
 	{
-		int NewPlayerNumber = GetAmountOfPlayers() + 1;
+		uint_fast8_t NewPlayerNumber = GetAmountOfPlayers() + 1;
 
-		std::cout << blue << "[Server] A client (assigned to Player " << NewPlayerNumber << ") is trying to connect... (" << client->getRemoteAddress() << ")" << white << std::endl;
+		std::cout << blue << "[Server] A client (assigned to Player " << int(NewPlayerNumber) << ") is trying to connect... (" << client->getRemoteAddress() << ")" << white << std::endl;
 
 		PreparePacket(Header_Connection); CurrentPacket << NewPlayerNumber; SendPacket(client);
 
@@ -405,8 +405,7 @@ void Server_To_Clients()
 
 	if (clients.size() > 0)
 	{
-		int PlrNumber = 1;
-
+		uint_fast8_t PlrNumber = 1;
 
 		for (int i = 0; i < clients.size(); ++i) {
 			sf::TcpSocket& client = *clients[i];
@@ -439,7 +438,7 @@ void Server_To_Clients()
 			
 		}
 
-		if ((PlrNumber-1) == clients.size()) //Yea we did it.
+		if ((int(PlrNumber)-1) == clients.size()) //Yea we did it.
 		{
 			ASM.Reset_ASM_Variables_Server();
 			Set_Server_RAM();
@@ -510,7 +509,7 @@ bool ConnectClient(void)
 		}
 
 		CheckForPlayers();
-		std::cout << blue << "[Network] Connected to " << ip << ":" << dec <<  PORT <<  ", " << PlayerAmount << " Players connected." << white << std::endl;
+		std::cout << blue << "[Network] Connected to " << ip << ":" << dec <<  PORT <<  ", " << int(PlayerAmount) << " Players connected." << white << std::endl;
 		return true;
 	}
 	return false;

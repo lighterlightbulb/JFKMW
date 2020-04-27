@@ -293,8 +293,7 @@ void draw8x8_tile(int_fast16_t x, int_fast16_t y, uint_fast16_t tile, uint_fast8
 				//drawPixelScreen(7 - i + x, y + index, color1 + palette);
 
 				uint_fast16_t c = palette_array[color1 + palette];
-				Uint32* p_screen = (Uint32*)(&screen_s_l1)->pixels;
-				p_screen += (y_p << 8) + x_p;
+				Uint32* p_screen = (Uint32*)(&screen_s_l1)->pixels + ((y_p << 8) + x_p);
 				*p_screen = 0xFF000000 +
 					(((c & 0x1F) << 3)) +
 					(((c >> 5) & 0x1F) << 11) +
@@ -366,14 +365,14 @@ void draw_tile_custom(int_fast16_t x, int_fast16_t y, uint_fast8_t size, double 
 			uint_fast8_t y_off_t = y_b << 3;
 
 			//cout << dec << int(x_b) << ", " << int(y_b) << endl;
-			uint_fast16_t curr_tile = (0x200 + tile + x_b + (y_b << 4)) << 5;
+			uint_fast16_t curr_tile = ((tile + x_b + (y_b << 4)) << 5) + 0xE000;
 
 			uint_fast8_t graphics_array[32];
-			//memcpy(graphics_array, &VRAM[curr_tile], 32 * sizeof(uint_fast8_t));
+			memcpy(graphics_array, &VRAM[curr_tile], 32 * sizeof(uint_fast8_t));
 
-			std::copy(VRAM + curr_tile,
-				VRAM + curr_tile + 32,
-				graphics_array);
+			//std::copy(VRAM + curr_tile,
+			//	VRAM + curr_tile + 32,
+			//	graphics_array);
 
 			//drawing a block now.
 			for (uint_fast8_t index = 0; index < 8; index++)

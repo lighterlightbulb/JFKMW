@@ -39,7 +39,7 @@ void game_loop()
 		Sprites.process_all_sprites(); //we're processing sprites. we're either the server or a player in local mode.
 	}
 
-	int player = 1;
+	uint_fast8_t player = 1;
 	unsigned int camera_total_x = 0; unsigned int camera_total_y = 0;
 	for (std::list<MPlayer>::iterator item = Mario.begin(); item != Mario.end(); ++item)
 	{

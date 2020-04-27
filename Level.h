@@ -263,6 +263,9 @@ public:
 		decode_graphics_file("Graphics/GFX" + int_to_hex(request_level_entry("gfx_7")) + ".bin", 6); //FG7
 		decode_graphics_file("Graphics/GFX" + int_to_hex(request_level_entry("gfx_8")) + ".bin", 7); //FG8
 
+		decode_graphics_file("Graphics/GFX" + int_to_hex(request_level_entry("sp_1")) + ".bin", 14); //SP1
+		decode_graphics_file("Graphics/GFX" + int_to_hex(request_level_entry("sp_2")) + ".bin", 15); //SP2
+
 		Initialize_Level();
 	}
 };

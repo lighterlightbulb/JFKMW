@@ -126,7 +126,7 @@ bool recent_big_change = false;
 bool disconnected = false;
 bool isClient = false;
 
-int SelfPlayerNumber = 1;
+uint_fast8_t SelfPlayerNumber = 1;
 int PlayerAmount = 0;
 
 

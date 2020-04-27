@@ -55,6 +55,7 @@ void render_oam(uint_fast16_t offset_o = 0, int CameraX = 0, int CameraY = 0)
 	}
 }
 
+int data_size_final = 0;
 
 void render()
 {
@@ -127,9 +128,6 @@ void render()
 	SDL_Surface *screen_plane = &screen_s_l1;
 	SDL_memset(screen_plane->pixels, 0, screen_plane->h * screen_plane->pitch);
 
-	//Draw OAM (low)
-
-	render_oam(0x300, int(CameraX), int(CameraY));
 
 	//Draw scenery
 	uint_fast8_t blocks_on_screen = 0;
@@ -164,9 +162,7 @@ void render()
 			}
 		}
 	}
-	//Draw OAM (priority)
 
-	render_oam(0x200, int(CameraX), int(CameraY));
 
 	//End rendering
 	SDL_UnlockSurface(&screen_s_l1);
@@ -184,6 +180,9 @@ void render()
 	SDL_RenderCopy(ren, screen_t_l1, nullptr, &DestR);
 
 
+	//Draw OAM (low)
+
+	render_oam(0x300, int(CameraX), int(CameraY));
 	//Draw Mario
 
 	for (std::list<MPlayer>::iterator item = Mario.begin(); item != Mario.end(); ++item)
@@ -200,8 +199,13 @@ void render()
 			{
 				Sprite Mario(path + "Sprites/mario/" + to_string(CurrentMario.skin) + "/" + CurrentMario.sprite + ".png", int(CurrentMario.x) + offs - int(CameraX), 224 - 32 - int(CurrentMario.y) + int(CameraY), int(CurrentMario.to_scale*is_skidding) * 24, 32);
 			}
+
 		}
 	}
+
+	//Draw OAM (priority)
+
+	render_oam(0x200, int(CameraX), int(CameraY));
 
 
 	//draw layer 3
@@ -225,9 +229,9 @@ void render()
 	draw_number_hex(256 - 48 - 80, 15, uint_fast16_t(LocalPlayer.Y_SPEED*256.0), 4);
 	draw_number_hex(256 - 88 - 80, 15, uint_fast16_t(LocalPlayer.X_SPEED*256.0), 4); //y
 
-	draw8x8_tile_2bpp(8 * 11, 15 + 8, networking ? 0x17 : 0x15, 1, 2);
-	draw8x8_tile_2bpp(8 * 10, 15 + 8, 0x50, 1, 2);
-	draw8x8_tile_2bpp(8 * 9, 15 + 8, isClient ? 0xC : 0x1C, 1, 2);
+	draw8x8_tile_2bpp(8 * 10, 15 + 8, networking ? 0x17 : 0x15, 1, 2);
+	draw8x8_tile_2bpp(8 * 9, 15 + 8, 0x50, 1, 2);
+	draw8x8_tile_2bpp(8 * 8, 15 + 8, isClient ? 0xC : 0x1C, 1, 2);
 
 	draw_number_hex(256 - 24, 15, blocks_on_screen, 2);
 
@@ -235,10 +239,19 @@ void render()
 	draw8x8_tile_2bpp(256 - 24, 15 + 8, 0x1C, 1, 2);
 	draw_number_dec(256 - 40, 15 + 8, int(latest_server_response.count()*1000.0));
 
-	draw8x8_tile_2bpp(128, 15 + 8, 0x22, 1, 2); //BY
-	draw8x8_tile_2bpp(128 - 8, 15 + 8, 0xb, 1, 2);
-	draw_number_dec(128 - 16, 15 + 8, data_size_current);
-	data_size_current = 0;
+	draw8x8_tile_2bpp(128 - 8, 15 + 8, 0x14, 1, 2); //KB
+	draw8x8_tile_2bpp(128, 15 + 8, 0xB, 1, 2);
+	
+
+	
+	if (!(global_frame_counter % 60))
+	{
+		data_size_final = data_size_current;
+		data_size_current = 0;
+	}
+	draw8x8_tile_2bpp(128 - 24, 15 + 8, 0x24, 1, 2); //KB
+	draw_number_dec(128 - 16, 15 + 8, (data_size_final/512) % 10);
+	draw_number_dec(128 - 32, 15 + 8, data_size_final/1024);
 
 	draw8x8_tile_2bpp(256 - 32 - 48, 15 + 8, 0xF, 1, 2); //FPS
 	draw8x8_tile_2bpp(256 - 24 - 48, 15 + 8, 0x19, 1, 2);

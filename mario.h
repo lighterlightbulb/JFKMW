@@ -33,11 +33,9 @@ public:
 	double x = 16.0;
 	double y = 16.0;
 
-	int player_index = 0;
-
-	int skin = 0;
-
-	int STATE = 1;
+	uint_fast8_t player_index = 0;
+	uint_fast8_t skin = 0;
+	uint_fast8_t STATE = 1;
 
 	bool DEAD = false;
 
@@ -650,7 +648,9 @@ public:
 		}
 		else
 		{
+			//Camera lol
 
+			
 			if (CAMERA_X < x)
 			{
 				CAMERA_X += 5.0;
@@ -668,6 +668,7 @@ public:
 					CAMERA_X = x;
 				}
 			}
+
 			//CAMERA_X = x;
 			//CAMERA_X += (x - CAMERA_X) / 20.0;
 		}
@@ -676,21 +677,22 @@ public:
 			CAMERA_Y = double(104 + ServerRAM.RAM[0x1464] + ServerRAM.RAM[0x1465] * 256);
 		}
 		else {
-			if (CAMERA_Y < y)
+			double new_y = (y + 16);
+			if (CAMERA_Y < new_y)
 			{
-				CAMERA_Y += 3.0;
-				if (CAMERA_Y > y)
+				CAMERA_Y += 4.0;
+				if (CAMERA_Y > new_y)
 				{
-					CAMERA_Y = y;
+					CAMERA_Y = new_y;
 				}
 			}
 
-			if (CAMERA_Y > y)
+			if (CAMERA_Y > new_y)
 			{
-				CAMERA_Y -= 3.0;
-				if (CAMERA_Y < y)
+				CAMERA_Y -= 4.0;
+				if (CAMERA_Y < new_y)
 				{
-					CAMERA_Y = y;
+					CAMERA_Y = new_y;
 				}
 			}
 		}
@@ -709,10 +711,10 @@ void AddNewPlayer() { MPlayer NewPlayer = MPlayer(16.0, 16.0); Mario.push_back(N
 void RemovePlayer() { Mario.pop_back(); }
 void CheckForPlayers() //Have to be careful when fucking with this. Or else memory might leak.
 {
-	int player_am = int(Mario.size());
+	uint_fast8_t player_am = uint_fast8_t(Mario.size());
 	if (player_am != PlayerAmount) //example, player am is 0, and amount is 1.
 	{
-		int distance = PlayerAmount - player_am; //1 - 0 = 1, needs to add!
+		int_fast8_t distance = PlayerAmount - player_am; //1 - 0 = 1, needs to add!
 		while (distance > 0) { distance -= 1; AddNewPlayer(); }
 		while (distance < 0) { distance += 1; RemovePlayer(); }
 
@@ -721,11 +723,11 @@ void CheckForPlayers() //Have to be careful when fucking with this. Or else memo
 
 // Get Mario
 
-MPlayer& get_mario(int number)
+MPlayer& get_mario(uint_fast8_t number)
 {
 	CheckForPlayers();
 	
-	int player = 1;
+	uint_fast8_t player = 1;
 	for (std::list<MPlayer>::iterator item = Mario.begin(); item != Mario.end(); ++item)
 	{
 		if (player == number)
