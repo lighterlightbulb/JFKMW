@@ -194,10 +194,31 @@ void render()
 			float is_skidding = 1.f - (float(abs(CurrentMario.SKIDDING))*2.f);
 
 			int offs = 0;
+
 			if ((CurrentMario.to_scale*is_skidding) == -1.f) { offs = -8; }
 			if (!CurrentMario.invisible)
 			{
 				Sprite Mario(path + "Sprites/mario/" + to_string(CurrentMario.skin) + "/" + CurrentMario.sprite + ".png", int(CurrentMario.x) + offs - int(CameraX), 224 - 32 - int(CurrentMario.y) + int(CameraY), int(CurrentMario.to_scale*is_skidding) * 24, 32);
+			}
+
+			if (CurrentMario.GRABBED_SPRITE != 0xFF)
+			{
+				uint_fast8_t tile = uint_fast8_t(ASM.Get_Ram(0x2F00 + CurrentMario.GRABBED_SPRITE, 1));
+				uint_fast8_t size = uint_fast8_t((ASM.Get_Ram(0x2E80 + CurrentMario.GRABBED_SPRITE, 1) >> 4) + ((ASM.Get_Ram(0x2E80 + CurrentMario.GRABBED_SPRITE, 1) >> 4) << 4));
+
+				int_fast16_t x_position = int_fast16_t(double(CurrentMario.x + CurrentMario.to_scale * -13.0));
+				int_fast16_t y_position = int_fast16_t(double(CurrentMario.y - 12.0));
+
+				uint_fast8_t pal = uint_fast8_t(ASM.Get_Ram(0x2E80 + CurrentMario.GRABBED_SPRITE, 1) & 0xF);
+
+				double angle = 0.0;
+				if (tile != 0x0 &&
+					(x_position - CameraX) > -64 && (x_position - CameraX) < (256 + 64) &&
+					(y_position - CameraY) > -64 && (y_position - CameraY) < (224 + 64)
+					)
+				{
+					draw_tile_custom(x_position - CameraX, 224 - 32 - y_position + CameraY, size, angle, tile, pal);
+				}
 			}
 
 		}
@@ -249,9 +270,9 @@ void render()
 		data_size_final = data_size_current;
 		data_size_current = 0;
 	}
-	draw8x8_tile_2bpp(128 - 24, 15 + 8, 0x24, 1, 2); //KB
+	draw8x8_tile_2bpp(128 - 20, 15 + 8, 0x24, 1, 2); //.
 	draw_number_dec(128 - 16, 15 + 8, (data_size_final/512) % 10);
-	draw_number_dec(128 - 32, 15 + 8, data_size_final/1024);
+	draw_number_dec(128 - 27, 15 + 8, data_size_final/1024);
 
 	draw8x8_tile_2bpp(256 - 32 - 48, 15 + 8, 0xF, 1, 2); //FPS
 	draw8x8_tile_2bpp(256 - 24 - 48, 15 + 8, 0x19, 1, 2);

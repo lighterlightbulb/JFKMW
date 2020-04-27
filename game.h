@@ -45,6 +45,10 @@ void game_loop()
 	{
 		MPlayer& CurrPlayer = *item;
 		CurrPlayer.PlayerControlled = networking ? (player == SelfPlayerNumber) : true; //Only control myself
+		if (!isClient && networking)
+		{
+			CurrPlayer.PlayerControlled = false;
+		}
 		if (player == SelfPlayerNumber)
 		{
 			CurrPlayer.skin = my_skin;

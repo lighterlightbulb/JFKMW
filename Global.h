@@ -139,6 +139,7 @@ string ip = "127.0.0.1"; int PORT = 0;
 
 sf::TcpSocket socketG; sf::SocketSelector selector; //no idea how this works
 sf::TcpListener listener; std::vector<sf::TcpSocket*> clients;
+
 sf::Packet CurrentPacket; uint8_t CurrentPacket_header;
 
 //Sprites

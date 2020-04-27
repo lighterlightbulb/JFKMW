@@ -27,6 +27,8 @@ using namespace std;
 #include <SDL_mixer.h>
 #include <SFML/Network.hpp>
 
+#include <lz4.h>
+
 
 #include "cout.h"
 

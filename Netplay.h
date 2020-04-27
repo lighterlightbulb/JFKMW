@@ -67,7 +67,7 @@ void put_mario_data_in(MPlayer& CurrentMario)
 
 	CurrentPacket << CurrentMario.CAMERA_X; CurrentPacket << CurrentMario.CAMERA_Y;
 
-	CurrentPacket << CurrentMario.skin;
+	CurrentPacket << CurrentMario.skin; //CurrentPacket << CurrentMario.GRABBED_SPRITE;
 	for (int inputs = 0; inputs < total_inputs; inputs++)
 	{
 		CurrentPacket << CurrentMario.pad[inputs];
@@ -91,13 +91,14 @@ void take_mario_data(MPlayer& CurrentMario)
 
 	CurrentPacket >> CurrentMario.CAMERA_X; CurrentPacket >> CurrentMario.CAMERA_Y;
 
-	CurrentPacket >> CurrentMario.skin;
+	CurrentPacket >> CurrentMario.skin; //CurrentPacket >> CurrentMario.GRABBED_SPRITE;
 	for (int inputs = 0; inputs < total_inputs; inputs++)
 	{
 		CurrentPacket >> CurrentMario.pad[inputs];
 	}
 	//copypaste
 }
+
 
 
 /*
@@ -290,8 +291,8 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool ignore_status = false)
 			for (std::list<MPlayer>::iterator item = Mario.begin(); item != Mario.end(); ++item) {
 				if (num != SelfPlayerNumber) { 
 					take_mario_data(*item); 
-					//cout << "Updated player " << num << endl;
 				}
+
 				num += 1;
 			}
 

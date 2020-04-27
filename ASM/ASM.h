@@ -25,6 +25,7 @@ public:
 	bool flags[4];
 
 	uint_fast8_t rom[rom_asm_size]; //This is basically a read-only memory.
+	bool crashed = false;
 
 	void CMP()
 	{
@@ -285,6 +286,7 @@ public:
 			unknown opcode
 			*/
 			default:
+				crashed = true;
 				cout << red << "[ASM] Crash at pointer 0x" << hex << pointer << " : " << broke_reason << endl; 
 				cout << "Information about crash (probably won't help much, you probably did something wrong)" << endl;
 				cout << "Current opcode : " << int(opcode) << endl;
@@ -369,6 +371,11 @@ void Sync_Server_RAM(bool compressed = false)
 			CurrentPacket >> new_value;
 			ServerRAM.RAM[pointer] = new_value;
 		}
+
+		for (uint_fast16_t i = 0; i < 0x200; i++)
+		{
+			CurrentPacket >> ServerRAM.RAM[0x200 + i];
+		}
 	}
 	//cout << red << "received ram" << white << endl;
 }
@@ -387,9 +394,12 @@ void Push_Server_RAM(bool compress = false)
 		uint_fast16_t entries = 0;
 		for (uint_fast16_t i = 0; i < RAM_Size; i++)
 		{
-			if (ServerRAM_D.RAM[i] != ServerRAM_old.RAM[i])
+			if (i < 0x200 || i > 0x400)
 			{
-				entries += 1; //you stupid //no i not //whats 9 + 10 //twenty one.
+				if (ServerRAM_D.RAM[i] != ServerRAM_old.RAM[i])
+				{
+					entries += 1; //you stupid //no i not //whats 9 + 10 //twenty one.
+				}
 			}
 		}
 
@@ -397,19 +407,29 @@ void Push_Server_RAM(bool compress = false)
 
 		for (uint_fast16_t i = 0; i < RAM_Size; i++)
 		{
-			if (ServerRAM_D.RAM[i] != ServerRAM_old.RAM[i])
+			if (i < 0x200 || i > 0x400)
 			{
-				CurrentPacket << i; CurrentPacket << ServerRAM_D.RAM[i];
+				if (ServerRAM_D.RAM[i] != ServerRAM_old.RAM[i])
+				{
+					CurrentPacket << i; CurrentPacket << ServerRAM_D.RAM[i];
+				}
 			}
 		}
+
+		//do not compress OAm please do not let's send the entire thing
+
+		for (uint_fast16_t i = 0; i < 0x200; i++)
+		{
+			CurrentPacket << ServerRAM_D.RAM[0x200 + i];
+		}
+		
 	}
+
+
 	//cout << red << "[ASM] Pushed SE-RAM to packet." << white << endl;
 }
 
 void Set_Server_RAM()
 {
-	for (uint_fast16_t i = 0; i < RAM_Size; i++)
-	{
-		ServerRAM_old.RAM[i] = ServerRAM_D.RAM[i];
-	}
+	memcpy(&ServerRAM_old.RAM, &ServerRAM_D.RAM, RAM_Size * sizeof(uint_fast8_t));
 }

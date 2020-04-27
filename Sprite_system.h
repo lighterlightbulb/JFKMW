@@ -1,6 +1,13 @@
 #pragma once
 /*
-0x2000 - Sprite Status
+0x2000 - Sprite Status :
+0 - Non existant
+1 - Main
+2 - Grabbable (Not grabbed)
+3 - Grabbable (Grabbed by a player)
+4 - Kicked
+
+
 0x2080 - Sprite Number
 0x2100 - Sprite X Position (L)
 0x2180 - Sprite X Position (H)
@@ -15,13 +22,19 @@
 0x2600 - Sprite Flags HSGO---
 0x2680 - Sprite Direction
 0x2700 - Sprite interacing with... (player number in hex)
+0x2780 - Sprite block flags
+
+0x2E80 - Unused, extra property for grabbed sprites, which props/palettes it uses
+0x2F00 - Unused, extra property for grabbed sprites, which tile it uses
 0x2F80 - Sprite Initialized
 
 
+Flags :
 H = Hurts
 S = Solid
 G = Gravity
-O = Offscreen Processing
+T = Solid on Top (H must be on)
+UDLR = Solid on up/down/left/right
 */
 
 
@@ -52,20 +65,25 @@ public:
 		double x_size = double(ServerRAM.RAM[0x2500 + entry]);
 		double y_size = double(ServerRAM.RAM[0x2580 + entry]);
 
+		
 		if (ServerRAM.RAM[0x2600 + entry] & 0b1000000) //if solid bit is on
 		{
+			ServerRAM.RAM[0x2780 + entry] = 0;
 			if (!Move(xMove, 0.0, x_size, y_size))
 			{
 				ServerRAM.RAM[0x2680 + entry] *= -1;
+				ServerRAM.RAM[0x2780 + entry] |= 0b00000001;
 			}
 
 			if (!Move(0.0, yMove, x_size, y_size))
 			{
 				ServerRAM.RAM[0x2480 + entry] = 0;
+				ServerRAM.RAM[0x2780 + entry] |= 0b00000010;
 			}
 		}
 		else
 		{
+			ServerRAM.RAM[0x2780 + entry] = 0;
 			x += xMove;
 			y += yMove;
 		}
@@ -202,6 +220,9 @@ public:
 					if (sprite_is_lua[i])
 					{
 						init_sprite_lua(int(i), "Code/Sprites/" + to_string(ServerRAM.RAM[0x2080 + i]) + ".lua");
+						lua_getglobal(SPR_STATE[i], "Init");
+						lua_pushinteger(SPR_STATE[i], i);
+						lua_call(SPR_STATE[i], 1, 0); // run script
 					}
 					ServerRAM.RAM[0x2F80 + i] = 1;
 				}
@@ -214,6 +235,10 @@ public:
 					ASM.load_asm("Code/Sprites/" + to_string(ServerRAM.RAM[0x2080 + i]) + ".jasm", location_temp_sprite_asm);
 					ASM.x = i;
 					ASM.start_JFK_thread(location_temp_sprite_asm);
+					if (ASM.crashed)
+					{
+						ServerRAM.RAM[0x2000 + i] = 0;
+					}
 
 				
 				}

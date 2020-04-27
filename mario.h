@@ -37,6 +37,8 @@ public:
 	uint_fast8_t skin = 0;
 	uint_fast8_t STATE = 1;
 
+	uint_fast8_t GRABBED_SPRITE = 0xFF; //A sprite index from 0 to 7F
+
 	bool DEAD = false;
 
 
@@ -46,6 +48,7 @@ public:
 
 	bool pad[total_inputs] = { false,false,false,false,false,false,false };
 	bool was_jumpin = false;
+
 	//Sounds
 	MPlayer(double newX = 0.0, double newY = 0.0)
 	{
@@ -154,6 +157,58 @@ public:
 		return 1;
 	}
 
+	void ProcessGrabbed()
+	{
+		if (GRABBED_SPRITE != 0xFF)
+		{
+			//cout << "Player 1 is holding sprite " << int(GRABBED_SPRITE) << endl;
+			if (!pad[button_y])
+			{
+				
+				uint_fast16_t x_position = uint_fast16_t(double(x + to_scale * -13.0));
+				uint_fast16_t y_position = uint_fast16_t(double(y - 12.0)) + 16;
+				ServerRAM.RAM[0x2100 + GRABBED_SPRITE] = uint_fast8_t(x_position & 0xFF);
+				ServerRAM.RAM[0x2180 + GRABBED_SPRITE] = uint_fast8_t(x_position >> 8);
+				ServerRAM.RAM[0x2200 + GRABBED_SPRITE] = 0x00;
+
+				ServerRAM.RAM[0x2280 + GRABBED_SPRITE] = uint_fast8_t(y_position & 0xFF);
+				ServerRAM.RAM[0x2300 + GRABBED_SPRITE] = uint_fast8_t(y_position >> 8);
+				ServerRAM.RAM[0x2380 + GRABBED_SPRITE] = 0x00;
+
+				ServerRAM.RAM[0x2000 + GRABBED_SPRITE] = 0x02;
+				ServerRAM.RAM[0x2E00 + GRABBED_SPRITE] = 0x10;
+
+				ServerRAM.RAM[0x2780 + GRABBED_SPRITE] = 0;
+
+
+
+
+				if (pad[button_down])
+				{
+					ServerRAM.RAM[0x2400 + GRABBED_SPRITE] = uint_fast8_t(int_fast8_t(to_scale * -4));
+				}
+
+				if (pad[button_up])
+				{
+					ServerRAM.RAM[0x2480 + GRABBED_SPRITE] = 0x70;
+					ServerRAM.RAM[0x2400 + GRABBED_SPRITE] = uint_fast8_t(int_fast8_t(X_SPEED * 8.0));
+				}
+
+				if (!pad[button_up] && !pad[button_down])
+				{
+					ServerRAM.RAM[0x2680 + GRABBED_SPRITE] = int_fast8_t(to_scale);
+					ServerRAM.RAM[0x2000 + GRABBED_SPRITE] = 4;
+				}
+
+				GRABBED_SPRITE = 0xFF;
+				ASM.Write_To_Ram(0x1DF9, 0x3, 1);
+
+
+
+			}
+		}
+	}
+
 	bool Move(double xMove, double yMove, bool do_change = false)
 	{
 		double NewPositionX = x + xMove;
@@ -202,7 +257,7 @@ public:
 							NewPositionX = RightBlock;
 							willreturn = false;
 
-							map16_handler.process_block(xB, yB, right);
+							map16_handler.process_block(xB, yB, right, pad[button_y]);
 						}
 					}
 					if (xMove > 0.0 && checkLeft == true)
@@ -212,7 +267,7 @@ public:
 							NewPositionX = LeftBlock;
 							willreturn = false;
 
-							map16_handler.process_block(xB, yB, left);
+							map16_handler.process_block(xB, yB, left, pad[button_y]);
 						}
 					}
 					if (yMove < 0.0 && checkTop == true)
@@ -223,7 +278,7 @@ public:
 						
 							willreturn = false;
 
-							map16_handler.process_block(xB, yB, top);
+							map16_handler.process_block(xB, yB, top, pad[button_y]);
 						}
 
 					}
@@ -348,6 +403,23 @@ public:
 					for (uint_fast8_t i = 0; i < 4; i++)
 					{
 						ServerRAM.RAM[0x2700 + sprite] += results[i] << i;
+					}
+
+					//Grabbing
+					if (ServerRAM.RAM[0x2000 + sprite] == 2 && ServerRAM.RAM[0x2E00 + sprite] == 0)
+					{
+						if (pad[button_y])
+						{
+							ServerRAM.RAM[0x2000 + sprite] = 3;
+							GRABBED_SPRITE = sprite;
+						}
+						else
+						{
+							ServerRAM.RAM[0x2680 + sprite] = int_fast8_t(to_scale);
+							ServerRAM.RAM[0x2000 + sprite] = 4;
+
+							ASM.Write_To_Ram(0x1DF9, 3, 1);
+						}
 					}
 					
 				}
@@ -543,6 +615,7 @@ public:
 		{
 			GRAV = GRAV * 0.5;
 		}
+
 		double SPEED_X_TO_SET = Calculate_Speed_X(320.0 + (RUN*256.0) + (CAN_SPRINT*192.0))*WALKING_DIR;
 		double SPEED_ACCEL_X = Calculate_Speed_X(24.0);
 		double STOPPING_DECEL = Calculate_Speed_X(16.0);
@@ -699,6 +772,8 @@ public:
 
 		if (x < 8.0) { x = 8.0; }
 		if (x > double(-24 + mapWidth * 16)) { x = double(-24 + mapWidth * 16); }
+
+		ProcessGrabbed();
 		return 1;
 	}
 };
