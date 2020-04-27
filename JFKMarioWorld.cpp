@@ -36,7 +36,7 @@ using namespace std;
 
 
 
-#include "LuaJIT.h"
+#include "LuaImplementation.h"
 
 #include "Sound.h"
 
