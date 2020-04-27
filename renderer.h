@@ -198,7 +198,7 @@ void render()
 			if ((CurrentMario.to_scale*is_skidding) == -1.f) { offs = -8; }
 			if (!CurrentMario.invisible)
 			{
-				Sprite Mario(path + "Sprites/mario/" + CurrentMario.sprite + ".png", int(CurrentMario.x) + offs - int(CameraX), 224 - 32 - int(CurrentMario.y) + int(CameraY), int(CurrentMario.to_scale*is_skidding) * 24, 32);
+				Sprite Mario(path + "Sprites/mario/" + to_string((CurrentMario.player_index - 1) % 2) + "/" + CurrentMario.sprite + ".png", int(CurrentMario.x) + offs - int(CameraX), 224 - 32 - int(CurrentMario.y) + int(CameraY), int(CurrentMario.to_scale*is_skidding) * 24, 32);
 			}
 		}
 	}

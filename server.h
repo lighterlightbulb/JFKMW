@@ -24,11 +24,11 @@ void server_code(string level = "")
 		std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
 		total_time_ticks = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1);
 		Sleep(16);
-		if (!(global_frame_counter % 60) && clients.size() > 0)
+		if (!(global_frame_counter % 120) && clients.size() > 0)
 		{
 			cout << green << "[Network] latest loop : "
 				<< dec << total_time_ticks.count() * 1000.0 << " ms. "
-				<< (double(data_size_current) / 1024.0) << "kb data outbound." << white << endl;
+				<< (double(data_size_current) / 2048.0) << "kb/s" << white << endl;
 			data_size_current = 0;
 		}
 
