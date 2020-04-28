@@ -9,6 +9,8 @@ void game_init()
 
 void game_loop()
 {
+	while (doing_read) {}
+
 	doing_write = true;
 	global_frame_counter += 1;
 	if (networking)

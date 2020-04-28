@@ -105,13 +105,13 @@ public:
 
 		if (PlayerControlled == true)
 		{
-			pad[button_y] = state[input_settings[0]] || state[input_settings[3]];
-			pad[button_b] = state[input_settings[1]];
-			pad[button_a] = state[input_settings[2]];
-			pad[button_left] = state[input_settings[4]];
-			pad[button_right] = state[input_settings[5]];
-			pad[button_down] = state[input_settings[6]];
-			pad[button_up] = state[input_settings[7]];
+			pad[button_y] = (state[input_settings[0]] || state[input_settings[3]]) || (BUTTONS_GAMEPAD[7] || BUTTONS_GAMEPAD[6]);
+			pad[button_b] = state[input_settings[1]] || BUTTONS_GAMEPAD[4];
+			pad[button_a] = state[input_settings[2]] || BUTTONS_GAMEPAD[5];
+			pad[button_left] = state[input_settings[4]] || BUTTONS_GAMEPAD[3];
+			pad[button_right] = state[input_settings[5]] || BUTTONS_GAMEPAD[1];
+			pad[button_down] = state[input_settings[6]] || BUTTONS_GAMEPAD[2];;
+			pad[button_up] = state[input_settings[7]] || BUTTONS_GAMEPAD[0];
 		}
 
 	}

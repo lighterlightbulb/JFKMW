@@ -122,6 +122,7 @@ bool quit = false;
 bool actuallyquitgame = false;
 //NET
 bool doing_write = false;
+bool doing_read = false;
 bool recent_big_change = false;
 bool disconnected = false;
 bool isClient = false;

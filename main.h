@@ -7,6 +7,7 @@ void player_code()
 	}
 	screen(resolution_x, resolution_y, "JFK mario world - " + da_epical_function_lol("JFKMarioWorld.exe"));
 	init_audio();
+	init_input();
 
 
 

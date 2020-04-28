@@ -418,9 +418,16 @@ void Sync_Server_RAM(bool compressed = false)
 
 void Push_Server_RAM(bool compress = false)
 {
-	while (doing_write) {
-		Sleep(1);
+	if (doing_write)
+	{
+		//cout << "trying to send server ram while still writing, waiting for it to free" << endl;
+		while (doing_write) {
+		}
+		//cout << "freed" << endl;
 	}
+
+	doing_read = true;
+
 
 	if (!compress)
 	{
@@ -505,6 +512,8 @@ void Push_Server_RAM(bool compress = false)
 		
 		
 	}
+
+	doing_read = false;
 
 
 	//cout << red << "[ASM] Pushed SE-RAM to packet." << white << endl;
