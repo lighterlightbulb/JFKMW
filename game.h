@@ -31,7 +31,7 @@ void game_loop()
 
 	if (!isClient || !networking) //if we are the server or we are playing locally...
 	{
-		for (int i = 0; i < 0x400; i++) //X/Y are now 2 bytes. The others stay the same.
+		for (int i = 0; i < 0x200; i++) //X/Y are now 2 bytes. The others stay the same.
 		{
 			ServerRAM.RAM[0x200 + i] = 0;
 		}

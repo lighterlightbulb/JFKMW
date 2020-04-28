@@ -55,8 +55,6 @@ void render_oam(uint_fast16_t offset_o = 0, int CameraX = 0, int CameraY = 0)
 	}
 }
 
-int data_size_final = 0;
-
 void render()
 {
 	CheckForPlayers();
@@ -265,14 +263,11 @@ void render()
 	
 
 	
-	if (!(global_frame_counter % 60))
-	{
-		data_size_final = data_size_current;
-		data_size_current = 0;
-	}
+	
 	draw8x8_tile_2bpp(128 - 20, 15 + 8, 0x24, 1, 2); //.
-	draw_number_dec(128 - 16, 15 + 8, (data_size_final/512) % 10);
-	draw_number_dec(128 - 27, 15 + 8, data_size_final/1024);
+	draw_number_dec(128 - 16, 15 + 8, (data_size_current/512) % 10);
+	draw_number_dec(128 - 27, 15 + 8, data_size_current/1024);
+	data_size_current = 0;
 
 	draw8x8_tile_2bpp(256 - 32 - 48, 15 + 8, 0xF, 1, 2); //FPS
 	draw8x8_tile_2bpp(256 - 24 - 48, 15 + 8, 0x19, 1, 2);

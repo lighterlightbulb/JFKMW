@@ -244,8 +244,6 @@ public:
 				}
 				process_sprite_logic(uint_fast8_t(i));
 			}
-
-
 		}
 	}
 };
