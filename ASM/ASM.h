@@ -419,6 +419,7 @@ void Sync_Server_RAM(bool compressed = false)
 void Push_Server_RAM(bool compress = false)
 {
 	while (doing_write) {
+		Sleep(1);
 	}
 
 	doing_read = true;

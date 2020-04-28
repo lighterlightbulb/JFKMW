@@ -9,7 +9,9 @@ void game_init()
 
 void game_loop()
 {
-	while (doing_read) {}
+	while (doing_read) {
+		Sleep(1);
+	}
 
 	doing_write = true;
 	global_frame_counter += 1;
