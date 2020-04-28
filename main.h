@@ -90,10 +90,13 @@ void player_code()
 			std::cout << "Please input a IP." << std::endl; std::cin >> ip;
 			std::cout << "Please input the port." << std::endl; std::cin >> PORT;
 			if (ConnectClient() == false) {
-				return;
+				networking = false;
+				isClient = false;
+				s_or_c = "t";
 			}
 		}
-		else
+		
+		if (s_or_c == "t")
 		{
 			isClient = false;
 			string level = ""; std::cout << "Enter a level : "; std::cin >> level; LevelManager.LoadLevel(stoi(level, nullptr, 16));
@@ -140,7 +143,7 @@ void player_code()
 		}
 
 		//We quit the game go back to the ZSNES ui
-		if (networking) { socketG.disconnect();  thread->terminate(); }
+		if (networking && !disconnected) { socketG.disconnect();  thread->terminate(); }
 		cout << green << "Returning to main screen..." << white << endl;
 		Sleep(1000);
 		quit = true;

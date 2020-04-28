@@ -361,29 +361,54 @@ void Sync_Server_RAM(bool compressed = false)
 	}
 	else
 	{
+
 		uint_fast16_t entries = 0;
 		CurrentPacket >> entries;
 		for (uint_fast16_t i = 0; i < entries; i++)
 		{
 			uint_fast16_t pointer;
-			uint_fast8_t new_value;
 			CurrentPacket >> pointer;
-			CurrentPacket >> new_value;
-			ServerRAM.RAM[pointer] = new_value;
+			CurrentPacket >> ServerRAM.RAM[pointer];
 		}
 
-		for (uint_fast16_t i = 0; i < 0x200; i++)
-		{
-			CurrentPacket >> ServerRAM.RAM[0x200 + i];
+		//Decompress OAM
+		for (uint_fast16_t i = 0; i < 0x200; i++) {
+			ServerRAM.RAM[0x0200 + i] = 0;
 		}
+		uint_fast8_t oam_entries = 0;
+		CurrentPacket >> oam_entries;
+		for (uint_fast8_t i = 0; i < oam_entries; i++)
+		{
+			uint_fast16_t pointer;
+			CurrentPacket >> pointer;
+			CurrentPacket >> ServerRAM.RAM[0x0200 + pointer];
+			CurrentPacket >> ServerRAM.RAM[0x0201 + pointer];
+			CurrentPacket >> ServerRAM.RAM[0x0202 + pointer];
+			CurrentPacket >> ServerRAM.RAM[0x0203 + pointer];
+			CurrentPacket >> ServerRAM.RAM[0x0204 + pointer];
+			CurrentPacket >> ServerRAM.RAM[0x0205 + pointer];
+			CurrentPacket >> ServerRAM.RAM[0x0206 + pointer];
+			CurrentPacket >> ServerRAM.RAM[0x0207 + pointer];
+		}
+
+		//Sprite Positions (not compressed)
 		for (uint_fast16_t i = 0; i < 0x200; i++)
 		{
 			CurrentPacket >> ServerRAM.RAM[0x2100 + i];
 			CurrentPacket >> ServerRAM.RAM[0x2280 + i];
 		}
-		for (uint_fast16_t i = 0; i < 0x80; i++)
+
+		//Decompress sprite entries
+		for (uint_fast8_t i = 0; i < 128; i++) {
+			ServerRAM.RAM[0x2000 + i] = 0;
+		}
+		uint_fast8_t sprite_entries = 0;
+		CurrentPacket >> sprite_entries;
+		for (uint_fast8_t i = 0; i < sprite_entries; i++)
 		{
-			CurrentPacket >> ServerRAM.RAM[0x2000 + i];
+			uint_fast8_t pointer;
+			CurrentPacket >> pointer;
+			CurrentPacket >> ServerRAM.RAM[0x2000 + pointer];
 		}
 	}
 	//cout << red << "received ram" << white << endl;
@@ -426,23 +451,52 @@ void Push_Server_RAM(bool compress = false)
 			}
 		}
 
-		//do not compress OAm please do not let's send the entire thing
-
-		for (uint_fast16_t i = 0; i < 0x200; i++)
-		{
-			CurrentPacket << ServerRAM_D.RAM[0x200 + i];
+		//Compress OAM (send it though)
+		uint_fast8_t oam_entries = 0;
+		for (uint_fast16_t i = 0; i < 0x200; i += 8) {
+			if (ServerRAM_D.RAM[0x200 + i] != 0) {
+				oam_entries += 1;
+			}
 		}
 
-		//Also not sprites either lol
-		for (uint_fast16_t i = 0; i < 0x200; i++)
-		{
-			CurrentPacket << ServerRAM.RAM[0x2100 + i];
-			CurrentPacket << ServerRAM.RAM[0x2280 + i];
+		CurrentPacket << oam_entries;
+		for (uint_fast16_t i = 0; i < 0x200; i += 8) {
+			if (ServerRAM_D.RAM[0x200 + i] != 0) {
+				CurrentPacket << i;
+				CurrentPacket << ServerRAM_D.RAM[0x0200 + i];
+				CurrentPacket << ServerRAM_D.RAM[0x0201 + i];
+				CurrentPacket << ServerRAM_D.RAM[0x0202 + i];
+				CurrentPacket << ServerRAM_D.RAM[0x0203 + i];
+				CurrentPacket << ServerRAM_D.RAM[0x0204 + i];
+				CurrentPacket << ServerRAM_D.RAM[0x0205 + i];
+				CurrentPacket << ServerRAM_D.RAM[0x0206 + i];
+				CurrentPacket << ServerRAM_D.RAM[0x0207 + i];
+			}
 		}
-		for (uint_fast16_t i = 0; i < 0x80; i++)
-		{
-			CurrentPacket << ServerRAM.RAM[0x2000 + i];
+
+		//Sprite Positions (not compressed)
+		for (uint_fast16_t i = 0; i < 0x200; i++) {
+			CurrentPacket << ServerRAM_D.RAM[0x2100 + i];
+			CurrentPacket << ServerRAM_D.RAM[0x2280 + i];
 		}
+
+
+		//Compress sprite entries
+		uint_fast8_t spr_entries = 0;
+		for (uint_fast8_t i = 0; i < 0x80; i++) {
+			if (ServerRAM_D.RAM[0x2000 + i] != 0) {
+				spr_entries += 1;
+			}
+		}
+
+		CurrentPacket << spr_entries;
+		for (uint_fast8_t i = 0; i < 0x80; i++) {
+			if (ServerRAM_D.RAM[0x2000 + i] != 0) {
+				CurrentPacket << i; CurrentPacket << ServerRAM_D.RAM[0x2000 + i];
+			}
+		}
+
+		
 		
 	}
 

@@ -366,13 +366,13 @@ void draw_tile_custom(int_fast16_t x, int_fast16_t y, uint_fast8_t size, double 
 
 			//cout << dec << int(x_b) << ", " << int(y_b) << endl;
 			uint_fast16_t curr_tile = ((tile + x_b + (y_b << 4)) << 5) + 0xE000;
+			if (curr_tile > 0xFFDF) //Fix a crash
+			{
+				curr_tile = 0xFFDF;
+			}
 
 			uint_fast8_t graphics_array[32];
 			memcpy(graphics_array, &VRAM[curr_tile], 32 * sizeof(uint_fast8_t));
-
-			//std::copy(VRAM + curr_tile,
-			//	VRAM + curr_tile + 32,
-			//	graphics_array);
 
 			//drawing a block now.
 			for (uint_fast8_t index = 0; index < 8; index++)

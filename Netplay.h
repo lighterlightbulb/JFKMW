@@ -374,7 +374,7 @@ void PendingConnection()
 
 			// Add the new client to the clients list
 			clients.push_back(client); selector.add(*client); GetAmountOfPlayers();
-			std::cout << blue << "[Server] " << username << " (" << client->getRemoteAddress() << ", " << latest_chk << ", Player " << dec << NewPlayerNumber << ") has connected." << white << std::endl;
+			std::cout << blue << "[Server] " << username << " (" << client->getRemoteAddress() << ", Player " << dec << int(NewPlayerNumber) << ") has connected." << white << std::endl;
 
 			PreparePacket(Header_LevelData);
 			Push_Server_RAM();
@@ -385,7 +385,7 @@ void PendingConnection()
 		}
 		else
 		{
-			cout << blue << "[Server] " << username << " (" << client->getRemoteAddress() << ", " << latest_chk << ", Player " << dec << NewPlayerNumber << ") Timed out or sent invalid information. Disconnecting." << white << std::endl;
+			cout << blue << "[Server] " << username << " (" << client->getRemoteAddress() << ", " << latest_chk << ", Player " << dec << int(NewPlayerNumber) << ") Timed out or sent invalid information. Disconnecting." << white << std::endl;
 			client->disconnect(); 
 			delete client;
 		}
@@ -513,5 +513,9 @@ bool ConnectClient(void)
 		std::cout << blue << "[Network] Connected to " << ip << ":" << dec <<  PORT <<  ", " << int(PlayerAmount) << " Players connected." << white << std::endl;
 		return true;
 	}
-	return false;
+	else
+	{
+		std::cout << blue << "[Network] Failed to connect. Falling back to normal mode." << white << std::endl;
+		return false;
+	}
 }
