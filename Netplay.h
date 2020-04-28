@@ -14,36 +14,24 @@ sf::Socket::Status receiveWithTimeout(sf::TcpSocket& socket, sf::Packet& packet,
 {
 	sf::SocketSelector selector;
 	selector.add(socket);
-	if (selector.wait(timeout))
-	{
+	if (selector.wait(timeout)){
 		last_status = socket.receive(packet);
 		return last_status;
 	}
-	else
-	{
+	else {
 		return sf::Socket::NotReady;
 	}
 }
 
-
-
-//Netcode
 bool validated_connection = false;
 
-uint_fast8_t GetAmountOfPlayers()
-{
+uint_fast8_t GetAmountOfPlayers() {
 	PlayerAmount = uint_fast8_t(clients.size()); CheckForPlayers();
 	return PlayerAmount;
 }
 
-void PreparePacket(uint8_t header)
-{
+void PreparePacket(uint8_t header) {
 	CurrentPacket.clear(); CurrentPacket << header; CurrentPacket_header = header;
-}
-
-void server_print(string text)
-{
-	cout << blue << text << white << endl;
 }
 
 /*
@@ -107,24 +95,18 @@ Pack Mario Data
 
 */
 
-void pack_mario_data(int skip = 1)
-{
-	if (!isClient)
-	{
+void pack_mario_data(uint_fast8_t skip = 1) {
+	if (!isClient) {
 		CurrentPacket << PlayerAmount;
-
-		int plrNum = 1;
+		uint_fast8_t plrNum = 1;
 		for (std::list<MPlayer>::iterator item = Mario.begin(); item != Mario.end(); ++item) { 
-			if (plrNum != skip)
-			{
+			if (plrNum != skip) {
 				put_mario_data_in(*item);
 			}
 			plrNum += 1;
 		}
 	}
-	else
-	{
-
+	else {
 		CurrentPacket << SelfPlayerNumber; 
 		put_mario_data_in(get_mario(SelfPlayerNumber));
 	}
@@ -138,22 +120,15 @@ Disconnection handler
 */
 
 
-void HandleDisconnection(sf::TcpSocket* ToSend = nullptr)
-{
-
+void HandleDisconnection(sf::TcpSocket* ToSend = nullptr) {
 	cout << blue << "[Server] " << ToSend->getRemoteAddress() << " has disconnected." << white << endl;
 
-	clients.erase(std::remove(clients.begin(), clients.end(), ToSend), clients.end());
+	clients.erase(std::remove(clients.begin(), clients.end(), ToSend));
 	selector.remove(*ToSend);
 
 	ToSend->disconnect();
-
-	//cout << blue << "[Server] Amount of players : " << clients.size() << white << endl;
-
 	last_status = sf::Socket::Error;
-
 	delete ToSend;
-
 }
 
 
@@ -163,41 +138,30 @@ Packet Sending
 
 */
 
-void send_not_blocking(sf::TcpSocket* ToSend = nullptr)
-{
-	if (ToSend->send(CurrentPacket) != sf::Socket::Done)
-	{
-
-		if (!isClient)
-		{
-			//cout << "sending packet of header " << int(CurrentPacket_header) << endl;
-			HandleDisconnection(ToSend); //Partial or disconnected will simply just disconnect the player.
+void send_not_blocking(sf::TcpSocket* ToSend = nullptr) {
+	if (ToSend->send(CurrentPacket) != sf::Socket::Done) {
+		if (!isClient) {
+			HandleDisconnection(ToSend);
 		}
-		else
-		{
+		else {
 			disconnected = true;
 		}
 	}
-
 }
 
-void SendPacket(sf::TcpSocket* ToSend = nullptr)
-{
+void SendPacket(sf::TcpSocket* ToSend = nullptr) {
 	//Server will send a packet.
 	//Players will receive it.
 	//Client will send a packet to server, server receives it.
 
-	if (!isClient)
-	{
+	if (!isClient) {
 		if (ToSend != nullptr) {
 			send_not_blocking(ToSend);
 		}
 		else
 		{
 			for (int i = 0; i < clients.size(); ++i) {
-
-				ToSend = clients[i];
-				
+				ToSend = clients[i];	
 				send_not_blocking(ToSend);
 			}
 		}
@@ -213,10 +177,8 @@ void SendPacket(sf::TcpSocket* ToSend = nullptr)
 void ReceivePacket(sf::TcpSocket &whoSentThis, bool ignore_status = false)
 {
 	//cout << last_status << endl;
-	if (!ignore_status)
-	{
-		if (last_status == sf::Socket::Disconnected || last_status == sf::Socket::Error)
-		{
+	if (!ignore_status) {
+		if (last_status == sf::Socket::Disconnected || last_status == sf::Socket::Error) {
 			if (!isClient)
 			{
 				HandleDisconnection(&whoSentThis);
@@ -231,9 +193,6 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool ignore_status = false)
 	CurrentPacket >> CurrentPacket_header;
 
 	data_size_current += int(CurrentPacket.getDataSize());
-	//cout << "header = " << CurrentPacket_header << endl;
-
-	//cout << blue << "[Network] Received Packet of " << dec << int(CurrentPacket.getDataSize()) << " header : " << CurrentPacket_header << white << endl;
 
 	/*
 	SERVER BEHAVIOUR
@@ -244,12 +203,14 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool ignore_status = false)
 		//cout << blue << "[Network] Received packet (" << CurrentPacket_header << ") from " << whoSentThis.getRemoteAddress() << white << endl;
 		if (CurrentPacket_header == Header_AttemptJoin)
 		{
-			//validated_connection = true;
-			/*string bruh;
-			CurrentPacket >> bruh;
-			validated_connection = bruh == da_epical_function_lol("JFKMarioWorld.exe");
-			latest_chk = bruh;
-			CurrentPacket >> username;*/
+			cout << blue << "[Client] Receiving verification.." << white << endl;
+
+			string validation;
+			CurrentPacket >> username;
+	
+			cout << blue << "[Client] " << username << " has passed verification." << white << endl;
+			validated_connection = true;
+
 		}
 		/*
 
@@ -289,10 +250,9 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool ignore_status = false)
 
 			uint_fast8_t num = 1;
 			for (std::list<MPlayer>::iterator item = Mario.begin(); item != Mario.end(); ++item) {
-				if (num != SelfPlayerNumber) { 
-					take_mario_data(*item); 
+				if (num != SelfPlayerNumber) {
+					take_mario_data(*item);
 				}
-
 				num += 1;
 			}
 
@@ -301,21 +261,22 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool ignore_status = false)
 
 		}
 
+		if (CurrentPacket_header == Header_LevelData)
+		{
+			cout << blue << "[Client] Received map_data." << white << endl;
+			Sync_Server_RAM(false);
+		}
+
+
 		if (CurrentPacket_header == Header_Connection)
 		{
 			CurrentPacket >> SelfPlayerNumber; PlayerAmount = SelfPlayerNumber; CheckForPlayers();
-			//cout << blue << "[Client] Validating connection.. (You are player " << SelfPlayerNumber << ")" << white << endl;
+			cout << blue << "[Client] Validating connection.." << white << endl;
 
 			PreparePacket(Header_AttemptJoin); 
-			CurrentPacket << da_epical_function_lol("JFKMarioWorld.exe");
+			//CurrentPacket << "Hi we are legit";
 			CurrentPacket << username;
 			SendPacket();
-		}
-
-		if (CurrentPacket_header == Header_LevelData)
-		{
-			//cout << blue << "[Client] Received map_data." << white << endl;
-			Sync_Server_RAM();
 		}
 
 	}
@@ -325,7 +286,7 @@ bool receive_all_packets(sf::TcpSocket& socket, bool slower = false)
 {
 	int current_pack = 0;
 
-	while (receiveWithTimeout(socket, CurrentPacket, sf::milliseconds(slower ? 100 : packet_wait_time)) != sf::Socket::NotReady)
+	while (receiveWithTimeout(socket, CurrentPacket, sf::milliseconds(slower ? 2000 : packet_wait_time)) != sf::Socket::NotReady)
 	{
 		current_pack += 1;
 		ReceivePacket(socket);
@@ -352,23 +313,10 @@ void PendingConnection()
 
 		PreparePacket(Header_Connection); CurrentPacket << NewPlayerNumber; SendPacket(client);
 
-		validated_connection = true;
-		/*username = "Unknown";
-		latest_chk = "Invalid";
 
-		int attempts = 0;
-		while (client->receive(CurrentPacket) != sf::Socket::Done && attempts < 10)
-		{
-			attempts += 1;
-			Sleep(500);
-			std::cout << blue << "[Server] Attempting connection validation.." << white << std::endl;
-		}
-		
-		if (attempts < 10)
-		{
-			ReceivePacket(*client, true);
-		}*/
-		
+		validated_connection = false;
+		receive_all_packets(*client, true);
+
 		if (validated_connection)
 		{
 
@@ -377,7 +325,7 @@ void PendingConnection()
 			std::cout << blue << "[Server] " << username << " (" << client->getRemoteAddress() << ", Player " << dec << int(NewPlayerNumber) << ") has connected." << white << std::endl;
 
 			PreparePacket(Header_LevelData);
-			Push_Server_RAM();
+			Push_Server_RAM(false);
 			SendPacket(client);
 
 
@@ -484,7 +432,14 @@ void NetWorkLoop()
 		/*
 		CLIENT MODE
 		*/
+		while (Mario.size() == 0) {
+			std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
+			receive_all_packets(socketG);
+			std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
+			latest_server_response = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1);
+		}
 
+		std::cout << blue << "[Network] Server loaded. " << int(PlayerAmount) << " Players connected." << endl;
 		while (!quit && !disconnected)
 		{
 			std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
@@ -502,7 +457,7 @@ bool ConnectClient(void)
 	if (socketG.connect(ip, PORT) == sf::Socket::Done)
 	{
 
-		receive_all_packets(socketG, false);
+		receive_all_packets(socketG, true);
 
 		if (last_status == sf::Socket::Error || last_status == sf::Socket::Disconnected)
 		{
@@ -510,7 +465,7 @@ bool ConnectClient(void)
 		}
 
 		CheckForPlayers();
-		std::cout << blue << "[Network] Connected to " << ip << ":" << dec <<  PORT <<  ", " << int(PlayerAmount) << " Players connected." << white << std::endl;
+		std::cout << blue << "[Network] Connected to " << ip << ":" << dec <<  PORT << white << std::endl;
 		return true;
 	}
 	else

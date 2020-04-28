@@ -121,6 +121,7 @@ std::string path = "E:/JFKMarioWorld/x64/JFKMarioWorld/Debug/";
 bool quit = false;
 bool actuallyquitgame = false;
 //NET
+bool doing_write = false;
 bool recent_big_change = false;
 bool disconnected = false;
 bool isClient = false;

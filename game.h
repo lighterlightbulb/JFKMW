@@ -9,6 +9,7 @@ void game_init()
 
 void game_loop()
 {
+	doing_write = true;
 	global_frame_counter += 1;
 	if (networking)
 	{
@@ -31,11 +32,10 @@ void game_loop()
 
 	if (!isClient || !networking) //if we are the server or we are playing locally...
 	{
-		for (int i = 0; i < 0x200; i++) //X/Y are now 2 bytes. The others stay the same.
+		for (int i = 0; i < 0x200; i++) //Clear OAM loop
 		{
 			ServerRAM.RAM[0x200 + i] = 0;
 		}
-
 		Sprites.process_all_sprites(); //we're processing sprites. we're either the server or a player in local mode.
 	}
 
@@ -92,10 +92,8 @@ void game_loop()
 
 	if (networking && !isClient) //if we are the server
 	{
-		for (uint_fast16_t i = 0; i < RAM_Size; i++)
-		{
-			ServerRAM_D.RAM[i] = ServerRAM.RAM[i];
-		}
+		memcpy(&ServerRAM_D.RAM, &ServerRAM.RAM, RAM_Size * sizeof(uint_fast8_t));
+		doing_write = false;
 	}
 
 }

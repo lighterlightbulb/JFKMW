@@ -23,7 +23,9 @@ void server_code(string level = "")
 		game_loop();
 		std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
 		total_time_ticks = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1);
-		Sleep(16);
+
+		
+
 		if (!(global_frame_counter % 120) && clients.size() > 0)
 		{
 			cout << green << "[Network] latest loop : "
@@ -39,8 +41,9 @@ void server_code(string level = "")
 		if (getKey(VK_F2))
 		{
 			cout << green << "[Network] Syncing RAM to other players.." << endl;
-			recent_big_change = true;
 			Set_Server_RAM();
+			recent_big_change = true;
 		}
+		Sleep(16);
 	}
 }

@@ -367,8 +367,10 @@ void Sync_Server_RAM(bool compressed = false)
 		for (uint_fast16_t i = 0; i < entries; i++)
 		{
 			uint_fast16_t pointer;
+			uint_fast8_t data;
 			CurrentPacket >> pointer;
-			CurrentPacket >> ServerRAM.RAM[pointer];
+			CurrentPacket >> data;
+			ServerRAM.RAM[pointer] = data;
 		}
 
 		//Decompress OAM
@@ -416,6 +418,10 @@ void Sync_Server_RAM(bool compressed = false)
 
 void Push_Server_RAM(bool compress = false)
 {
+	while (doing_write) {
+		Sleep(1);
+	}
+
 	if (!compress)
 	{
 		for (uint_fast16_t i = 0; i < RAM_Size; i++)
@@ -428,7 +434,7 @@ void Push_Server_RAM(bool compress = false)
 		uint_fast16_t entries = 0;
 		for (uint_fast16_t i = 0; i < RAM_Size; i++)
 		{
-			if (((i < 0x200 || i > 0x400) && (i < 0x2100 || i > 0x2400)) && (i < 0x2000 || i > 0x2080))
+			if (((i < 0x200 || i > 0x3FF) && (i < 0x2100 || i > 0x23FF)) && (i < 0x2000 || i > 0x207F))
 			{
 				if (ServerRAM_D.RAM[i] != ServerRAM_old.RAM[i])
 				{
@@ -442,7 +448,7 @@ void Push_Server_RAM(bool compress = false)
 		for (uint_fast16_t i = 0; i < RAM_Size; i++)
 		{
 
-			if (((i < 0x200 || i > 0x400) && (i < 0x2100 || i > 0x2400)) && (i < 0x2000 || i > 0x2080))
+			if (((i < 0x200 || i > 0x3FF) && (i < 0x2100 || i > 0x23FF)) && (i < 0x2000 || i > 0x207F))
 			{
 				if (ServerRAM_D.RAM[i] != ServerRAM_old.RAM[i])
 				{
@@ -504,7 +510,6 @@ void Push_Server_RAM(bool compress = false)
 	//cout << red << "[ASM] Pushed SE-RAM to packet." << white << endl;
 }
 
-void Set_Server_RAM()
-{
+void Set_Server_RAM() {
 	memcpy(&ServerRAM_old.RAM, &ServerRAM_D.RAM, RAM_Size * sizeof(uint_fast8_t));
 }
