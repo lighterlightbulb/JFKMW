@@ -10,14 +10,13 @@
 #define bounds_y 6.0
 #define button_b 0
 #define button_y 1
-#define button_x 2
-#define button_a 3
-#define button_left 4
-#define button_right 5
-#define button_up 6
-#define button_down 7
+#define button_a 2
+#define button_left 3
+#define button_right 4
+#define button_up 5
+#define button_down 6
 
-#define total_inputs 8
+#define total_inputs 7
 
 #define SpriteAmount 64
 #define ogg_sample_rate 32000

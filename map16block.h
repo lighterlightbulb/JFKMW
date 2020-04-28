@@ -136,51 +136,10 @@ public:
 
 		if (t == 0x012E && pressing_y)
 		{
-
-			for (uint_fast8_t i = 0; i < 128; i++)
-			{
-				if (ServerRAM.RAM[0x2000 + i] == 0)
-				{
-					/*
-						0x2080 - Sprite Number
-						0x2100 - Sprite X Position (L)
-						0x2180 - Sprite X Position (H)
-						0x2200 - Sprite X Position (F)
-						0x2280 - Sprite Y Position (L)
-						0x2300 - Sprite Y Position (H)
-						0x2380 - Sprite Y Position (F)
-						0x2400 - Sprite X Speed
-						0x2480 - Sprite Y Speed
-						0x2500 - Sprite Size X
-						0x2580 - Sprite Size Y
-						0x2600 - Sprite Flags HSGO---
-						0x2680 - Sprite Direction
-						0x2700 - Sprite interacing with... (player number in hex)
-						0x2780 - Sprite block flags
-					*/
-					replace_map_tile(0x0025, x, y);
-
-					ServerRAM.RAM[0x2000 + i] = 2;
-					ServerRAM.RAM[0x2080 + i] = 2;
-					ServerRAM.RAM[0x2F80 + i] = 0;
-					x *= 16;
-					y *= 16;
-
-					ServerRAM.RAM[0x2100 + i] = uint_fast8_t(x & 0xFF);
-					ServerRAM.RAM[0x2180 + i] = uint_fast8_t(x >> 8);
-					ServerRAM.RAM[0x2200 + i] = 0;
-
-					ServerRAM.RAM[0x2280 + i] = uint_fast8_t(y & 0xFF);
-					ServerRAM.RAM[0x2300 + i] = uint_fast8_t(y >> 8);
-					ServerRAM.RAM[0x2380 + i] = 0;
-
-					ServerRAM.RAM[0x2400 + i] = 0;
-					ServerRAM.RAM[0x2480 + i] = 0;
-
-					sprite_is_lua[i] = true;
-					break;
-				}
-			}
+			replace_map_tile(0x0025, x, y);
+			x *= 16;
+			y *= 16;
+			spawnSpriteJFKMarioWorld(2, 2, x, y, true);
 
 		}
 

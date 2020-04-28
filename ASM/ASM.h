@@ -376,6 +376,11 @@ void Sync_Server_RAM(bool compressed = false)
 		{
 			CurrentPacket >> ServerRAM.RAM[0x200 + i];
 		}
+		for (uint_fast16_t i = 0; i < 0x200; i++)
+		{
+			CurrentPacket >> ServerRAM.RAM[0x2100 + i];
+			CurrentPacket >> ServerRAM.RAM[0x2280 + i];
+		}
 	}
 	//cout << red << "received ram" << white << endl;
 }
@@ -394,7 +399,7 @@ void Push_Server_RAM(bool compress = false)
 		uint_fast16_t entries = 0;
 		for (uint_fast16_t i = 0; i < RAM_Size; i++)
 		{
-			if (i < 0x200 || i > 0x400)
+			if ((i < 0x200 || i > 0x400) && (i < 0x2100 || i > 0x2400))
 			{
 				if (ServerRAM_D.RAM[i] != ServerRAM_old.RAM[i])
 				{
@@ -407,7 +412,8 @@ void Push_Server_RAM(bool compress = false)
 
 		for (uint_fast16_t i = 0; i < RAM_Size; i++)
 		{
-			if (i < 0x200 || i > 0x400)
+
+			if ((i < 0x200 || i > 0x400) && (i < 0x2100 || i > 0x2400))
 			{
 				if (ServerRAM_D.RAM[i] != ServerRAM_old.RAM[i])
 				{
@@ -421,6 +427,13 @@ void Push_Server_RAM(bool compress = false)
 		for (uint_fast16_t i = 0; i < 0x200; i++)
 		{
 			CurrentPacket << ServerRAM_D.RAM[0x200 + i];
+		}
+
+		//Also not sprites either lol
+		for (uint_fast16_t i = 0; i < 0x200; i++)
+		{
+			CurrentPacket << ServerRAM.RAM[0x2100 + i];
+			CurrentPacket << ServerRAM.RAM[0x2280 + i];
 		}
 		
 	}

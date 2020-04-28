@@ -1,4 +1,3 @@
-#include "pch.h"
 #include <Windows.h>
 #include <cmath>
 #include <string>
@@ -36,7 +35,7 @@ using namespace std;
 #include "ASM/ASM.h"
 #include "config.h"
 
-
+#include "Sprite_shared.h"
 
 #include "LuaImplementation.h"
 

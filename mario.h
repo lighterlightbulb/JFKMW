@@ -40,6 +40,8 @@ public:
 	uint_fast8_t GRABBED_SPRITE = 0xFF; //A sprite index from 0 to 7F
 
 	bool DEAD = false;
+	bool pressed_y = false;
+	bool old_y = false;
 
 
 	int_fast8_t DEATH_TIMER = 0;
@@ -103,10 +105,9 @@ public:
 
 		if (PlayerControlled == true)
 		{
-			pad[button_y] = state[input_settings[0]];
+			pad[button_y] = state[input_settings[0]] || state[input_settings[3]];
 			pad[button_b] = state[input_settings[1]];
 			pad[button_a] = state[input_settings[2]];
-			pad[button_x] = state[input_settings[3]];
 			pad[button_left] = state[input_settings[4]];
 			pad[button_right] = state[input_settings[5]];
 			pad[button_down] = state[input_settings[6]];
@@ -257,7 +258,7 @@ public:
 							NewPositionX = RightBlock;
 							willreturn = false;
 
-							map16_handler.process_block(xB, yB, right, pad[button_y]);
+							map16_handler.process_block(xB, yB, right, pressed_y);
 						}
 					}
 					if (xMove > 0.0 && checkLeft == true)
@@ -267,7 +268,7 @@ public:
 							NewPositionX = LeftBlock;
 							willreturn = false;
 
-							map16_handler.process_block(xB, yB, left, pad[button_y]);
+							map16_handler.process_block(xB, yB, left, pressed_y);
 						}
 					}
 					if (yMove < 0.0 && checkTop == true)
@@ -278,7 +279,7 @@ public:
 						
 							willreturn = false;
 
-							map16_handler.process_block(xB, yB, top, pad[button_y]);
+							map16_handler.process_block(xB, yB, top, pressed_y);
 						}
 
 					}
@@ -406,19 +407,22 @@ public:
 					}
 
 					//Grabbing
-					if (ServerRAM.RAM[0x2000 + sprite] == 2 && ServerRAM.RAM[0x2E00 + sprite] == 0)
+					if (GRABBED_SPRITE == 0xFF)
 					{
-						if (pad[button_y])
+						if (ServerRAM.RAM[0x2000 + sprite] == 2 && ServerRAM.RAM[0x2E00 + sprite] == 0)
 						{
-							ServerRAM.RAM[0x2000 + sprite] = 3;
-							GRABBED_SPRITE = sprite;
-						}
-						else
-						{
-							ServerRAM.RAM[0x2680 + sprite] = int_fast8_t(to_scale);
-							ServerRAM.RAM[0x2000 + sprite] = 4;
+							if (pad[button_y])
+							{
+								ServerRAM.RAM[0x2000 + sprite] = 3;
+								GRABBED_SPRITE = sprite;
+							}
+							else
+							{
+								ServerRAM.RAM[0x2680 + sprite] = int_fast8_t(to_scale);
+								ServerRAM.RAM[0x2000 + sprite] = 4;
 
-							ASM.Write_To_Ram(0x1DF9, 3, 1);
+								ASM.Write_To_Ram(0x1DF9, 3, 1);
+							}
 						}
 					}
 					
@@ -601,6 +605,16 @@ public:
 		if (pad[button_y])
 		{
 			RUN = 1.0;
+		}
+
+		pressed_y = false;
+		if (pad[button_y] != old_y)
+		{
+			old_y = pad[button_y];
+			if (old_y == true)
+			{
+				pressed_y = true;
+			}
 		}
 		if (pad[button_b] != was_jumpin)
 		{

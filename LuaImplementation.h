@@ -56,6 +56,18 @@ extern "C" int lua_get_ram(lua_State* L)
 	return 1; // Count of returned values
 }
 
+static int lua_spawn_sprite(lua_State* L) {
+	uint_fast8_t n = (uint_fast8_t)lua_tointeger(L, 1); // First argument
+	uint_fast8_t s = (uint_fast8_t)lua_tointeger(L, 2); // First argument
+	uint_fast16_t x = (uint_fast16_t)lua_tointeger(L, 3); // First argument
+	uint_fast16_t y = (uint_fast16_t)lua_tointeger(L, 4); // First argument
+	bool is_l = lua_toboolean(L, 5);
+
+	spawnSpriteJFKMarioWorld(n, s, x, y, is_l);
+
+	return 0;
+}
+
 /* functions end */
 
 void lua_connect_functions(lua_State* L)
@@ -63,7 +75,9 @@ void lua_connect_functions(lua_State* L)
 	//lua_print("Connected functions to 0x" + int_to_;
 	lua_pushcfunction(L, lua_write); lua_setglobal(L, "mario_print");
 	lua_pushcfunction(L, lua_write_ram); lua_setglobal(L, "asm_write");
+	lua_pushcfunction(L, lua_spawn_sprite); lua_setglobal(L, "spawn_sprite");
 	lua_register(L, "asm_read", lua_get_ram);
+
 }
 
 
