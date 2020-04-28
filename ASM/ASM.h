@@ -418,12 +418,7 @@ void Sync_Server_RAM(bool compressed = false)
 
 void Push_Server_RAM(bool compress = false)
 {
-	if (doing_write)
-	{
-		//cout << "trying to send server ram while still writing, waiting for it to free" << endl;
-		while (doing_write) {
-		}
-		//cout << "freed" << endl;
+	while (doing_write) {
 	}
 
 	doing_read = true;
