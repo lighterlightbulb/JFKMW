@@ -1,6 +1,6 @@
 #pragma once
 
-void spawnSpriteJFKMarioWorld(uint_fast8_t sprite_num, uint_fast8_t new_state, uint_fast16_t x, uint_fast16_t y, bool is_lua)
+void spawnSpriteJFKMarioWorld(uint_fast8_t sprite_num, uint_fast8_t new_state, uint_fast16_t x, uint_fast16_t y, uint_fast8_t direction, bool is_lua)
 {
 	for (uint_fast8_t i = 0; i < 128; i++)
 	{
@@ -20,6 +20,11 @@ void spawnSpriteJFKMarioWorld(uint_fast8_t sprite_num, uint_fast8_t new_state, u
 
 			ServerRAM.RAM[0x2400 + i] = 0;
 			ServerRAM.RAM[0x2480 + i] = 0;
+
+			ServerRAM.RAM[0x2680 + i] = direction;
+
+			ServerRAM.RAM[0x2700 + i] = 0;
+
 
 			sprite_is_lua[i] = is_lua;
 			return;

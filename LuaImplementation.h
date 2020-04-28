@@ -61,9 +61,10 @@ static int lua_spawn_sprite(lua_State* L) {
 	uint_fast8_t s = (uint_fast8_t)lua_tointeger(L, 2); // First argument
 	uint_fast16_t x = (uint_fast16_t)lua_tointeger(L, 3); // First argument
 	uint_fast16_t y = (uint_fast16_t)lua_tointeger(L, 4); // First argument
-	bool is_l = lua_toboolean(L, 5);
+	uint_fast8_t direction = (uint_fast8_t)lua_tointeger(L, 5); // First argument
+	bool is_l = lua_toboolean(L, 6);
 
-	spawnSpriteJFKMarioWorld(n, s, x, y, is_l);
+	spawnSpriteJFKMarioWorld(n, s, x, y, direction, is_l);
 
 	return 0;
 }

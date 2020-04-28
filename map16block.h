@@ -139,7 +139,7 @@ public:
 			replace_map_tile(0x0025, x, y);
 			x *= 16;
 			y *= 16;
-			spawnSpriteJFKMarioWorld(2, 2, x, y, true);
+			spawnSpriteJFKMarioWorld(2, 2, x, y, 0, true);
 
 		}
 
