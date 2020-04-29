@@ -133,6 +133,7 @@ void render()
 			uint_fast16_t tile = map16_handler.get_tile(x + offsetX, y + offsetY);
 			if (tile != 0x25)
 			{
+				blocks_on_screen += 1;
 				uint_fast16_t entry = tile * tile_table_size;
 
 				//Block 8x8 tiles
@@ -144,7 +145,6 @@ void render()
 
 					if (block_index != 0xF8)
 					{
-						blocks_on_screen += 1;
 						draw8x8_tile(
 							((i << 3) & 0xF) - offsetXPixel + (x << 4),
 							208 - (i > 1 ? -8 : 0) + offsetYPixel - (y << 4),

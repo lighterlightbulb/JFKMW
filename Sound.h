@@ -58,7 +58,7 @@ void SoundLoop()
 	{
 		old_1dfb = ASM.Get_Ram(0x1DFB, 1);
 
-		string file = path + "Sounds/music/" + std::to_string(old_1dfb) + ".ogg";
+		string file = path + "Sounds/music/" + int_to_hex(old_1dfb, true) + ".ogg";
 		music = Mix_LoadMUS(file.c_str());
 
 		if (music == NULL)
