@@ -46,7 +46,7 @@ void render_oam(uint_fast16_t offset_o = 0, int CameraX = 0, int CameraY = 0)
 			(y_position - CameraY) > -64 && (y_position - CameraY) < (224 + 64)			
 		)
 		{
-			draw_tile_custom(x_position - CameraX, 224 - 32 - y_position + CameraY, size, angle, tile, pal);
+			draw_tile_custom(x_position - CameraX, 224 - 32 - y_position + CameraY, size, angle, tile, pal, ((uint_fast8_t(ASM.Get_Ram(offset_o + i + 6, 1)) >> 5) & 1)  );
 		}
 	}
 }
@@ -211,7 +211,7 @@ void render()
 					(y_position - CameraY) > -64 && (y_position - CameraY) < (224 + 64)
 					)
 				{
-					draw_tile_custom(x_position - CameraX, 224 - 32 - y_position + CameraY, size, angle, tile, pal);
+					draw_tile_custom(x_position - CameraX, 224 - 32 - y_position + CameraY, size, angle, tile, pal, false);
 				}
 			}
 

@@ -324,7 +324,7 @@ void draw8x8_tile_2bpp(uint_fast8_t x, uint_fast8_t y, uint_fast16_t tile, uint_
 
 //drawtilecustom
 
-void draw_tile_custom(int_fast16_t x, int_fast16_t y, uint_fast8_t size, double angle, uint_fast16_t tile, uint_fast8_t palette)
+void draw_tile_custom(int_fast16_t x, int_fast16_t y, uint_fast8_t size, double angle, uint_fast16_t tile, uint_fast8_t palette, bool flip)
 {
 	/* SDL interprets each pixel as a 32-bit number, so our masks must depend
 	   on the endianness (byte order) of the machine */
@@ -336,7 +336,7 @@ void draw_tile_custom(int_fast16_t x, int_fast16_t y, uint_fast8_t size, double 
 #endif
 	uint_fast8_t size_x = (size % 16) + 1;
 	uint_fast8_t size_y = (size / 16) + 1;
-	SDL_Surface *ti = SDL_CreateRGBSurface(0,  size_x * 8, size_y * 8, 32,
+	SDL_Surface* ti = SDL_CreateRGBSurface(0, size_x * 8, size_y * 8, 32,
 		rmask, gmask, bmask, amask);
 
 	//set up
@@ -386,16 +386,17 @@ void draw_tile_custom(int_fast16_t x, int_fast16_t y, uint_fast8_t size, double 
 			}
 		}
 	}
-	
 
-	
+
+
 
 	SDL_Texture* drawnTex = SDL_CreateTextureFromSurface(ren, ti);
 	SDL_Rect SourceR;
-	SourceR.x = (x*scale) + sp_offset_x;
-	SourceR.y = (y*scale) + sp_offset_y;
+	SourceR.x = (x * scale) + sp_offset_x;
+	SourceR.y = (y * scale) + sp_offset_y;
 	SourceR.w = (size_x << 3) * scale; //Same bs as above.
 	SourceR.h = (size_y << 3) * scale;
+	SDL_RendererFlip flip_r = flip ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
 
 	//SDL_BlitSurface(ti, NULL, &screen_s_l1, &SourceR);
 	//SDL_UnlockSurface(ti);
@@ -408,7 +409,7 @@ void draw_tile_custom(int_fast16_t x, int_fast16_t y, uint_fast8_t size, double 
 
 	//SDL_BlitScaled(ti, NULL, &screen_s_l1, &DestR);
 	//SDL_UnlockSurface(ti);
-	SDL_RenderCopyEx(ren, drawnTex, NULL, &SourceR, angle, NULL, SDL_FLIP_NONE);
+	SDL_RenderCopyEx(ren, drawnTex, NULL, &SourceR, angle, NULL, flip_r);
 	//bofa deez. 
 	SDL_FreeSurface(ti);
 	SDL_DestroyTexture(drawnTex);
