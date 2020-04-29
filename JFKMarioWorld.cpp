@@ -18,14 +18,19 @@
 #include <cstring>
 #include <cassert>
 
-#define DISABLE_NETWORK
-
 using namespace std;
-
 
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_mixer.h>
+
+#if defined(__LINUX__)
+#define DISABLE_NETWORK
+#endif
+
+#if defined(DARWIN)
+#define DISABLE_NETWORK
+#endif
 
 #if not defined(DISABLE_NETWORK)
 #include <SFML/Network.hpp>
