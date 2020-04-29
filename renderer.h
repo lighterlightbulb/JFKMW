@@ -46,10 +46,6 @@ void render_oam(uint_fast16_t offset_o = 0, int CameraX = 0, int CameraY = 0)
 			(y_position - CameraY) > -64 && (y_position - CameraY) < (224 + 64)			
 		)
 		{
-			if (angle != 0.0 && simulate_SNES_quirks)
-			{
-				add_to_ticks += rand() % 4;
-			}
 			draw_tile_custom(x_position - CameraX, 224 - 32 - y_position + CameraY, size, angle, tile, pal);
 		}
 	}

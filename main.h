@@ -136,8 +136,6 @@ void player_code()
 			redraw();
 			total_time_ticks = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1);
 
-			add_to_ticks = 0;
-
 			if (disconnected) {
 				quit = true; cout << red << "[Network] Disconnected." << white << endl; break;
 			}

@@ -70,8 +70,6 @@ void SoundLoop()
 			if (Mix_PlayingMusic() == 1)
 			{
 				Mix_HaltMusic();
-				add_to_ticks += 30;
-				Sleep(simulate_SNES_quirks * 500);
 			}
 			Mix_PlayMusic(music, -1);
 			cout << purple << "[Audio] Playing " << file << white << endl;

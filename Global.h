@@ -57,7 +57,6 @@ std::chrono::duration<double> latest_server_response;
 
 unsigned int network_update_rate = 16;
 unsigned int packet_wait_time = 16;
-unsigned int add_to_ticks = 0;
 int mouse_x, mouse_y;
 int data_size_current = 0;
 
@@ -66,7 +65,6 @@ int rendering_device = -1;
 bool fullscreen = false;
 bool opengl = false;
 bool networking = false;
-bool simulate_SNES_quirks = false;
 bool renderer_accelerated = true;
 bool v_sync = true;
 
