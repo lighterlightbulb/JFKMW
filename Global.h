@@ -105,7 +105,7 @@ double Calculate_Speed_X(double speed)
 std::string int_to_hex(int T, bool add_0 = false)
 {
 	std::stringstream stream;
-	if (add_0 == false)
+	if (!add_0)
 	{
 		stream << std::hex << T;
 	}

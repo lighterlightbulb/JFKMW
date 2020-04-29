@@ -60,7 +60,7 @@ public:
 
 	void Die()
 	{
-		if (DEAD == false)
+		if (!DEAD)
 		{
 			ASM.Write_To_Ram(0x1DFC, 100, 1);
 			DEAD = true;
@@ -70,7 +70,7 @@ public:
 
 	void Hurt()
 	{
-		if (DEAD == false && INVINCIBILITY_FRAMES == 0)
+		if (!DEAD && INVINCIBILITY_FRAMES == 0)
 		{
 
 			if (STATE != 0)
@@ -103,7 +103,7 @@ public:
 		//b = A or B; y = X or Y; e = select; t = Start; U = up; D = down; L = left, R = right.
 
 
-		if (PlayerControlled == true)
+		if (PlayerControlled)
 		{
 			pad[button_y] = (state[input_settings[0]] || state[input_settings[3]]) || (BUTTONS_GAMEPAD[7] || BUTTONS_GAMEPAD[6]);
 			pad[button_b] = state[input_settings[1]] || BUTTONS_GAMEPAD[4];
@@ -251,7 +251,7 @@ public:
 					}
 
 					map16_handler.process_block(xB, yB, inside);
-					if (xMove < 0.0 && checkRight == true)
+					if (xMove < 0.0 && checkRight)
 					{
 						if (NewPositionX < RightBlock && NewPositionX > RightBlock - bounds_x)
 						{
@@ -261,7 +261,7 @@ public:
 							map16_handler.process_block(xB, yB, right, pressed_y);
 						}
 					}
-					if (xMove > 0.0 && checkLeft == true)
+					if (xMove > 0.0 && checkLeft)
 					{
 						if (NewPositionX > LeftBlock && NewPositionX < LeftBlock + bounds_x)
 						{
@@ -271,7 +271,7 @@ public:
 							map16_handler.process_block(xB, yB, left, pressed_y);
 						}
 					}
-					if (yMove < 0.0 && checkTop == true)
+					if (yMove < 0.0 && checkTop)
 					{
 						if (NewPositionY < AboveBlock && NewPositionY > AboveBlock - bounds_y)
 						{
@@ -283,7 +283,7 @@ public:
 						}
 
 					}
-					if (yMove > 0.0 && checkBottom == true)
+					if (yMove > 0.0 && checkBottom)
 					{
 						if (NewPositionY > BelowBlock && NewPositionY < BelowBlock + bounds_y)
 						{
@@ -442,12 +442,12 @@ public:
 	{
 		string NewSprite = "STAND";
 
-		if (DEAD == true)
+		if (DEAD)
 		{
 			sprite = "DEAD";
 			return;
 		}
-		if (CROUCH == false)
+		if (!CROUCH)
 		{
 			if (Y_SPEED != 0.0)
 			{
@@ -511,7 +511,7 @@ public:
 
 		height = (STATE > 0 && CROUCH == 0) ? 28.0 : 14.0;
 
-		if (DEAD == true)
+		if (DEAD)
 		{
 			return DeathProcess();
 		}
@@ -542,7 +542,7 @@ public:
 		}
 
 		ON_FL = false;
-		if (Move(0.0, -1.0, true) == false) //Detected a floor below
+		if (!Move(0.0, -1.0, true)) //Detected a floor below
 		{
 			ON_FL = true;
 		}
@@ -614,7 +614,7 @@ public:
 		if (pad[button_y] != old_y)
 		{
 			old_y = pad[button_y];
-			if (old_y == true)
+			if (old_y)
 			{
 				pressed_y = true;
 			}
@@ -650,7 +650,7 @@ public:
 				SKIDDING = 1;
 				X_SPEED += SKID_ACCEL;
 			}
-			if (ON_FL == false)
+			if (!ON_FL)
 			{
 				SKIDDING = 0;
 			}
@@ -712,11 +712,11 @@ public:
 			Y_SPEED = Calculate_Speed(-1312.0);
 		}
 
-		if (Move(X_SPEED + Calculate_Speed(double(int_fast8_t(ServerRAM.RAM[0x7B]))*16.0), 0.0) == false)
+		if (!Move(X_SPEED + Calculate_Speed(double(int_fast8_t(ServerRAM.RAM[0x7B]))*16.0), 0.0))
 		{
 			X_SPEED = 0.0;
 		}
-		if (Move(0.0, Y_SPEED + Calculate_Speed(double(int_fast8_t(ServerRAM.RAM[0x7D]))*16.0)) == false)
+		if (!Move(0.0, Y_SPEED + Calculate_Speed(double(int_fast8_t(ServerRAM.RAM[0x7D]))*16.0)))
 		{
 			Y_SPEED = 0.0;
 		}

@@ -12,6 +12,7 @@ void server_code(string level = "")
 
 	isClient = false;
 	networking = true;
+	bool DisablePrints = false;
 	
 	cout << green << "[Network] Server starting. To load a new level, press F1, to sync the ram to all players, press F2." << white << endl;
 	data_size_current = 0;
@@ -28,9 +29,12 @@ void server_code(string level = "")
 
 		if (!(global_frame_counter % 120) && clients.size() > 0)
 		{
-			cout << green << "[Network] latest loop : "
-				<< dec << total_time_ticks.count() * 1000.0 << " ms. "
-				<< (double(data_size_current) / 2048.0) << "kb/s" << white << endl;
+			if (DisablePrints)
+			{
+				cout << green << "[Network] latest loop : "
+					<< dec << total_time_ticks.count() * 1000.0 << " ms. "
+					<< (double(data_size_current) / 2048.0) << "kb/s" << white << endl;
+			}
 			data_size_current = 0;
 		}
 
@@ -43,6 +47,18 @@ void server_code(string level = "")
 			cout << green << "[Network] Syncing RAM to other players.." << endl;
 			Set_Server_RAM();
 			recent_big_change = true;
+		}
+		if (getKey(VK_F3))
+		{
+			DisablePrints = !DisablePrints;
+			if (!DisablePrints)
+			{
+				cout << green << "[Network] Disabled Network latest loop prints." << endl;
+			}
+			else
+			{
+				cout << green << "[Network] Enabled Network latest loop prints." << endl;
+			}
 		}
 		Sleep(16);
 	}

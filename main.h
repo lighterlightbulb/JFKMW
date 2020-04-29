@@ -100,7 +100,7 @@ void player_code()
 			isClient = true;
 			std::cout << "Please input a IP." << std::endl; std::cin >> ip;
 			std::cout << "Please input the port." << std::endl; std::cin >> PORT;
-			if (ConnectClient() == false) {
+			if (!ConnectClient()) {
 				networking = false;
 				isClient = false;
 				s_or_c = "t";

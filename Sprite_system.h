@@ -136,7 +136,7 @@ public:
 				if (NewPositionX < RightBlock && NewPositionX > LeftBlock && NewPositionY < AboveBlock && NewPositionY > BelowBlock)
 				{
 
-					if (xMove < 0.0 && checkRight == true)
+					if (xMove < 0.0 && checkRight)
 					{
 						if (NewPositionX < RightBlock && NewPositionX > RightBlock - bounds_x)
 						{
@@ -144,7 +144,7 @@ public:
 							finna_return = false;
 						}
 					}
-					if (xMove > 0.0 && checkLeft == true)
+					if (xMove > 0.0 && checkLeft)
 					{
 						if (NewPositionX > LeftBlock && NewPositionX < LeftBlock + bounds_x)
 						{
@@ -152,7 +152,7 @@ public:
 							finna_return = false;
 						}
 					}
-					if (yMove < 0.0 && checkTop == true)
+					if (yMove < 0.0 && checkTop)
 					{
 						if (NewPositionY < AboveBlock && NewPositionY > AboveBlock - bounds_y)
 						{
@@ -161,7 +161,7 @@ public:
 						}
 
 					}
-					if (yMove > 0.0 && checkBottom == true)
+					if (yMove > 0.0 && checkBottom)
 					{
 						if (NewPositionY > BelowBlock && NewPositionY < BelowBlock + bounds_y)
 						{

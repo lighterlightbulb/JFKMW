@@ -3,7 +3,7 @@
 
 void process_ex_animation()
 {
-	if (!networking || (networking && isClient == false))
+	if (!networking || (networking && !isClient))
 	{
 		//Bruh crap
 		for (int i = 0; i < 4; i++)
