@@ -175,7 +175,7 @@ public:
 				ServerRAM.RAM[0x2280 + GRABBED_SPRITE] = uint_fast8_t(y_position & 0xFF);
 				ServerRAM.RAM[0x2300 + GRABBED_SPRITE] = uint_fast8_t(y_position >> 8);
 				ServerRAM.RAM[0x2380 + GRABBED_SPRITE] = 0x00;
-				ServerRAM.RAM[0x2E00 + GRABBED_SPRITE] = 0x18;
+				ServerRAM.RAM[0x2800 + GRABBED_SPRITE] = 0x18;
 				ServerRAM.RAM[0x2780 + GRABBED_SPRITE] = 0;
 
 				ServerRAM.RAM[0x2000 + GRABBED_SPRITE] = 0x02;
@@ -411,7 +411,7 @@ public:
 					//Grabbing
 					if (GRABBED_SPRITE == 0xFF)
 					{
-						if (ServerRAM.RAM[0x2000 + sprite] == 2 && ServerRAM.RAM[0x2E00 + sprite] == 0)
+						if (ServerRAM.RAM[0x2000 + sprite] == 2 && ServerRAM.RAM[0x2800 + sprite] == 0)
 						{
 							if (pad[button_y])
 							{
@@ -422,7 +422,7 @@ public:
 							{
 								ServerRAM.RAM[0x2680 + sprite] = int_fast8_t(to_scale);
 								ServerRAM.RAM[0x2000 + sprite] = 4;
-								ServerRAM.RAM[0x2E00 + sprite] = 0x10;
+								ServerRAM.RAM[0x2800 + sprite] = 0x10;
 
 								ASM.Write_To_Ram(0x1DF9, 3, 1);
 							}

@@ -24,7 +24,7 @@
 0x2700 - Sprite interacing with... (player number in hex)
 0x2780 - Sprite block flags
 
-0x2E00 - Sprite is lua/asm type
+0x2800 - Sprite is lua/asm type
 0x2E80 - Unused, extra property for grabbed sprites, which props/palettes it uses
 0x2F00 - Unused, extra property for grabbed sprites, which tile it uses
 0x2F80 - Sprite Initialized
@@ -218,7 +218,7 @@ public:
 			{
 				if (ServerRAM.RAM[0x2F80 + i] == 0)
 				{
-					if (ServerRAM.RAM[0x2E00 + i])
+					if (ServerRAM.RAM[0x2800 + i])
 					{
 						init_sprite_lua(int(i), "Code/Sprites/" + int_to_hex(ServerRAM.RAM[0x2080 + i], true) + ".lua");
 						lua_getglobal(SPR_STATE[i], "Init");
@@ -227,7 +227,7 @@ public:
 					}
 					ServerRAM.RAM[0x2F80 + i] = 1;
 				}
-				if (ServerRAM.RAM[0x2E00 + i])
+				if (ServerRAM.RAM[0x2800 + i])
 				{
 					call_sprite_lua(i);
 				}
