@@ -110,7 +110,7 @@ public:
 
 					if(status == "level_config")
 					{
-						line.erase(remove_if(line.begin(), line.end(), isspace),
+						line.erase(remove_if(line.begin(), line.end(), ::isspace),
 							line.end());
 						auto delimiterPos = line.find("=");
 						auto name = line.substr(0, delimiterPos);
@@ -122,7 +122,7 @@ public:
 
 					if (status == "scripts")
 					{
-						line.erase(remove_if(line.begin(), line.end(), isspace),
+						line.erase(remove_if(line.begin(), line.end(), ::isspace),
 							line.end());
 						auto delimiterPos = line.find("=");
 						auto name = line.substr(0, delimiterPos);

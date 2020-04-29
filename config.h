@@ -8,7 +8,7 @@ void load_configuration()
 	{
 		string line;
 		while (getline(cFile, line)) {
-			line.erase(remove_if(line.begin(), line.end(), isspace),
+			line.erase(remove_if(line.begin(), line.end(), ::isspace),
 				line.end());
 			if (line[0] == '#' || line.empty())
 				continue;
