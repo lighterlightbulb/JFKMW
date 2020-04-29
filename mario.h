@@ -43,6 +43,9 @@ public:
 	bool pressed_y = false;
 	bool old_y = false;
 
+	bool in_pipe = false;
+	int_fast8_t pipe_speed = 0;
+
 
 	int_fast8_t DEATH_TIMER = 0;
 

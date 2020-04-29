@@ -55,7 +55,7 @@ void put_mario_data_in(MPlayer& CurrentMario)
 
 	CurrentPacket << CurrentMario.CAMERA_X; CurrentPacket << CurrentMario.CAMERA_Y;
 
-	CurrentPacket << CurrentMario.skin; //CurrentPacket << CurrentMario.GRABBED_SPRITE;
+	CurrentPacket << CurrentMario.skin; CurrentPacket << CurrentMario.in_pipe; CurrentPacket << CurrentMario.pipe_speed;
 	for (int inputs = 0; inputs < total_inputs; inputs++)
 	{
 		CurrentPacket << CurrentMario.pad[inputs];
@@ -79,7 +79,7 @@ void take_mario_data(MPlayer& CurrentMario)
 
 	CurrentPacket >> CurrentMario.CAMERA_X; CurrentPacket >> CurrentMario.CAMERA_Y;
 
-	CurrentPacket >> CurrentMario.skin; //CurrentPacket >> CurrentMario.GRABBED_SPRITE;
+	CurrentPacket >> CurrentMario.skin; CurrentPacket >> CurrentMario.in_pipe; CurrentPacket >> CurrentMario.pipe_speed;
 	for (int inputs = 0; inputs < total_inputs; inputs++)
 	{
 		CurrentPacket >> CurrentMario.pad[inputs];
