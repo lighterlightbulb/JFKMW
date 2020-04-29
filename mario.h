@@ -477,7 +477,7 @@ public:
 		}
 		if (in_pipe)
 		{
-			sprite = "PIPE_" + std::to_string(STATE);
+			sprite = "PIPE_" + to_string(STATE);
 			return;
 		}
 		if (!CROUCH)
@@ -510,11 +510,11 @@ public:
 						int Frame = abs(int(FRM) % (2 + (STATE > 0)));
 						if (abs(X_SPEED) > Calculate_Speed_X(750.0))
 						{
-							NewSprite = "RUN" + std::to_string(Frame);
+							NewSprite = "RUN" + to_string(Frame);
 						}
 						else
 						{
-							NewSprite = "WALK" + std::to_string(Frame);
+							NewSprite = "WALK" + to_string(Frame);
 						}
 					}
 				}
@@ -536,7 +536,7 @@ public:
 		{
 			to_scale = 1.f;
 		}
-		sprite = NewSprite + "_" + std::to_string(STATE);
+		sprite = NewSprite + "_" + to_string(STATE);
 	}
 
 	void in_pipe_process()
@@ -800,7 +800,7 @@ public:
 
 //Mario management
 
-std::list<MPlayer> Mario; //This is how much players exist. Starts at 0.
+list<MPlayer> Mario; //This is how much players exist. Starts at 0.
 void AddNewPlayer() { MPlayer NewPlayer = MPlayer(16.0, 16.0); Mario.push_back(NewPlayer); }
 void RemovePlayer() { Mario.pop_back(); }
 void CheckForPlayers() //Have to be careful when fucking with this. Or else memory might leak.
@@ -822,7 +822,7 @@ MPlayer& get_mario(uint_fast8_t number)
 	CheckForPlayers();
 	
 	uint_fast8_t player = 1;
-	for (std::list<MPlayer>::iterator item = Mario.begin(); item != Mario.end(); ++item)
+	for (list<MPlayer>::iterator item = Mario.begin(); item != Mario.end(); ++item)
 	{
 		if (player == number)
 		{
@@ -838,7 +838,7 @@ MPlayer& get_mario(uint_fast8_t number)
 //player interaction with other players, for now it's just mario combat
 void PlayerInteraction()
 {
-	for (std::list<MPlayer>::iterator curr_p = Mario.begin(); curr_p != Mario.end(); ++curr_p)
+	for (list<MPlayer>::iterator curr_p = Mario.begin(); curr_p != Mario.end(); ++curr_p)
 	{
 		MPlayer& CurrPlayer = *curr_p;
 		if (CurrPlayer.DEAD)
@@ -847,7 +847,7 @@ void PlayerInteraction()
 		}
 		else
 		{
-			for (std::list<MPlayer>::iterator item = Mario.begin(); item != Mario.end(); ++item)
+			for (list<MPlayer>::iterator item = Mario.begin(); item != Mario.end(); ++item)
 			{
 				MPlayer& PlrInteract = *item;
 				if ((&PlrInteract == &CurrPlayer || PlrInteract.DEAD) || PlrInteract.INVINCIBILITY_FRAMES > 0)

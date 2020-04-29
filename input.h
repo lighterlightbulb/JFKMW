@@ -8,20 +8,20 @@ void init_input()
 {
 	if (SDL_NumJoysticks() < 1)
 	{
-		std::cout << cyan << "[SDL] No controllers are plugged in." << endl;
+		cout << cyan << "[SDL] No controllers are plugged in." << endl;
 	}
 	else
 	{
-		std::cout << cyan << "[SDL] There's a controller plugged in!" << white << endl;
+		cout << cyan << "[SDL] There's a controller plugged in!" << white << endl;
 		//Load joystick
 		gGameController = SDL_GameControllerOpen(controller);
 		if (gGameController == NULL)
 		{
-			std::cout << cyan << "[SDL] Controller " << controller << " error : " << SDL_GetError() << white << endl;
+			cout << cyan << "[SDL] Controller " << controller << " error : " << SDL_GetError() << white << endl;
 		}
 		else
 		{
-			std::cout << cyan << "[SDL] Controller " << controller << " is plugged in." << white << endl;
+			cout << cyan << "[SDL] Controller " << controller << " is plugged in." << white << endl;
 		}
 	}
 }

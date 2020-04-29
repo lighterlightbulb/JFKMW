@@ -1,7 +1,7 @@
 #pragma once
 
 
-SDL_Surface* loadSurface(std::string path)
+SDL_Surface* loadSurface(string path)
 {
 
 	//Load image at specified path
@@ -12,7 +12,7 @@ SDL_Surface* loadSurface(std::string path)
 class TextureManager
 {
 public:
-	std::unordered_map<std::string, SDL_Texture*> Textures;
+	unordered_map<string, SDL_Texture*> Textures;
 	SDL_Texture *loadTexture(string file)
 	{
 		auto entry = Textures.find(file);
@@ -24,8 +24,8 @@ public:
 		SDL_Surface *s = loadSurface(file);
 		SDL_Texture *t = SDL_CreateTextureFromSurface(ren, s);
 		SDL_FreeSurface(s);
-		std::cout << purple_int << "[TexManager] couldn't find " + file + ", loading it" << white << endl;
-		Textures.insert(std::make_pair(file, t));
+		cout << purple_int << "[TexManager] couldn't find " + file + ", loading it" << white << endl;
+		Textures.insert(make_pair(file, t));
 
 		return t;
 
@@ -39,7 +39,7 @@ SDL_Surface *bg_surface;
 class Sprite
 {
 public:
-	Sprite(std::string sprite, int x, int y, int size_x, int size_y, double angle = 0.0)
+	Sprite(string sprite, int x, int y, int size_x, int size_y, double angle = 0.0)
 	{
 		SDL_Rect DestR;
 

@@ -8,11 +8,11 @@ public:
 	Level() {}
 
 
-	//std::vector<string, int> data;
-	std::string current_level;
-	std::unordered_map<std::string, uint_fast32_t> level_data;
+	//vector<string, int> data;
+	string current_level;
+	unordered_map<string, uint_fast32_t> level_data;
 
-	uint_fast32_t request_level_entry(std::string name)
+	uint_fast32_t request_level_entry(string name)
 	{
 		auto entry = level_data.find(name);
 
@@ -21,63 +21,63 @@ public:
 			return entry->second;
 		}
 
-		std::cout << green
+		cout << green
 			<< "[Level Manager] Couldn't find entry " << name
-			<< " : not created yet?" << white << std::endl;
+			<< " : not created yet?" << white << endl;
 
 		return 0;
 	}
 
-	void add_entry(std::string name, uint_fast32_t value)
+	void add_entry(string name, uint_fast32_t value)
 	{
 
-		std::cout << green
+		cout << green
 			<< "[Level Manager] Added entry " << name
-			<< " = " << dec << value << white << std::endl;
+			<< " = " << dec << value << white << endl;
 
 
-		level_data.insert(std::make_pair(name, value));
+		level_data.insert(make_pair(name, value));
 	}
 
 
-	std::string LoadLevelData(std::string FILENAME)
+	string LoadLevelData(string FILENAME)
 	{
-		std::ifstream file;
+		ifstream file;
 		file.open(FILENAME);
 		if (file.is_open())
 		{
 
-			std::stringstream strStream;
+			stringstream strStream;
 			strStream << file.rdbuf(); //read the file
-			std::string str = strStream.str(); //str holds the content of the file
+			string str = strStream.str(); //str holds the content of the file
 
 			return str;
 		}
 		file.close();
 		return "Error";
 	}
-	void LoadLevelFromFile(std::string FILENAME, uint_fast16_t num)
+	void LoadLevelFromFile(string FILENAME, uint_fast16_t num)
 	{
 		current_level = FILENAME;
-		std::cout << green
+		cout << green
 			<< "[Level Manager] Loading " << FILENAME
-			<< white << std::endl;
+			<< white << endl;
 		LoadLevelFromString(LoadLevelData(FILENAME), num);
 	}
 
-	void LoadLevelFromString(std::string DLevel, uint_fast16_t num)
+	void LoadLevelFromString(string DLevel, uint_fast16_t num)
 	{
 		
 		reset_map();
 
-		std::cout << green
+		cout << green
 			<< "[Level Manager] Processing level string.."
-			<< white << std::endl;
+			<< white << endl;
 
-		std::string status;
-		std::string line;
+		string status;
+		string line;
 
-		istringstream str(DLevel); // std::string
+		istringstream str(DLevel); // string
 
 		int spr_index = 0;
 		while (getline(str, line)) {
@@ -92,7 +92,7 @@ public:
 					if (line.substr(0, 1) == "[")
 					{
 						status = line.substr(1, line.length() - 2);
-						std::cout << green << "[Level Manager] Status = " << status << white << std::endl;
+						cout << green << "[Level Manager] Status = " << status << white << endl;
 
 						uint_fast32_t size[2] = {
 							request_level_entry("size_x"),
@@ -110,30 +110,30 @@ public:
 
 					if(status == "level_config")
 					{
-						line.erase(std::remove_if(line.begin(), line.end(), isspace),
+						line.erase(remove_if(line.begin(), line.end(), isspace),
 							line.end());
 						auto delimiterPos = line.find("=");
 						auto name = line.substr(0, delimiterPos);
 						auto value = line.substr(delimiterPos + 1);
 
-						// std::cout << green << "[Level Manager] adding level config entry " << name << " = " << value << white << std::endl;
+						// cout << green << "[Level Manager] adding level config entry " << name << " = " << value << white << endl;
 						add_entry(name, stoi(value));
 					}
 
 					if (status == "scripts")
 					{
-						line.erase(std::remove_if(line.begin(), line.end(), isspace),
+						line.erase(remove_if(line.begin(), line.end(), isspace),
 							line.end());
 						auto delimiterPos = line.find("=");
 						auto name = line.substr(0, delimiterPos);
 						auto value = line.substr(delimiterPos + 1);
 						auto type = name.substr(name.length() - 3);
 
-						//std::cout << "[load script] type " << type << std::endl;
-						std::cout << green
+						//cout << "[load script] type " << type << endl;
+						cout << green
 							<< "[Level Manager] Loading Script " << name << " of type " << type
-							<< white << std::endl;
-						// std::cout << green << "[Level Manager] adding level config entry " << name << " = " << value << white << std::endl;
+							<< white << endl;
+						// cout << green << "[Level Manager] adding level config entry " << name << " = " << value << white << endl;
 						if (type == "lua")
 						{
 							lua_loadfile("Levels/" + int_to_hex(num) + "/" + name);
@@ -175,12 +175,12 @@ public:
 								//cout << dataType << endl;
 								if (dataType == 0)
 								{
-									tile = std::stoi(i, nullptr, 16);
+									tile = stoi(i, nullptr, 16);
 								}
-								if (dataType == 1) { x_start = std::stoi(i); }
-								if (dataType == 2) { y_start = std::stoi(i); }
-								if (dataType == 3) { x_end = std::stoi(i); }
-								if (dataType == 4) { y_end = std::stoi(i); }
+								if (dataType == 1) { x_start = stoi(i); }
+								if (dataType == 2) { y_start = stoi(i); }
+								if (dataType == 3) { x_end = stoi(i); }
+								if (dataType == 4) { y_end = stoi(i); }
 
 								dataType += 1;
 							}
@@ -225,9 +225,9 @@ public:
 
 		}
 
-		std::cout << green
+		cout << green
 			<< "[Level Manager] Finished loading level."
-			<< white << std::endl;
+			<< white << endl;
 	}
 
 	void Initialize_Level()
@@ -248,9 +248,9 @@ public:
 			level_data.erase(level_data.begin());
 		}
 
-		std::cout << green
+		cout << green
 			<< "[Level Manager] Loading level " << int_to_hex(num) << ".."
-			<< white << std::endl;
+			<< white << endl;
 
 		read_from_palette(path + "Levels/" + int_to_hex(num) + "/level_palette.mw3");
 		LoadLevelFromFile(path + "Levels/" + int_to_hex(num) + "/level_data.txt", num);

@@ -119,7 +119,7 @@ int main(int argc, char* argv[])
 #else
 	player_code();
 #endif
-	std::cout << yellow << "[JFKMW] Quitting JFK mario world. Thanks for testing!" << white << endl;
+	cout << yellow << "[JFKMW] Quitting JFK mario world. Thanks for testing!" << white << endl;
 	end_game();
 	Sleep(1000);
 	return 0;

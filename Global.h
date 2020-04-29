@@ -55,8 +55,8 @@ int sp_offset_y = 28;
 uint_fast8_t my_skin = 0;
 uint_fast32_t global_frame_counter = 0;
 
-std::chrono::duration<double> total_time_ticks;
-std::chrono::duration<double> latest_server_response;
+chrono::duration<double> total_time_ticks;
+chrono::duration<double> latest_server_response;
 
 unsigned int network_update_rate = 16;
 unsigned int packet_wait_time = 16;
@@ -105,12 +105,12 @@ double Calculate_Speed_X(double speed)
 	return speed / 256.0;
 }
 
-std::string int_to_hex(int T, bool add_0 = false)
+string int_to_hex(int T, bool add_0 = false)
 {
-	std::stringstream stream;
+	stringstream stream;
 	if (!add_0)
 	{
-		stream << std::hex << T;
+		stream << hex << T;
 	}
 	else
 	{
@@ -118,7 +118,7 @@ std::string int_to_hex(int T, bool add_0 = false)
 		{
 			stream << "0";
 		}
-		stream << std::hex << T;
+		stream << hex << T;
 	}
 	
 	return stream.str();
@@ -126,9 +126,9 @@ std::string int_to_hex(int T, bool add_0 = false)
 
 
 #ifdef NDEBUG
-std::string path = "";
+string path = "";
 #else
-std::string path = "E:/JFKMarioWorld/x64/JFKMarioWorld/Debug/";
+string path = "E:/JFKMarioWorld/x64/JFKMarioWorld/Debug/";
 #endif
 
 bool quit = false;
@@ -144,7 +144,7 @@ uint_fast8_t SelfPlayerNumber = 1;
 int PlayerAmount = 0;
 
 
-std::string da_epical_function_lol(string file) { file = path + file; char *filename = &file[0u]; std::ifstream POOOOOOOOOOOOOOOP(filename); std::stringstream bitch_ass_fuck_ass_i_farted; if (!POOOOOOOOOOOOOOOP.is_open()) { return ""; } uint32_t magic = 5381; char c; while (POOOOOOOOOOOOOOOP.get(c)) { magic = ((magic << 5) + magic) + c; } bitch_ass_fuck_ass_i_farted << std::hex << std::setw(8) << std::setfill('0') << magic; return bitch_ass_fuck_ass_i_farted.str(); }
+string da_epical_function_lol(string file) { file = path + file; char *filename = &file[0u]; ifstream POOOOOOOOOOOOOOOP(filename); stringstream bitch_ass_fuck_ass_i_farted; if (!POOOOOOOOOOOOOOOP.is_open()) { return ""; } uint32_t magic = 5381; char c; while (POOOOOOOOOOOOOOOP.get(c)) { magic = ((magic << 5) + magic) + c; } bitch_ass_fuck_ass_i_farted << hex << setw(8) << setfill('0') << magic; return bitch_ass_fuck_ass_i_farted.str(); }
 
 
 //Network
@@ -156,7 +156,7 @@ string ip = "127.0.0.1"; int PORT = 0;
 #if not defined(DISABLE_NETWORK)
 
 sf::TcpSocket socketG; sf::SocketSelector selector; //no idea how this works
-sf::TcpListener listener; std::vector<sf::TcpSocket*> clients;
+sf::TcpListener listener; vector<sf::TcpSocket*> clients;
 
 sf::Packet CurrentPacket; uint8_t CurrentPacket_header;
 

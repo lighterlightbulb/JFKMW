@@ -1,7 +1,7 @@
 #pragma once
 
 #if defined(_WIN32)
-inline std::ostream& blue(std::ostream &s)
+inline ostream& blue(ostream &s)
 {
 	HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(hStdout, FOREGROUND_BLUE
@@ -9,7 +9,7 @@ inline std::ostream& blue(std::ostream &s)
 	return s;
 }
 
-inline std::ostream& red(std::ostream &s)
+inline ostream& red(ostream &s)
 {
 	HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(hStdout,
@@ -17,7 +17,7 @@ inline std::ostream& red(std::ostream &s)
 	return s;
 }
 
-inline std::ostream& green(std::ostream &s)
+inline ostream& green(ostream &s)
 {
 	HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(hStdout,
@@ -25,7 +25,7 @@ inline std::ostream& green(std::ostream &s)
 	return s;
 }
 
-inline std::ostream& yellow(std::ostream &s)
+inline ostream& yellow(ostream &s)
 {
 	HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(hStdout,
@@ -33,7 +33,7 @@ inline std::ostream& yellow(std::ostream &s)
 	return s;
 }
 
-inline std::ostream& white(std::ostream &s)
+inline ostream& white(ostream &s)
 {
 	HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(hStdout,
@@ -41,7 +41,7 @@ inline std::ostream& white(std::ostream &s)
 	return s;
 }
 
-inline std::ostream& cyan(std::ostream &s)
+inline ostream& cyan(ostream &s)
 {
 	HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(hStdout,
@@ -49,7 +49,7 @@ inline std::ostream& cyan(std::ostream &s)
 	return s;
 }
 
-inline std::ostream& purple(std::ostream &s)
+inline ostream& purple(ostream &s)
 {
 	HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(hStdout,
@@ -57,7 +57,7 @@ inline std::ostream& purple(std::ostream &s)
 	return s;
 }
 
-inline std::ostream& purple_int(std::ostream &s)
+inline ostream& purple_int(ostream &s)
 {
 	HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(hStdout,
@@ -66,7 +66,7 @@ inline std::ostream& purple_int(std::ostream &s)
 }
 
 
-inline std::ostream& lua_color(std::ostream& s)
+inline ostream& lua_color(ostream& s)
 {
 	HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(hStdout, 9);
@@ -80,21 +80,21 @@ struct color {
 };
 
 template <class _Elem, class _Traits>
-std::basic_ostream<_Elem, _Traits>&
-operator<<(std::basic_ostream<_Elem, _Traits>& i, color& c)
+basic_ostream<_Elem, _Traits>&
+operator<<(basic_ostream<_Elem, _Traits>& i, color& c)
 {
 	HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(hStdout, c.m_color);
 	return i;
 }
 #elif defined(__linux__)
-std::string blue = "";
-std::string red = "";
-std::string green = "";
-std::string yellow = "";
-std::string white = "";
-std::string cyan = "";
-std::string purple = "";
-std::string purple_int = "";
-std::string lua_color = "";
+string blue = "";
+string red = "";
+string green = "";
+string yellow = "";
+string white = "";
+string cyan = "";
+string purple = "";
+string purple_int = "";
+string lua_color = "";
 #endif

@@ -20,7 +20,7 @@ bool init_audio()
 	return true;
 }
 
-std::vector<char> data;
+vector<char> data;
 
 void SoundLoop()
 {

@@ -48,7 +48,7 @@ void game_loop()
 
 	uint_fast8_t player = 1;
 	unsigned int camera_total_x = 0; unsigned int camera_total_y = 0;
-	for (std::list<MPlayer>::iterator item = Mario.begin(); item != Mario.end(); ++item)
+	for (list<MPlayer>::iterator item = Mario.begin(); item != Mario.end(); ++item)
 	{
 		MPlayer& CurrPlayer = *item;
 		CurrPlayer.PlayerControlled = networking ? (player == SelfPlayerNumber) : true; //Only control myself

@@ -16,7 +16,7 @@ void draw_number_hex(int pos_x, int pos_y, uint_fast16_t number, int length)
 
 void draw_number_dec(int pos_x, int pos_y, int number)
 {
-	int length = int(std::to_string(number).length());
+	int length = int(to_string(number).length());
 	for (int i = 0; i < length; i++)
 	{
 		draw8x8_tile_2bpp(pos_x - i * 8, pos_y, int(number / pow(10, i)) % 10, 1, 2);
@@ -64,7 +64,7 @@ void render()
 		palette_array[i] = ServerRAM.RAM[0x3D00 + i] + (ServerRAM.RAM[0x3E00 + i] << 8);
 	}
 
-	/*std::copy(ServerRAM.RAM + VRAM_Location,
+	/*copy(ServerRAM.RAM + VRAM_Location,
 		ServerRAM.RAM + VRAM_Location + VRAM_Size,
 		VRAM);*/
 	memcpy(VRAM, &ServerRAM.RAM[VRAM_Location], VRAM_Size * sizeof(uint_fast8_t));
@@ -179,7 +179,7 @@ void render()
 	render_oam(0x300, int(CameraX), int(CameraY));
 	//Draw Mario
 
-	for (std::list<MPlayer>::iterator item = Mario.begin(); item != Mario.end(); ++item)
+	for (list<MPlayer>::iterator item = Mario.begin(); item != Mario.end(); ++item)
 	{
 		MPlayer& CurrentMario = *item;
 
@@ -229,8 +229,8 @@ void render()
 	SDL_memset(screen_plane_sequel->pixels, 0, screen_plane_sequel->h * screen_plane_sequel->pitch);
 	
 	//StatusBar
-	std::string player_name_c = username;
-	std::transform(player_name_c.begin(), player_name_c.end(), player_name_c.begin(), ::tolower);
+	string player_name_c = username;
+	transform(player_name_c.begin(), player_name_c.end(), player_name_c.begin(), ::tolower);
 	for (int i = 0; i < 5; i++)
 	{
 		draw8x8_tile_2bpp(16 + i * 8, 15, uint_fast8_t(player_name_c.at(i)) - 0x57, 0, 2);

@@ -303,11 +303,11 @@ public:
 		}
 	}
 
-	void load_asm(std::string file, int offset_pointer = 0x000000)
+	void load_asm(string file, int offset_pointer = 0x000000)
 	{
 		file = path + file;
-		std::ifstream input(file, std::ios::binary);
-		std::vector<unsigned char> buffer(std::istreambuf_iterator<char>(input), {});
+		ifstream input(file, ios::binary);
+		vector<unsigned char> buffer(istreambuf_iterator<char>(input), {});
 
 		int current_byte = 0;
 		for (auto &v : buffer) {

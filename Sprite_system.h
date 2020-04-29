@@ -202,7 +202,7 @@ public:
 		if (ret != 0)
 		{
 			lua_print("Error occurs when calling luaL_dofile() Hint Machine 0x%x\n" + ret);
-			lua_print("Error: " + std::string(lua_tostring(SPR_STATE[index], -1)));
+			lua_print("Error: " + string(lua_tostring(SPR_STATE[index], -1)));
 			return;
 		}
 

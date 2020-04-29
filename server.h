@@ -4,9 +4,9 @@ void server_code(string level = "")
 {
 	game_init();
 	initialize_map16();
-	std::cout << yellow << "[JFKMW] Starting up a server." << white << endl;
+	cout << yellow << "[JFKMW] Starting up a server." << white << endl;
 	if (level == "") {
-		std::cout << "Enter a level : "; std::cin >> level;
+		cout << "Enter a level : "; cin >> level;
 	}
 	LevelManager.LoadLevel(stoi(level, nullptr, 16));
 
@@ -20,10 +20,10 @@ void server_code(string level = "")
 	while (true)
 	{
 
-		std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
+		chrono::high_resolution_clock::time_point t1 = chrono::high_resolution_clock::now();
 		game_loop();
-		std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
-		total_time_ticks = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1);
+		chrono::high_resolution_clock::time_point t2 = chrono::high_resolution_clock::now();
+		total_time_ticks = chrono::duration_cast<chrono::duration<double>>(t2 - t1);
 
 		
 
@@ -40,7 +40,7 @@ void server_code(string level = "")
 
 		if (getKey(VK_F1))
 		{
-			string level = ""; std::cout << "Enter a level : "; std::cin >> level; LevelManager.LoadLevel(stoi(level, nullptr, 16));
+			string level = ""; cout << "Enter a level : "; cin >> level; LevelManager.LoadLevel(stoi(level, nullptr, 16));
 		}
 		if (getKey(VK_F2))
 		{

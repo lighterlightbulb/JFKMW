@@ -20,7 +20,7 @@ void player_code()
 
 		/* Options Loop */
 		string s_or_c;
-		std::cout << yellow << "[JFKMW] Welcome to JFK mario world! Release " << da_epical_function_lol("JFKMarioWorld.exe") << "Press R to reload the config, Press Q if you want to play singleplayer, W if connecting to a server (client), then go to the console. We don't have a UI yet." << white << endl;
+		cout << yellow << "[JFKMW] Welcome to JFK mario world! Release " << da_epical_function_lol("JFKMarioWorld.exe") << "Press R to reload the config, Press Q if you want to play singleplayer, W if connecting to a server (client), then go to the console. We don't have a UI yet." << white << endl;
 		while (true)
 		{
 			if (done(true))
@@ -101,15 +101,15 @@ void player_code()
 
 #if not defined(DISABLE_NETWORK)
 
-			std::cout << "Please input a IP." << std::endl; std::cin >> ip;
-			std::cout << "Please input the port." << std::endl; std::cin >> PORT;
+			cout << "Please input a IP." << endl; cin >> ip;
+			cout << "Please input the port." << endl; cin >> PORT;
 			if (!ConnectClient()) {
 				networking = false;
 				isClient = false;
 				s_or_c = "t";
 			}
 #else
-			std::cout << "Multiplayer is not supported in this build!" << std::endl;
+			cout << "Multiplayer is not supported in this build!" << endl;
 			networking = false;
 			isClient = false;
 			s_or_c = "t";
@@ -119,7 +119,7 @@ void player_code()
 		if (s_or_c == "t")
 		{
 			isClient = false;
-			string level = ""; std::cout << "Enter a level : "; std::cin >> level; LevelManager.LoadLevel(stoi(level, nullptr, 16));
+			string level = ""; cout << "Enter a level : "; cin >> level; LevelManager.LoadLevel(stoi(level, nullptr, 16));
 		}
 
 		//Initialize Singleplayer
@@ -135,7 +135,7 @@ void player_code()
 		}
 #endif
 
-		std::cout << yellow << "[JFKMW] Waiting for player..." << white << endl;
+		cout << yellow << "[JFKMW] Waiting for player..." << white << endl;
 		while (Mario.size() == 0) {
 			Sleep(16);
 		}
@@ -148,14 +148,14 @@ void player_code()
 
 		while (!done(true))
 		{
-			std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
+			chrono::high_resolution_clock::time_point t1 = chrono::high_resolution_clock::now();
 			check_input(); game_loop(); SoundLoop();
 
 			render();
-			std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
+			chrono::high_resolution_clock::time_point t2 = chrono::high_resolution_clock::now();
 
 			redraw();
-			total_time_ticks = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1);
+			total_time_ticks = chrono::duration_cast<chrono::duration<double>>(t2 - t1);
 
 			if (disconnected) {
 				quit = true; cout << red << "[Network] Disconnected." << white << endl; break;
@@ -167,7 +167,7 @@ void player_code()
 #if not defined(DISABLE_NETWORK)
 		if (networking && !disconnected) { socketG.disconnect();  thread->terminate(); }
 #endif
-		std::cout << yellow << "[JFKMW] Returning to main screen.." << white << endl;
+		cout << yellow << "[JFKMW] Returning to main screen.." << white << endl;
 		Sleep(1000);
 		quit = true;
 	}

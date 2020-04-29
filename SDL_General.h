@@ -26,7 +26,7 @@ SDL_Event event = { 0 };
 //Set fullscreen to false for a window, or to true for fullscreen output
 //text is the caption or title of the window
 //also inits SDL therefore you MUST call screen before any other InstantCG or SDL functions
-void screen(int width, int height, const std::string& text = "test")
+void screen(int width, int height, const string& text = "test")
 {
 	if (win) { SDL_DestroyWindow(win); }
 
@@ -48,7 +48,7 @@ void screen(int width, int height, const std::string& text = "test")
 
 	win = SDL_CreateWindow(text.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, w, h, flags);
 
-	if (win == NULL) { std::cout << cyan << "[SDL] Window error: " << SDL_GetError() << white << std::endl; SDL_Quit(); std::exit(1); }
+	if (win == NULL) { cout << cyan << "[SDL] Window error: " << SDL_GetError() << white << endl; SDL_Quit(); exit(1); }
 
 	flags = 0;
 	if (v_sync)
@@ -60,11 +60,11 @@ void screen(int width, int height, const std::string& text = "test")
 		flags |= SDL_RENDERER_ACCELERATED;
 	}
 	ren = SDL_CreateRenderer(win, rendering_device, flags);
-	if (ren == NULL) { std::cout << cyan << "[SDL] Renderer error: " << SDL_GetError() << white << std::endl; SDL_Quit(); std::exit(1); }
+	if (ren == NULL) { cout << cyan << "[SDL] Renderer error: " << SDL_GetError() << white << endl; SDL_Quit(); exit(1); }
 
 
-	std::cout << cyan << "[SDL] Initialized window of " << dec << width << "x" << height << " resolution" << white << endl;
-	std::cout << cyan << "[SDL] Current video card : " << SDL_GetCurrentVideoDriver() << white << endl;
+	cout << cyan << "[SDL] Initialized window of " << dec << width << "x" << height << " resolution" << white << endl;
+	cout << cyan << "[SDL] Current video card : " << SDL_GetCurrentVideoDriver() << white << endl;
 
 	//string file = path + "Sprites/icon.ico";
 	//SDL_SetWindowIcon(win, IMG_Load(path.c_str()) );
@@ -149,12 +149,12 @@ bool done(bool delay)
 	return quit;
 }
 
-void read_from_palette(std::string file)
+void read_from_palette(string file)
 {
 	cout << red << "[PAL] Loading File " << file << white << endl;
 
-	std::ifstream input(file, std::ios::binary);
-	std::vector<unsigned char> buffer(std::istreambuf_iterator<char>(input), {});
+	ifstream input(file, ios::binary);
+	vector<unsigned char> buffer(istreambuf_iterator<char>(input), {});
 
 	//print
 	int curr = 0;
@@ -166,7 +166,7 @@ void read_from_palette(std::string file)
 	{
 		current_buffer[curr] = uint8_t(v);
 
-		//std::cout << std::hex << current_buffer[curr] << ",";
+		//cout << hex << current_buffer[curr] << ",";
 
 		if (curr == 1)
 		{
@@ -188,18 +188,18 @@ void read_from_palette(std::string file)
 }
 
 
-void decode_graphics_file(std::string file, int offset = 0)
+void decode_graphics_file(string file, int offset = 0)
 {
 	file = path + file;
 
-	std::ifstream input(file, std::ios::binary);
-	std::vector<unsigned char> buffer(std::istreambuf_iterator<char>(input), {});
+	ifstream input(file, ios::binary);
+	vector<unsigned char> buffer(istreambuf_iterator<char>(input), {});
 
 	int current_byte = 0;
 	for (auto &v : buffer)
 	{
 		ServerRAM.RAM[VRAM_Location + (offset*4096) + current_byte] = uint_fast8_t(v);
-		//cout << std::hex << int(VRAM[(4096 * offset) + current_byte]) << ",";
+		//cout << hex << int(VRAM[(4096 * offset) + current_byte]) << ",";
 		current_byte += 1;
 	}
 
@@ -258,7 +258,7 @@ void draw8x8_tile(int_fast16_t x, int_fast16_t y, uint_fast16_t tile, uint_fast8
 	uint_fast8_t index;
 
 	uint_fast8_t graphics_array[32];
-	/*std::copy(VRAM + tile,
+	/*copy(VRAM + tile,
 		VRAM + tile + 32,
 		graphics_array);*/
 	memcpy(graphics_array, &VRAM[tile], 32 * sizeof(uint_fast8_t));

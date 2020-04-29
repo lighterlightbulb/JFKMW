@@ -99,7 +99,7 @@ void pack_mario_data(uint_fast8_t skip = 1) {
 	if (!isClient) {
 		CurrentPacket << PlayerAmount;
 		uint_fast8_t plrNum = 1;
-		for (std::list<MPlayer>::iterator item = Mario.begin(); item != Mario.end(); ++item) { 
+		for (list<MPlayer>::iterator item = Mario.begin(); item != Mario.end(); ++item) { 
 			if (plrNum != skip) {
 				put_mario_data_in(*item);
 			}
@@ -128,7 +128,7 @@ Disconnection handler
 void HandleDisconnection(sf::TcpSocket* ToSend = nullptr) {
 	cout << blue << "[Server] " << ToSend->getRemoteAddress() << " has disconnected." << white << endl;
 
-	clients.erase(std::remove(clients.begin(), clients.end(), ToSend));
+	clients.erase(remove(clients.begin(), clients.end(), ToSend));
 	selector.remove(*ToSend);
 
 	ToSend->disconnect();
@@ -254,7 +254,7 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool ignore_status = false)
 
 
 			uint_fast8_t num = 1;
-			for (std::list<MPlayer>::iterator item = Mario.begin(); item != Mario.end(); ++item) {
+			for (list<MPlayer>::iterator item = Mario.begin(); item != Mario.end(); ++item) {
 				if (num != SelfPlayerNumber) {
 					take_mario_data(*item);
 				}
@@ -311,7 +311,7 @@ bool receive_all_packets(sf::TcpSocket& socket, bool slower = false)
 void PendingConnection()
 {
 	// The listener is ready: there is a pending connection
-	//std::cout << blue << "[Server] Pending connection..." << white << std::endl;
+	//cout << blue << "[Server] Pending connection..." << white << endl;
 
 
 	sf::TcpSocket* client = new sf::TcpSocket;
@@ -319,7 +319,7 @@ void PendingConnection()
 	{
 		uint_fast8_t NewPlayerNumber = GetAmountOfPlayers() + 1;
 
-		std::cout << blue << "[Server] A client (assigned to Player " << int(NewPlayerNumber) << ") is trying to connect... (" << client->getRemoteAddress() << ")" << white << std::endl;
+		cout << blue << "[Server] A client (assigned to Player " << int(NewPlayerNumber) << ") is trying to connect... (" << client->getRemoteAddress() << ")" << white << endl;
 
 		PreparePacket(Header_Connection); CurrentPacket << NewPlayerNumber; SendPacket(client);
 
@@ -332,7 +332,7 @@ void PendingConnection()
 
 			// Add the new client to the clients list
 			clients.push_back(client); selector.add(*client); GetAmountOfPlayers();
-			std::cout << blue << "[Server] " << username << " (" << client->getRemoteAddress() << ", Player " << dec << int(NewPlayerNumber) << ") has connected." << white << std::endl;
+			cout << blue << "[Server] " << username << " (" << client->getRemoteAddress() << ", Player " << dec << int(NewPlayerNumber) << ") has connected." << white << endl;
 
 			PreparePacket(Header_LevelData);
 			Push_Server_RAM(false);
@@ -343,7 +343,7 @@ void PendingConnection()
 		}
 		else
 		{
-			cout << blue << "[Server] " << username << " (" << client->getRemoteAddress() << ", " << latest_chk << ", Player " << dec << int(NewPlayerNumber) << ") Timed out or sent invalid information. Disconnecting." << white << std::endl;
+			cout << blue << "[Server] " << username << " (" << client->getRemoteAddress() << ", " << latest_chk << ", Player " << dec << int(NewPlayerNumber) << ") Timed out or sent invalid information. Disconnecting." << white << endl;
 			client->disconnect(); 
 			delete client;
 		}
@@ -371,7 +371,7 @@ void Server_To_Clients()
 			receive_all_packets(client);
 			if (clients.size() < 1 || last_status == sf::Socket::Error || last_status == sf::Socket::Disconnected)
 			{
-				//cout << blue << "[Server] Attempting to recover from player failure. Will stop communication." << white << std::endl;
+				//cout << blue << "[Server] Attempting to recover from player failure. Will stop communication." << white << endl;
 				break;
 			}
 
@@ -389,7 +389,7 @@ void Server_To_Clients()
 
 			if (clients.size() < 1 || last_status == sf::Socket::Error || last_status == sf::Socket::Disconnected)
 			{
-				//cout << blue << "[Server] Attempting to recover from player failure. Will stop communication." << white << std::endl;
+				//cout << blue << "[Server] Attempting to recover from player failure. Will stop communication." << white << endl;
 				break;
 			}
 
@@ -419,7 +419,7 @@ void NetWorkLoop()
 	if (!isClient)
 	{
 		listener.listen(PORT); selector.add(listener);
-		std::cout << blue << "[Server] Server is running on port " << dec << PORT << white << std::endl;
+		cout << blue << "[Server] Server is running on port " << dec << PORT << white << endl;
 		// Endless loop that waits for new connections
 		while (!quit)
 		{
@@ -443,19 +443,19 @@ void NetWorkLoop()
 		CLIENT MODE
 		*/
 		while (Mario.size() == 0) {
-			std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
+			chrono::high_resolution_clock::time_point t1 = chrono::high_resolution_clock::now();
 			receive_all_packets(socketG);
-			std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
-			latest_server_response = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1);
+			chrono::high_resolution_clock::time_point t2 = chrono::high_resolution_clock::now();
+			latest_server_response = chrono::duration_cast<chrono::duration<double>>(t2 - t1);
 		}
 
-		std::cout << blue << "[Network] Server loaded. " << int(PlayerAmount) << " Players connected." << endl;
+		cout << blue << "[Network] Server loaded. " << int(PlayerAmount) << " Players connected." << endl;
 		while (!quit && !disconnected)
 		{
-			std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
+			chrono::high_resolution_clock::time_point t1 = chrono::high_resolution_clock::now();
 			receive_all_packets(socketG);
-			std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
-			latest_server_response = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1);
+			chrono::high_resolution_clock::time_point t2 = chrono::high_resolution_clock::now();
+			latest_server_response = chrono::duration_cast<chrono::duration<double>>(t2 - t1);
 
 			PreparePacket(Header_UpdatePlayerData); pack_mario_data(); SendPacket();
 		}
@@ -475,12 +475,12 @@ bool ConnectClient(void)
 		}
 
 		CheckForPlayers();
-		std::cout << blue << "[Network] Connected to " << ip << ":" << dec <<  PORT << white << std::endl;
+		cout << blue << "[Network] Connected to " << ip << ":" << dec <<  PORT << white << endl;
 		return true;
 	}
 	else
 	{
-		std::cout << blue << "[Network] Failed to connect. Falling back to normal mode." << white << std::endl;
+		cout << blue << "[Network] Failed to connect. Falling back to normal mode." << white << endl;
 		return false;
 	}
 }

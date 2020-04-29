@@ -14,9 +14,9 @@ extern "C" {
 
 lua_State* LUA_STATE;
 
-void lua_print(std::string text)
+void lua_print(string text)
 {
-	std::cout << lua_color << "[Lua] " << text << white << std::endl;
+	cout << lua_color << "[Lua] " << text << white << endl;
 }
 
 //lua functions to bind to jfk mario world.
@@ -81,7 +81,7 @@ void lua_connect_functions(lua_State* L)
 */
 
 
-void lua_loadfile(std::string file)
+void lua_loadfile(string file)
 {
 	if (LUA_STATE)
 	{
@@ -96,7 +96,7 @@ void lua_loadfile(std::string file)
 	if (ret != 0)
 	{
 		lua_print("Error occurs when calling luaL_dofile() Hint Machine 0x%x\n" + ret);
-		lua_print("Error: " + std::string(lua_tostring(LUA_STATE, -1)));
+		lua_print("Error: " + string(lua_tostring(LUA_STATE, -1)));
 		return;
 	}
 
