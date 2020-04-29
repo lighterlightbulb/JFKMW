@@ -272,6 +272,7 @@ public:
 							willreturn = false;
 
 							map16_handler.process_block(xB, yB, left, pressed_y);
+
 						}
 					}
 					if (yMove < 0.0 && checkTop)
@@ -283,6 +284,18 @@ public:
 							willreturn = false;
 
 							map16_handler.process_block(xB, yB, top, pressed_y);
+							if (pad[button_down])
+							{
+								if (
+									map16_handler.get_tile(uint_fast16_t((NewPositionX + 4.0) / 16.0), yB) == 0x137 &&
+									map16_handler.get_tile(uint_fast16_t((NewPositionX + 12.0) / 16.0), yB) == 0x138
+									)
+								{
+									in_pipe = true;
+									pipe_speed = -2;
+									ASM.Write_To_Ram(0x1DF9, 0x4, 1);
+								}
+							}
 						}
 
 					}
@@ -297,6 +310,18 @@ public:
 							ASM.Write_To_Ram(0x1DF9, 0x1, 1);
 
 							map16_handler.process_block(xB, yB, bottom);
+							if (pad[button_up])
+							{
+								if (
+									map16_handler.get_tile(uint_fast16_t((NewPositionX + 4.0) / 16.0), yB) == 0x137 &&
+									map16_handler.get_tile(uint_fast16_t((NewPositionX + 12.0) / 16.0), yB) == 0x138
+									)
+								{
+									in_pipe = true;
+									pipe_speed = 2;
+									ASM.Write_To_Ram(0x1DF9, 0x4, 1);
+								}
+							}
 						}
 					}
 
@@ -450,6 +475,11 @@ public:
 			sprite = "DEAD";
 			return;
 		}
+		if (in_pipe)
+		{
+			sprite = "PIPE_" + std::to_string(STATE);
+			return;
+		}
 		if (!CROUCH)
 		{
 			if (Y_SPEED != 0.0)
@@ -508,6 +538,24 @@ public:
 		}
 		sprite = NewSprite + "_" + std::to_string(STATE);
 	}
+
+	void in_pipe_process()
+	{
+		y += pipe_speed*2;
+		uint_fast16_t check_y_1 = uint_fast16_t((y + height) / 16.0);
+		uint_fast16_t check_y_2 = uint_fast16_t((y) / 16.0);
+		uint_fast16_t check_x = uint_fast16_t((x+8.0)/16.0);
+		CROUCH = false;
+		X_SPEED = 0;
+		Y_SPEED = 0;
+		if (map16_handler.get_tile(check_x, check_y_1) == 0x25 && map16_handler.get_tile(check_x, check_y_2) == 0x25)
+		{
+			in_pipe = false;
+			pipe_speed = 0;
+			ASM.Write_To_Ram(0x1DF9, 0x4, 1);
+		}
+	}
+
 	int Process()
 	{
 		getInput();
@@ -518,6 +566,7 @@ public:
 		{
 			return DeathProcess();
 		}
+
 		if (y < -16.0)
 		{
 			Die();
@@ -527,6 +576,9 @@ public:
 		{
 			INVINCIBILITY_FRAMES -= 1;
 		}
+
+
+
 
 		double GRAV = -96.0;
 		bool RUN = false;
@@ -544,121 +596,128 @@ public:
 			invisible = false;
 		}
 
-		ON_FL = false;
-		if (!Move(0.0, -1.0, true)) //Detected a floor below
+
+		if (in_pipe)
 		{
-			ON_FL = true;
+			in_pipe_process();
 		}
 		else
 		{
-			Move(0.0, 1.0, false);
-		}
-
-		SKIDDING = 0;
-		if (abs(X_SPEED) >= Calculate_Speed_X(576.0) && pad[button_y])
-		{
-			SLIGHT_HIGH_SPEED = true;
-			if (ON_FL && !CROUCH)
+			ON_FL = false;
+			if (!Move(0.0, -1.0, true)) //Detected a floor below
 			{
-				P_METER += 2;
-				if (P_METER > P_METER_REQUIRED)
+				ON_FL = true;
+			}
+			else
+			{
+				Move(0.0, 1.0, false);
+			}
+
+			SKIDDING = 0;
+			if (abs(X_SPEED) >= Calculate_Speed_X(576.0) && pad[button_y])
+			{
+				SLIGHT_HIGH_SPEED = true;
+				if (ON_FL && !CROUCH)
 				{
-					P_METER = P_METER_REQUIRED;
+					P_METER += 2;
+					if (P_METER > P_METER_REQUIRED)
+					{
+						P_METER = P_METER_REQUIRED;
+					}
 				}
 			}
-		}
-		else
-		{
-			if (ON_FL)
+			else
 			{
-				if (P_METER > 0)
+				if (ON_FL)
 				{
-					P_METER -= 1;
+					if (P_METER > 0)
+					{
+						P_METER -= 1;
+					}
 				}
 			}
-		}
 
-		if (P_METER >= P_METER_REQUIRED && pad[button_y])
-		{
-			CAN_SPRINT = true;
-		}
-		if (pad[button_left])
-		{
-			WALKING_DIR = -1;
-			MOV = true;
-		}
-		if (pad[button_right])
-		{
-			WALKING_DIR = 1;
-			MOV = true;
-		}
-		if (pad[button_down])
-		{
-			if (ON_FL)
+			if (P_METER >= P_METER_REQUIRED && pad[button_y])
 			{
-				WALKING_DIR = 0;
+				CAN_SPRINT = true;
+			}
+			if (pad[button_left])
+			{
+				WALKING_DIR = -1;
 				MOV = true;
-				CROUCH = true;
 			}
-		}
-		else
-		{
-			if (ON_FL)
+			if (pad[button_right])
 			{
-				CROUCH = false;
+				WALKING_DIR = 1;
+				MOV = true;
 			}
-		}
-		if (pad[button_y])
-		{
-			RUN = 1.0;
-		}
+			if (pad[button_down])
+			{
+				if (ON_FL)
+				{
+					WALKING_DIR = 0;
+					MOV = true;
+					CROUCH = true;
+				}
+			}
+			else
+			{
+				if (ON_FL)
+				{
+					CROUCH = false;
+				}
+			}
+			if (pad[button_y])
+			{
+				RUN = 1.0;
+			}
 
-		pressed_y = false;
-		if (pad[button_y] != old_y)
-		{
-			old_y = pad[button_y];
-			if (old_y)
+			pressed_y = false;
+			if (pad[button_y] != old_y)
 			{
-				pressed_y = true;
+				old_y = pad[button_y];
+				if (old_y)
+				{
+					pressed_y = true;
+				}
 			}
-		}
-		if (pad[button_b] != was_jumpin)
-		{
-			was_jumpin = pad[button_b];
-			if (was_jumpin && ON_FL)
+			if (pad[button_b] != was_jumpin)
 			{
-				Y_SPEED = Calculate_Speed(1232.0 + (148.0 * SLIGHT_HIGH_SPEED) + (20.0 * CAN_SPRINT));
-				ASM.Write_To_Ram(0x1DFC, 0x35, 1);
+				was_jumpin = pad[button_b];
+				if (was_jumpin && ON_FL)
+				{
+					Y_SPEED = Calculate_Speed(1232.0 + (148.0 * SLIGHT_HIGH_SPEED) + (20.0 * CAN_SPRINT));
+					ASM.Write_To_Ram(0x1DFC, 0x35, 1);
+				}
 			}
-		}
-		if (pad[button_b])
-		{
-			GRAV = GRAV * 0.5;
-		}
+			if (pad[button_b])
+			{
+				GRAV = GRAV * 0.5;
+			}
 
-		double SPEED_X_TO_SET = Calculate_Speed_X(320.0 + (RUN*256.0) + (CAN_SPRINT*192.0))*WALKING_DIR;
-		double SPEED_ACCEL_X = Calculate_Speed_X(24.0);
-		double STOPPING_DECEL = Calculate_Speed_X(16.0);
-		double SKID_ACCEL = Calculate_Speed_X(16.0 + (24.0*RUN) + (CAN_SPRINT*40.0));
+			double SPEED_X_TO_SET = Calculate_Speed_X(320.0 + (RUN * 256.0) + (CAN_SPRINT * 192.0)) * WALKING_DIR;
+			double SPEED_ACCEL_X = Calculate_Speed_X(24.0);
+			double STOPPING_DECEL = Calculate_Speed_X(16.0);
+			double SKID_ACCEL = Calculate_Speed_X(16.0 + (24.0 * RUN) + (CAN_SPRINT * 40.0));
 
-		if (MOV != 0)
-		{
-			if (X_SPEED > 0.0 && SPEED_X_TO_SET < 0.0 && WALKING_DIR == -1)
+			if (MOV != 0)
 			{
-				SKIDDING = -1;
-				X_SPEED -= SKID_ACCEL;
-			}
-			if (X_SPEED < 0.0 && SPEED_X_TO_SET > 0.0 && WALKING_DIR == 1)
-			{
-				SKIDDING = 1;
-				X_SPEED += SKID_ACCEL;
-			}
-			if (!ON_FL)
-			{
-				SKIDDING = 0;
-			}
-			//if (SKIDDING == 0)
-			//{
+				if (X_SPEED > 0.0 && SPEED_X_TO_SET < 0.0 && WALKING_DIR == -1)
+				{
+					SKIDDING = -1;
+					X_SPEED -= SKID_ACCEL;
+				}
+				if (X_SPEED < 0.0 && SPEED_X_TO_SET > 0.0 && WALKING_DIR == 1)
+				{
+					SKIDDING = 1;
+					X_SPEED += SKID_ACCEL;
+				}
+				if (!ON_FL)
+				{
+					SKIDDING = 0;
+				}
+				//if (SKIDDING == 0)
+				//{
 				if (X_SPEED > SPEED_X_TO_SET)
 				{
 					X_SPEED -= SPEED_ACCEL_X;
@@ -676,54 +735,54 @@ public:
 						X_SPEED = SPEED_X_TO_SET;
 					}
 				}
-			//}
-		}
-		else
-		{
-			if (ON_FL == 1.0)
+				//}
+			}
+			else
 			{
-				if (X_SPEED > 0.0)
+				if (ON_FL == 1.0)
 				{
-					X_SPEED -= STOPPING_DECEL;
-					if (X_SPEED < 0.0)
-					{
-						X_SPEED = 0.0;
-					}
-				}
-				if (X_SPEED < 0.0)
-				{
-					X_SPEED += STOPPING_DECEL;
 					if (X_SPEED > 0.0)
 					{
-						X_SPEED = 0.0;
+						X_SPEED -= STOPPING_DECEL;
+						if (X_SPEED < 0.0)
+						{
+							X_SPEED = 0.0;
+						}
+					}
+					if (X_SPEED < 0.0)
+					{
+						X_SPEED += STOPPING_DECEL;
+						if (X_SPEED > 0.0)
+						{
+							X_SPEED = 0.0;
+						}
 					}
 				}
 			}
-		}
 
 
-		if (!ON_FL)
-		{
-			Y_SPEED += Calculate_Speed(GRAV);
-		}
-		else
-		{
-			LAST_X_SPEED_ON_FL = X_SPEED;
-		}
-		if (Y_SPEED < Calculate_Speed(-1312.0))
-		{
-			Y_SPEED = Calculate_Speed(-1312.0);
-		}
+			if (!ON_FL)
+			{
+				Y_SPEED += Calculate_Speed(GRAV);
+			}
+			else
+			{
+				LAST_X_SPEED_ON_FL = X_SPEED;
+			}
+			if (Y_SPEED < Calculate_Speed(-1312.0))
+			{
+				Y_SPEED = Calculate_Speed(-1312.0);
+			}
 
-		if (!Move(X_SPEED + Calculate_Speed(double(int_fast8_t(ServerRAM.RAM[0x7B]))*16.0), 0.0))
-		{
-			X_SPEED = 0.0;
+			if (!Move(X_SPEED + Calculate_Speed(double(int_fast8_t(ServerRAM.RAM[0x7B])) * 16.0), 0.0))
+			{
+				X_SPEED = 0.0;
+			}
+			if (!Move(0.0, Y_SPEED + Calculate_Speed(double(int_fast8_t(ServerRAM.RAM[0x7D])) * 16.0)))
+			{
+				Y_SPEED = 0.0;
+			}
 		}
-		if (!Move(0.0, Y_SPEED + Calculate_Speed(double(int_fast8_t(ServerRAM.RAM[0x7D]))*16.0)))
-		{
-			Y_SPEED = 0.0;
-		}
-
 		Get_Sprite();
 
 		if (ServerRAM.RAM[0x1411] == 0)
