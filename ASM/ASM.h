@@ -408,8 +408,8 @@ void Sync_Server_RAM(bool compressed = false)
 			uint_fast8_t p;
 			CurrentPacket >> p;
 
-			for (uint_fast16_t n = 0; n < 0x1000; n += 80) {
-				CurrentPacket >> ServerRAM_D.RAM[0x2000 + n + p];
+			for (uint_fast16_t n = 0; n < 0x20; n++) {
+				CurrentPacket >> ServerRAM_D.RAM[0x2000 + (n << 5) + p];
 			}
 		}
 
@@ -500,9 +500,8 @@ void Push_Server_RAM(bool compress = false)
 			if (ServerRAM_D.RAM[0x2000 + i] != 0) {
 				CurrentPacket << i;
 
-				for (uint_fast16_t n = 0; n < 0x1000; n += 80)
-				{
-					CurrentPacket << ServerRAM_D.RAM[0x2000 + i + n];
+				for (uint_fast16_t n = 0; n < 0x20; n++) {
+					CurrentPacket << ServerRAM_D.RAM[0x2000 + (n << 5) + i];
 				}
 			}
 		}

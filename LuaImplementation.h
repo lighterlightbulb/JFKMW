@@ -14,13 +14,6 @@ extern "C" {
 
 lua_State* LUA_STATE;
 
-inline std::ostream& lua_color(std::ostream& s)
-{
-	HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
-	SetConsoleTextAttribute(hStdout, 9);
-	return s;
-}
-
 void lua_print(std::string text)
 {
 	std::cout << lua_color << "[Lua] " << text << white << std::endl;

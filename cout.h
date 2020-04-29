@@ -1,5 +1,6 @@
 #pragma once
 
+#if defined(_WIN32)
 inline std::ostream& blue(std::ostream &s)
 {
 	HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -65,6 +66,13 @@ inline std::ostream& purple_int(std::ostream &s)
 }
 
 
+inline std::ostream& lua_color(std::ostream& s)
+{
+	HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleTextAttribute(hStdout, 9);
+	return s;
+}
+
 
 struct color {
 	color(WORD attribute) :m_color(attribute) {};
@@ -79,3 +87,14 @@ operator<<(std::basic_ostream<_Elem, _Traits>& i, color& c)
 	SetConsoleTextAttribute(hStdout, c.m_color);
 	return i;
 }
+#elif defined(__linux__)
+std::string blue = "";
+std::string red = "";
+std::string green = "";
+std::string yellow = "";
+std::string white = "";
+std::string cyan = "";
+std::string purple = "";
+std::string purple_int = "";
+std::string lua_color = "";
+#endif

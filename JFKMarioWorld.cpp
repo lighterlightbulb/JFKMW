@@ -1,4 +1,11 @@
+#if defined(_WIN32)
 #include <Windows.h>
+#elif defined(__linux__)
+#include <unistd.h>
+void Sleep(int time) {
+	usleep(time * 1000);
+}
+#endif
 #include <cmath>
 #include <string>
 #include <vector>
