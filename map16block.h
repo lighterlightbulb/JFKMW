@@ -120,27 +120,30 @@ public:
 	*/
 	void process_block(uint_fast16_t x, uint_fast16_t y, uint8_t side, bool pressing_y = false)
 	{
-		uint_fast32_t index = (x % mapWidth) + (y * mapWidth);
-
-
-		uint_fast32_t t = ServerRAM.RAM[ram_level_low + index] + ServerRAM.RAM[ram_level_high + index] * 256;
-		if (t == 0x0124 && side == bottom)
+		if (!networking || !isClient)
 		{
-			ServerRAM.RAM[ram_level_low + index] = 0x32;
-		}
-		if (t == 0x002B)
-		{
-			replace_map_tile(0x0025, x, y);
-			ServerRAM.RAM[0x1DFC] = 1;
-		}
+			uint_fast32_t index = (x % mapWidth) + (y * mapWidth);
 
-		if (t == 0x012E && pressing_y)
-		{
-			replace_map_tile(0x0025, x, y);
-			x *= 16;
-			y *= 16;
-			spawnSpriteJFKMarioWorld(2, 2, x, y, 0, true);
 
+			uint_fast32_t t = ServerRAM.RAM[ram_level_low + index] + ServerRAM.RAM[ram_level_high + index] * 256;
+			if (t == 0x0124 && side == bottom)
+			{
+				ServerRAM.RAM[ram_level_low + index] = 0x32;
+			}
+			if (t == 0x002B)
+			{
+				replace_map_tile(0x0025, x, y);
+				ServerRAM.RAM[0x1DFC] = 1;
+			}
+
+			if (t == 0x012E && pressing_y)
+			{
+				replace_map_tile(0x0025, x, y);
+				x *= 16;
+				y *= 16;
+				spawnSpriteJFKMarioWorld(2, 2, x, y, 0, true);
+
+			}
 		}
 
 	}
