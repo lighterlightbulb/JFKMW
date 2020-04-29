@@ -12,7 +12,7 @@ void server_code(string level = "")
 
 	isClient = false;
 	networking = true;
-	bool DisablePrints = false;
+	bool DisablePrints = true;
 	
 	cout << green << "[Network] Server starting. To load a new level, press F1, to sync the ram to all players, press F2." << white << endl;
 	data_size_current = 0;

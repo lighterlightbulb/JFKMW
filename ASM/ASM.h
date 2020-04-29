@@ -350,6 +350,8 @@ public:
 JFKASM ASM;
 
 
+
+#if not defined(DISABLE_NETWORK)
 void Sync_Server_RAM(bool compressed = false)
 {
 	if (!compressed)
@@ -393,25 +395,24 @@ void Sync_Server_RAM(bool compressed = false)
 			CurrentPacket >> ServerRAM.RAM[0x0207 + pointer];
 		}
 
-		//Sprite Positions (not compressed)
-		for (uint_fast16_t i = 0; i < 0x200; i++)
-		{
-			CurrentPacket >> ServerRAM.RAM[0x2100 + i];
-			CurrentPacket >> ServerRAM.RAM[0x2280 + i];
+
+		//Decompress sprite entries (Fuck do you mean )
+		for (uint_fast16_t i = 0; i < 0x1000; i++) {
+			ServerRAM.RAM[0x2000 + i] = 0; //Da fuck
 		}
 
-		//Decompress sprite entries
-		for (uint_fast8_t i = 0; i < 128; i++) {
-			ServerRAM.RAM[0x2000 + i] = 0;
+		uint_fast8_t spr_entries;
+		CurrentPacket >> spr_entries;
+		for (uint_fast8_t i = 0; i < spr_entries; i++) {
+
+			uint_fast8_t p;
+			CurrentPacket >> p;
+
+			for (uint_fast16_t n = 0; n < 0x1000; n += 80) {
+				CurrentPacket >> ServerRAM_D.RAM[0x2000 + n + p];
+			}
 		}
-		uint_fast8_t sprite_entries = 0;
-		CurrentPacket >> sprite_entries;
-		for (uint_fast8_t i = 0; i < sprite_entries; i++)
-		{
-			uint_fast8_t pointer;
-			CurrentPacket >> pointer;
-			CurrentPacket >> ServerRAM.RAM[0x2000 + pointer];
-		}
+
 	}
 	//cout << red << "received ram" << white << endl;
 }
@@ -483,17 +484,13 @@ void Push_Server_RAM(bool compress = false)
 			}
 		}
 
-		//Sprite Positions (not compressed)
-		for (uint_fast16_t i = 0; i < 0x200; i++) {
-			CurrentPacket << ServerRAM_D.RAM[0x2100 + i];
-			CurrentPacket << ServerRAM_D.RAM[0x2280 + i];
-		}
-
 
 		//Compress sprite entries
+
+		
 		uint_fast8_t spr_entries = 0;
 		for (uint_fast8_t i = 0; i < 0x80; i++) {
-			if (ServerRAM_D.RAM[0x2000 + i] != 0) {
+			if (ServerRAM_D.RAM[0x2000 + i] != 0) { //Sprites exist
 				spr_entries += 1;
 			}
 		}
@@ -501,7 +498,12 @@ void Push_Server_RAM(bool compress = false)
 		CurrentPacket << spr_entries;
 		for (uint_fast8_t i = 0; i < 0x80; i++) {
 			if (ServerRAM_D.RAM[0x2000 + i] != 0) {
-				CurrentPacket << i; CurrentPacket << ServerRAM_D.RAM[0x2000 + i];
+				CurrentPacket << i;
+
+				for (uint_fast16_t n = 0; n < 0x1000; n += 80)
+				{
+					CurrentPacket << ServerRAM_D.RAM[0x2000 + i + n];
+				}
 			}
 		}
 
@@ -514,6 +516,7 @@ void Push_Server_RAM(bool compress = false)
 
 	//cout << red << "[ASM] Pushed SE-RAM to packet." << white << endl;
 }
+#endif
 
 void Set_Server_RAM() {
 	memcpy(&ServerRAM_old.RAM, &ServerRAM_D.RAM, RAM_Size * sizeof(uint_fast8_t));

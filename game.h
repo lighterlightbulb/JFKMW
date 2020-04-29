@@ -15,13 +15,16 @@ void game_loop()
 
 	doing_write = true;
 	global_frame_counter += 1;
+#if not defined(DISABLE_NETWORK)
 	if (networking)
 	{
+
 		if ((clients.size() == 0 && !isClient))
 		{
 			return;
 		}
 	}
+#endif
 
 	mapWidth = ServerRAM.RAM[0x3F00] + ServerRAM.RAM[0x3F01] * 256;
 	if (mapWidth == 0)

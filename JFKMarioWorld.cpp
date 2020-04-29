@@ -18,13 +18,18 @@
 #include <cstring>
 #include <cassert>
 
+#define DISABLE_NETWORK
+
 using namespace std;
 
 
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_mixer.h>
+
+#if not defined(DISABLE_NETWORK)
 #include <SFML/Network.hpp>
+#endif
 
 #include <lz4.h>
 
@@ -57,19 +62,26 @@ using namespace std;
 
 #include "game.h"
 
+
+#if not defined(DISABLE_NETWORK)
 #include "Netplay.h"
+#endif
+
 #include "sprite.h"
 #include "renderer.h"
 
 #include "zsnes_ui.h"
 
+#if not defined(DISABLE_NETWORK)
 #include "server.h"
+#endif
 #include "main.h"
 
 int main(int argc, char* argv[])
 {
 	load_configuration();
 
+#if not defined(DISABLE_NETWORK)
 	bool hosting = false;
 	if (argc > 1)
 	{
@@ -80,6 +92,7 @@ int main(int argc, char* argv[])
 			hosting = false;
 		}
 	}
+
 	if (hosting) {
 		if (argc > 2) {
 			server_code(string(argv[2]));
@@ -91,6 +104,9 @@ int main(int argc, char* argv[])
 	else {
 		player_code();
 	}
+#else
+	player_code();
+#endif
 	std::cout << yellow << "[JFKMW] Quitting JFK mario world. Thanks for testing!" << white << endl;
 	end_game();
 	Sleep(1000);

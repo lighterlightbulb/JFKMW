@@ -98,6 +98,9 @@ void player_code()
 		if (s_or_c == "c")
 		{
 			isClient = true;
+
+#if not defined(DISABLE_NETWORK)
+
 			std::cout << "Please input a IP." << std::endl; std::cin >> ip;
 			std::cout << "Please input the port." << std::endl; std::cin >> PORT;
 			if (!ConnectClient()) {
@@ -105,6 +108,12 @@ void player_code()
 				isClient = false;
 				s_or_c = "t";
 			}
+#else
+			std::cout << "Multiplayer is not supported in this build!" << std::endl;
+			networking = false;
+			isClient = false;
+			s_or_c = "t";
+#endif
 		}
 		
 		if (s_or_c == "t")
@@ -118,11 +127,13 @@ void player_code()
 			PlayerAmount = 1; SelfPlayerNumber = 1; CheckForPlayers();
 		}
 
+#if not defined(DISABLE_NETWORK)
 		//Initialize Multiplayer Client
 		if (networking)
 		{
 			thread = new sf::Thread(&NetWorkLoop); thread->launch();
 		}
+#endif
 
 		std::cout << yellow << "[JFKMW] Waiting for player..." << white << endl;
 		while (Mario.size() == 0) {
@@ -152,7 +163,10 @@ void player_code()
 		}
 
 		//We quit the game go back to the ZSNES ui
+
+#if not defined(DISABLE_NETWORK)
 		if (networking && !disconnected) { socketG.disconnect();  thread->terminate(); }
+#endif
 		std::cout << yellow << "[JFKMW] Returning to main screen.." << white << endl;
 		Sleep(1000);
 		quit = true;

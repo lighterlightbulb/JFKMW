@@ -39,7 +39,10 @@ uint_fast8_t VRAM[VRAM_Size];
 
 
 //threads
+
+#if not defined(DISABLE_NETWORK)
 sf::Thread* thread = 0;
+#endif
 
 //ASM
 
@@ -146,12 +149,18 @@ std::string da_epical_function_lol(string file) { file = path + file; char *file
 
 //Network
 
+
+
 string ip = "127.0.0.1"; int PORT = 0;
+
+#if not defined(DISABLE_NETWORK)
 
 sf::TcpSocket socketG; sf::SocketSelector selector; //no idea how this works
 sf::TcpListener listener; std::vector<sf::TcpSocket*> clients;
 
 sf::Packet CurrentPacket; uint8_t CurrentPacket_header;
+
+#endif
 
 //Sprites
 #define sprite_size 0x80
