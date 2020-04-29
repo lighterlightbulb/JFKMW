@@ -54,9 +54,11 @@ void check_input()
 
 bool getKey(int what_want)
 {
+#if defined(_WIN32)
 	if (GetAsyncKeyState(what_want) & 0x7FFF)
 	{
 		return true;
 	}
+#endif
 	return false;
 }
