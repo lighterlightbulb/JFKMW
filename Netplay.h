@@ -103,6 +103,11 @@ void pack_mario_data(uint_fast8_t skip = 1) {
 			if (plrNum != skip) {
 				put_mario_data_in(*item);
 			}
+			else
+			{
+				MPlayer& CurrentMario = *item;
+				CurrentPacket << CurrentMario.GRABBED_SPRITE;
+			}
 			plrNum += 1;
 		}
 	}
@@ -252,6 +257,11 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool ignore_status = false)
 			for (std::list<MPlayer>::iterator item = Mario.begin(); item != Mario.end(); ++item) {
 				if (num != SelfPlayerNumber) {
 					take_mario_data(*item);
+				}
+				else
+				{
+					MPlayer& CurrentMario = *item;
+					CurrentPacket >> CurrentMario.GRABBED_SPRITE;
 				}
 				num += 1;
 			}

@@ -163,11 +163,11 @@ public:
 		if (GRABBED_SPRITE != 0xFF)
 		{
 			//cout << "Player 1 is holding sprite " << int(GRABBED_SPRITE) << endl;
-			if (!pad[button_y])
+			if (!pad[button_y] && !DEAD)
 			{
 				
-				uint_fast16_t x_position = uint_fast16_t(double(x + to_scale * -13.0));
-				uint_fast16_t y_position = uint_fast16_t(double(y - 12.0)) + 16;
+				uint_fast16_t x_position = uint_fast16_t(double(x + to_scale * -15.0));
+				uint_fast16_t y_position = uint_fast16_t(double(y - (STATE > 0 ? 13.0 : 16.0))) + 16.0;
 				ServerRAM.RAM[0x2100 + GRABBED_SPRITE] = uint_fast8_t(x_position & 0xFF);
 				ServerRAM.RAM[0x2180 + GRABBED_SPRITE] = uint_fast8_t(x_position >> 8);
 				ServerRAM.RAM[0x2200 + GRABBED_SPRITE] = 0x00;
@@ -175,17 +175,16 @@ public:
 				ServerRAM.RAM[0x2280 + GRABBED_SPRITE] = uint_fast8_t(y_position & 0xFF);
 				ServerRAM.RAM[0x2300 + GRABBED_SPRITE] = uint_fast8_t(y_position >> 8);
 				ServerRAM.RAM[0x2380 + GRABBED_SPRITE] = 0x00;
-
-				ServerRAM.RAM[0x2000 + GRABBED_SPRITE] = 0x02;
-				ServerRAM.RAM[0x2E00 + GRABBED_SPRITE] = 0x10;
-
+				ServerRAM.RAM[0x2E00 + GRABBED_SPRITE] = 0x18;
 				ServerRAM.RAM[0x2780 + GRABBED_SPRITE] = 0;
 
+				ServerRAM.RAM[0x2000 + GRABBED_SPRITE] = 0x02;
 
 
 
 				if (pad[button_down])
 				{
+					ServerRAM.RAM[0x2480 + GRABBED_SPRITE] = 0x00;
 					ServerRAM.RAM[0x2400 + GRABBED_SPRITE] = uint_fast8_t(int_fast8_t(to_scale * -4));
 				}
 
@@ -198,7 +197,8 @@ public:
 				if (!pad[button_up] && !pad[button_down])
 				{
 					ServerRAM.RAM[0x2680 + GRABBED_SPRITE] = int_fast8_t(to_scale);
-					ServerRAM.RAM[0x2000 + GRABBED_SPRITE] = 4;
+					ServerRAM.RAM[0x2000 + GRABBED_SPRITE] = 0x04;
+					ServerRAM.RAM[0x2480 + GRABBED_SPRITE] = 0x00;
 				}
 
 				GRABBED_SPRITE = 0xFF;
@@ -354,13 +354,15 @@ public:
 					{
 						if (ServerRAM.RAM[0x2600 + sprite] & 0b10000)
 						{
-							if (yMove < 0.0 && NewPositionY < AboveSprite - bounds_y)
+							if (yMove < 0.0 && NewPositionY > (AboveSprite-5))
 							{
-								Hurt();
+								NewPositionY += 1;
+								Enemy_Jump();
+								results[2] = true;
 							}
 							else
 							{
-								Enemy_Jump();
+								Hurt();
 							}
 						}
 						else
@@ -420,6 +422,7 @@ public:
 							{
 								ServerRAM.RAM[0x2680 + sprite] = int_fast8_t(to_scale);
 								ServerRAM.RAM[0x2000 + sprite] = 4;
+								ServerRAM.RAM[0x2E00 + sprite] = 0x10;
 
 								ASM.Write_To_Ram(0x1DF9, 3, 1);
 							}

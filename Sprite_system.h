@@ -33,7 +33,7 @@ Flags :
 H = Hurts
 S = Solid
 G = Gravity
-T = Solid on Top (H must be on)
+T = Jumpable
 UDLR = Solid on up/down/left/right
 */
 
@@ -71,13 +71,13 @@ public:
 			ServerRAM.RAM[0x2780 + entry] = 0;
 			if (!Move(xMove, 0.0, x_size, y_size))
 			{
-				ServerRAM.RAM[0x2680 + entry] *= -1;
+				//ServerRAM.RAM[0x2680 + entry] *= -1;
 				ServerRAM.RAM[0x2780 + entry] |= 0b00000001;
 			}
 
 			if (!Move(0.0, yMove, x_size, y_size))
 			{
-				ServerRAM.RAM[0x2480 + entry] = 0;
+				//ServerRAM.RAM[0x2480 + entry] = 0;
 				ServerRAM.RAM[0x2780 + entry] |= 0b00000010;
 			}
 		}
@@ -219,7 +219,7 @@ public:
 				{
 					if (sprite_is_lua[i])
 					{
-						init_sprite_lua(int(i), "Code/Sprites/" + to_string(ServerRAM.RAM[0x2080 + i]) + ".lua");
+						init_sprite_lua(int(i), "Code/Sprites/" + int_to_hex(ServerRAM.RAM[0x2080 + i], true) + ".lua");
 						lua_getglobal(SPR_STATE[i], "Init");
 						lua_pushinteger(SPR_STATE[i], i);
 						lua_call(SPR_STATE[i], 1, 0); // run script

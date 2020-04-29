@@ -28,13 +28,13 @@ void render_oam(uint_fast16_t offset_o = 0, int CameraX = 0, int CameraY = 0)
 {
 	for (uint_fast16_t i = 0; i < 0x100; i += 8) //Tile, Size, XY (4 bytes), PAL, ANG, in total 8 bytes per entry. 0 to 7.
 	{
-		uint_fast8_t tile = uint_fast8_t(ASM.Get_Ram(offset_o + i, 1));
+		uint_fast8_t tile = uint_fast8_t(ASM.Get_Ram(offset_o + i, 1)) + (((uint_fast8_t(ASM.Get_Ram(offset_o + i + 6, 1)) >> 4) & 1) << 8);
 		uint_fast8_t size = uint_fast8_t(ASM.Get_Ram(offset_o + i + 1, 1));
 
 		int_fast16_t x_position = int_fast16_t(ASM.Get_Ram(offset_o + i + 2, 2));
 		int_fast16_t y_position = int_fast16_t(ASM.Get_Ram(offset_o + i + 4, 2));
 
-		uint_fast8_t pal = uint_fast8_t(ASM.Get_Ram(offset_o + i + 6, 1));
+		uint_fast8_t pal = uint_fast8_t(ASM.Get_Ram(offset_o + i + 6, 1)) & 0xF;
 
 		double angle = (double(ASM.Get_Ram(offset_o + i + 7, 1)) / 256.0) * 360.0;
 
@@ -204,8 +204,8 @@ void render()
 				uint_fast8_t tile = uint_fast8_t(ASM.Get_Ram(0x2F00 + CurrentMario.GRABBED_SPRITE, 1));
 				uint_fast8_t size = uint_fast8_t((ASM.Get_Ram(0x2E80 + CurrentMario.GRABBED_SPRITE, 1) >> 4) + ((ASM.Get_Ram(0x2E80 + CurrentMario.GRABBED_SPRITE, 1) >> 4) << 4));
 
-				int_fast16_t x_position = int_fast16_t(double(CurrentMario.x + CurrentMario.to_scale * -13.0));
-				int_fast16_t y_position = int_fast16_t(double(CurrentMario.y - 12.0));
+				int_fast16_t x_position = int_fast16_t(double(CurrentMario.x + CurrentMario.to_scale * -12.0));
+				int_fast16_t y_position = int_fast16_t(double(CurrentMario.y - (CurrentMario.STATE > 0 ? 13.0 : 16.0)));
 
 				uint_fast8_t pal = uint_fast8_t(ASM.Get_Ram(0x2E80 + CurrentMario.GRABBED_SPRITE, 1) & 0xF);
 

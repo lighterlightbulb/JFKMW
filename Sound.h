@@ -33,7 +33,7 @@ void SoundLoop()
 		{
 			Mix_FreeChunk(sfxPorts[i]);
 
-			string sfx_to_play = path + "Sounds/" + int_to_hex(RAM_P) + "/" + std::to_string(ASM.Get_Ram(RAM_P,1)) + ".ogg"; 
+			string sfx_to_play = path + "Sounds/" + int_to_hex(RAM_P) + "/" + int_to_hex(ASM.Get_Ram(RAM_P,1), true) + ".ogg"; 
 			const char *cstr = sfx_to_play.c_str();
 
 			cout << purple << "[Audio] Port" << dec << (i+1) << " : " << cstr << white << endl;

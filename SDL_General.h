@@ -315,7 +315,7 @@ void draw8x8_tile_2bpp(uint_fast8_t x, uint_fast8_t y, uint_fast16_t tile, uint_
 
 	for (uint_fast8_t index = 0; index < 16; index += 2)
 	{
-		memcpy(graphics_array, &VRAM[0XC000 + tile + index], 2 * sizeof(uint_fast8_t));
+		memcpy(graphics_array, &VRAM[0XB000 + tile + index], 2 * sizeof(uint_fast8_t));
 
 		for (uint_fast8_t i = 0; i < 8; i++)
 		{
@@ -351,8 +351,6 @@ void draw_tile_custom(int_fast16_t x, int_fast16_t y, uint_fast8_t size, double 
 	//set up
 	palette = palette << 4;
 
-	//cout << dec << int(size_x) << ", " << int(size_y) << endl;
-
 	//Ok
 	SDL_LockSurface(ti);
 
@@ -365,10 +363,10 @@ void draw_tile_custom(int_fast16_t x, int_fast16_t y, uint_fast8_t size, double 
 			uint_fast8_t y_off_t = y_b << 3;
 
 			//cout << dec << int(x_b) << ", " << int(y_b) << endl;
-			uint_fast16_t curr_tile = ((tile + x_b + (y_b << 4)) << 5) + 0xE000;
-			if (curr_tile > 0xFFDF) //Fix a crash
+			uint_fast16_t curr_tile = ((tile + x_b + (y_b << 4)) << 5) + 0xC000;
+			if (curr_tile > 0xFFE0) //Fix a crash
 			{
-				curr_tile = 0xFFDF;
+				curr_tile = 0xFFE0;
 			}
 
 			uint_fast8_t graphics_array[32];

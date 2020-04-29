@@ -254,17 +254,20 @@ public:
 		read_from_palette(path + "Levels/" + int_to_hex(num) + "/level_palette.mw3");
 		LoadLevelFromFile(path + "Levels/" + int_to_hex(num) + "/level_data.txt", num);
 
-		decode_graphics_file("Graphics/GFX" + int_to_hex(request_level_entry("gfx_1")) + ".bin", 0); //FG1
-		decode_graphics_file("Graphics/GFX" + int_to_hex(request_level_entry("gfx_2")) + ".bin", 1); //FG2
-		decode_graphics_file("Graphics/GFX" + int_to_hex(request_level_entry("gfx_3")) + ".bin", 2); //FG3
-		decode_graphics_file("Graphics/GFX" + int_to_hex(request_level_entry("gfx_4")) + ".bin", 3); //FG4
-		decode_graphics_file("Graphics/GFX" + int_to_hex(request_level_entry("gfx_5")) + ".bin", 4); //FG5
-		decode_graphics_file("Graphics/GFX" + int_to_hex(request_level_entry("gfx_6")) + ".bin", 5); //FG6
-		decode_graphics_file("Graphics/GFX" + int_to_hex(request_level_entry("gfx_7")) + ".bin", 6); //FG7
-		decode_graphics_file("Graphics/GFX" + int_to_hex(request_level_entry("gfx_8")) + ".bin", 7); //FG8
+		decode_graphics_file("Graphics/GFX" + int_to_hex(request_level_entry("gfx_1"), true) + ".bin", 0); //FG1
+		decode_graphics_file("Graphics/GFX" + int_to_hex(request_level_entry("gfx_2"), true) + ".bin", 1); //FG2
+		decode_graphics_file("Graphics/GFX" + int_to_hex(request_level_entry("gfx_3"), true) + ".bin", 2); //FG3
+		decode_graphics_file("Graphics/GFX" + int_to_hex(request_level_entry("gfx_4"), true) + ".bin", 3); //FG4
+		decode_graphics_file("Graphics/GFX" + int_to_hex(request_level_entry("gfx_5"), true) + ".bin", 4); //FG5
+		decode_graphics_file("Graphics/GFX" + int_to_hex(request_level_entry("gfx_6"), true) + ".bin", 5); //FG6
+		decode_graphics_file("Graphics/GFX" + int_to_hex(request_level_entry("gfx_7"), true) + ".bin", 6); //FG7
+		decode_graphics_file("Graphics/GFX" + int_to_hex(request_level_entry("gfx_8"), true) + ".bin", 7); //FG8
 
-		decode_graphics_file("Graphics/GFX" + int_to_hex(request_level_entry("sp_1")) + ".bin", 14); //SP1
-		decode_graphics_file("Graphics/GFX" + int_to_hex(request_level_entry("sp_2")) + ".bin", 15); //SP2
+		decode_graphics_file("Graphics/GFX" + int_to_hex(request_level_entry("sp_1"), true) + ".bin", 12); //SP1
+		decode_graphics_file("Graphics/GFX" + int_to_hex(request_level_entry("sp_2"), true) + ".bin", 13); //SP2
+		decode_graphics_file("Graphics/GFX" + int_to_hex(request_level_entry("sp_3"), true) + ".bin", 14); //SP3
+		decode_graphics_file("Graphics/GFX" + int_to_hex(request_level_entry("sp_4"), true) + ".bin", 15); //SP4
+
 
 		Initialize_Level();
 	}

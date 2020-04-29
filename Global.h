@@ -49,7 +49,7 @@ int resolution_x = 320;
 int resolution_y = 240;
 int sp_offset_x = 32;
 int sp_offset_y = 28;
-int my_skin = 0;
+uint_fast8_t my_skin = 0;
 uint_fast32_t global_frame_counter = 0;
 
 std::chrono::duration<double> total_time_ticks;
@@ -104,10 +104,22 @@ double Calculate_Speed_X(double speed)
 	return speed / 256.0;
 }
 
-std::string int_to_hex(int T)
+std::string int_to_hex(int T, bool add_0 = false)
 {
 	std::stringstream stream;
-	stream << std::hex << T;
+	if (add_0 == false)
+	{
+		stream << std::hex << T;
+	}
+	else
+	{
+		if(T < 10)
+		{
+			stream << "0";
+		}
+		stream << std::hex << T;
+	}
+	
 	return stream.str();
 }
 

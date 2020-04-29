@@ -4,7 +4,7 @@
 void game_init()
 {
 	decode_graphics_file("Graphics/exanimations.bin", 8);
-	decode_graphics_file("Graphics/hud.bin", 12);
+	decode_graphics_file("Graphics/hud.bin", 11);
 }
 
 void game_loop()
@@ -49,12 +49,10 @@ void game_loop()
 	{
 		MPlayer& CurrPlayer = *item;
 		CurrPlayer.PlayerControlled = networking ? (player == SelfPlayerNumber) : true; //Only control myself
-		if (!isClient && networking)
-		{
+		if (!isClient && networking) {
 			CurrPlayer.PlayerControlled = false;
 		}
-		if (player == SelfPlayerNumber)
-		{
+		if (player == SelfPlayerNumber) {
 			CurrPlayer.skin = my_skin;
 		}
 		//cout << SelfPlayerNumber;
