@@ -206,7 +206,7 @@ public:
 		}
 
 		lua_connect_functions(SPR_STATE[index]);
-		cout << purple << "[Sprites] Initialized Sprite Slot " << int(index) << " " << path << file << white << endl;
+		//cout << purple << "[Sprites] Initialized Sprite Slot " << int(index) << " " << path << file << white << endl;
 	}
 
 	void process_all_sprites()

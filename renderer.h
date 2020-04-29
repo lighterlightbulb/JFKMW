@@ -229,9 +229,11 @@ void render()
 	SDL_memset(screen_plane_sequel->pixels, 0, screen_plane_sequel->h * screen_plane_sequel->pitch);
 	
 	//StatusBar
+	std::string player_name_c = username;
+	std::transform(player_name_c.begin(), player_name_c.end(), player_name_c.begin(), ::tolower);
 	for (int i = 0; i < 5; i++)
 	{
-		draw8x8_tile_2bpp(16 + i * 8, 15, 0x30 + i, 0, 2);
+		draw8x8_tile_2bpp(16 + i * 8, 15, uint_fast8_t(player_name_c.at(i)) - 0x57, 0, 2);
 
 	}
 	//just debug for now. ignore this ugly shit

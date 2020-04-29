@@ -5,11 +5,11 @@ void player_code()
 	if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
 		cout << "SDL initialization failed. SDL Error: " << SDL_GetError(); return;
 	}
-	screen(resolution_x, resolution_y, "JFK mario world - " + da_epical_function_lol("JFKMarioWorld.exe"));
-	init_audio();
+
+
+	screen(resolution_x, resolution_y, "JFK mario world");
 	init_input();
-
-
+	init_audio();
 
 	while (!actuallyquitgame)
 	{
@@ -20,9 +20,13 @@ void player_code()
 
 		/* Options Loop */
 		string s_or_c;
-		std::cout << yellow << "[JFKMW] Press Q if you want to play singleplayer, W if connecting to a server (client), To host a server, start the game with the argument -s. We do not have a UI right now, but we're working on it." << white << endl;
-		while (doneOnlyLoop(true))
+		std::cout << yellow << "[JFKMW] Welcome to JFK mario world! Release " << da_epical_function_lol("JFKMarioWorld.exe") << "Press R to reload the config, Press Q if you want to play singleplayer, W if connecting to a server (client), then go to the console. We don't have a UI yet." << white << endl;
+		while (true)
 		{
+			if (done(true))
+			{
+				return;
+			}
 			cls();
 			zsnes_ui.process();
 			zsnes_ui.draw_button(4, 2, 50, 12);
@@ -66,6 +70,12 @@ void player_code()
 			if (state[SDL_SCANCODE_W]) {
 				s_or_c = "c";
 				break;
+			}
+
+			if (state[SDL_SCANCODE_R])
+			{
+				Sleep(1000);
+				load_configuration();
 			}
 
 			if (state[SDL_SCANCODE_ESCAPE])
@@ -143,7 +153,7 @@ void player_code()
 
 		//We quit the game go back to the ZSNES ui
 		if (networking && !disconnected) { socketG.disconnect();  thread->terminate(); }
-		cout << green << "Returning to main screen..." << white << endl;
+		std::cout << yellow << "[JFKMW] Returning to main screen.." << white << endl;
 		Sleep(1000);
 		quit = true;
 	}

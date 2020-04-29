@@ -12,13 +12,17 @@ void init_input()
 	}
 	else
 	{
+		std::cout << cyan << "[SDL] There's a controller plugged in!" << white << endl;
 		//Load joystick
-		gGameController = SDL_GameControllerOpen(0);
+		gGameController = SDL_GameControllerOpen(controller);
 		if (gGameController == NULL)
 		{
-			std::cout << cyan << "[SDL] This controller ain't workin : " << SDL_GetError() << white << endl;
+			std::cout << cyan << "[SDL] Controller " << controller << " error : " << SDL_GetError() << white << endl;
 		}
-		std::cout << cyan << "[SDL] Controller 0 is plugged in." << white << endl;
+		else
+		{
+			std::cout << cyan << "[SDL] Controller " << controller << " is plugged in." << white << endl;
+		}
 	}
 }
 

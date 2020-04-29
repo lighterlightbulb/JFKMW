@@ -91,7 +91,7 @@ int main(int argc, char* argv[])
 	else {
 		player_code();
 	}
-	cout << green << "Quitting JFK mario world..." << white << endl;
+	std::cout << yellow << "[JFKMW] Quitting JFK mario world. Thanks for testing!" << white << endl;
 	end_game();
 	Sleep(1000);
 	return 0;

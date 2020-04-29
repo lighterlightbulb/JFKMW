@@ -61,7 +61,7 @@ int mouse_x, mouse_y;
 int data_size_current = 0;
 
 int rendering_device = -1;
-
+int controller = 0;
 bool fullscreen = false;
 bool opengl = false;
 bool networking = false;

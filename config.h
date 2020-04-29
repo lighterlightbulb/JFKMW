@@ -41,6 +41,8 @@ void load_configuration()
 			if (name == "button_right") { input_settings[5] = SDL_GetScancodeFromName(v); }
 			if (name == "button_down") { input_settings[6] = SDL_GetScancodeFromName(v); }
 			if (name == "button_up") { input_settings[7] = SDL_GetScancodeFromName(v); }
+
+			if (name == "joystick_num") { controller = stoi(value); }
 		}
 
 	}

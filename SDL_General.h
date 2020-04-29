@@ -139,15 +139,6 @@ void redraw()
 	SDL_RenderPresent(ren);
 }
 
-bool doneOnlyLoop(bool delay)
-{
-	if (delay) SDL_Delay(5); //So it consumes less processing power
-	while (SDL_PollEvent(&event))
-	{
-	}
-	return true;
-}
-
 bool done(bool delay)
 {
 	if (delay) SDL_Delay(5); //So it consumes less processing power
