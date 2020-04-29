@@ -155,4 +155,3 @@ sf::Packet CurrentPacket; uint8_t CurrentPacket_header;
 
 //Sprites
 #define sprite_size 0x80
-bool sprite_is_lua[sprite_size];

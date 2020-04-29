@@ -202,7 +202,7 @@ public:
 					{
 						vector<string> v = split(line.c_str(), ',');
 
-						sprite_is_lua[spr_index] = v[0] == "lua";
+						ServerRAM.RAM[0x2E00 + spr_index] = v[0] == "lua" ? 1 : 0;
 						
 						ServerRAM.RAM[0x2000 + spr_index] = 1;
 						ServerRAM.RAM[0x2080 + spr_index] = stoi(v[1], nullptr, 16);
