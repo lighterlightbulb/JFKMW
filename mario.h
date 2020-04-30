@@ -93,8 +93,8 @@ public:
 
 	void Respawn()
 	{
-		x = 16.0;
-		y = 16.0;
+		x = LevelManager.start_x;
+		y = LevelManager.start_y;
 		DEATH_TIMER = 0;
 		DEAD = false;
 		STATE = 1;
@@ -558,6 +558,7 @@ public:
 
 	int Process()
 	{
+		STATE = 1;
 		getInput();
 
 		height = (STATE > 0 && CROUCH == 0) ? 28.0 : 14.0;

@@ -1,13 +1,20 @@
 #if defined(_WIN32)
 #include <Windows.h>
-#elif defined(__linux__)
+#elif defined(__LINUX__)
 #include <unistd.h>
 #include <list>
 void Sleep(int time) {
 	usleep(time * 1000);
 }
-
+#define DISABLE_NETWORK
 #endif
+
+#if defined(DARWIN)
+#define DISABLE_NETWORK
+#error "get the fuck out mac users"
+#endif
+
+
 #include <cmath>
 #include <string>
 #include <vector>
@@ -33,13 +40,6 @@ using namespace std;
 #include <SDL_image.h>
 #include <SDL_mixer.h>
 
-#if defined(__LINUX__)
-#define DISABLE_NETWORK
-#endif
-
-#if defined(DARWIN)
-#define DISABLE_NETWORK
-#endif
 
 #if not defined(DISABLE_NETWORK)
 #include <SFML/Network.hpp>

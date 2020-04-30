@@ -23,8 +23,8 @@
 0x2680 - Sprite Direction
 0x2700 - Sprite interacing with... (player number in hex)
 0x2780 - Sprite block flags
-
 0x2800 - Sprite is lua/asm type
+
 0x2E80 - Unused, extra property for grabbed sprites, which props/palettes it uses
 0x2F00 - Unused, extra property for grabbed sprites, which tile it uses
 0x2F80 - Sprite Initialized
@@ -66,6 +66,27 @@ public:
 		double x_size = double(ServerRAM.RAM[0x2500 + entry]);
 		double y_size = double(ServerRAM.RAM[0x2580 + entry]);
 
+		for (uint_fast8_t spr = 0; spr < 0x80; spr++)
+		{
+			if (spr != entry && ServerRAM.RAM[0x2000 + spr] > 1)
+			{
+				double t_x = double(ServerRAM.RAM[0x2100 + spr] + double(ServerRAM.RAM[0x2180 + spr]) * 256.0) + double(ServerRAM.RAM[0x2200 + spr]) / 256.0;
+				double t_y = double(ServerRAM.RAM[0x2280 + spr] + double(ServerRAM.RAM[0x2300 + spr]) * 256.0) + double(ServerRAM.RAM[0x2380 + spr]) / 256.0;
+
+				if (
+					t_x > (x - 16.0) &&
+					t_x < (x + x_size) &&
+					t_y > (y - 16.0) &&
+					t_y < (y + y_size)
+					)
+				{
+					ServerRAM.RAM[0x2700 + entry] = 0xFF;
+					//ServerRAM.RAM[0x2780 + spr] |= 0b00000011;
+
+				}
+			}
+		}
+
 		
 		if (ServerRAM.RAM[0x2600 + entry] & 0b1000000) //if solid bit is on
 		{
@@ -100,6 +121,7 @@ public:
 
 		ServerRAM.RAM[0x2100 + entry] = int_fast8_t(int(x) % 256); ServerRAM.RAM[0x2180 + entry] = int_fast8_t(int(x) / 256); ServerRAM.RAM[0x2200 + entry] = int_fast8_t(int(x*256.0) % 256);
 		ServerRAM.RAM[0x2280 + entry] = int_fast8_t(int(y) % 256); ServerRAM.RAM[0x2300 + entry] = int_fast8_t(int(y) / 256); ServerRAM.RAM[0x2380 + entry] = int_fast8_t(int(y*256.0) % 256);
+
 	}
 
 	/*
