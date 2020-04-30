@@ -801,7 +801,7 @@ public:
 //Mario management
 
 list<MPlayer> Mario; //This is how much players exist. Starts at 0.
-void AddNewPlayer() { MPlayer NewPlayer = MPlayer(16.0, 16.0); Mario.push_back(NewPlayer); }
+void AddNewPlayer() { MPlayer NewPlayer = MPlayer(LevelManager.start_x, LevelManager.start_y); Mario.push_back(NewPlayer); }
 void RemovePlayer() { Mario.pop_back(); }
 void CheckForPlayers() //Have to be careful when fucking with this. Or else memory might leak.
 {

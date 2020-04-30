@@ -10,6 +10,8 @@ public:
 
 	//vector<string, int> data;
 	string current_level;
+	double start_x = 16;
+	double start_y = 16;
 	unordered_map<string, uint_fast32_t> level_data;
 
 	uint_fast32_t request_level_entry(string name)
@@ -269,6 +271,8 @@ public:
 		decode_graphics_file("Graphics/GFX" + int_to_hex(request_level_entry("sp_3"), true) + ".bin", 14); //SP3
 		decode_graphics_file("Graphics/GFX" + int_to_hex(request_level_entry("sp_4"), true) + ".bin", 15); //SP4
 
+		start_x = double(request_level_entry("start_x"))*16.0;
+		start_y = double(request_level_entry("start_y"))*16.0;
 
 		Initialize_Level();
 	}
