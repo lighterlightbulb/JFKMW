@@ -354,6 +354,10 @@ JFKASM ASM;
 #if not defined(DISABLE_NETWORK)
 void Sync_Server_RAM(bool compressed = false)
 {
+	while (doing_write) {
+		Sleep(1);
+	}
+	doing_read = true;
 	if (!compressed)
 	{
 		for (uint_fast16_t i = 0; i < RAM_Size; i++)
@@ -412,6 +416,7 @@ void Sync_Server_RAM(bool compressed = false)
 		}
 
 	}
+	doing_read = false;
 	//cout << red << "received ram" << white << endl;
 }
 
