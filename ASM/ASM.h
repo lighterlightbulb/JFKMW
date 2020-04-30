@@ -396,18 +396,16 @@ void Sync_Server_RAM(bool compressed = false)
 		}
 
 
-		//Decompress sprite entries (Fuck do you mean )
-		for (uint_fast16_t i = 0; i < 0x1000; i++) {
-			ServerRAM.RAM[0x2000 + i] = 0; //Da fuck
+		for (uint_fast8_t i = 0; i < 0x80; i++) {
+			ServerRAM.RAM[0x2000 + i] = 0;
 		}
 
+		//Decompress sprite entries (Fuck do you mean )
 		uint_fast8_t spr_entries;
 		CurrentPacket >> spr_entries;
 		for (uint_fast8_t i = 0; i < spr_entries; i++) {
-
 			uint_fast8_t p;
 			CurrentPacket >> p;
-
 			for (uint_fast16_t n = 0; n < 0x20; n++) {
 				CurrentPacket >> ServerRAM.RAM[0x2000 + (n << 5) + p];
 			}
@@ -498,8 +496,8 @@ void Push_Server_RAM(bool compress = false)
 		CurrentPacket << spr_entries;
 		for (uint_fast8_t i = 0; i < 0x80; i++) {
 			if (ServerRAM_D.RAM[0x2000 + i] != 0) {
+				//cout << "Compressing sprite entry " << int(i) << endl;
 				CurrentPacket << i;
-
 				for (uint_fast16_t n = 0; n < 0x20; n++) {
 					CurrentPacket << ServerRAM_D.RAM[0x2000 + (n << 5) + i];
 				}
