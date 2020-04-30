@@ -541,7 +541,7 @@ public:
 
 	void in_pipe_process()
 	{
-		y += pipe_speed*2;
+		y += pipe_speed*3;
 		uint_fast16_t check_y_1 = uint_fast16_t((y + height) / 16.0);
 		uint_fast16_t check_y_2 = uint_fast16_t((y) / 16.0);
 		uint_fast16_t check_x = uint_fast16_t((x+8.0)/16.0);
@@ -554,6 +554,8 @@ public:
 			pipe_speed = 0;
 			ASM.Write_To_Ram(0x1DF9, 0x4, 1);
 		}
+		invisible = true;
+
 	}
 
 	int Process()
