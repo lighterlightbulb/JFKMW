@@ -47,7 +47,7 @@ void game_loop()
 	}
 
 	uint_fast8_t player = 1;
-	unsigned int camera_total_x = 0; unsigned int camera_total_y = 0;
+	int camera_total_x = 0; int camera_total_y = 0;
 	for (list<MPlayer>::iterator item = Mario.begin(); item != Mario.end(); ++item)
 	{
 		MPlayer& CurrPlayer = *item;
@@ -62,8 +62,8 @@ void game_loop()
 		CurrPlayer.player_index = player;
 		CurrPlayer.Process();
 
-		camera_total_x += unsigned int((CurrPlayer.CAMERA_X - 128.0) > 0 ? (CurrPlayer.CAMERA_X - 128.0) : 0);
-		camera_total_y += unsigned int((CurrPlayer.CAMERA_Y - 112.0) > 0 ? (CurrPlayer.CAMERA_Y - 112.0) : 0);
+		camera_total_x += int((CurrPlayer.CAMERA_X - 128.0) > 0 ? (CurrPlayer.CAMERA_X - 128.0) : 0);
+		camera_total_y += int((CurrPlayer.CAMERA_Y - 112.0) > 0 ? (CurrPlayer.CAMERA_Y - 112.0) : 0);
 
 		player += 1;
 
