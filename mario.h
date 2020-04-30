@@ -382,7 +382,7 @@ public:
 					{
 						if (ServerRAM.RAM[0x2600 + sprite] & 0b10000)
 						{
-							if (yMove < 0.0 && NewPositionY > (AboveSprite-5))
+							if (NewPositionY > (AboveSprite-bounds_y))
 							{
 								NewPositionY += 1;
 								Enemy_Jump();

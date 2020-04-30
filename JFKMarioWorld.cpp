@@ -2,9 +2,11 @@
 #include <Windows.h>
 #elif defined(__linux__)
 #include <unistd.h>
+#include <list>
 void Sleep(int time) {
 	usleep(time * 1000);
 }
+
 #endif
 #include <cmath>
 #include <string>
