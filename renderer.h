@@ -240,8 +240,8 @@ void render()
 	draw8x8_tile_2bpp(24, 15 + 8, 0x26, 1, 2);
 
 	draw_number_hex(40, 15+8, SelfPlayerNumber, 2);
-	draw_number_hex(256 - 48, 15, int(LocalPlayer.x), 4);
-	draw_number_hex(256 - 88, 15, int(LocalPlayer.y), 4);
+	draw_number_hex(256 - 88, 15, int(LocalPlayer.x), 4);
+	draw_number_hex(256 - 48, 15, int(LocalPlayer.y), 4);
 
 	draw_number_hex(256 - 48 - 80, 15, uint_fast16_t(LocalPlayer.Y_SPEED*256.0), 4);
 	draw_number_hex(256 - 88 - 80, 15, uint_fast16_t(LocalPlayer.X_SPEED*256.0), 4); //y
