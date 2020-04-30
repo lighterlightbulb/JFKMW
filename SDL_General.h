@@ -133,8 +133,6 @@ void redraw()
 		rect = { w - sp_offset_x,0,sp_offset_x,h }; SDL_RenderFillRect(ren, &rect);
 	}
 
-	SDL_SetRenderDrawColor(ren, 255, 255, 255, 255);
-	SDL_RenderDrawPoint(ren, mouse_x, mouse_y);
 
 	SDL_RenderPresent(ren);
 }

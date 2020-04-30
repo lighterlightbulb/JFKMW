@@ -110,7 +110,7 @@ public:
 			y += yMove;
 		}
 
-		if (y < -64.0)
+		if (y < 0.0)
 		{
 			for (int i = 0; i < 32; i++)
 			{

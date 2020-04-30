@@ -16,7 +16,6 @@ void player_code()
 		disconnected = false;
 		PlayerAmount = 0; SelfPlayerNumber = 1; CheckForPlayers();
 		quit = false;
-		SDL_ShowCursor(SDL_ENABLE);
 
 		/* Options Loop */
 		string s_or_c;
@@ -143,7 +142,6 @@ void player_code()
 		if (!isClient) {
 			game_init();
 		}
-		SDL_ShowCursor(SDL_DISABLE);
 
 
 		while (!done(true))

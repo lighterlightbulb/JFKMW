@@ -409,7 +409,7 @@ void Sync_Server_RAM(bool compressed = false)
 			CurrentPacket >> p;
 
 			for (uint_fast16_t n = 0; n < 0x20; n++) {
-				CurrentPacket >> ServerRAM_D.RAM[0x2000 + (n << 5) + p];
+				CurrentPacket >> ServerRAM.RAM[0x2000 + (n << 5) + p];
 			}
 		}
 
