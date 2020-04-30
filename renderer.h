@@ -28,7 +28,7 @@ void render_oam(uint_fast16_t offset_o = 0, int CameraX = 0, int CameraY = 0)
 {
 	for (uint_fast16_t i = 0; i < 0x100; i += 8) //Tile, Size, XY (4 bytes), PAL, ANG, in total 8 bytes per entry. 0 to 7.
 	{
-		uint_fast8_t tile = uint_fast8_t(ASM.Get_Ram(offset_o + i, 1)) + (((uint_fast8_t(ASM.Get_Ram(offset_o + i + 6, 1)) >> 4) & 1) << 8);
+		uint_fast16_t tile = uint_fast16_t(ASM.Get_Ram(offset_o + i, 1)) + (((ServerRAM.RAM[offset_o + i + 6] >> 4) & 1) << 8);
 		uint_fast8_t size = uint_fast8_t(ASM.Get_Ram(offset_o + i + 1, 1));
 
 		int_fast16_t x_position = int_fast16_t(ASM.Get_Ram(offset_o + i + 2, 2));
