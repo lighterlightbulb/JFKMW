@@ -100,7 +100,8 @@ void game_loop()
 	if (networking && !isClient) //if we are the server
 	{
 		memcpy(&ServerRAM_D.RAM, &ServerRAM.RAM, RAM_Size * sizeof(uint_fast8_t));
-		doing_write = false;
+		
 	}
+	doing_write = false;
 
 }
