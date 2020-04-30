@@ -28,8 +28,6 @@ public:
 
 	uint_fast8_t COINS = 0;
 	double height = 14.0;
-	string sprite = "STAND_0";
-	//uint_fast8_t STATE = 1;
 	double x = 16.0;
 	double y = 16.0;
 
@@ -54,6 +52,7 @@ public:
 	bool pad[total_inputs] = { false,false,false,false,false,false,false };
 	bool was_jumpin = false;
 
+	string sprite = "STAND_0";
 	//Sounds
 	MPlayer(double newX = 0.0, double newY = 0.0)
 	{

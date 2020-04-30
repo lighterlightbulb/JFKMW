@@ -51,6 +51,7 @@ void game_loop()
 	for (list<MPlayer>::iterator item = Mario.begin(); item != Mario.end(); ++item)
 	{
 		MPlayer& CurrPlayer = *item;
+		//cout << "Player " << dec << int(player) << " location is " << hex << &CurrPlayer << dec << endl;
 		CurrPlayer.PlayerControlled = networking ? (player == SelfPlayerNumber) : true; //Only control myself
 		if (!isClient && networking) {
 			CurrPlayer.PlayerControlled = false;
@@ -66,6 +67,7 @@ void game_loop()
 		camera_total_y += int((CurrPlayer.CAMERA_Y - 112.0) > 0 ? (CurrPlayer.CAMERA_Y - 112.0) : 0);
 
 		player += 1;
+
 
 	}
 	PlayerInteraction();
