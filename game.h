@@ -39,7 +39,7 @@ void game_loop()
 
 	if (!isClient || !networking) //if we are the server or we are playing locally...
 	{
-		for (int i = 0; i < 0x200; i++) //Clear OAM loop
+		for (int i = 0; i < 0x400; i++) //Clear OAM loop
 		{
 			ServerRAM.RAM[0x200 + i] = 0;
 		}
