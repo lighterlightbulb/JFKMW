@@ -36,14 +36,16 @@ void Sleep(int time) {
 
 using namespace std;
 
+#if defined(__linux__)
 istream& getline(istream& stream, string& str)
 {
 	char ch;
 	str.clear();
-	while (stream.get(ch) && ch != '\n')
+	while (stream.get(ch) && ch != '\r\n')
 		str.push_back(ch);
 	return stream;
 }
+#endif
 
 #include <SDL.h>
 #include <SDL_image.h>
