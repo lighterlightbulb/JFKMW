@@ -255,7 +255,7 @@ public:
 					map16_handler.process_block(xB, yB, inside);
 					if (xMove < 0.0 && checkRight)
 					{
-						if (NewPositionX < RightBlock && NewPositionX > RightBlock - bounds_x)
+						if (NewPositionX > RightBlock - bounds_x)
 						{
 							NewPositionX = RightBlock;
 							willreturn = false;
@@ -265,7 +265,7 @@ public:
 					}
 					if (xMove > 0.0 && checkLeft)
 					{
-						if (NewPositionX > LeftBlock && NewPositionX < LeftBlock + bounds_x)
+						if (NewPositionX < LeftBlock + bounds_x)
 						{
 							NewPositionX = LeftBlock;
 							willreturn = false;
@@ -276,10 +276,12 @@ public:
 					}
 					if (yMove < 0.0 && checkTop)
 					{
-						if (NewPositionY < AboveBlock && NewPositionY > AboveBlock - bounds_y)
+						if (NewPositionY > AboveBlock - bounds_y)
 						{
+							//if (do_change)
+							//{
 							NewPositionY = AboveBlock;
-						
+							//}
 							willreturn = false;
 
 							map16_handler.process_block(xB, yB, top, pressed_y);
@@ -300,7 +302,7 @@ public:
 					}
 					if (yMove > 0.0 && checkBottom)
 					{
-						if (NewPositionY > BelowBlock && NewPositionY < BelowBlock + bounds_y)
+						if (NewPositionY < BelowBlock + bounds_y)
 						{
 							NewPositionY = BelowBlock;
 							willreturn = false;
@@ -419,7 +421,11 @@ public:
 							NewPositionX += double(int_fast8_t(ServerRAM.RAM[0x2400 + sprite]) * 16) / 256.0;
 							NewPositionY += double(int_fast8_t(ServerRAM.RAM[0x2480 + sprite]) * 16) / 256.0;
 						}
-						results[2] = true;
+
+						if (Y_SPEED <= 0)
+						{
+							results[2] = true;
+						}
 
 					}
 					if (checkBottom && yMove > 0.0 && NewPositionY > BelowSprite && NewPositionY < BelowSprite + bounds_y)
@@ -547,7 +553,7 @@ public:
 		CROUCH = false;
 		X_SPEED = 0;
 		Y_SPEED = 0;
-		if (map16_handler.get_tile(check_x, check_y_1) == 0x25 && map16_handler.get_tile(check_x, check_y_2) == 0x25)
+		if (map16_handler.get_tile(check_x, check_y_1) < 0x100 && map16_handler.get_tile(check_x, check_y_2) < 0x100)
 		{
 			in_pipe = false;
 			pipe_speed = 0;
@@ -592,7 +598,7 @@ public:
 				ON_FL = true;
 			}
 			else {
-				Move(0.0, 1.0, false);
+				y += 1;
 			}
 
 			SKIDDING = 0;

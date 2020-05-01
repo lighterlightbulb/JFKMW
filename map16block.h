@@ -125,7 +125,7 @@ public:
 			uint_fast32_t index = (x % mapWidth) + (y * mapWidth);
 
 
-			uint_fast32_t t = ServerRAM.RAM[ram_level_low + index] + ServerRAM.RAM[ram_level_high + index] * 256;
+			uint_fast16_t t = ServerRAM.RAM[ram_level_low + index] + ServerRAM.RAM[ram_level_high + index] * 256;
 			if (t == 0x0124 && side == bottom)
 			{
 				ServerRAM.RAM[ram_level_low + index] = 0x32;

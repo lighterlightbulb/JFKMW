@@ -114,7 +114,7 @@ string int_to_hex(int T, bool add_0 = false)
 	}
 	else
 	{
-		if(T < 10)
+		if(T < 16)
 		{
 			stream << "0";
 		}
