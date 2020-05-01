@@ -41,11 +41,19 @@ istream& getline(istream& stream, string& str)
 {
 	char ch;
 	str.clear();
-	while (stream.get(ch) && ch != '\r\n')
+	while (stream.get(ch)) {
+		if (ch == '\r') {
+			stream.get(ch)
+				if (ch == '\n') {
+					break
+				}
+		}
 		str.push_back(ch);
+	}
 	return stream;
 }
 #endif
+
 
 #include <SDL.h>
 #include <SDL_image.h>
