@@ -380,7 +380,7 @@ void Sync_Server_RAM(bool compressed = false)
 		}
 
 		//Decompress OAM
-		for (uint_fast16_t i = 0; i < 0x200; i++) {
+		for (uint_fast16_t i = 0; i < 0x400; i++) {
 			ServerRAM.RAM[0x0200 + i] = 0;
 		}
 		uint_fast8_t oam_entries = 0;
@@ -466,14 +466,14 @@ void Push_Server_RAM(bool compress = false)
 
 		//Compress OAM (send it though)
 		uint_fast8_t oam_entries = 0;
-		for (uint_fast16_t i = 0; i < 0x200; i += 8) {
+		for (uint_fast16_t i = 0; i < 0x400; i += 8) {
 			if (ServerRAM_D.RAM[0x200 + i] != 0) {
 				oam_entries += 1;
 			}
 		}
 
 		CurrentPacket << oam_entries;
-		for (uint_fast16_t i = 0; i < 0x200; i += 8) {
+		for (uint_fast16_t i = 0; i < 0x400; i += 8) {
 			if (ServerRAM_D.RAM[0x200 + i] != 0) {
 				CurrentPacket << i;
 				CurrentPacket << ServerRAM_D.RAM[0x0200 + i];
