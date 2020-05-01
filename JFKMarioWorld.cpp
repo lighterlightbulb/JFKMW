@@ -36,6 +36,15 @@ void Sleep(int time) {
 
 using namespace std;
 
+istream& getline(istream& stream, string& str)
+{
+	char ch;
+	str.clear();
+	while (stream.get(ch) && ch != '\n')
+		str.push_back(ch);
+	return stream;
+}
+
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_mixer.h>
