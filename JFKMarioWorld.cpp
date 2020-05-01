@@ -43,10 +43,10 @@ istream& getline(istream& stream, string& str)
 	str.clear();
 	while (stream.get(ch)) {
 		if (ch == '\r') {
-			stream.get(ch)
-				if (ch == '\n') {
-					break
-				}
+			stream.get(ch);
+			if (ch == '\n') {
+				break;
+			}
 		}
 		str.push_back(ch);
 	}
