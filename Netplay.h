@@ -147,7 +147,7 @@ Packet Sending
 */
 
 void send_not_blocking(sf::TcpSocket* ToSend = nullptr) {
-	if (ToSend->send(CurrentPacket) != sf::Socket::Done) {
+	if (ToSend->send(CurrentPacket) == sf::Socket::Disconnected) {
 		if (!isClient) {
 			HandleDisconnection(ToSend);
 		}
@@ -491,7 +491,7 @@ bool ConnectClient(void)
 		PreparePacket(Header_AttemptJoin);
 		CurrentPacket << username;
 		SendPacket();
-
+		sf::sleep(sf::milliseconds(500));
 		receive_all_packets(socketG, true);
 		validated_connection = false;
 		CheckForPlayers();
