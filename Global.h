@@ -53,6 +53,7 @@ int resolution_y = 240;
 int sp_offset_x = 32;
 int sp_offset_y = 28;
 bool need_sync_music = false;
+bool kill_music = false;
 uint_fast8_t my_skin = 0;
 uint_fast32_t global_frame_counter = 0;
 

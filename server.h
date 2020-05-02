@@ -20,13 +20,18 @@ void server_code(string level = "")
 	Sleep(100);
 	while (true)
 	{
+		while (doing_read) {
+			Sleep(1);
+		}
 
+
+		doing_write = true;
 		chrono::high_resolution_clock::time_point t1 = chrono::high_resolution_clock::now();
 		game_loop();
 		SoundLoop();
 		chrono::high_resolution_clock::time_point t2 = chrono::high_resolution_clock::now();
 		total_time_ticks = chrono::duration_cast<chrono::duration<double>>(t2 - t1);
-
+		doing_write = false;
 		
 
 		if (!(global_frame_counter % 120) && clients.size() > 0)
@@ -42,13 +47,19 @@ void server_code(string level = "")
 
 		if (getKey(VK_F1))
 		{
-			string level = ""; cout << "Enter a level : "; cin >> level; LevelManager.LoadLevel(stoi(level, nullptr, 16));
+			
+			string level = ""; cout << "Enter a level : "; cin >> level; 
+			doing_write = true;
+			LevelManager.LoadLevel(stoi(level, nullptr, 16));
+			recent_big_change = true;
+			doing_write = false;
 		}
 		if (getKey(VK_F2))
 		{
 			cout << green << "[Network] Syncing RAM to other players.." << endl;
 			Set_Server_RAM();
 			recent_big_change = true;
+			
 		}
 		if (getKey(VK_F3))
 		{

@@ -353,8 +353,8 @@ JFKASM ASM;
 #if not defined(DISABLE_NETWORK)
 void Sync_Server_RAM(bool compressed = false)
 {
-	while (doing_write) {
-		Sleep(1);
+	while (doing_write || doing_read) {
+		sf::sleep(sf::milliseconds(1));
 	}
 	doing_read = true;
 	if (!compressed)
@@ -366,11 +366,11 @@ void Sync_Server_RAM(bool compressed = false)
 	}
 	else
 	{
-		uint_fast16_t entries = 0;
+		uint_fast32_t entries = 0;
 		CurrentPacket >> entries;
-		for (uint_fast16_t i = 0; i < entries; i++)
+		for (uint_fast32_t i = 0; i < entries; i++)
 		{
-			uint_fast16_t pointer;
+			uint_fast32_t pointer;
 			uint_fast8_t data;
 			CurrentPacket >> pointer;
 			CurrentPacket >> data;
@@ -389,6 +389,7 @@ void Sync_Server_RAM(bool compressed = false)
 		for (uint_fast16_t i = 0; i < 0x400; i++) {
 			ServerRAM.RAM[0x0200 + i] = 0;
 		}
+
 		uint_fast8_t oam_entries = 0;
 		CurrentPacket >> oam_entries;
 		for (uint_fast8_t i = 0; i < oam_entries; i++)
@@ -417,7 +418,7 @@ void Sync_Server_RAM(bool compressed = false)
 			uint_fast8_t p;
 			CurrentPacket >> p;
 			for (uint_fast16_t n = 0; n < 0x20; n++) {
-				CurrentPacket >> ServerRAM.RAM[0x2000 + (n << 5) + p];
+				CurrentPacket >> ServerRAM.RAM[0x2000 + (n << 7) + p];
 			}
 		}
 
@@ -429,7 +430,7 @@ void Sync_Server_RAM(bool compressed = false)
 void Push_Server_RAM(bool compress = false)
 {
 	while (doing_write) {
-		Sleep(1);
+		sf::sleep(sf::milliseconds(1));
 	}
 
 	doing_read = true;
@@ -444,10 +445,10 @@ void Push_Server_RAM(bool compress = false)
 	}
 	else
 	{
-		uint_fast16_t entries = 0;
+		uint_fast32_t entries = 0;
 		for (uint_fast32_t i = 0; i < RAM_Size; i++)
 		{
-			if (((i < 0x200 || i > 0x5FF) && (i < 0x2000 || i >= 0x3000)))
+			if ((i < 0x200 || i > 0x5FF) && (i < 0x2000 || i >= 0x3000))
 			{
 				if (ServerRAM.RAM[i] != ServerRAM_old.RAM[i])
 				{
@@ -455,16 +456,16 @@ void Push_Server_RAM(bool compress = false)
 				}
 			}
 		}
-
 		CurrentPacket << entries;
 
 		for (uint_fast32_t i = 0; i < RAM_Size; i++)
 		{
-			if (((i < 0x200 || i > 0x5FF) && (i < 0x2000 || i >= 0x3000)))
+			if ((i < 0x200 || i > 0x5FF) && (i < 0x2000 || i >= 0x3000))
 			{
 				if (ServerRAM.RAM[i] != ServerRAM_old.RAM[i])
 				{
-					CurrentPacket << i; CurrentPacket << ServerRAM.RAM[i];
+					CurrentPacket << i;
+					CurrentPacket << ServerRAM.RAM[i];
 				}
 			}
 		}
@@ -480,15 +481,14 @@ void Push_Server_RAM(bool compress = false)
 		//Compress OAM (send it though)
 		uint_fast8_t oam_entries = 0;
 		for (uint_fast16_t i = 0; i < 0x400; i += 8) {
-			if (ServerRAM.RAM[0x200 + i] != 0) {
+			if (ServerRAM.RAM[0x200 + i] != 0 && ServerRAM.RAM[0x206 + i] != 0) {
 				oam_entries += 1;
 			}
 		}
 		CurrentPacket << oam_entries;
 
-
 		for (uint_fast16_t i = 0; i < 0x400; i += 8) {
-			if (ServerRAM.RAM[0x200 + i] != 0) {
+			if (ServerRAM.RAM[0x200 + i] != 0 && ServerRAM.RAM[0x206 + i] != 0) {
 				CurrentPacket << i;
 				CurrentPacket << ServerRAM.RAM[0x0200 + i];
 				CurrentPacket << ServerRAM.RAM[0x0201 + i];
@@ -503,22 +503,18 @@ void Push_Server_RAM(bool compress = false)
 
 
 		//Compress sprite entries
-
-		
 		uint_fast8_t spr_entries = 0;
 		for (uint_fast8_t i = 0; i < 0x80; i++) {
 			if (ServerRAM.RAM[0x2000 + i] != 0) { //Sprites exist
 				spr_entries += 1;
 			}
 		}
-
 		CurrentPacket << spr_entries;
 		for (uint_fast8_t i = 0; i < 0x80; i++) {
 			if (ServerRAM.RAM[0x2000 + i] != 0) {
-				//cout << "Compressing sprite entry " << int(i) << endl;
 				CurrentPacket << i;
 				for (uint_fast16_t n = 0; n < 0x20; n++) {
-					CurrentPacket << ServerRAM.RAM[0x2000 + (n << 5) + i];
+					CurrentPacket << ServerRAM.RAM[0x2000 + (n << 7) + i];
 				}
 			}
 		}

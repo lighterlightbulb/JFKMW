@@ -146,6 +146,11 @@ void player_code()
 
 		while (!done(true))
 		{
+			while (doing_read) {
+				Sleep(1);
+			}
+
+			doing_write = true;
 			chrono::high_resolution_clock::time_point t1 = chrono::high_resolution_clock::now();
 			check_input(); game_loop(); SoundLoop();
 
@@ -154,6 +159,7 @@ void player_code()
 
 			redraw();
 			total_time_ticks = chrono::duration_cast<chrono::duration<double>>(t2 - t1);
+			doing_write = false;
 
 			if (disconnected) {
 				quit = true; cout << red << "[Network] Disconnected." << white << endl; break;

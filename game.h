@@ -9,11 +9,6 @@ void game_init()
 
 void game_loop()
 {
-	while (doing_read) {
-		Sleep(1);
-	}
-
-	doing_write = true;
 	global_frame_counter += 1;
 #if not defined(DISABLE_NETWORK)
 	if (networking)
@@ -96,6 +91,5 @@ void game_loop()
 
 		ServerRAM.RAM[0x14] = global_frame_counter % 256;
 	}
-	doing_write = false;
 
 }

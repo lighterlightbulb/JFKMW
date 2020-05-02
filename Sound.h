@@ -25,21 +25,30 @@ int music_data_size;
 #if not defined(DISABLE_NETWORK)
 void SendMusic()
 {
+	while (doing_write) {
+		sf::sleep(sf::milliseconds(1));
+	}
+	doing_read = true;
 	cout << green << "[Network] Syncing music data.." << endl;
 	CurrentPacket << music_data_size;
 	for (int i = 0; i < music_data_size; i++)
 	{
 		CurrentPacket << (uint_fast8_t)music_data[i];
 	}
+	doing_read = false;
 }
 
 void ReceiveMusic()
 {
 	while (doing_write) {
+		sf::sleep(sf::milliseconds(1));
+	}
+	kill_music = true;
+	while (kill_music) {
 		Sleep(1);
 	}
 	doing_read = true;
-	cout << green << "[Network] Receiving music from server.." << endl;
+	cout << green << "[Network] Downloading music from server.." << endl;
 
 	CurrentPacket >> music_data_size;
 	delete[] music_data;
@@ -53,8 +62,8 @@ void ReceiveMusic()
 	}
 	cout << green << "[Network] Music applied." << endl;
 
-	need_sync_music = true;
 	doing_read = false;
+	need_sync_music = true;
 }
 #endif
 
@@ -117,6 +126,14 @@ void SoundLoop()
 		}
 		else
 		{
+			if (kill_music)
+			{
+				if (Mix_PlayingMusic() == 1)
+				{
+					Mix_HaltMusic();
+				}
+				kill_music = false;
+			}
 			if (need_sync_music)
 			{
 				need_sync_music = false;
@@ -156,12 +173,12 @@ void SoundLoop()
 				input.read(music_data, music_data_size);
 				input.close();
 				cout << purple << "[Audio] Loaded " << file << white << endl;
+				need_sync_music = true;
 			}
 			else
 			{
 				cout << purple << "[Audio] Failed to load " << file << white << endl;
 			}
-			need_sync_music = true;
 		}
 	}
 }

@@ -237,6 +237,9 @@ public:
 		ASM.Write_To_Ram(0x1DFB, request_level_entry("music"), 1);
 		ASM.Write_To_Ram(0x3F05, request_level_entry("background"), 1);
 
+		ASM.Write_To_Ram(0x1411, 1, 1);
+		ASM.Write_To_Ram(0x1412, 1, 1);
+
 		recent_big_change = true;
 
 		Set_Server_RAM();

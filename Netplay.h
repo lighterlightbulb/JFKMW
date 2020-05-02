@@ -7,6 +7,7 @@
 #define Header_LevelData 0x04
 #define Header_RAM 0x05
 #define Header_MusicData 0x06
+
 #define Delay_Connection 200
 
 string latest_chk = "";
@@ -245,8 +246,15 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool ignore_status = false)
 		UPDATE PLAYER DATA
 
 		*/
+
+		if (CurrentPacket_header == Header_MusicData)
+		{
+			ReceiveMusic();
+		}
+
 		if (CurrentPacket_header == Header_GlobalUpdate)
 		{
+			//cout << "Received Global Update Packet Of Size " << CurrentPacket.getDataSize() << endl;
 			CurrentPacket >> SelfPlayerNumber; //Me
 			CurrentPacket >> PlayerAmount; //Update Plr Amount
 
@@ -270,11 +278,6 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool ignore_status = false)
 			CurrentPacket >> recent_big_change;
 			Sync_Server_RAM(!recent_big_change);
 
-		}
-
-		if (CurrentPacket_header == Header_MusicData)
-		{
-			ReceiveMusic();
 		}
 
 		if (CurrentPacket_header == Header_LevelData)
@@ -301,6 +304,10 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool ignore_status = false)
 
 bool receive_all_packets(sf::TcpSocket& socket, bool slower = false)
 {
+	while (doing_read || doing_write)
+	{
+		sf::sleep(sf::milliseconds(1));
+	}
 	int current_pack = 0;
 
 	while (receiveWithTimeout(socket, CurrentPacket, sf::milliseconds(slower ? 2000 : packet_wait_time)) != sf::Socket::NotReady)
@@ -384,21 +391,13 @@ void Server_To_Clients()
 			}
 
 
-			PreparePacket(Header_GlobalUpdate); 
-			CurrentPacket << PlrNumber; 
-			pack_mario_data(PlrNumber); 
-
+			PreparePacket(Header_GlobalUpdate);
+			CurrentPacket << PlrNumber;
+			pack_mario_data(PlrNumber);
 			CurrentPacket << recent_big_change;
 			Push_Server_RAM(!recent_big_change);
-
 			SendPacket(&client);
 
-			if (need_sync_music)
-			{
-				PreparePacket(Header_MusicData);
-				SendMusic();
-				SendPacket(&client);
-			}
 
 
 			if (clients.size() < 1 || last_status == sf::Socket::Error || last_status == sf::Socket::Disconnected)
@@ -408,21 +407,27 @@ void Server_To_Clients()
 			}
 
 			PlrNumber += 1;
-			
+
 		}
 
-		need_sync_music = false;
+		if (need_sync_music)
+		{
+			PreparePacket(Header_MusicData);
+			SendMusic();
+			SendPacket();
+			need_sync_music = false;
+		}
 
 		if ((int(PlrNumber)-1) == clients.size()) //Yea we did it.
 		{
 			ASM.Reset_ASM_Variables_Server();
 			Set_Server_RAM();
+		}
 
-			if (recent_big_change)
-			{
-				recent_big_change = false;
-				cout << green << "[Network] Synced RAM and game." << endl;
-			}
+		if (recent_big_change)
+		{
+			recent_big_change = false;
+			cout << green << "[Network] Synced RAM and game." << endl;
 		}
 
 
