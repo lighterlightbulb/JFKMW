@@ -491,7 +491,7 @@ public:
 		}
 		if (!CROUCH)
 		{
-			if (Y_SPEED != 0.0)
+			if (!ON_FL)
 			{
 				if (CAN_SPRINT)
 				{
