@@ -58,6 +58,9 @@ public:
 	{
 		x = newX;
 		y = newY;
+
+		CAMERA_X = x;
+		CAMERA_Y = y;
 	}
 
 	void Die()

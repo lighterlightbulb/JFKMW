@@ -110,6 +110,10 @@ public:
 			y += yMove;
 		}
 
+		if (x < 8.0)
+		{
+			x = 8.0;
+		}
 		if (y < 0.0)
 		{
 			for (int i = 0; i < 32; i++)
