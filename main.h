@@ -12,7 +12,7 @@ void player_code()
 	init_audio();
 
 	Mix_HaltMusic();
-	string file = path + "Sounds/music/FF.ogg";
+	string file = path + "Sounds/music/boot.ogg";
 	music = Mix_LoadMUS(file.c_str());
 	Mix_PlayMusic(music, 1);
 
@@ -24,7 +24,7 @@ void player_code()
 
 		/* Options Loop */
 		string s_or_c;
-		cout << yellow << "[JFKMW] Welcome to JFK mario world! Release " << da_epical_function_lol("JFKMarioWorld.exe") << ", Press R to reload the config, Press Q if you want to play singleplayer, W if connecting to a server (client), then go to the console. We don't have a UI yet." << white << endl;
+		cout << yellow << "[JFKMW] Welcome to JFK mario world release " << da_epical_function_lol("JFKMarioWorld.exe") << "!, Press R to reload the config, Press Q if you want to play singleplayer, or W to connect to a server, then go to the console. We don't have a UI yet." << white << endl;
 
 
 
