@@ -6,6 +6,7 @@
 #define Header_Connection 0x03
 #define Header_LevelData 0x04
 #define Header_RAM 0x05
+#define Header_MusicData 0x06
 #define Delay_Connection 200
 
 string latest_chk = "";
@@ -271,10 +272,16 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool ignore_status = false)
 
 		}
 
+		if (CurrentPacket_header == Header_MusicData)
+		{
+			ReceiveMusic();
+		}
+
 		if (CurrentPacket_header == Header_LevelData)
 		{
 			cout << blue << "[Client] Received map_data." << white << endl;
 			Sync_Server_RAM(false);
+			ReceiveMusic();
 		}
 
 
@@ -336,6 +343,7 @@ void PendingConnection()
 
 			PreparePacket(Header_LevelData);
 			Push_Server_RAM(false);
+			SendMusic();
 			SendPacket(client);
 
 
@@ -385,6 +393,12 @@ void Server_To_Clients()
 
 			SendPacket(&client);
 
+			if (need_sync_music)
+			{
+				PreparePacket(Header_MusicData);
+				SendMusic();
+				SendPacket(&client);
+			}
 
 
 			if (clients.size() < 1 || last_status == sf::Socket::Error || last_status == sf::Socket::Disconnected)
@@ -396,6 +410,8 @@ void Server_To_Clients()
 			PlrNumber += 1;
 			
 		}
+
+		need_sync_music = false;
 
 		if ((int(PlrNumber)-1) == clients.size()) //Yea we did it.
 		{

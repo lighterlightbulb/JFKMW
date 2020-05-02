@@ -52,6 +52,7 @@ public:
 	bool pad[total_inputs] = { false,false,false,false,false,false,false };
 	bool was_jumpin = false;
 
+	bool CAN_SPRINT = false;
 	string sprite = "STAND_0";
 	//Sounds
 	MPlayer(double newX = 0.0, double newY = 0.0)
@@ -492,7 +493,7 @@ public:
 		{
 			if (Y_SPEED != 0.0)
 			{
-				if (abs(LAST_X_SPEED_ON_FL) > Calculate_Speed_X(750.0))
+				if (CAN_SPRINT)
 				{
 					NewSprite = "JUMPB";
 				}
@@ -516,7 +517,7 @@ public:
 					{
 						FRM += X_SPEED / 5;
 						int Frame = abs(int(FRM) % (2 + (STATE > 0)));
-						if (abs(X_SPEED) > Calculate_Speed_X(750.0))
+						if (CAN_SPRINT)
 						{
 							NewSprite = "RUN" + to_string(Frame);
 						}
@@ -588,7 +589,7 @@ public:
 		bool RUN = false;
 		bool MOV = false;
 		bool SLIGHT_HIGH_SPEED = false;
-		bool CAN_SPRINT = false;
+		CAN_SPRINT = false;
 
 		invisible = INVINCIBILITY_FRAMES > 0 ? !invisible : false;
 

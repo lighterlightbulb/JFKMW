@@ -39,7 +39,7 @@ void game_loop()
 
 	if (!isClient || !networking) //if we are the server or we are playing locally...
 	{
-		for (int i = 0; i < 0x400; i++) //Clear OAM loop
+		for (uint_fast16_t i = 0; i < 0x400; i++) //Clear OAM loop
 		{
 			ServerRAM.RAM[0x200 + i] = 0;
 		}
@@ -95,12 +95,6 @@ void game_loop()
 		}
 
 		ServerRAM.RAM[0x14] = global_frame_counter % 256;
-	}
-
-	if (networking && !isClient) //if we are the server
-	{
-		memcpy(&ServerRAM_D.RAM, &ServerRAM.RAM, RAM_Size * sizeof(uint_fast8_t));
-		
 	}
 	doing_write = false;
 

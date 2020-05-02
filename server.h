@@ -17,11 +17,13 @@ void server_code(string level = "")
 	cout << green << "[Network] Server starting. To load a new level, press F1, to sync the ram to all players, press F2." << white << endl;
 	data_size_current = 0;
 	thread = new sf::Thread(&NetWorkLoop); thread->launch();
+	Sleep(100);
 	while (true)
 	{
 
 		chrono::high_resolution_clock::time_point t1 = chrono::high_resolution_clock::now();
 		game_loop();
+		SoundLoop();
 		chrono::high_resolution_clock::time_point t2 = chrono::high_resolution_clock::now();
 		total_time_ticks = chrono::duration_cast<chrono::duration<double>>(t2 - t1);
 
