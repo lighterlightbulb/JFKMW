@@ -335,6 +335,7 @@ void PendingConnection()
 	if (listener.accept(*client) == sf::Socket::Done)
 	{
 		uint_fast8_t NewPlayerNumber = GetAmountOfPlayers() + 1;
+		username = "Unknown";
 
 		cout << blue << "[Server] A client (assigned to Player " << int(NewPlayerNumber) << ") is trying to connect... (" << client->getRemoteAddress() << ")" << white << endl;
 
