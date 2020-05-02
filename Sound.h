@@ -29,7 +29,7 @@ void SendMusic()
 		sf::sleep(sf::milliseconds(1));
 	}
 	doing_read = true;
-	cout << green << "[Network] Syncing music data.." << endl;
+	cout << green << "[Network] Packing music data.." << endl;
 	CurrentPacket << music_data_size;
 	for (int i = 0; i < music_data_size; i++)
 	{
@@ -52,7 +52,6 @@ void ReceiveMusic()
 
 	CurrentPacket >> music_data_size;
 	delete[] music_data;
-	cout << green << "[Network] Received new music. " << music_data_size / 1024 << "kb big." << endl;
 	music_data = new char[music_data_size];
 	for (int i = 0; i < music_data_size; i++)
 	{
@@ -60,7 +59,7 @@ void ReceiveMusic()
 		CurrentPacket >> g;
 		music_data[i] = (char)g;
 	}
-	cout << green << "[Network] Music applied." << endl;
+	cout << green << "[Network] Received new music. " << music_data_size / 1024 << "kb big." << endl;
 
 	doing_read = false;
 	need_sync_music = true;

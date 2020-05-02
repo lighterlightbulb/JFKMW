@@ -470,7 +470,7 @@ void NetWorkLoop()
 			latest_server_response = chrono::duration_cast<chrono::duration<double>>(t2 - t1);
 		}
 
-		cout << blue << "[Network] Server loaded. " << int(PlayerAmount) << " Players connected." << endl;
+		cout << blue << "[Network] Connected to server. " << int(PlayerAmount) << " player(s) connected." << endl;
 		while (!quit && !disconnected)
 		{
 			chrono::high_resolution_clock::time_point t1 = chrono::high_resolution_clock::now();

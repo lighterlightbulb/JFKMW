@@ -51,6 +51,7 @@ void server_code(string level = "")
 			string level = ""; cout << "Enter a level : "; cin >> level; 
 			doing_write = true;
 			LevelManager.LoadLevel(stoi(level, nullptr, 16));
+			Set_Server_RAM();
 			recent_big_change = true;
 			doing_write = false;
 		}
@@ -72,6 +73,12 @@ void server_code(string level = "")
 			{
 				cout << green << "[Network] Enabled Network latest loop prints." << endl;
 			}
+		}
+
+		if (getKey(VK_F4))
+		{
+			cout << green << "[Network] Syncing music to other players.." << endl;
+			need_sync_music = true;
 		}
 		Sleep(16);
 	}
