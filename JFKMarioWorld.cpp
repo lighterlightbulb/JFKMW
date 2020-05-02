@@ -14,7 +14,6 @@ void Sleep(int time) {
 #error "get the fuck out mac users"
 #endif
 
-
 #include <cmath>
 #include <string>
 #include <vector>
