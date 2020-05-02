@@ -494,13 +494,16 @@ bool ConnectClient(void)
 		sf::sleep(sf::milliseconds(500));
 		receive_all_packets(socketG, true);
 		validated_connection = false;
+		if (disconnected)
+		{
+			return false;
+		}
 		CheckForPlayers();
 		cout << blue << "[Network] Connected to " << ip << ":" << dec <<  PORT << white << endl;
 		return true;
 	}
 	else
 	{
-		cout << blue << "[Network] Failed to connect. Falling back to normal mode." << white << endl;
 		socketG.disconnect();
 		return false;
 	}

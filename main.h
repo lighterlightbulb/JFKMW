@@ -108,11 +108,14 @@ void player_code()
 
 #if not defined(DISABLE_NETWORK)
 
-			cout << "Please input a IP." << endl; cin >> ip;
-			cout << "Please input the port." << endl; cin >> PORT;
+			cout << blue << "[Network] Please input the ip : " << green; cin >> ip;
+			cout << blue << "[Network] Please input the port : " << green; cin >> PORT;
+			cout << white;
 			if (!ConnectClient()) {
+				cout << red << "[Network] Failed to connect. Falling back to normal mode." << white << endl;
 				networking = false;
 				isClient = false;
+				disconnected = false;
 				s_or_c = "t";
 			}
 #else
