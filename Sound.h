@@ -38,14 +38,17 @@ void SendMusic()
 	doing_read = false;
 }
 
-void ReceiveMusic()
+void ReceiveMusic(bool dont_care = false)
 {
-	while (doing_write) {
-		sf::sleep(sf::milliseconds(1));
-	}
-	kill_music = true;
-	while (kill_music) {
-		Sleep(1);
+	if (!dont_care)
+	{
+		while (doing_write) {
+			sf::sleep(sf::milliseconds(1));
+		}
+		kill_music = true;
+		while (kill_music) {
+			Sleep(1);
+		}
 	}
 	doing_read = true;
 	cout << green << "[Network] Downloading music from server.." << endl;

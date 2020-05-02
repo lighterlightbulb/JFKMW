@@ -4,7 +4,7 @@
 #define Header_UpdatePlayerData 0x01
 #define Header_GlobalUpdate 0x02
 #define Header_Connection 0x03
-#define Header_LevelData 0x04
+#define Header_ConnectData 0x04
 #define Header_RAM 0x05
 #define Header_MusicData 0x06
 
@@ -12,11 +12,12 @@
 
 string latest_chk = "";
 sf::Socket::Status last_status;
-sf::Socket::Status receiveWithTimeout(sf::TcpSocket& socket, sf::Packet& packet, sf::Time timeout)
+sf::Socket::Status receiveWithTimeout(sf::TcpSocket& socket, sf::Packet& packet, sf::Time timeout, bool blocking)
 {
 	sf::SocketSelector selector;
 	selector.add(socket);
 	if (selector.wait(timeout)){
+		socket.setBlocking(blocking);
 		last_status = socket.receive(packet);
 		return last_status;
 	}
@@ -181,26 +182,27 @@ void SendPacket(sf::TcpSocket* ToSend = nullptr) {
 
 
 
-void ReceivePacket(sf::TcpSocket &whoSentThis, bool ignore_status = false)
+void ReceivePacket(sf::TcpSocket &whoSentThis, bool for_validating = false)
 {
 	//cout << last_status << endl;
-	if (!ignore_status) {
-		if (last_status == sf::Socket::Disconnected || last_status == sf::Socket::Error) {
-			if (!isClient)
-			{
-				HandleDisconnection(&whoSentThis);
-			}
-			else
-			{
-				disconnected = true;
-			}
-			return;
-		}
-	}
 	CurrentPacket >> CurrentPacket_header;
-
 	data_size_current += int(CurrentPacket.getDataSize());
 
+	if (for_validating == true)
+	{
+		if (CurrentPacket_header == Header_AttemptJoin)
+		{
+			cout << blue << "[Client] Receiving verification.." << white << endl;
+
+			string validation;
+			CurrentPacket >> username;
+
+			cout << blue << "[Client] " << username << " has passed verification." << white << endl;
+			validated_connection = true;
+
+		}
+		return;
+	}
 	/*
 	SERVER BEHAVIOUR
 	*/
@@ -208,17 +210,6 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool ignore_status = false)
 	{
 
 		//cout << blue << "[Network] Received packet (" << CurrentPacket_header << ") from " << whoSentThis.getRemoteAddress() << white << endl;
-		if (CurrentPacket_header == Header_AttemptJoin)
-		{
-			cout << blue << "[Client] Receiving verification.." << white << endl;
-
-			string validation;
-			CurrentPacket >> username;
-	
-			cout << blue << "[Client] " << username << " has passed verification." << white << endl;
-			validated_connection = true;
-
-		}
 		/*
 
 		UPDATE PLAYER DATA
@@ -280,29 +271,24 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool ignore_status = false)
 
 		}
 
-		if (CurrentPacket_header == Header_LevelData)
+		if (CurrentPacket_header == Header_ConnectData)
 		{
-			cout << blue << "[Client] Received map_data." << white << endl;
+			cout << blue << "[Client] Received connection data." << white << endl;
+
+			CurrentPacket >> PlayerAmount; //Update Plr Amount
+			CheckForPlayers(); //have to update the mario list. so it fits.
+
+			cout << blue << "[Client] Receiving server RAM" << white << endl;
 			Sync_Server_RAM(false);
-			ReceiveMusic();
-		}
-
-
-		if (CurrentPacket_header == Header_Connection)
-		{
-			CurrentPacket >> SelfPlayerNumber; PlayerAmount = SelfPlayerNumber; CheckForPlayers();
-			cout << blue << "[Client] Validating connection.." << white << endl;
-
-			PreparePacket(Header_AttemptJoin); 
-			//CurrentPacket << "Hi we are legit";
-			CurrentPacket << username;
-			SendPacket();
+			cout << blue << "[Client] Receiving music" << white << endl;
+			ReceiveMusic(true);
+			cout << blue << "[Client] Received." << white << endl;
 		}
 
 	}
 }
 
-bool receive_all_packets(sf::TcpSocket& socket, bool slower = false)
+bool receive_all_packets(sf::TcpSocket& socket, bool slower = false, bool for_validating = false)
 {
 	while (doing_read || doing_write)
 	{
@@ -310,10 +296,15 @@ bool receive_all_packets(sf::TcpSocket& socket, bool slower = false)
 	}
 	int current_pack = 0;
 
-	while (receiveWithTimeout(socket, CurrentPacket, sf::milliseconds(slower ? 2000 : packet_wait_time)) != sf::Socket::NotReady)
+	while (receiveWithTimeout(socket, CurrentPacket, sf::milliseconds(slower ? 2000 : packet_wait_time), !for_validating) != sf::Socket::NotReady)
 	{
+
 		current_pack += 1;
-		ReceivePacket(socket);
+		ReceivePacket(socket, for_validating);
+	}
+	if (for_validating && !validated_connection)
+	{
+		return false;
 	}
 	if (!isClient)
 	{
@@ -339,7 +330,7 @@ void PendingConnection()
 
 
 		validated_connection = false;
-		receive_all_packets(*client, true);
+		receive_all_packets(*client, true, true);
 
 		if (validated_connection)
 		{
@@ -348,7 +339,8 @@ void PendingConnection()
 			clients.push_back(client); selector.add(*client); GetAmountOfPlayers();
 			cout << blue << "[Server] " << username << " (" << client->getRemoteAddress() << ", Player " << dec << int(NewPlayerNumber) << ") has connected." << white << endl;
 
-			PreparePacket(Header_LevelData);
+			PreparePacket(Header_ConnectData);
+			CurrentPacket << PlayerAmount;
 			Push_Server_RAM(false);
 			SendMusic();
 			SendPacket(client);
@@ -487,6 +479,11 @@ bool ConnectClient(void)
 {
 	if (socketG.connect(ip, PORT) == sf::Socket::Done)
 	{
+		PreparePacket(Header_AttemptJoin);
+		CurrentPacket << username;
+		SendPacket();
+
+		sf::sleep(sf::milliseconds(500));
 
 		receive_all_packets(socketG, true);
 
