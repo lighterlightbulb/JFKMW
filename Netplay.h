@@ -290,15 +290,21 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool for_validating = false)
 
 bool receive_all_packets(sf::TcpSocket& socket, bool slower = false, bool for_validating = false)
 {
-	while (doing_read || doing_write)
-	{
-		sf::sleep(sf::milliseconds(1));
-	}
 	int current_pack = 0;
 
 	while (receiveWithTimeout(socket, CurrentPacket, sf::milliseconds(slower ? 2000 : packet_wait_time), !for_validating) != sf::Socket::NotReady)
 	{
-
+		if (last_status == sf::Socket::Disconnected)
+		{
+			if (!isClient) {
+				HandleDisconnection(&socket);
+				return false;
+			}
+			else {
+				disconnected = true;
+				return false;
+			}
+		}
 		current_pack += 1;
 		ReceivePacket(socket, for_validating);
 	}
@@ -376,6 +382,7 @@ void Server_To_Clients()
 		for (int i = 0; i < clients.size(); ++i) {
 			sf::TcpSocket& client = *clients[i];
 			receive_all_packets(client);
+			
 			if (clients.size() < 1 || last_status == sf::Socket::Error || last_status == sf::Socket::Disconnected)
 			{
 				//cout << blue << "[Server] Attempting to recover from player failure. Will stop communication." << white << endl;
@@ -386,9 +393,11 @@ void Server_To_Clients()
 			PreparePacket(Header_GlobalUpdate);
 			CurrentPacket << PlrNumber;
 			pack_mario_data(PlrNumber);
+
 			CurrentPacket << recent_big_change;
 			Push_Server_RAM(!recent_big_change);
 			SendPacket(&client);
+
 
 
 
@@ -477,7 +486,7 @@ void NetWorkLoop()
 
 bool ConnectClient(void)
 {
-	if (socketG.connect(ip, PORT) == sf::Socket::Done)
+	if (socketG.connect(ip, PORT) != sf::Socket::Disconnected)
 	{
 		PreparePacket(Header_AttemptJoin);
 		CurrentPacket << username;
@@ -499,6 +508,7 @@ bool ConnectClient(void)
 	else
 	{
 		cout << blue << "[Network] Failed to connect. Falling back to normal mode." << white << endl;
+		socketG.disconnect();
 		return false;
 	}
 }

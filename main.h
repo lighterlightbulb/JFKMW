@@ -177,7 +177,7 @@ void player_code()
 		//We quit the game go back to the ZSNES ui
 
 #if not defined(DISABLE_NETWORK)
-		if (networking && !disconnected) { socketG.disconnect();  thread->terminate(); }
+		if (networking) { socketG.disconnect();  thread->terminate(); }
 #endif
 		cout << yellow << "[JFKMW] Returning to main screen.." << white << endl;
 		Sleep(1000);
