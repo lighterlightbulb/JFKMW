@@ -63,19 +63,11 @@ void render()
 	{
 		palette_array[i] = ServerRAM.RAM[0x3D00 + i] + (ServerRAM.RAM[0x3E00 + i] << 8);
 	}
-
-	/*copy(ServerRAM.RAM + VRAM_Location,
-		ServerRAM.RAM + VRAM_Location + VRAM_Size,
-		VRAM);*/
 	memcpy(VRAM, &ServerRAM.RAM[VRAM_Location], VRAM_Size * sizeof(uint_fast8_t));
 
 
 
 	MPlayer& LocalPlayer = get_mario(SelfPlayerNumber);
-
-	//Camera offsets
-
-	
 	CameraX = int_fast16_t(LocalPlayer.CAMERA_X - 120.0);
 	CameraY = int_fast16_t(LocalPlayer.CAMERA_Y - 112.0);
 

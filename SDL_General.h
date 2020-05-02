@@ -320,7 +320,7 @@ void draw8x8_tile_2bpp(uint_fast8_t x, uint_fast8_t y, uint_fast16_t tile, uint_
 
 
 
-//drawtilecustom
+//drawtilecustom, if anyone knew how to fucking optimize this, i'd fucking love you for life.
 
 void draw_tile_custom(int_fast16_t x, int_fast16_t y, uint_fast8_t size, double angle, uint_fast16_t tile, uint_fast8_t palette, bool flip)
 {
@@ -339,8 +339,6 @@ void draw_tile_custom(int_fast16_t x, int_fast16_t y, uint_fast8_t size, double 
 
 	//set up
 	palette = palette << 4;
-
-	//Ok
 	SDL_LockSurface(ti);
 
 	uint_fast8_t color1 = 0;
@@ -395,20 +393,7 @@ void draw_tile_custom(int_fast16_t x, int_fast16_t y, uint_fast8_t size, double 
 	SourceR.w = (size_x << 3) * scale; //Same bs as above.
 	SourceR.h = (size_y << 3) * scale;
 	SDL_RendererFlip flip_r = flip ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
-
-	//SDL_BlitSurface(ti, NULL, &screen_s_l1, &SourceR);
-	//SDL_UnlockSurface(ti);
-	//SDL_Rect DestR;
-	//DestR.x = x;
-	//DestR.y = y;
-	//DestR.w = size_x << 3;
-	//DestR.h = size_y << 3;
-	//SDL_BlitSurface(ti, &DestR, &screen_s_l1, NULL);
-
-	//SDL_BlitScaled(ti, NULL, &screen_s_l1, &DestR);
-	//SDL_UnlockSurface(ti);
 	SDL_RenderCopyEx(ren, drawnTex, NULL, &SourceR, angle, NULL, flip_r);
-	//bofa deez. 
 	SDL_FreeSurface(ti);
 	SDL_DestroyTexture(drawnTex);
 }
