@@ -237,7 +237,7 @@ void render()
 	draw8x8_tile_2bpp(8 * 9, 15 + 8, 0x50, 1, 2);
 	draw8x8_tile_2bpp(8 * 8, 15 + 8, isClient ? 0xC : 0x1C, 1, 2);
 
-	draw_number_hex(256 - 24, 15, blocks_on_screen, 2);
+	draw_number_hex(256 - 24, 15, ServerRAM.RAM[0x14] , 2);
 
 	draw8x8_tile_2bpp(256 - 32, 15 + 8, 0x16, 1, 2); //MS
 	draw8x8_tile_2bpp(256 - 24, 15 + 8, 0x1C, 1, 2);

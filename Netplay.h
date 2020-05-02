@@ -492,15 +492,8 @@ bool ConnectClient(void)
 		CurrentPacket << username;
 		SendPacket();
 
-		sf::sleep(sf::milliseconds(500));
-
 		receive_all_packets(socketG, true);
-
-		if (last_status == sf::Socket::Error || last_status == sf::Socket::Disconnected)
-		{
-			return false;
-		}
-
+		validated_connection = false;
 		CheckForPlayers();
 		cout << blue << "[Network] Connected to " << ip << ":" << dec <<  PORT << white << endl;
 		return true;
