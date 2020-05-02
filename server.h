@@ -34,13 +34,13 @@ void server_code(string level = "")
 		doing_write = false;
 		
 
-		if (!(global_frame_counter % 120) && clients.size() > 0)
+		if (!(global_frame_counter % 60) && clients.size() > 0)
 		{
 			if (DisablePrints)
 			{
 				cout << green << "[Network] latest loop : "
 					<< dec << total_time_ticks.count() * 1000.0 << " ms. "
-					<< (double(data_size_current) / 2048.0) << "kb/s" << white << endl;
+					<< (double(data_size_current) / 1024.0) << "kb/s" << white << endl;
 			}
 			data_size_current = 0;
 		}
