@@ -195,11 +195,17 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool for_validating = false)
 			cout << blue << "[Client] Receiving verification.." << white << endl;
 
 			string validation;
+
 			CurrentPacket >> username;
-
-			cout << blue << "[Client] " << username << " has passed verification." << white << endl;
-			validated_connection = true;
-
+			CurrentPacket >> validation;
+			if (validation == da_epical_function_lol())
+			{
+				cout << blue << "[Client] " << username << " has passed verification." << white << endl;
+				validated_connection = true;
+				return;
+			}
+			cout << blue << "[Client] Failed verification." << white << endl;
+			validated_connection = false;
 		}
 		return;
 	}
@@ -489,7 +495,7 @@ bool ConnectClient(void)
 	if (socketG.connect(ip, PORT) != sf::Socket::Disconnected)
 	{
 		PreparePacket(Header_AttemptJoin);
-		CurrentPacket << username;
+		CurrentPacket << username; CurrentPacket << da_epical_function_lol();
 		SendPacket();
 		sf::sleep(sf::milliseconds(500));
 		receive_all_packets(socketG, true);

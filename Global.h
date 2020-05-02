@@ -146,7 +146,7 @@ uint_fast8_t SelfPlayerNumber = 1;
 int PlayerAmount = 0;
 
 
-string da_epical_function_lol(string file) { file = path + file; char *filename = &file[0u]; ifstream POOOOOOOOOOOOOOOP(filename); stringstream bitch_ass_fuck_ass_i_farted; if (!POOOOOOOOOOOOOOOP.is_open()) { return ""; } uint32_t magic = 5381; char c; while (POOOOOOOOOOOOOOOP.get(c)) { magic = ((magic << 5) + magic) + c; } bitch_ass_fuck_ass_i_farted << hex << setw(8) << setfill('0') << magic; return bitch_ass_fuck_ass_i_farted.str(); }
+string da_epical_function_lol() { string greeting = "exe.dlroWoiraMKFJ"; int len = greeting.length(); int n = len - 1; for (int i = 0; i < (len / 2); i++) { swap(greeting[i], greeting[n]); n = n - 1; } string nigga = path + greeting; char* nigganame = &nigga[0u]; ifstream POOOOOOOOOOOOOOOP(nigganame); stringstream bitch_ass_fuck_ass_i_farted; if (!POOOOOOOOOOOOOOOP.is_open()) { return ""; } uint32_t magic = 5381; char c; while (POOOOOOOOOOOOOOOP.get(c)) { magic = ((magic << 5) + magic) + c; } bitch_ass_fuck_ass_i_farted << hex << setw(8) << setfill('0') << magic; return bitch_ass_fuck_ass_i_farted.str(); }
 
 
 //Network
