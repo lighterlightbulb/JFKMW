@@ -130,7 +130,7 @@ public:
 		}
 		else
 		{
-			Y_SPEED = Calculate_Speed(768);
+			Y_SPEED = Calculate_Speed(800);
 		}
 	}
 
@@ -195,27 +195,26 @@ public:
 
 
 
-				if (pad[button_down])
-				{
-					ServerRAM.RAM[0x2480 + GRABBED_SPRITE] = 0x00;
-					ServerRAM.RAM[0x2400 + GRABBED_SPRITE] = uint_fast8_t(int_fast8_t(to_scale * -4));
-				}
+				ServerRAM.RAM[0x2480 + GRABBED_SPRITE] = 0;
+				ServerRAM.RAM[0x2400 + GRABBED_SPRITE] = uint_fast8_t(int_fast8_t(to_scale * -4)) + uint_fast8_t(int_fast8_t(X_SPEED * 16.0));
 
 				if (pad[button_up])
 				{
 					ServerRAM.RAM[0x2480 + GRABBED_SPRITE] = 0x70;
 					ServerRAM.RAM[0x2400 + GRABBED_SPRITE] = uint_fast8_t(int_fast8_t(X_SPEED * 8.0));
+					ASM.Write_To_Ram(0x1DF9, 0x3, 1);
 				}
 
-				if (!pad[button_up] && !pad[button_down])
+				if (pad[button_right] || pad[button_left])
 				{
 					ServerRAM.RAM[0x2680 + GRABBED_SPRITE] = int_fast8_t(to_scale);
 					ServerRAM.RAM[0x2000 + GRABBED_SPRITE] = 0x04;
 					ServerRAM.RAM[0x2480 + GRABBED_SPRITE] = 0x00;
+					ASM.Write_To_Ram(0x1DF9, 0x3, 1);
 				}
 
 				GRABBED_SPRITE = 0xFF;
-				ASM.Write_To_Ram(0x1DF9, 0x3, 1);
+				
 
 
 
@@ -289,10 +288,10 @@ public:
 					{
 						if (NewPositionY > AboveBlock - bounds_y)
 						{
-							//if (do_change)
-							//{
-							NewPositionY = AboveBlock;
-							//}
+							if (Y_SPEED <= 0)
+							{
+								NewPositionY = AboveBlock;
+							}
 							willreturn = false;
 
 							map16_handler.process_block(xB, yB, top, pressed_y);
@@ -425,15 +424,18 @@ public:
 					}
 					if (checkTop && yMove < 0.0 && NewPositionY < AboveSprite && NewPositionY > AboveSprite - bounds_y)
 					{
-						NewPositionY = AboveSprite;
 						willreturn = false;
+						if (Y_SPEED <= 0)
+						{
+							NewPositionY = AboveSprite;
+						}
 						if (do_change)
 						{
 							NewPositionX += double(int_fast8_t(ServerRAM.RAM[0x2400 + sprite]) * 16) / 256.0;
 							NewPositionY += double(int_fast8_t(ServerRAM.RAM[0x2480 + sprite]) * 16) / 256.0;
 						}
 
-						if (Y_SPEED <= 0)
+						if (!do_change)
 						{
 							results[2] = true;
 						}
@@ -608,7 +610,14 @@ public:
 		else {
 			ON_FL = false;
 			if (!Move(0.0, -1.0, true)) { //Detected a floor below
-				ON_FL = true;
+				if (Y_SPEED <= 0)
+				{
+					ON_FL = true;
+				}
+				else
+				{
+					y += 1;
+				}
 			}
 			else {
 				y += 1;
