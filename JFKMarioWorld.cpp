@@ -9,11 +9,6 @@ void Sleep(int time) {
 #define DISABLE_NETWORK
 #endif
 
-#if defined(DARWIN)
-#define DISABLE_NETWORK
-#error "get the fuck out mac users"
-#endif
-
 #include <cmath>
 #include <string>
 #include <vector>
