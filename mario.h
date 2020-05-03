@@ -589,8 +589,10 @@ public:
 		bool RUN = false;
 		bool MOV = false;
 		bool SLIGHT_HIGH_SPEED = false;
-		CAN_SPRINT = false;
-
+		if (ON_FL)
+		{
+			CAN_SPRINT = false;
+		}
 		invisible = INVINCIBILITY_FRAMES > 0 ? !invisible : false;
 
 		if (in_pipe) {
@@ -606,9 +608,9 @@ public:
 			}
 
 			SKIDDING = 0;
-			if (ON_FL && abs(X_SPEED) >= Calculate_Speed_X(576.0) && pad[button_y]) {
+			if (abs(X_SPEED) >= Calculate_Speed_X(576.0) && pad[button_y]) {
 				SLIGHT_HIGH_SPEED = true;
-				if (ON_FL && !CROUCH) {
+				if (CAN_SPRINT || (ON_FL && !CROUCH)) {
 					P_METER += 2;
 					if (P_METER > P_METER_REQUIRED) {
 						P_METER = P_METER_REQUIRED;
@@ -622,14 +624,12 @@ public:
 				}
 			}
 			else {
-				if (ON_FL) {
-					if (P_METER > 0) {
-						P_METER -= 1;
-					}
+				if (P_METER > 0) {
+					P_METER -= 1;
 				}
 			}
 
-			if (P_METER >= P_METER_REQUIRED && pad[button_y]) {
+			if (P_METER >= (P_METER_REQUIRED-1) && pad[button_y]) {
 				CAN_SPRINT = true;
 			}
 			if (pad[button_left]) {
@@ -666,7 +666,7 @@ public:
 			if (pad[button_b] != was_jumpin) {
 				was_jumpin = pad[button_b];
 				if (was_jumpin && ON_FL) {
-					Y_SPEED = Calculate_Speed(1232.0 + (148.0 * SLIGHT_HIGH_SPEED) + (20.0 * CAN_SPRINT));
+					Y_SPEED = Calculate_Speed(1232.0 + (148.0 * SLIGHT_HIGH_SPEED) + (32.0 * CAN_SPRINT));
 					ASM.Write_To_Ram(0x1DFC, 0x35, 1);
 				}
 			}
