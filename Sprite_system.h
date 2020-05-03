@@ -211,7 +211,7 @@ public:
 	{
 		lua_getglobal(SPR_STATE[index], "Main");
 		lua_pushinteger(SPR_STATE[index], index);
-		lua_call(SPR_STATE[index], 1, 0); // run script
+		lua_pcall(SPR_STATE[index], 1, 0, 0); // run script
 	}
 
 	void init_sprite_lua(int index, string file)
@@ -228,13 +228,17 @@ public:
 		int ret = luaL_dofile(SPR_STATE[index], (path + file).c_str());
 		if (ret != 0)
 		{
-			lua_print("Error occurs when calling luaL_dofile() Hint Machine 0x%x\n" + ret);
+			lua_print("Error occurred when calling luaL_dofile()");
 			lua_print("Error: " + string(lua_tostring(SPR_STATE[index], -1)));
+			//lua_close(SPR_STATE[index]);
+			ServerRAM.RAM[0x2000 + index] = 0;
 			return;
 		}
 
 		lua_connect_functions(SPR_STATE[index]);
-		//cout << purple << "[Sprites] Initialized Sprite Slot " << int(index) << " " << path << file << white << endl;
+		lua_getglobal(SPR_STATE[index], "Init");
+		lua_pushinteger(SPR_STATE[index], index);
+		lua_pcall(SPR_STATE[index], 1, 0, 0); // run script
 	}
 
 	void process_all_sprites()
@@ -248,9 +252,6 @@ public:
 					if (ServerRAM.RAM[0x2800 + i])
 					{
 						init_sprite_lua(int(i), "Code/Sprites/" + int_to_hex(ServerRAM.RAM[0x2080 + i], true) + ".lua");
-						lua_getglobal(SPR_STATE[i], "Init");
-						lua_pushinteger(SPR_STATE[i], i);
-						lua_call(SPR_STATE[i], 1, 0); // run script
 					}
 					ServerRAM.RAM[0x2F80 + i] = 1;
 				}

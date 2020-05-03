@@ -96,8 +96,9 @@ void lua_loadfile(string file)
 	int ret = luaL_dofile(LUA_STATE, (path + file).c_str());
 	if (ret != 0)
 	{
-		lua_print("Error occurs when calling luaL_dofile() Hint Machine 0x%x\n" + ret);
+		lua_print("Error occurred when calling luaL_dofile()");
 		lua_print("Error: " + string(lua_tostring(LUA_STATE, -1)));
+		lua_close(LUA_STATE);
 		return;
 	}
 
@@ -110,16 +111,12 @@ void lua_loadfile(string file)
 
 void lua_run_init()
 {
-	//lua_print("calling init()");
 	lua_getglobal(LUA_STATE, "Init");
-	lua_call(LUA_STATE, 0, 0); // run script
-
+	lua_pcall(LUA_STATE, 0, 0, 0); // run script
 }
 
 void lua_run_main()
 {
-	//lua_print("calling main()");
 	lua_getglobal(LUA_STATE, "Main");
-	lua_call(LUA_STATE, 0, 0); // run script
-
+	lua_pcall(LUA_STATE, 0, 0, 0); // run script
 }
