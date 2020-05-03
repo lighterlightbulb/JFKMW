@@ -63,8 +63,6 @@ istream& getline(istream& stream, string& str)
 #include <SFML/Network.hpp>
 #endif
 
-#include <lz4.h>
-
 
 #include "cout.h"
 
