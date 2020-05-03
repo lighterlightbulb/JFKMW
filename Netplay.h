@@ -279,15 +279,15 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool for_validating = false)
 
 		if (CurrentPacket_header == Header_ConnectData)
 		{
-			cout << blue << "[Client] Received connection data." << white << endl;
+			//cout << blue << "[Client] Received connection data." << white << endl;
 
 			CurrentPacket >> PlayerAmount; //Update Plr Amount
 			CheckForPlayers(); //have to update the mario list. so it fits.
-
-			cout << blue << "[Client] Receiving server RAM" << white << endl;
+			//cout << blue << "[Client] Receiving server RAM" << white << endl;
 			Sync_Server_RAM(false);
-			cout << blue << "[Client] Receiving music" << white << endl;
+			//cout << blue << "[Client] Receiving music" << white << endl;
 			ReceiveMusic(true);
+			validated_connection = true;
 			cout << blue << "[Client] Received." << white << endl;
 		}
 
@@ -313,6 +313,10 @@ bool receive_all_packets(sf::TcpSocket& socket, bool slower = false, bool for_va
 		}
 		current_pack += 1;
 		ReceivePacket(socket, for_validating);
+		if (isClient && validated_connection)
+		{
+			return true;
+		}
 	}
 	if (for_validating && !validated_connection)
 	{

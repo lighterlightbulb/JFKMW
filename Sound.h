@@ -62,7 +62,7 @@ void ReceiveMusic(bool dont_care = false)
 		CurrentPacket >> g;
 		music_data[i] = (char)g;
 	}
-	cout << green << "[Network] Received new music. " << music_data_size / 1024 << "kb big." << endl;
+	cout << green << "[Network] Received new music. " << dec << music_data_size / 1024 << "kb big." << endl;
 
 	doing_read = false;
 	need_sync_music = true;
