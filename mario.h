@@ -173,7 +173,7 @@ public:
 
 	void ProcessGrabbed()
 	{
-		if (GRABBED_SPRITE != 0xFF)
+		if (GRABBED_SPRITE != 0xFF && ServerRAM.RAM[0x2000 + GRABBED_SPRITE] == 3)
 		{
 			//cout << "Player 1 is holding sprite " << int(GRABBED_SPRITE) << endl;
 			if (!pad[button_y] && !DEAD)
