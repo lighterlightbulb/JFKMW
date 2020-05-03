@@ -124,7 +124,14 @@ public:
 
 	void Enemy_Jump()
 	{
-		Y_SPEED = 5.0;
+		if (pad[button_b])
+		{
+			Y_SPEED = Calculate_Speed(1408);
+		}
+		else
+		{
+			Y_SPEED = Calculate_Speed(768);
+		}
 	}
 
 	int DeathProcess()
@@ -616,9 +623,9 @@ public:
 
 					if (CAN_SPRINT || (ON_FL && !CROUCH)) {
 						P_METER += 2;
-							if (P_METER > P_METER_REQUIRED) {
-								P_METER = P_METER_REQUIRED;
-							}
+						if (P_METER > P_METER_REQUIRED) {
+							P_METER = P_METER_REQUIRED;
+						}
 					}
 					else
 					{
