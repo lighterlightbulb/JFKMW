@@ -13,5 +13,13 @@ A remake of super mario world in C++, can be considered a engine. for mario game
 ## How can I help?
 If you know how to code, submit fixes. If you like to test stuff, test the craziest stuff you can think of and try to find bugs, then report them in issues. Everything helps! We especially need help on making the game physics accurate. Also if a multiplayer server is up, help us test the netcode by just playing the game.
 
+## Requirements / Dependencies / whateve rthe fuck u call it
+-SDL2
+-SDL_MIXER
+-SDL_IMAGE
+-SFML
+-LUA53
+-LZ4
+
 ## Social
 You can join the official discord for the game (and other projects) here : https://discord.gg/fD5QQK3
