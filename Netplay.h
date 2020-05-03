@@ -199,10 +199,10 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool for_validating = false)
 		{
 			cout << blue << "[Client] Receiving verification.." << white << endl;
 
-			string validation;
+			//string validation;
 
 			CurrentPacket >> username;
-			CurrentPacket >> validation;
+			//CurrentPacket >> validation;
 			//if (validation == da_epical_function_lol())
 			//{
 			cout << blue << "[Client] " << username << " has passed verification." << white << endl;
