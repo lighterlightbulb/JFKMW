@@ -25,6 +25,7 @@
 0x2780 - Sprite block flags
 0x2800 - Sprite is lua/asm type
 
+0x2E00 - Unused, used in the throwblock and grabbed sprites for a "how much frames til we can hurt mario" timer
 0x2E80 - Unused, extra property for grabbed sprites, which props/palettes it uses
 0x2F00 - Unused, extra property for grabbed sprites, which tile it uses
 0x2F80 - Sprite Initialized

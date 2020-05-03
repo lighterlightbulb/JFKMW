@@ -26,7 +26,7 @@ void player_code()
 
 		/* Options Loop */
 		string s_or_c;
-		cout << yellow << "[JFKMW] Welcome to JFK mario world!, Press R to reload the config, Press Q if you want to play singleplayer, or W to connect to a server, then go to the console. We don't have a UI yet." << white << endl;
+		cout << yellow << "[JFKMW] Welcome to JFK mario world!, Press R to reload the last level you played, Press Q if you want to play singleplayer, or W to connect to a server, then go to the console. We don't have a UI yet." << white << endl;
 
 		while (true)
 		{
@@ -178,7 +178,6 @@ void player_code()
 		if (networking) { socketG.disconnect();  thread->terminate(); }
 #endif
 		cout << yellow << "[JFKMW] Returning to main screen.." << white << endl;
-		Sleep(1000);
 		quit = true;
 	}
 }

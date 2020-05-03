@@ -185,7 +185,7 @@ void render()
 			if (CurrentMario.GRABBED_SPRITE != 0xFF)
 			{
 				uint_fast8_t tile = uint_fast8_t(ASM.Get_Ram(0x2F00 + CurrentMario.GRABBED_SPRITE, 1));
-				uint_fast8_t size = uint_fast8_t((ASM.Get_Ram(0x2E80 + CurrentMario.GRABBED_SPRITE, 1) >> 4) + ((ASM.Get_Ram(0x2E80 + CurrentMario.GRABBED_SPRITE, 1) >> 4) << 4));
+				uint_fast8_t size = uint_fast8_t(((ASM.Get_Ram(0x2E80 + CurrentMario.GRABBED_SPRITE, 1) & 0x7F) >> 4) + (((ASM.Get_Ram(0x2E80 + CurrentMario.GRABBED_SPRITE, 1) & 0x7F) >> 4) << 4));
 
 				int_fast16_t x_position = int_fast16_t(double(CurrentMario.x + CurrentMario.to_scale * -12.0));
 				int_fast16_t y_position = int_fast16_t(double(CurrentMario.y - (CurrentMario.STATE > 0 ? 13.0 : 16.0)));
