@@ -204,7 +204,6 @@ public:
 					ServerRAM.RAM[0x2400 + GRABBED_SPRITE] = uint_fast8_t(int_fast8_t(X_SPEED * 8.0));
 					ASM.Write_To_Ram(0x1DF9, 0x3, 1);
 				}
-
 				if (!pad[button_up])
 				{
 					if ((ServerRAM.RAM[0x2E80 + GRABBED_SPRITE] > 0x80 && (!pad[button_down])) || (pad[button_right] || pad[button_left]))
@@ -215,12 +214,7 @@ public:
 						ASM.Write_To_Ram(0x1DF9, 0x3, 1);
 					}
 				}
-
 				GRABBED_SPRITE = 0xFF;
-				
-
-
-
 			}
 		}
 	}
