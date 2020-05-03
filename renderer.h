@@ -246,7 +246,10 @@ void render()
 	draw8x8_tile_2bpp(128 - 8, 15 + 8, 0x14, 1, 2); //KB
 	draw8x8_tile_2bpp(128, 15 + 8, 0xB, 1, 2);
 	
-
+	for (int i = 0; i < 7; i++)
+	{
+		draw8x8_tile_2bpp(0 + i * 8, 0, LocalPlayer.pad[i], 0, 2);
+	}
 	
 	
 	draw8x8_tile_2bpp(128 - 20, 15 + 8, 0x24, 1, 2); //.

@@ -544,11 +544,11 @@ public:
 		{
 			NewSprite = "CROUCH";
 		}
-		if (X_SPEED > 0)
+		if (WALKING_DIR > 0)
 		{
 			to_scale = -1.f;
 		}
-		if (X_SPEED < 0)
+		if (WALKING_DIR < 0)
 		{
 			to_scale = 1.f;
 		}
