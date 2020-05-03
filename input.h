@@ -35,7 +35,6 @@ void check_input()
 		quit = true;
 	}
 	SDL_GetMouseState(&mouse_x, &mouse_y);
-
 	if (gGameController)
 	{
 		BUTTONS_GAMEPAD[0] = SDL_GameControllerGetButton(gGameController, SDL_CONTROLLER_BUTTON_DPAD_UP);

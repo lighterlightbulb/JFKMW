@@ -606,12 +606,18 @@ public:
 			}
 
 			SKIDDING = 0;
-			if (abs(X_SPEED) >= Calculate_Speed_X(576.0) && pad[button_y]) {
+			if (ON_FL && abs(X_SPEED) >= Calculate_Speed_X(576.0) && pad[button_y]) {
 				SLIGHT_HIGH_SPEED = true;
 				if (ON_FL && !CROUCH) {
 					P_METER += 2;
 					if (P_METER > P_METER_REQUIRED) {
 						P_METER = P_METER_REQUIRED;
+					}
+				}
+				else
+				{
+					if (P_METER > 0) {
+						P_METER -= 1;
 					}
 				}
 			}

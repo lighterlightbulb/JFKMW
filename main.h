@@ -16,7 +16,9 @@ void player_code()
 	music = Mix_LoadMUS(file.c_str());
 	Mix_PlayMusic(music, 1);
 
-	while (!actuallyquitgame)
+	string level = "";
+
+	while (true)
 	{
 		disconnected = false;
 		PlayerAmount = 0; SelfPlayerNumber = 1; CheckForPlayers();
@@ -26,10 +28,9 @@ void player_code()
 		string s_or_c;
 		cout << yellow << "[JFKMW] Welcome to JFK mario world!, Press R to reload the config, Press Q if you want to play singleplayer, or W to connect to a server, then go to the console. We don't have a UI yet." << white << endl;
 
-
-
 		while (true)
 		{
+			quit = false;
 			if (done(true))
 			{
 				return;
@@ -72,6 +73,7 @@ void player_code()
 			check_input();
 			if (state[SDL_SCANCODE_Q]) {
 				s_or_c = "t";
+				level = "";
 				break;
 			}
 			if (state[SDL_SCANCODE_W]) {
@@ -81,21 +83,10 @@ void player_code()
 
 			if (state[SDL_SCANCODE_R])
 			{
-				Sleep(1000);
-				load_configuration();
-			}
-
-			if (state[SDL_SCANCODE_ESCAPE])
-			{
-				actuallyquitgame = true;
+				s_or_c = "t";
 				break;
 			}
 
-		}
-
-		if (actuallyquitgame)
-		{
-			break;
 		}
 		/* Load Shit */
 
@@ -129,7 +120,11 @@ void player_code()
 		if (s_or_c == "t")
 		{
 			isClient = false;
-			string level = ""; cout << "Enter a level : "; cin >> level; LevelManager.LoadLevel(stoi(level, nullptr, 16));
+			if (level == "")
+			{
+				cout << "Enter a level : "; cin >> level;
+			}
+			LevelManager.LoadLevel(stoi(level, nullptr, 16));
 		}
 
 		//Initialize Singleplayer
