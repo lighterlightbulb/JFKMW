@@ -608,12 +608,23 @@ public:
 			}
 
 			SKIDDING = 0;
-			if (abs(X_SPEED) >= Calculate_Speed_X(576.0) && pad[button_y]) {
+			if (abs(X_SPEED) >= Calculate_Speed_X(576.0)) {
+
 				SLIGHT_HIGH_SPEED = true;
-				if (CAN_SPRINT || (ON_FL && !CROUCH)) {
-					P_METER += 2;
-					if (P_METER > P_METER_REQUIRED) {
-						P_METER = P_METER_REQUIRED;
+				if (pad[button_y] && (pad[button_left] || pad[button_right]))
+				{
+
+					if (CAN_SPRINT || (ON_FL && !CROUCH)) {
+						P_METER += 2;
+							if (P_METER > P_METER_REQUIRED) {
+								P_METER = P_METER_REQUIRED;
+							}
+					}
+					else
+					{
+						if (P_METER > 0) {
+							P_METER -= 1;
+						}
 					}
 				}
 				else
@@ -666,7 +677,7 @@ public:
 			if (pad[button_b] != was_jumpin) {
 				was_jumpin = pad[button_b];
 				if (was_jumpin && ON_FL) {
-					Y_SPEED = Calculate_Speed(1232.0 + (148.0 * SLIGHT_HIGH_SPEED) + (32.0 * CAN_SPRINT));
+					Y_SPEED = Calculate_Speed(1232.0 + (148.0 * SLIGHT_HIGH_SPEED) + (32.0 * (X_SPEED > Calculate_Speed_X(320+256+176))));
 					ASM.Write_To_Ram(0x1DFC, 0x35, 1);
 				}
 			}
