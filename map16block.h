@@ -129,6 +129,13 @@ public:
 			if (t == 0x0124 && side == bottom)
 			{
 				ServerRAM.RAM[ram_level_low + index] = 0x32;
+				x *= 16;
+				y *= 16;
+				if ((rand() % 10) < 2)
+				{
+					uint_fast8_t spr = spawnSpriteJFKMarioWorld(0x74, 5, x, y+8, 1, true);
+					ServerRAM.RAM[0x2480 + spr] = 0x20;
+				}
 			}
 			if (t == 0x002B)
 			{

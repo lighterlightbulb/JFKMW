@@ -30,7 +30,7 @@ void check_input()
 {
 	state = SDL_GetKeyboardState(NULL);
 
-	if (state[SDL_SCANCODE_ESCAPE])
+	if (state[SDL_SCANCODE_ESCAPE] || SDL_GameControllerGetButton(gGameController, SDL_CONTROLLER_BUTTON_LEFTSHOULDER))
 	{
 		quit = true;
 	}

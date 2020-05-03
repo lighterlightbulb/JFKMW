@@ -457,6 +457,15 @@ public:
 						ServerRAM.RAM[0x2700 + sprite] += results[i] << i;
 					}
 
+					//Powerups
+					if (ServerRAM.RAM[0x2000 + sprite] == 5)
+					{
+						STATE = 1;
+						ServerRAM.RAM[0x2000 + sprite] = 0;
+						ASM.Write_To_Ram(0x1DF9, 0xA, 1);
+						INVINCIBILITY_FRAMES = 20;
+					}
+
 					//Grabbing
 					if (GRABBED_SPRITE == 0xFF)
 					{

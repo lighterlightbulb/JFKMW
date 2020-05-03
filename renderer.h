@@ -225,8 +225,9 @@ void render()
 	}
 	//just debug for now. ignore this ugly shit
 	draw8x8_tile_2bpp(24, 15 + 8, 0x26, 1, 2);
+	//draw_number_dec(24, 15 + 8, Mario.size());
 
-	draw_number_hex(40, 15+8, SelfPlayerNumber, 2);
+	draw_number_hex(40, 15+8, uint_fast16_t(Mario.size()), 2);
 	draw_number_hex(256 - 88, 15, int(LocalPlayer.x), 4);
 	draw_number_hex(256 - 48, 15, int(LocalPlayer.y), 4);
 

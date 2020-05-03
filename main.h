@@ -81,7 +81,7 @@ void player_code()
 				break;
 			}
 
-			if (state[SDL_SCANCODE_R])
+			if (state[SDL_SCANCODE_R] || SDL_GameControllerGetButton(gGameController, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER))
 			{
 				s_or_c = "t";
 				break;
