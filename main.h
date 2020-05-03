@@ -172,14 +172,6 @@ void player_code()
 			total_time_ticks = chrono::duration_cast<chrono::duration<double>>(t2 - t1);
 			doing_write = false;
 
-
-			GetCheatHwnd();
-			if (cheating)
-			{
-				cout << red << "STOP CHEATING BRUH! CHEATING AINT FUNNY!" << white << endl;
-				disconnected = true;
-			}
-
 			if (disconnected) {
 				quit = true; cout << red << "[Network] Disconnected." << white << endl; break;
 			}
