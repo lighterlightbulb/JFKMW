@@ -458,7 +458,7 @@ public:
 					}
 
 					//Powerups
-					if (ServerRAM.RAM[0x2000 + sprite] == 5)
+					if (ServerRAM.RAM[0x2000 + sprite] == 5 && STATE == 0)
 					{
 						STATE = 1;
 						ServerRAM.RAM[0x2000 + sprite] = 0;
