@@ -82,28 +82,28 @@ void lua_connect_functions(lua_State* L)
 */
 
 
-void lua_loadfile(string file)
+void lua_loadfile(string file, lua_State* L = LUA_STATE)
 {
-	if (LUA_STATE)
+	if (L)
 	{
-		lua_close(LUA_STATE);
+		lua_close(L);
 	}
 
-	LUA_STATE = luaL_newstate();
-	luaL_openlibs(LUA_STATE); // load default Lua libs
+	L = luaL_newstate();
+	luaL_openlibs(L); // load default Lua libs
 
 
-	int ret = luaL_dofile(LUA_STATE, (path + file).c_str());
+	int ret = luaL_dofile(L, (path + file).c_str());
 	if (ret != 0)
 	{
 		lua_print("Error occurs when calling luaL_dofile() Hint Machine 0x%x\n" + ret);
-		lua_print("Error: " + string(lua_tostring(LUA_STATE, -1)));
+		lua_print("Error: " + string(lua_tostring(L, -1)));
 		return;
 	}
 
 
 	//main connectors back to jfk mario world.
-	lua_connect_functions(LUA_STATE);
+	lua_connect_functions(L);
 
 	lua_print("loaded " + path + file);
 }
