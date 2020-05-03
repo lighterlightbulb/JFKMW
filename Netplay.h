@@ -203,13 +203,13 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool for_validating = false)
 
 			CurrentPacket >> username;
 			CurrentPacket >> validation;
-			if (validation == da_epical_function_lol())
-			{
-				cout << blue << "[Client] " << username << " has passed verification." << white << endl;
-				validated_connection = true;
-				return;
-			}
-			cout << blue << "[Client] Failed verification." << white << endl;
+			//if (validation == da_epical_function_lol())
+			//{
+			cout << blue << "[Client] " << username << " has passed verification." << white << endl;
+			validated_connection = true;
+			//	return;
+			//}
+			//cout << blue << "[Client] Failed verification." << white << endl;
 		}
 		return;
 	}
@@ -241,7 +241,7 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool for_validating = false)
 				return; //once again fuck off
 			}
 			
-			PlayerAmount = clients.size(); CheckForPlayers();
+			PlayerAmount = int(clients.size()); CheckForPlayers();
 			take_mario_data(get_mario(PlrNum));
 			//cout << "attempting to update player " << PlrNum << endl;
 		}
@@ -513,7 +513,7 @@ bool ConnectClient(void)
 	if (socketG.connect(ip, PORT) != sf::Socket::Disconnected)
 	{
 		PreparePacket(Header_AttemptJoin);
-		CurrentPacket << username; CurrentPacket << da_epical_function_lol();
+		CurrentPacket << username; //CurrentPacket << da_epical_function_lol();
 		SendPacket();
 		sf::sleep(sf::milliseconds(500));
 		receive_all_packets(socketG, true);
