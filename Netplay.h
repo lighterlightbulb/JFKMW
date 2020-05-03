@@ -164,13 +164,17 @@ void SendPacket(sf::TcpSocket* ToSend = nullptr) {
 
 	if (!isClient) {
 		if (ToSend != nullptr) {
+			ToSend->setBlocking(false);
 			send_not_blocking(ToSend);
+			ToSend->setBlocking(true);
 		}
 		else
 		{
 			for (int i = 0; i < clients.size(); ++i) {
 				ToSend = clients[i];	
+				ToSend->setBlocking(false);
 				send_not_blocking(ToSend);
+				ToSend->setBlocking(true);
 			}
 		}
 	}
@@ -190,7 +194,8 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool for_validating = false)
 
 	if (for_validating == true)
 	{
-		if (CurrentPacket_header == Header_AttemptJoin)
+		validated_connection = false;
+		if (CurrentPacket_header == Header_AttemptJoin && CurrentPacket.getDataSize() < 64) //Why would the verification packet be bigger than 64 bytes? It's only username and checksum so.
 		{
 			cout << blue << "[Client] Receiving verification.." << white << endl;
 
@@ -205,8 +210,13 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool for_validating = false)
 				return;
 			}
 			cout << blue << "[Client] Failed verification." << white << endl;
-			validated_connection = false;
 		}
+		return;
+	}
+	if (!isClient && CurrentPacket.getDataSize() != 85) //Player only sends things to update their data, so they shouldn't send stuff that big.
+	{
+		cout << blue << "[Network] Something's weird, " << whoSentThis.getRemoteAddress() << " sent a packet that wasn't 85 bytes! (" << dec << CurrentPacket.getDataSize() << " bytes) Disconnecting!" << white << endl;
+		HandleDisconnection(&whoSentThis);
 		return;
 	}
 	/*
@@ -223,12 +233,15 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool for_validating = false)
 		*/
 		if (CurrentPacket_header == Header_UpdatePlayerData)
 		{
-			uint_fast8_t PlrNum = 1; CurrentPacket >> PlrNum; 
-			if (PlrNum > PlayerAmount)
+			uint_fast8_t PlrNum = 1; CurrentPacket >> PlrNum;
+			if (PlrNum > clients.size() || PlrNum == 0)
 			{
-				PlayerAmount = PlrNum;
-				CheckForPlayers();
+				cout << blue << "[Network] Something's weird, " << whoSentThis.getRemoteAddress() << " sent a invalid player packet. Disconnecting!" << white << endl;
+				HandleDisconnection(&whoSentThis);
+				return; //once again fuck off
 			}
+			
+			PlayerAmount = clients.size(); CheckForPlayers();
 			take_mario_data(get_mario(PlrNum));
 			//cout << "attempting to update player " << PlrNum << endl;
 		}
