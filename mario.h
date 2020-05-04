@@ -591,7 +591,6 @@ public:
 
 	int Process()
 	{
-		STATE = 1;
 		getInput();
 
 		height = (STATE > 0 && CROUCH == 0) ? 28.0 : 14.0;
