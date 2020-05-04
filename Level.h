@@ -118,6 +118,14 @@ public:
 						auto name = line.substr(0, delimiterPos);
 						auto value = line.substr(delimiterPos + 1);
 
+						if (name == "music")
+						{
+							ASM.Write_To_Ram(0x1DFB, stoi(value, nullptr, 16), 1);
+						}
+						if (name == "background")
+						{
+							ASM.Write_To_Ram(0x3F05, stoi(value, nullptr, 16), 1);
+						}
 						// cout << green << "[Level Manager] adding level config entry " << name << " = " << value << white << endl;
 						add_entry(name, stoi(value));
 					}
@@ -234,16 +242,12 @@ public:
 
 	void Initialize_Level()
 	{
-		ASM.Write_To_Ram(0x1DFB, request_level_entry("music"), 1);
-		ASM.Write_To_Ram(0x3F05, request_level_entry("background"), 1);
-
 		ASM.Write_To_Ram(0x1411, 1, 1);
 		ASM.Write_To_Ram(0x1412, 1, 1);
 
 		ASM.Write_To_Ram(0x36, 0, 1);
 
 		recent_big_change = true;
-
 		Set_Server_RAM();
 	}
 

@@ -5,21 +5,23 @@
 int_fast16_t CameraX, CameraY;
 uint_fast8_t curr_bg = 0xFF;
 
-void draw_number_hex(int pos_x, int pos_y, uint_fast16_t number, int length)
+void draw_number_hex(uint_fast8_t pos_x, uint_fast8_t pos_y, uint_fast16_t number, int length)
 {
 	for (int i = 0; i < length; i++)
 	{
-		draw8x8_tile_2bpp(pos_x - i*8, pos_y, (number >> (i << 2)) & 0xF, 1, 2);
+		VRAM[0xB800 + (-i * 2) + (pos_x * 2) + pos_y * 64] = (number >> (i << 2)) & 0xF;
+		VRAM[0xB801 + (-i * 2) + (pos_x * 2) + pos_y * 64] = 6;
 	}
 
 }
 
-void draw_number_dec(int pos_x, int pos_y, int number)
+void draw_number_dec(uint_fast8_t pos_x, uint_fast8_t pos_y, int number)
 {
 	int length = int(to_string(number).length());
 	for (int i = 0; i < length; i++)
 	{
-		draw8x8_tile_2bpp(pos_x - i * 8, pos_y, int(number / pow(10, i)) % 10, 1, 2);
+		VRAM[0xB800 + (-i * 2) + (pos_x * 2) + pos_y * 64] = int(number / pow(10, i)) % 10;
+		VRAM[0xB801 + (-i * 2) + (pos_x * 2) + pos_y * 64] = 6;
 	}
 
 }
@@ -214,63 +216,69 @@ void render()
 	SDL_LockSurface(&screen_s_l2);
 	SDL_Surface *screen_plane_sequel = &screen_s_l2;
 	SDL_memset(screen_plane_sequel->pixels, 0, screen_plane_sequel->h * screen_plane_sequel->pitch);
-	
-	//StatusBar
+
+	//Status bar code here
 	string player_name_c = username;
 	transform(player_name_c.begin(), player_name_c.end(), player_name_c.begin(), ::tolower);
 	for (int i = 0; i < 5; i++)
 	{
-		draw8x8_tile_2bpp(16 + i * 8, 15, uint_fast8_t(player_name_c.at(i)) - 0x57, 0, 2);
-
+		VRAM[0xB804 + (i * 2) + 128] = uint_fast8_t(player_name_c.at(i)) - 0x57;
+		VRAM[0xB805 + (i * 2) + 128] = 2;
 	}
-	//just debug for now. ignore this ugly shit
-	draw8x8_tile_2bpp(24, 15 + 8, 0x26, 1, 2);
-	//draw_number_dec(24, 15 + 8, Mario.size());
 
-	draw_number_hex(40, 15+8, uint_fast16_t(Mario.size()), 2);
-	draw_number_hex(256 - 88, 15, int(LocalPlayer.x), 4);
-	draw_number_hex(256 - 48, 15, int(LocalPlayer.y), 4);
+	//Lives
+	VRAM[0xB806 + 192] = 0x26;
+	VRAM[0xB807 + 192] = 0x6;
+	draw_number_hex(5, 3, uint_fast16_t(Mario.size()), 2);
 
-	draw_number_hex(256 - 48 - 80, 15, uint_fast16_t(LocalPlayer.Y_SPEED*256.0), 4);
-	draw_number_hex(256 - 88 - 80, 15, uint_fast16_t(LocalPlayer.X_SPEED*256.0), 4); //y
+	//Player X/Y
+	draw_number_hex(21, 2, int(LocalPlayer.x), 4);
+	draw_number_hex(26, 2, int(LocalPlayer.y), 4);
 
-	draw8x8_tile_2bpp(8 * 10, 15 + 8, networking ? 0x17 : 0x15, 1, 2);
-	draw8x8_tile_2bpp(8 * 9, 15 + 8, 0x50, 1, 2);
-	draw8x8_tile_2bpp(8 * 8, 15 + 8, isClient ? 0xC : 0x1C, 1, 2);
+	//Player Speed X/Y
+	draw_number_hex(16, 2, uint_fast16_t(LocalPlayer.Y_SPEED * 256.0), 4);
+	draw_number_hex(11, 2, uint_fast16_t(LocalPlayer.X_SPEED * 256.0), 4);
 
-	draw_number_hex(256 - 24, 15, ServerRAM.RAM[0x14] , 2);
+	//Networking symbols
+	VRAM[0xB800 + 20 + 192] = networking ? 0x17 : 0x15; VRAM[0xB801 + 20 + 192] = 6;
+	VRAM[0xB800 + 18 + 192] = 0x50; VRAM[0xB801 + 18 + 192] = 6;
+	VRAM[0xB800 + 16 + 192] = isClient ? 0xC : 0x1C; VRAM[0xB801 + 16 + 192] = 6;
 
-	draw8x8_tile_2bpp(256 - 32, 15 + 8, 0x16, 1, 2); //MS
-	draw8x8_tile_2bpp(256 - 24, 15 + 8, 0x1C, 1, 2);
-	draw_number_dec(256 - 40, 15 + 8, int(latest_server_response.count()*1000.0));
+	//FCounter
+	draw_number_hex(29, 2, ServerRAM.RAM[0x14], 2);
 
-	draw8x8_tile_2bpp(128 - 8, 15 + 8, 0x14, 1, 2); //KB
-	draw8x8_tile_2bpp(128, 15 + 8, 0xB, 1, 2);
-	
-	for (int i = 0; i < 7; i++)
-	{
-		draw8x8_tile_2bpp(0 + i * 8, 0, LocalPlayer.pad[i], 0, 2);
-	}
-	
-	
-	draw8x8_tile_2bpp(128 - 20, 15 + 8, 0x24, 1, 2); //.
-	draw_number_dec(128 - 16, 15 + 8, (data_size_current/512) % 10);
-	draw_number_dec(128 - 27, 15 + 8, data_size_current/1024);
+	//Ping
+	VRAM[0xB800 + 56 + 192] = 0x16;	VRAM[0xB801 + 56 + 192] = 6;
+	VRAM[0xB800 + 58 + 192] = 0x1C;	VRAM[0xB801 + 58 + 192] = 6;
+	draw_number_dec(27, 3, int(latest_server_response.count() * 1000.0));
+
+	//FPS
+	VRAM[0xB800 + 44 + 192] = 0xF;	VRAM[0xB801 + 44 + 192] = 6;
+	VRAM[0xB800 + 46 + 192] = 0x19;	VRAM[0xB801 + 46 + 192] = 6;
+	VRAM[0xB800 + 48 + 192] = 0x1C;	VRAM[0xB801 + 48 + 192] = 6;
+	draw_number_dec(21, 3, int(1.0 / (total_time_ticks.count() / 1.0)));
+
+	//KB
+	//VRAM[0xB800 + 26 + 192] = 0x24;	VRAM[0xB801 + 26 + 192] = 6;
+	VRAM[0xB800 + 30 + 192] = 0x14;	VRAM[0xB801 + 30 + 192] = 6;
+	VRAM[0xB800 + 32 + 192] = 0x0B;	VRAM[0xB801 + 32 + 192] = 6;
+	//draw_number_dec(14, 3, (data_size_current / 512) % 10);
+	draw_number_dec(14, 3, data_size_current / 1024);
+
 	data_size_current = 0;
 
-	draw8x8_tile_2bpp(256 - 32 - 48, 15 + 8, 0xF, 1, 2); //FPS
-	draw8x8_tile_2bpp(256 - 24 - 48, 15 + 8, 0x19, 1, 2);
-	draw8x8_tile_2bpp(256 - 16 - 48, 15 + 8, 0x1C, 1, 2);
-	draw_number_dec(256 - 40 - 48, 15 + 8, int(1.0/ (total_time_ticks.count()/1.0) ) );
-	
 
-	/*for (uint_fast8_t x_st = 0; x_st < 32; x_st++)
+	//Draw L3
+	for (uint_fast8_t t3_x = 0; t3_x < 32; t3_x++)
 	{
-		for (uint_fast8_t y_st = 0; y_st < 32; x_st++)
+		for (uint_fast8_t t3_y = 0; t3_y < 28; t3_y++)
 		{
-			draw8x8_tile_2bpp(x_st << 3, y_st << 3, VRAM[0xD000 + (y_st << 5) + x_st], VRAM[0xE000 + (y_st << 5) + x_st], 2);
+			if (VRAM[0xB800 + (t3_x * 2) + t3_y * 64] != 0xFC)
+			{
+				draw8x8_tile_2bpp(t3_x * 8, t3_y * 8, VRAM[0xB800 + (t3_x * 2) + t3_y * 64], VRAM[0xB801 + (t3_x * 2) + t3_y * 64]);
+			}
 		}
-	}*/
+	}
 
 	SDL_UnlockSurface(&screen_s_l2);
 

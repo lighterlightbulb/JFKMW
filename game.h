@@ -5,6 +5,12 @@ void game_init()
 {
 	decode_graphics_file("Graphics/exanimations.bin", 8);
 	decode_graphics_file("Graphics/hud.bin", 11);
+	for (uint_fast16_t l = 0; l < 0x800; l += 2)
+	{
+		ServerRAM.RAM[VRAM_Location + 0xB800 + l] = 0xFC;
+		ServerRAM.RAM[VRAM_Location + 0xB800 + l + 1] = 0x00;
+
+	}
 }
 
 void game_loop()

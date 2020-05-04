@@ -295,24 +295,26 @@ void draw8x8_tile(int_fast16_t x, int_fast16_t y, uint_fast16_t tile, uint_fast8
 
 
 
-void draw8x8_tile_2bpp(uint_fast8_t x, uint_fast8_t y, uint_fast16_t tile, uint_fast8_t palette, uint_fast8_t palette_offs)
+void draw8x8_tile_2bpp(uint_fast8_t x, uint_fast8_t y, uint_fast16_t tile, uint_fast8_t palette_offs)
 {
 
 	uint_fast8_t color1;
-	uint8_t graphics_array[2];
+	uint8_t graphics_array[16];
 	tile = tile << 4;
+	memcpy(graphics_array, &VRAM[0XB000 + tile], 16 * sizeof(uint_fast8_t));
 
 	for (uint_fast8_t index = 0; index < 16; index += 2)
 	{
-		memcpy(graphics_array, &VRAM[0XB000 + tile + index], 2 * sizeof(uint_fast8_t));
-
 		for (uint_fast8_t i = 0; i < 8; i++)
 		{
-			color1 = get_bit(graphics_array[0], i) + (get_bit(graphics_array[1], i)<<1);
-
-			if (color1 != 0)
-			{
-				drawRect(7 - i + x, y + (index >> 1), color1 + (palette << 4) + (palette_offs << 2), &screen_s_l2);
+			color1 = ((graphics_array[0 + index] >> i) & 1) + (((graphics_array[1 + index] >> i) & 1) << 1);
+			if (color1 != 0) {
+				uint_fast16_t c = palette_array[color1 + (palette_offs << 2)];
+				Uint32* p_screen = (Uint32*)(&screen_s_l2)->pixels + (7 - i + x) + ((y + (index >> 1)) << 8);
+				*p_screen = 0xFF000000 +
+					(((c & 0x1F) << 3)) +
+					(((c >> 5) & 0x1F) << 11) +
+					((c >> 10) << 19);
 			}
 		}
 	}

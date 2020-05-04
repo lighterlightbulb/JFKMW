@@ -313,17 +313,16 @@ public:
 			rom[offset_pointer + current_byte] = uint8_t(v); current_byte += 1;
 			
 		}
-		//cout << red << "[ASM] Loaded " << file << " to offset " << hex << offset_pointer << ", " << dec << current_byte << " bytes loaded. " << white << endl;
 	}
 
-	void Write_To_Ram(uint_fast16_t pointer, uint_fast32_t value, uint_fast8_t size = 1)
+	void Write_To_Ram(uint_fast32_t pointer, uint_fast32_t value, uint_fast8_t size = 1)
 	{
 		for (uint_fast8_t i = 0; i < size; i++) {
 			ServerRAM.RAM[pointer + i] = uint_fast8_t(value >> (i * 8));
 		}
 	}
 
-	uint_fast32_t Get_Ram(uint_fast16_t pointer, uint_fast8_t size = 1)
+	uint_fast32_t Get_Ram(uint_fast32_t pointer, uint_fast8_t size = 1)
 	{
 		uint_fast32_t temp = 0;
 		for (uint_fast8_t i = 0; i < size; i++) {

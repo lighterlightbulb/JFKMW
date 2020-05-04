@@ -28,7 +28,7 @@ static int lua_write(lua_State* L) {
 
 static int lua_write_ram(lua_State* L) {
 	uint_fast32_t n = (uint_fast32_t)lua_tonumber(L, 1);
-	uint_fast16_t p = (uint_fast16_t)lua_tointeger(L, 2);
+	uint_fast32_t p = (uint_fast16_t)lua_tointeger(L, 2);
 	uint_fast8_t s = (uint_fast8_t)lua_tointeger(L, 3);
 
 	ASM.Write_To_Ram(p, n, s);
@@ -38,7 +38,7 @@ static int lua_write_ram(lua_State* L) {
 
 extern "C" int lua_get_ram(lua_State* L)
 {
-	uint_fast16_t p = (uint_fast16_t)lua_tointeger(L, 1); // First argument
+	uint_fast32_t p = (uint_fast16_t)lua_tointeger(L, 1); // First argument
 	uint_fast8_t s = (uint_fast8_t)lua_tointeger(L, 2); // First argument
 
 	double result = double(int_fast32_t(ASM.Get_Ram(p, s)));
