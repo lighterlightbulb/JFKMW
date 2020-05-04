@@ -4,6 +4,7 @@
 #define camBoundY 32.0
 int_fast16_t CameraX, CameraY;
 uint_fast8_t curr_bg = 0xFF;
+uint_fast8_t screen_darken = 0;
 
 void draw_number_hex(uint_fast8_t pos_x, uint_fast8_t pos_y, uint_fast16_t number, int length)
 {
@@ -59,6 +60,18 @@ void render()
 	if (Mario.size() < 1 || SelfPlayerNumber < 1)
 	{
 		return;
+	}
+
+	if (ServerRAM.RAM[0x1493] > 0)
+	{
+		if (screen_darken < 255)
+		{
+			screen_darken += 1;
+		}
+	}
+	else
+	{
+		screen_darken = 0;
 	}
 
 	for (uint_fast16_t i = 0; i < 256; i++)
@@ -166,6 +179,12 @@ void render()
 	SDL_DestroyTexture(screen_t_l1);
 	screen_t_l1 = SDL_CreateTextureFromSurface(ren, &screen_s_l1);
 	SDL_RenderCopy(ren, screen_t_l1, nullptr, &DestR);
+
+	//Draw screen darkening
+	SDL_SetRenderDrawColor(ren, 0, 0, 0, (screen_darken >> 3) << 3);
+	SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_BLEND);
+	SDL_RenderFillRect(ren, NULL);
+	SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_NONE);
 
 	//Draw Mario
 	for (list<MPlayer>::iterator item = Mario.begin(); item != Mario.end(); ++item)

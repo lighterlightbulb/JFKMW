@@ -17,7 +17,7 @@ uint_fast8_t spawnSpriteJFKMarioWorld(uint_fast8_t sprite_num, uint_fast8_t new_
 			ServerRAM.RAM[0x2280 + i] = uint_fast8_t(y & 0xFF);
 			ServerRAM.RAM[0x2300 + i] = uint_fast8_t(y >> 8);
 			ServerRAM.RAM[0x2380 + i] = 0;
-
+			ServerRAM.RAM[0x2600 + i] = 0;
 			ServerRAM.RAM[0x2400 + i] = 0;
 			ServerRAM.RAM[0x2480 + i] = 0;
 
@@ -25,7 +25,7 @@ uint_fast8_t spawnSpriteJFKMarioWorld(uint_fast8_t sprite_num, uint_fast8_t new_
 
 			ServerRAM.RAM[0x2700 + i] = 0;
 
-			ServerRAM.RAM[0x2E00 + i] = 0x08;
+			ServerRAM.RAM[0x2E00 + i] = 0x01;
 
 
 			ServerRAM.RAM[0x2800 + i] = is_lua;

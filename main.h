@@ -12,7 +12,7 @@ void player_code()
 	init_audio();
 
 	Mix_HaltMusic();
-	string file = path + "Sounds/music/boot.ogg";
+	string file = path + "Sounds/music/_boot.ogg";
 	music = Mix_LoadMUS(file.c_str());
 	Mix_PlayMusic(music, 1);
 

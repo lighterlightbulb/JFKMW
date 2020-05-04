@@ -127,7 +127,7 @@ void redraw()
 	SDL_Rect rect;
 	if (w != (scale * 256) || h != (scale * 224))
 	{
-		rect = { 0,0,w, sp_offset_y}; SDL_RenderFillRect(ren, &rect); //simulate v-blank quirk
+		rect = { 0,0,w, sp_offset_y}; SDL_RenderFillRect(ren, &rect);
 		rect = { 0,h - sp_offset_y,w,sp_offset_y }; SDL_RenderFillRect(ren, &rect);
 		rect = { 0,0,sp_offset_x, h }; SDL_RenderFillRect(ren, &rect);
 		rect = { w - sp_offset_x,0,sp_offset_x,h }; SDL_RenderFillRect(ren, &rect);

@@ -26,6 +26,18 @@ void game_loop()
 		}
 	}
 #endif
+	if (!isClient && ServerRAM.RAM[0x1493] > 0)
+	{
+		if ((global_frame_counter % 3) == 0)
+		{
+			ServerRAM.RAM[0x1493] -= 1;
+		}
+		if (ServerRAM.RAM[0x1493] == 0)
+		{
+			LevelManager.LoadLevel(uint_fast16_t(ASM.Get_Ram(0x3F0A, 2)));
+			game_init();
+		}
+	}
 
 	mapWidth = ServerRAM.RAM[0x3F00] + ServerRAM.RAM[0x3F01] * 256;
 	if (mapWidth == 0)

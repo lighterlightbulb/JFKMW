@@ -108,7 +108,14 @@ public:
 		//Controller buttons currently held down. Format: byetUDLR.
 		//b = A or B; y = X or Y; e = select; t = Start; U = up; D = down; L = left, R = right.
 
-
+		if (ServerRAM.RAM[0x1493] > 0)
+		{
+			for (int inputs = 0; inputs < total_inputs; inputs++)
+			{
+				pad[inputs] = false;
+			}
+			return;
+		}
 		if (PlayerControlled)
 		{
 			pad[button_y] = (state[input_settings[0]] || state[input_settings[3]]) || (BUTTONS_GAMEPAD[7] || BUTTONS_GAMEPAD[6]);
@@ -584,6 +591,7 @@ public:
 
 	int Process()
 	{
+		STATE = 1;
 		getInput();
 
 		height = (STATE > 0 && CROUCH == 0) ? 28.0 : 14.0;
@@ -792,27 +800,28 @@ public:
 		{
 			//Camera lol
 
+			double new_x = x;
 			
-			if (CAMERA_X < x)
+			if (CAMERA_X < new_x)
 			{
 				CAMERA_X += 5.0;
-				if (CAMERA_X > x)
+				if (CAMERA_X > new_x)
 				{
-					CAMERA_X = x;
+					CAMERA_X = new_x;
 				}
 			}
 
-			if (CAMERA_X > x)
+			if (CAMERA_X > new_x)
 			{
 				CAMERA_X -= 5.0;
-				if (CAMERA_X < x)
+				if (CAMERA_X < new_x)
 				{
-					CAMERA_X = x;
+					CAMERA_X = new_x;
 				}
 			}
+			
 
-			//CAMERA_X = x;
-			//CAMERA_X += (x - CAMERA_X) / 20.0;
+			//CAMERA_X += (new_x - CAMERA_X) / 10.0;
 		}
 
 		if (ServerRAM.RAM[0x1412] == 0) {
@@ -820,6 +829,7 @@ public:
 		}
 		else {
 			double new_y = (y + 16);
+			
 			if (CAMERA_Y < new_y)
 			{
 				CAMERA_Y += 4.0;
@@ -837,6 +847,7 @@ public:
 					CAMERA_Y = new_y;
 				}
 			}
+			//CAMERA_Y += (new_y - CAMERA_Y) / 10.0;
 		}
 
 		if (x < 8.0) { x = 8.0; }
