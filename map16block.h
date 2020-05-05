@@ -15,7 +15,8 @@
 #define ram_level_high 0xC000
 
 
-uint8_t map16_entries[tile_table_size * 0xFFFF]; //65535 entries.
+uint_fast8_t map16_entries[tile_table_size * 0x200];
+uint_fast8_t spawned_grabbable = 0xFF;
 
 void reset_map()
 {
@@ -148,7 +149,8 @@ public:
 				replace_map_tile(0x0025, x, y);
 				x *= 16;
 				y *= 16;
-				spawnSpriteJFKMarioWorld(0x53, 2, x, y, 0, true);
+				spawned_grabbable = spawnSpriteJFKMarioWorld(0x53, 2, x, y, 0, true);
+				//cout << "new spawned grabbable : 0x" << hex << int(spawned_grabbable) << endl;
 
 			}
 		}

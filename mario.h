@@ -340,6 +340,12 @@ public:
 						}
 					}
 
+					if (spawned_grabbable != 0xFF)
+					{
+						GRABBED_SPRITE = spawned_grabbable;
+						ServerRAM.RAM[0x2000 + GRABBED_SPRITE] = 0x03;
+						spawned_grabbable = 0xFF;
+					}
 				}
 			}
 		}
@@ -432,6 +438,7 @@ public:
 						if (Y_SPEED <= 0)
 						{
 							NewPositionY = AboveSprite;
+							results[2] = true;
 						}
 						if (do_change)
 						{
@@ -439,10 +446,6 @@ public:
 							NewPositionY += double(int_fast8_t(ServerRAM.RAM[0x2480 + sprite]) * 16) / 256.0;
 						}
 
-						if (!do_change)
-						{
-							results[2] = true;
-						}
 
 					}
 					if (checkBottom && yMove > 0.0 && NewPositionY > BelowSprite && NewPositionY < BelowSprite + bounds_y)
@@ -592,6 +595,12 @@ public:
 	int Process()
 	{
 		getInput();
+		if (pad[button_y] != old_y) {
+			old_y = pad[button_y];
+			if (old_y) {
+				pressed_y = true;
+			}
+		}
 
 		height = (STATE > 0 && CROUCH == 0) ? 28.0 : 14.0;
 
@@ -637,7 +646,7 @@ public:
 			}
 
 			SKIDDING = 0;
-			if (abs(X_SPEED) >= Calculate_Speed_X(576.0)) {
+			if (abs(X_SPEED) >= Calculate_Speed(576.0)) {
 
 				SLIGHT_HIGH_SPEED = true;
 				if (pad[button_y] && (pad[button_left] || pad[button_right]))
@@ -697,16 +706,10 @@ public:
 			}
 
 			pressed_y = false;
-			if (pad[button_y] != old_y) {
-				old_y = pad[button_y];
-				if (old_y) {
-					pressed_y = true;
-				}
-			}
 			if (pad[button_b] != was_jumpin) {
 				was_jumpin = pad[button_b];
 				if (was_jumpin && ON_FL) {
-					Y_SPEED = Calculate_Speed(1232.0 + (148.0 * SLIGHT_HIGH_SPEED) + (32.0 * (X_SPEED > Calculate_Speed_X(320+256+176))));
+					Y_SPEED = Calculate_Speed(1232.0 + (abs(X_SPEED)*64.0)); //(148.0 * SLIGHT_HIGH_SPEED) + (32.0 * (X_SPEED > Calculate_Speed(320+256+176)))
 					ASM.Write_To_Ram(0x1DFC, 0x35, 1);
 				}
 			}
@@ -714,10 +717,10 @@ public:
 				GRAV = GRAV * 0.5;
 			}
 
-			double SPEED_X_TO_SET = Calculate_Speed_X(320.0 + (RUN * 256.0) + (CAN_SPRINT * 192.0)) * WALKING_DIR;
-			double SPEED_ACCEL_X = Calculate_Speed_X(24.0);
-			double STOPPING_DECEL = Calculate_Speed_X(16.0);
-			double SKID_ACCEL = Calculate_Speed_X(16.0 + (24.0 * RUN) + (CAN_SPRINT * 40.0));
+			double SPEED_X_TO_SET = Calculate_Speed(320.0 + (RUN * 256.0) + (CAN_SPRINT * 192.0)) * WALKING_DIR;
+			double SPEED_ACCEL_X = Calculate_Speed(24.0);
+			double STOPPING_DECEL = Calculate_Speed(16.0);
+			double SKID_ACCEL = Calculate_Speed(16.0 + (24.0 * RUN) + (CAN_SPRINT * 40.0));
 
 			if (MOV != 0) {
 				if (X_SPEED > 0.0 && SPEED_X_TO_SET < 0.0 && WALKING_DIR == -1) {

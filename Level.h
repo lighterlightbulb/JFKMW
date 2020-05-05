@@ -121,10 +121,12 @@ public:
 						if (name == "music")
 						{
 							ASM.Write_To_Ram(0x1DFB, stoi(value, nullptr, 16), 1);
+							continue;
 						}
 						if (name == "background")
 						{
 							ASM.Write_To_Ram(0x3F05, stoi(value, nullptr, 16), 1);
+							continue;
 						}
 						// cout << green << "[Level Manager] adding level config entry " << name << " = " << value << white << endl;
 						add_entry(name, stoi(value));
@@ -246,6 +248,7 @@ public:
 		ASM.Write_To_Ram(0x1412, 1, 1);
 
 		ASM.Write_To_Ram(0x36, 0, 1);
+		ASM.Write_To_Ram(0x1493, 0, 1);
 
 		recent_big_change = true;
 		Set_Server_RAM();

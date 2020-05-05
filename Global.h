@@ -102,10 +102,6 @@ double Calculate_Speed(double speed)
 {
 	return speed / 256.0;
 }
-double Calculate_Speed_X(double speed)
-{
-	return speed / 256.0;
-}
 
 string int_to_hex(int T, bool add_0 = false)
 {
