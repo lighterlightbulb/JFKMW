@@ -695,10 +695,11 @@ public:
 		else {
 			ON_FL = false;
 			if (!Move(0.0, -1.0, true)) { //Detected a floor below
-				jump_is_spin = false;
+				
 				if (Y_SPEED <= 0)
 				{
 					ON_FL = true;
+					jump_is_spin = false;
 				}
 				else
 				{
@@ -1003,7 +1004,14 @@ void PlayerInteraction()
 					double DownBound = PlrInteract.y - (CurrPlayer.STATE == 0 ? 16.0 : 32.0);
 					if (CurrPlayer.x > LeftBound && CurrPlayer.x < RightBound && CurrPlayer.y < UpBound && CurrPlayer.y > DownBound && CurrPlayer.Y_SPEED < -2.0)
 					{
-						CurrPlayer.Enemy_Jump();
+						if (CurrPlayer.jump_is_spin)
+						{
+							CurrPlayer.Enemy_Jump_Spin();
+						}
+						else
+						{
+							CurrPlayer.Enemy_Jump();
+						}
 						PlrInteract.Hurt();
 					}
 				}

@@ -15,7 +15,7 @@
 #define ram_level_high 0xC000
 
 
-uint_fast8_t map16_entries[tile_table_size * 0x200];
+uint_fast8_t map16_entries[tile_table_size * 0x10000];
 uint_fast8_t spawned_grabbable = 0xFF;
 
 void reset_map()
