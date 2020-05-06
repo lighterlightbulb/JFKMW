@@ -58,6 +58,8 @@ void put_mario_data_in(MPlayer& CurrentMario)
 
 	CurrentPacket << CurrentMario.CAMERA_X; CurrentPacket << CurrentMario.CAMERA_Y;
 
+	CurrentPacket << CurrentMario.jump_is_spin;
+
 	CurrentPacket << CurrentMario.skin; CurrentPacket << CurrentMario.in_pipe; CurrentPacket << CurrentMario.pipe_speed;
 	for (int inputs = 0; inputs < total_inputs; inputs++)
 	{
@@ -81,6 +83,8 @@ void take_mario_data(MPlayer& CurrentMario)
 	CurrentPacket >> CurrentMario.COINS; CurrentPacket >> CurrentMario.player_index;
 
 	CurrentPacket >> CurrentMario.CAMERA_X; CurrentPacket >> CurrentMario.CAMERA_Y;
+
+	CurrentPacket >> CurrentMario.jump_is_spin;
 
 	CurrentPacket >> CurrentMario.skin; CurrentPacket >> CurrentMario.in_pipe; CurrentPacket >> CurrentMario.pipe_speed;
 	for (int inputs = 0; inputs < total_inputs; inputs++)
@@ -260,6 +264,7 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool for_validating = false)
 		if (CurrentPacket_header == Header_MusicData)
 		{
 			ReceiveMusic();
+			Sync_Server_RAM(false);
 		}
 
 		if (CurrentPacket_header == Header_GlobalUpdate)
@@ -439,6 +444,7 @@ void Server_To_Clients()
 		{
 			PreparePacket(Header_MusicData);
 			SendMusic();
+			Push_Server_RAM(false);
 			SendPacket();
 			need_sync_music = false;
 		}

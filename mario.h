@@ -42,6 +42,7 @@ public:
 	bool old_y = false;
 
 	bool in_pipe = false;
+	bool jump_is_spin = false; //If a jump is a spinjump
 	int_fast8_t pipe_speed = 0;
 
 
@@ -131,7 +132,23 @@ public:
 
 	void Enemy_Jump()
 	{
-		if (pad[button_b])
+		if (!jump_is_spin)
+		{
+			if (pad[button_b])
+			{
+				Y_SPEED = Calculate_Speed(1408);
+			}
+			else
+			{
+				Y_SPEED = Calculate_Speed(800);
+			}
+		}
+	}
+
+	void Enemy_Jump_Spin()
+	{
+		ASM.Write_To_Ram(0x1DF9, 0x2, 1);
+		if (pad[button_b] || pad[button_a])
 		{
 			Y_SPEED = Calculate_Speed(1408);
 		}
@@ -407,7 +424,23 @@ public:
 							{
 								NewPositionY += 1;
 								Enemy_Jump();
-								results[2] = true;
+								if (jump_is_spin)
+								{
+									if (ServerRAM.RAM[0x2880 + sprite] & 1)
+									{
+										ServerRAM.RAM[0x2000 + sprite] = 0;
+										Y_SPEED = Calculate_Speed(128);
+										ASM.Write_To_Ram(0x1DF9, 0x8, 1);
+									}
+									else
+									{
+										Enemy_Jump_Spin();
+									}
+								}
+								else
+								{
+									results[2] = true;
+								}
 							}
 							else
 							{
@@ -416,7 +449,14 @@ public:
 						}
 						else
 						{
-							Hurt();
+							if (jump_is_spin && NewPositionY > (AboveSprite - bounds_y))
+							{
+								Enemy_Jump_Spin();
+							}
+							else
+							{
+								Hurt();
+							}
 						}
 					}
 
@@ -502,11 +542,34 @@ public:
 	}
 	void Get_Sprite()
 	{
-		string NewSprite = "STAND";
-
 		if (DEAD)
 		{
 			sprite = "DEAD";
+			return;
+		}
+		string NewSprite = "STAND";
+		if (jump_is_spin && !ON_FL)
+		{
+			switch ((global_frame_counter / 2) % 4) {
+			case 0:
+				NewSprite = "PIPE";
+				to_scale = 1.f;
+				break;
+			case 1:
+				NewSprite = "STAND";
+				to_scale = 1.f;
+				break;
+			case 2:
+				NewSprite = "BACK";
+				to_scale = 1.f;
+				break;
+			case 3:
+				NewSprite = "STAND";
+				to_scale = -1.f;
+				break;
+			}
+
+			sprite = NewSprite + "_" + to_string(STATE);
 			return;
 		}
 		if (in_pipe)
@@ -632,6 +695,7 @@ public:
 		else {
 			ON_FL = false;
 			if (!Move(0.0, -1.0, true)) { //Detected a floor below
+				jump_is_spin = false;
 				if (Y_SPEED <= 0)
 				{
 					ON_FL = true;
@@ -706,14 +770,28 @@ public:
 			}
 
 			pressed_y = false;
-			if (pad[button_b] != was_jumpin) {
-				was_jumpin = pad[button_b];
+			if ((pad[button_a] || pad[button_b]) != was_jumpin) {
+				was_jumpin = pad[button_a] || pad[button_b];
 				if (was_jumpin && ON_FL) {
-					Y_SPEED = Calculate_Speed(1232.0 + (abs(X_SPEED)*64.0)); //(148.0 * SLIGHT_HIGH_SPEED) + (32.0 * (X_SPEED > Calculate_Speed(320+256+176)))
-					ASM.Write_To_Ram(0x1DFC, 0x35, 1);
+					if (pad[button_a])
+					{
+						//Spinjump
+						Y_SPEED = Calculate_Speed(1136.0 + (abs(X_SPEED) * 64.0)); //(148.0 * SLIGHT_HIGH_SPEED) + (32.0 * (X_SPEED > Calculate_Speed(320+256+176)))
+						ASM.Write_To_Ram(0x1DFC, 0x04, 1);
+
+						jump_is_spin = true;
+					}
+					else
+					{
+						//Normal jump
+						Y_SPEED = Calculate_Speed(1232.0 + (abs(X_SPEED) * 64.0)); //(148.0 * SLIGHT_HIGH_SPEED) + (32.0 * (X_SPEED > Calculate_Speed(320+256+176)))
+						ASM.Write_To_Ram(0x1DFC, 0x35, 1);
+
+						//jump_is_spin = false;
+					}
 				}
 			}
-			if (pad[button_b]) {
+			if (pad[button_a] || pad[button_b]) {
 				GRAV = GRAV * 0.5;
 			}
 

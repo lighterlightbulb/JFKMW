@@ -29,6 +29,7 @@ uint_fast8_t spawnSpriteJFKMarioWorld(uint_fast8_t sprite_num, uint_fast8_t new_
 
 
 			ServerRAM.RAM[0x2800 + i] = is_lua;
+			ServerRAM.RAM[0x2880 + i] = 0;
 			return i;
 		}
 	}

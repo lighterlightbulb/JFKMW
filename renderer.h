@@ -119,8 +119,8 @@ void render()
 		for (int y = 0; y < 2; y++)
 		{
 			RenderBackground(
-				(-int(double(CameraX) * (double(ServerRAM.RAM[0x3F06]) / 16.0)) % 512) + x*512,
-				-256 + (int(double(CameraY) * (double(ServerRAM.RAM[0x3F07]) / 16.0)) % 512) + y*-512);
+				(-int(double(CameraX) * (double(ServerRAM.RAM[0x3F06]) / 16.0) + ASM.Get_Ram(0x1466, 2)) % 512) + x*512,
+				-256 + (int(double(CameraY) * (double(ServerRAM.RAM[0x3F07]) / 16.0) + ASM.Get_Ram(0x1468, 2)) % 512) + y*-512);
 		}
 	}
 

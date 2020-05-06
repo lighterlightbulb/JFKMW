@@ -379,10 +379,15 @@ void Sync_Server_RAM(bool compressed = false)
 		//Get screen stuff
 		CurrentPacket >> ServerRAM.RAM[0x1411];
 		CurrentPacket >> ServerRAM.RAM[0x1412];
+		//Could be a loop once again
 		CurrentPacket >> ServerRAM.RAM[0x1462];
 		CurrentPacket >> ServerRAM.RAM[0x1463];
 		CurrentPacket >> ServerRAM.RAM[0x1464];
 		CurrentPacket >> ServerRAM.RAM[0x1465];
+		CurrentPacket >> ServerRAM.RAM[0x1466];
+		CurrentPacket >> ServerRAM.RAM[0x1467];
+		CurrentPacket >> ServerRAM.RAM[0x1468];
+		CurrentPacket >> ServerRAM.RAM[0x1469];
 
 		//Decompress OAM
 		for (uint_fast16_t i = 0; i < 0x400; i++) {
@@ -472,10 +477,15 @@ void Push_Server_RAM(bool compress = false)
 		//Send screen stuff
 		CurrentPacket << ServerRAM.RAM[0x1411];
 		CurrentPacket << ServerRAM.RAM[0x1412];
+		//Could put these in a loop but I don't care right now
 		CurrentPacket << ServerRAM.RAM[0x1462];
 		CurrentPacket << ServerRAM.RAM[0x1463];
 		CurrentPacket << ServerRAM.RAM[0x1464];
 		CurrentPacket << ServerRAM.RAM[0x1465];
+		CurrentPacket << ServerRAM.RAM[0x1466];
+		CurrentPacket << ServerRAM.RAM[0x1467];
+		CurrentPacket << ServerRAM.RAM[0x1468];
+		CurrentPacket << ServerRAM.RAM[0x1469];
 
 		//Compress OAM (send it though)
 		uint_fast8_t oam_entries = 0;

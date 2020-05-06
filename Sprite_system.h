@@ -24,6 +24,7 @@
 0x2700 - Sprite interacing with... (player number in hex)
 0x2780 - Sprite block flags
 0x2800 - Sprite is lua/asm type
+0x2880 - Sprite Flags 2 -------S
 
 0x2E00 - Unused, used in the throwblock and grabbed sprites for a "how much frames til we can hurt mario" timer
 0x2E80 - Unused, extra property for grabbed sprites, which props/palettes it uses

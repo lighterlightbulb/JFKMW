@@ -247,11 +247,14 @@ public:
 		ASM.Write_To_Ram(0x1411, 1, 1);
 		ASM.Write_To_Ram(0x1412, 1, 1);
 
+		ASM.Write_To_Ram(0x1462, 0, 2);
+		ASM.Write_To_Ram(0x1464, 0, 2);
+		ASM.Write_To_Ram(0x1466, 0, 2);
+		ASM.Write_To_Ram(0x1468, 0, 2);
+
+
 		ASM.Write_To_Ram(0x36, 0, 1);
 		ASM.Write_To_Ram(0x1493, 0, 1);
-
-		recent_big_change = true;
-		Set_Server_RAM();
 	}
 
 	void LoadLevel(uint_fast16_t num)
@@ -261,7 +264,7 @@ public:
 		{
 			level_data.erase(level_data.begin());
 		}
-
+		Initialize_Level();
 		cout << green
 			<< "[Level Manager] Loading level " << int_to_hex(num) << ".."
 			<< white << endl;
@@ -286,7 +289,8 @@ public:
 		start_x = double(request_level_entry("start_x"))*16.0;
 		start_y = double(request_level_entry("start_y"))*16.0;
 
-		Initialize_Level();
+		recent_big_change = true;
+		Set_Server_RAM();
 	}
 };
 
