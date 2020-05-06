@@ -217,9 +217,9 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool for_validating = false)
 		}
 		return;
 	}
-	if (!isClient && CurrentPacket.getDataSize() != 85) //Player only sends things to update their data, so they shouldn't send stuff that big.
+	if (!isClient && CurrentPacket.getDataSize() != 86) //Player only sends things to update their data, so they shouldn't send stuff that big.
 	{
-		cout << blue << "[Network] Something's weird, " << whoSentThis.getRemoteAddress() << " sent a packet that wasn't 85 bytes! (" << dec << CurrentPacket.getDataSize() << " bytes) Disconnecting!" << white << endl;
+		cout << blue << "[Network] Something's weird, " << whoSentThis.getRemoteAddress() << " sent a packet that wasn't 86 bytes! (" << dec << CurrentPacket.getDataSize() << " bytes) Disconnecting!" << white << endl;
 		HandleDisconnection(&whoSentThis);
 		return;
 	}

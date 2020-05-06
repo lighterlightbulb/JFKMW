@@ -300,7 +300,6 @@ public:
 						{
 							NewPositionX = LeftBlock;
 							willreturn = false;
-
 							map16_handler.process_block(xB, yB, left, pressed_y);
 
 						}
@@ -329,7 +328,6 @@ public:
 								}
 							}
 						}
-
 					}
 					if (yMove > 0.0 && checkBottom)
 					{
@@ -361,8 +359,8 @@ public:
 					{
 						GRABBED_SPRITE = spawned_grabbable;
 						ServerRAM.RAM[0x2000 + GRABBED_SPRITE] = 0x03;
-						spawned_grabbable = 0xFF;
 					}
+					spawned_grabbable = 0xFF;
 				}
 			}
 		}
@@ -770,7 +768,7 @@ public:
 				RUN = true;
 			}
 
-			pressed_y = false;
+			
 			if ((pad[button_a] || pad[button_b]) != was_jumpin) {
 				was_jumpin = pad[button_a] || pad[button_b];
 				if (was_jumpin && ON_FL) {
@@ -861,7 +859,9 @@ public:
 			if (!Move(0.0, Y_SPEED + Calculate_Speed(double(int_fast8_t(ServerRAM.RAM[0x7D])) * 16.0))) {
 				Y_SPEED = 0.0;
 			}
+
 		}
+		pressed_y = false;
 		Get_Sprite();
 
 		if (ServerRAM.RAM[0x1411] == 0)

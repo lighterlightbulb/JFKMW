@@ -150,8 +150,6 @@ public:
 				x *= 16;
 				y *= 16;
 				spawned_grabbable = spawnSpriteJFKMarioWorld(0x53, 2, x, y, 0, true);
-				//cout << "new spawned grabbable : 0x" << hex << int(spawned_grabbable) << endl;
-
 			}
 		}
 
