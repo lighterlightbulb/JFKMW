@@ -37,6 +37,7 @@ void game_loop()
 			if (ASM.Get_Ram(0x3F0A, 2) != 0)
 			{
 				LevelManager.LoadLevel(uint_fast16_t(ASM.Get_Ram(0x3F0A, 2)));
+
 				game_init();
 
 				ASM.Write_To_Ram(0x3F0A, 0, 2);

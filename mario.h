@@ -772,7 +772,7 @@ public:
 			if ((pad[button_a] || pad[button_b]) != was_jumpin) {
 				was_jumpin = pad[button_a] || pad[button_b];
 				if (was_jumpin && ON_FL) {
-					if (pad[button_a])
+					if (pad[button_a] && GRABBED_SPRITE == 0xFF)
 					{
 						//Spinjump
 						Y_SPEED = Calculate_Speed(1136.0 + (abs(X_SPEED) * 64.0)); //(148.0 * SLIGHT_HIGH_SPEED) + (32.0 * (X_SPEED > Calculate_Speed(320+256+176)))

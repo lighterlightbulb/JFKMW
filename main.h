@@ -127,6 +127,11 @@ void player_code()
 			LevelManager.LoadLevel(stoi(level, nullptr, 16));
 		}
 
+		if (!isClient)
+		{
+			game_init();
+		}
+
 		//Initialize Singleplayer
 		if (s_or_c == "t") {
 			PlayerAmount = 1; SelfPlayerNumber = 1; CheckForPlayers();
@@ -144,11 +149,7 @@ void player_code()
 		while (Mario.size() == 0) {
 			Sleep(16);
 		}
-
-		if (!isClient) {
-			game_init();
-		}
-
+		
 
 		while (!done(true))
 		{

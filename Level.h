@@ -255,6 +255,7 @@ public:
 
 		ASM.Write_To_Ram(0x36, 0, 1);
 		ASM.Write_To_Ram(0x1493, 0, 1);
+
 	}
 
 	void LoadLevel(uint_fast16_t num)
