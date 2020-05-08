@@ -165,7 +165,18 @@ void player_code()
 			chrono::high_resolution_clock::time_point t2 = chrono::high_resolution_clock::now();
 
 			redraw();
+			
 			total_time_ticks = chrono::duration_cast<chrono::duration<double>>(t2 - t1);
+			int fps = int(1.0 / (total_time_ticks.count() / 1.0));
+			if (force_sleep)
+			{
+				while (fps > 75)
+				{
+					Sleep(1);
+					t2 = chrono::high_resolution_clock::now();
+					fps = int(1.0 / ((chrono::duration_cast<chrono::duration<double>>(t2 - t1)).count() / 1.0));
+				}
+			}
 			doing_write = false;
 
 			if (disconnected) {

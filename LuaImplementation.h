@@ -63,6 +63,115 @@ static int lua_spawn_sprite(lua_State* L) {
 	return 1;
 }
 
+static int draw_to_oam(lua_State* L)
+{
+	uint_fast8_t sprite_index = (uint_fast8_t)lua_tonumber(L, 1);
+	uint_fast8_t tile = (uint_fast8_t)lua_tonumber(L, 2);
+	uint_fast8_t size = (uint_fast8_t)lua_tonumber(L, 3);
+	uint_fast8_t angle = (uint_fast8_t)lua_tonumber(L, 4);
+	int offset_x = (int)lua_tonumber(L, 5);
+	int offset_y = (int)lua_tonumber(L, 6);
+
+	uint_fast8_t pal = (uint_fast8_t)lua_tonumber(L, 7);
+	uint_fast16_t oam_index = 0;
+	while (oam_index < 0x400)
+	{
+		if (ServerRAM.RAM[0x200 + oam_index] == 0 && ServerRAM.RAM[0x206 + oam_index] == 0) //Founmd a empty OAM slot
+		{
+			break;
+		}
+		oam_index += 8;
+	}
+
+
+	ServerRAM.RAM[0x200 + oam_index] = tile;
+	ServerRAM.RAM[0x201 + oam_index] = size;
+
+	uint_fast16_t sprite_x_position = uint_fast16_t(int(offset_x + ServerRAM.RAM[0x2100 + sprite_index] + ServerRAM.RAM[0x2180 + sprite_index] * 256));
+	uint_fast16_t sprite_y_position = uint_fast16_t(int(offset_y + ServerRAM.RAM[0x2280 + sprite_index] + ServerRAM.RAM[0x2300 + sprite_index] * 256));
+
+
+	ServerRAM.RAM[0x202 + oam_index] = sprite_x_position;
+	ServerRAM.RAM[0x203 + oam_index] = sprite_x_position >> 8;
+
+	ServerRAM.RAM[0x204 + oam_index] = sprite_y_position;
+	ServerRAM.RAM[0x205 + oam_index] = sprite_y_position >> 8;
+
+	ServerRAM.RAM[0x206 + oam_index] = pal;
+	ServerRAM.RAM[0x207 + oam_index] = angle;
+
+	return 0;
+}
+
+
+static int draw_to_oam_direct(lua_State* L)
+{
+	uint_fast8_t tile = (uint_fast8_t)lua_tonumber(L, 1);
+	uint_fast8_t size = (uint_fast8_t)lua_tonumber(L, 2);
+	uint_fast8_t angle = (uint_fast8_t)lua_tonumber(L, 3);
+	uint_fast16_t sprite_x_position = (uint_fast16_t)lua_tonumber(L, 4);
+	uint_fast16_t sprite_y_position = (uint_fast16_t)lua_tonumber(L, 5);
+	uint_fast8_t pal = (uint_fast8_t)lua_tonumber(L, 6);
+	uint_fast16_t oam_index = 0;
+	while (oam_index < 0x400)
+	{
+		if (ServerRAM.RAM[0x200 + oam_index] == 0 && ServerRAM.RAM[0x206 + oam_index] == 0) //Founmd a empty OAM slot
+		{
+			break;
+		}
+		oam_index += 8;
+	}
+
+	ServerRAM.RAM[0x200 + oam_index] = tile;
+	ServerRAM.RAM[0x201 + oam_index] = size;
+
+	ServerRAM.RAM[0x202 + oam_index] = sprite_x_position;
+	ServerRAM.RAM[0x203 + oam_index] = sprite_x_position >> 8;
+
+	ServerRAM.RAM[0x204 + oam_index] = sprite_y_position;
+	ServerRAM.RAM[0x205 + oam_index] = sprite_y_position >> 8;
+
+	ServerRAM.RAM[0x206 + oam_index] = pal;
+	ServerRAM.RAM[0x207 + oam_index] = angle;
+
+	return 0;
+}
+
+
+
+static int lua_bitand(lua_State* L) {
+/*
+	local result = 0
+	local bitval = 1
+	while a > 0 and b > 0 do
+	  if a % 2 == 1 and b % 2 == 1 then -- test the rightmost bits
+		  result = result + bitval      -- set the current bit
+	  end
+	  bitval = bitval * 2 -- shift left
+	  a = math.floor(a/2) -- shift right
+	  b = math.floor(b/2)
+	end
+	return result
+*/
+	uint_fast8_t a = (uint_fast8_t)lua_tointeger(L, 1); 
+	uint_fast8_t b = (uint_fast8_t)lua_tointeger(L, 2);
+	
+	uint_fast8_t result = 0;
+	uint_fast8_t bitval = 1;
+	while (a > 0 && b > 0)
+	{
+		if ((a % 2) == 1 && (b % 2) == 1)
+		{
+			result = result + bitval;
+		}
+		bitval = bitval << 1;
+		a = a >> 1;
+		b = b >> 1;
+	}
+	lua_pushnumber(L, result);
+	return 1;
+}
+
 /* functions end */
 
 void lua_connect_functions(lua_State* L)
@@ -71,7 +180,11 @@ void lua_connect_functions(lua_State* L)
 	lua_pushcfunction(L, lua_write); lua_setglobal(L, "mario_print");
 	lua_pushcfunction(L, lua_write_ram); lua_setglobal(L, "asm_write");
 	lua_pushcfunction(L, lua_spawn_sprite); lua_setglobal(L, "spawn_sprite");
+	lua_pushcfunction(L, draw_to_oam); lua_setglobal(L, "draw_to_oam");
+	lua_pushcfunction(L, draw_to_oam_direct); lua_setglobal(L, "draw_to_oam_direct");
+	lua_pushcfunction(L, lua_bitand); lua_setglobal(L, "bitand");
 	lua_register(L, "asm_read", lua_get_ram);
+
 
 }
 
@@ -101,6 +214,7 @@ void lua_loadfile(string file)
 		lua_close(LUA_STATE);
 		return;
 	}
+
 
 
 	//main connectors back to jfk mario world.

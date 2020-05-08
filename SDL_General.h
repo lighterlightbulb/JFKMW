@@ -28,6 +28,7 @@ SDL_Event event = { 0 };
 //also inits SDL therefore you MUST call screen before any other InstantCG or SDL functions
 void screen(int width, int height, const string& text = "test")
 {
+	cout << cyan << "[SDL] Creating window" << endl;
 	if (win) { SDL_DestroyWindow(win); }
 
 	w = width;
@@ -49,6 +50,7 @@ void screen(int width, int height, const string& text = "test")
 	win = SDL_CreateWindow(text.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, w, h, flags);
 
 	if (win == NULL) { cout << cyan << "[SDL] Window error: " << SDL_GetError() << white << endl; SDL_Quit(); exit(1); }
+	cout << cyan << "[SDL] Window created, initializing renderer..." << endl;
 
 	flags = 0;
 	if (v_sync)
@@ -59,6 +61,11 @@ void screen(int width, int height, const string& text = "test")
 	{
 		flags |= SDL_RENDERER_ACCELERATED;
 	}
+	else
+	{
+		flags |= SDL_RENDERER_SOFTWARE;
+	}
+	
 	ren = SDL_CreateRenderer(win, rendering_device, flags);
 	if (ren == NULL) { cout << cyan << "[SDL] Renderer error: " << SDL_GetError() << white << endl; SDL_Quit(); exit(1); }
 

@@ -4,3 +4,7 @@ JFKMarioWorld.user
 JFKMarioWorld.vcxproj
 JFKMarioWorld.vcxproj.filters
 JFKMarioWorld.vcxproj.user
+*.log
+*.tlog
+*.obj
+*.pdb

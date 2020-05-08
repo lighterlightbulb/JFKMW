@@ -102,6 +102,7 @@ public:
 		DEATH_TIMER = 0;
 		DEAD = false;
 		STATE = 1;
+		jump_is_spin = false;
 	}
 
 	void getInput()

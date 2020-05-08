@@ -1,5 +1,6 @@
 #if defined(_WIN32)
 #include <Windows.h>
+
 #elif defined(__linux__)
 #include <unistd.h>
 #include <list>

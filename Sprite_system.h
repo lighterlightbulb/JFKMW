@@ -229,7 +229,7 @@ public:
 		int ret = luaL_dofile(SPR_STATE[index], (path + file).c_str());
 		if (ret != 0)
 		{
-			lua_print("Error occurred when calling luaL_dofile()");
+			//lua_print("Error occurred when calling luaL_loadfile()");
 			lua_print("Error: " + string(lua_tostring(SPR_STATE[index], -1)));
 			//lua_close(SPR_STATE[index]);
 			ServerRAM.RAM[0x2000 + index] = 0;
