@@ -27,6 +27,7 @@ void load_configuration()
 			if (name == "renderer_accelerated") { renderer_accelerated = value == "true"; }
 			if (name == "v_sync") { v_sync = value == "true"; }
 			if (name == "force_sleep") { force_sleep = value == "true"; }
+			if (name == "smooth_camera") { smooth_camera = value == "true"; }
 
 			if (name == "username") { username = value; }
 			if (name == "skin") { my_skin = uint_fast8_t(stoi(value)); }

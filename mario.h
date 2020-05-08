@@ -883,22 +883,29 @@ public:
 			//Camera lol
 
 			double new_x = x;
-			
-			if (CAMERA_X < new_x)
-			{
-				CAMERA_X += 5.0;
-				if (CAMERA_X > new_x)
-				{
-					CAMERA_X = new_x;
-				}
-			}
 
-			if (CAMERA_X > new_x)
+			if (smooth_camera)
 			{
-				CAMERA_X -= 5.0;
+				CAMERA_X += (new_x - CAMERA_X) / 10.0;
+			}
+			else
+			{
 				if (CAMERA_X < new_x)
 				{
-					CAMERA_X = new_x;
+					CAMERA_X += 5.0;
+					if (CAMERA_X > new_x)
+					{
+						CAMERA_X = new_x;
+					}
+				}
+
+				if (CAMERA_X > new_x)
+				{
+					CAMERA_X -= 5.0;
+					if (CAMERA_X < new_x)
+					{
+						CAMERA_X = new_x;
+					}
 				}
 			}
 			
@@ -911,25 +918,32 @@ public:
 		}
 		else {
 			double new_y = (y + 16);
-			
-			if (CAMERA_Y < new_y)
-			{
-				CAMERA_Y += 4.0;
-				if (CAMERA_Y > new_y)
-				{
-					CAMERA_Y = new_y;
-				}
-			}
 
-			if (CAMERA_Y > new_y)
+			if (smooth_camera)
 			{
-				CAMERA_Y -= 4.0;
+				CAMERA_Y += (new_y - CAMERA_Y) / 10.0;
+			}
+			else
+			{
 				if (CAMERA_Y < new_y)
 				{
-					CAMERA_Y = new_y;
+					CAMERA_Y += 4.0;
+					if (CAMERA_Y > new_y)
+					{
+						CAMERA_Y = new_y;
+					}
+				}
+
+				if (CAMERA_Y > new_y)
+				{
+					CAMERA_Y -= 4.0;
+					if (CAMERA_Y < new_y)
+					{
+						CAMERA_Y = new_y;
+					}
 				}
 			}
-			//CAMERA_Y += (new_y - CAMERA_Y) / 10.0;
+			
 		}
 
 		if (x < 8.0) { x = 8.0; }
