@@ -886,7 +886,7 @@ public:
 
 			if (smooth_camera)
 			{
-				CAMERA_X += (new_x - CAMERA_X) / 10.0;
+				CAMERA_X += (new_x - CAMERA_X) / smooth_camera_speed;
 			}
 			else
 			{
@@ -921,7 +921,7 @@ public:
 
 			if (smooth_camera)
 			{
-				CAMERA_Y += (new_y - CAMERA_Y) / 10.0;
+				CAMERA_Y += (new_y - CAMERA_Y) / smooth_camera_speed;
 			}
 			else
 			{

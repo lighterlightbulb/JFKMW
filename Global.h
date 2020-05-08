@@ -142,6 +142,7 @@ bool isClient = false;
 
 //Game
 bool smooth_camera = false;
+double smooth_camera_speed = 0;
 uint_fast8_t SelfPlayerNumber = 1;
 int PlayerAmount = 0;
 

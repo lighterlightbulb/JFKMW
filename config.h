@@ -28,6 +28,7 @@ void load_configuration()
 			if (name == "v_sync") { v_sync = value == "true"; }
 			if (name == "force_sleep") { force_sleep = value == "true"; }
 			if (name == "smooth_camera") { smooth_camera = value == "true"; }
+			if (name == "smooth_camera_speed") { smooth_camera_speed = double(stoi(value)); }
 
 			if (name == "username") { username = value; }
 			if (name == "skin") { my_skin = uint_fast8_t(stoi(value)); }
