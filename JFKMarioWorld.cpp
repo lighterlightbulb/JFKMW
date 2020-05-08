@@ -120,6 +120,7 @@ int main(int argc, char* argv[])
 	}
 
 	if (hosting) {
+		cout << yellow << "[JFKMW] Welcome to JFK mario world " + GAME_VERSION + "! Hosting a server." << endl;
 		if (argc > 2) {
 			server_code(string(argv[2]));
 		}
@@ -128,6 +129,7 @@ int main(int argc, char* argv[])
 		}
 	}
 	else {
+		cout << yellow << "[JFKMW] Welcome to JFK mario world " + GAME_VERSION + "!, Press R to reload the last level you played, Press Q if you want to play singleplayer, or W to connect to a server, then go to the console. We don't have a UI yet. If you want to get updates, join the discord at https://discord.gg/fD5QQK3" << white << endl;
 		player_code();
 	}
 #else

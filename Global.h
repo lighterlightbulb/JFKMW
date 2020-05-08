@@ -1,5 +1,7 @@
 #pragma once
 
+string GAME_VERSION = "0.2 alpha";
+
 #define rom_asm_size 0x20000 //128kb
 #define location_rom_levelasm 0x00000 //this will put LevelASM on the start of the ROM
 #define location_temp_sprite_asm 0x10000
