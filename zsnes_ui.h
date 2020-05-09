@@ -51,7 +51,8 @@ uint_fast8_t char_to_zsnes_font_letter(char l) //use to convert strings
 {
 	uint_fast8_t new_l = uint_fast8_t(l);
 	if (new_l == 0x2E) { return 0x27; }
-	if (new_l == 0x3A) { return 0x3F; }
+	if (new_l == 0x3A) { return 0x2D; }
+	if (new_l == 0x5F) { return 0x25; }
 	if (new_l > 0x60) { return new_l - 0x57; }
 	if (new_l > 0x40) { return new_l - 0x37; }
 	if (new_l >= 0x30) { return new_l - 0x30; }
@@ -252,7 +253,7 @@ public:
 		if (getKey(VK_BACK) && hint.size() > 0) { hint.pop_back(); }
 
 		draw_string(false, "JFKMW " + GAME_VERSION, 5, 224 - 10);
-		draw_string(false, "Option: " + hint, 5, 224 - 16);
+		draw_string(false, "Option: " + hint + ((global_frame_counter % 64) > 32 ? "_" : ""), 5, 224 - 16);
 	}
 
 	//finish processing, copy to texture.

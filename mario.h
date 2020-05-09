@@ -205,8 +205,9 @@ public:
 	{
 		if (GRABBED_SPRITE != 0xFF && ServerRAM.RAM[0x2000 + GRABBED_SPRITE] == 3)
 		{
+			
 			//cout << "Player 1 is holding sprite " << int(GRABBED_SPRITE) << endl;
-			if ((in_pipe || !pad[button_y]) || DEAD)
+			if (!in_pipe && (!pad[button_y] || DEAD))
 			{
 				
 				uint_fast16_t x_position = uint_fast16_t(double(x + to_scale * -15.0));

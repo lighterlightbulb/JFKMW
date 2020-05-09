@@ -22,6 +22,8 @@ void player_code()
 	string file = path + "Sounds/music/_boot.ogg"; music = Mix_LoadMUS(file.c_str()); Mix_PlayMusic(music, 1);
 
 	string level = "";
+	global_frame_counter = 0;
+
 	while (true)
 	{
 		zsnes_ui.hint = "";
@@ -39,6 +41,7 @@ void player_code()
 			{
 				return;
 			}
+			global_frame_counter += 1;
 
 			cls();
 			zsnes_ui.process();
@@ -104,6 +107,7 @@ void player_code()
 				return;
 			}
 		}
+		global_frame_counter = 0;
 		/* Load Shit */
 
 		networking = s_or_c != "t";
