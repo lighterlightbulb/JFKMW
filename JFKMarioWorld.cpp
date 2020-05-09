@@ -1,6 +1,5 @@
 #if defined(_WIN32)
 #include <Windows.h>
-#include <cstdint>
 #elif defined(__linux__)
 #include <unistd.h>
 #include <list>
@@ -10,6 +9,8 @@ void Sleep(int time) {
 //#define DISABLE_NETWORK
 #endif
 
+
+#include <cstdint>
 #include <cmath>
 #include <string>
 #include <vector>
