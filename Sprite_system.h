@@ -153,7 +153,7 @@ public:
 
 
 				double BelowBlock = double(yB * 16) - y_size;
-				double AboveBlock = double(yB * 16) + map16_handler.ground_y(NewPositionX + (x_size/2) - (xB * 16), xB, yB);
+				double AboveBlock = double(yB * 16) + map16_handler.ground_y(NewPositionX + (x_size / 2.0) - (xB * 16), xB, yB);
 				double RightBlock = double(xB * 16) + 16.0;
 				double LeftBlock = double(xB * 16) - x_size;
 
@@ -183,7 +183,13 @@ public:
 					}
 					if (yMove < 0.0 && checkTop)
 					{
-						if (NewPositionY < AboveBlock && NewPositionY > AboveBlock - bounds_y)
+						double bound_y = bounds_y;
+						uint_fast8_t new_s = map16_handler.get_slope(xB, yB);
+						if (new_s != 0)
+						{
+							bound_y += 4;
+						}
+						if (NewPositionY < AboveBlock && NewPositionY > AboveBlock - bound_y)
 						{
 							NewPositionY = AboveBlock;
 							finna_return = false;

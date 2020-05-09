@@ -312,7 +312,13 @@ public:
 					}
 					if (yMove < 0.0 && checkTop)
 					{
-						if (NewPositionY > AboveBlock - bounds_y)
+						double bound_y = bounds_y;
+						uint_fast8_t new_s = map16_handler.get_slope(xB, yB);
+						if (new_s != 0)
+						{
+							bound_y += 2;
+						}
+						if (NewPositionY > AboveBlock - bound_y)
 						{
 							if (Y_SPEED <= 0)
 							{
@@ -320,7 +326,7 @@ public:
 							}
 							willreturn = false;
 
-							uint_fast8_t new_s = map16_handler.get_slope(xB, yB);
+							
 							if (new_s != 0 && SLOPE_TYPE == 0)
 							{
 								SLOPE_TYPE = new_s;
@@ -816,6 +822,11 @@ public:
 					if (!MOV || (WALKING_DIR == -1 && MOV)) { SLOPE_ADD = Calculate_Speed(-256); }
 					if (MOV) { SLOPE_ADD = Calculate_Speed(-80); }
 				}
+				if (SLOPE_TYPE == 2)
+				{
+					if (!MOV || (WALKING_DIR == 1 && MOV)) { SLOPE_ADD = Calculate_Speed(256); }
+					if (MOV) { SLOPE_ADD = Calculate_Speed(80); }
+				}
 			}
 			double SPEED_X_TO_SET = SLOPE_ADD + (Calculate_Speed(320.0 + (RUN * 256.0) + (CAN_SPRINT * 192.0)) * WALKING_DIR) * MOV;
 			double SPEED_ACCEL_X = Calculate_Speed(24.0);
@@ -931,68 +942,71 @@ public:
 		{
 			//Camera lol
 
-			double new_x = x;
+			if (ServerRAM.RAM[0x1493] == 0)
+			{
+				double new_x = x;
 
-			if (smooth_camera)
-			{
-				CAMERA_X += (new_x - CAMERA_X) / smooth_camera_speed;
-			}
-			else
-			{
-				if (CAMERA_X < new_x)
+				if (smooth_camera)
 				{
-					CAMERA_X += 5.0;
-					if (CAMERA_X > new_x)
-					{
-						CAMERA_X = new_x;
-					}
+					CAMERA_X += (new_x - CAMERA_X) / smooth_camera_speed;
 				}
-
-				if (CAMERA_X > new_x)
+				else
 				{
-					CAMERA_X -= 5.0;
 					if (CAMERA_X < new_x)
 					{
-						CAMERA_X = new_x;
+						CAMERA_X += 5.0;
+						if (CAMERA_X > new_x)
+						{
+							CAMERA_X = new_x;
+						}
+					}
+
+					if (CAMERA_X > new_x)
+					{
+						CAMERA_X -= 5.0;
+						if (CAMERA_X < new_x)
+						{
+							CAMERA_X = new_x;
+						}
 					}
 				}
-			}
-			
 
-			//CAMERA_X += (new_x - CAMERA_X) / 10.0;
+			}
 		}
 
 		if (ServerRAM.RAM[0x1412] == 0) {
 			CAMERA_Y = double(104 + ServerRAM.RAM[0x1464] + ServerRAM.RAM[0x1465] * 256);
 		}
 		else {
-			double new_y = (y + 16);
+			if (ServerRAM.RAM[0x1493] == 0)
+			{
+				double new_y = (y + 16);
 
-			if (smooth_camera)
-			{
-				CAMERA_Y += (new_y - CAMERA_Y) / smooth_camera_speed;
-			}
-			else
-			{
-				if (CAMERA_Y < new_y)
+				if (smooth_camera)
 				{
-					CAMERA_Y += 4.0;
-					if (CAMERA_Y > new_y)
-					{
-						CAMERA_Y = new_y;
-					}
+					CAMERA_Y += (new_y - CAMERA_Y) / smooth_camera_speed;
 				}
-
-				if (CAMERA_Y > new_y)
+				else
 				{
-					CAMERA_Y -= 4.0;
 					if (CAMERA_Y < new_y)
 					{
-						CAMERA_Y = new_y;
+						CAMERA_Y += 4.0;
+						if (CAMERA_Y > new_y)
+						{
+							CAMERA_Y = new_y;
+						}
+					}
+
+					if (CAMERA_Y > new_y)
+					{
+						CAMERA_Y -= 4.0;
+						if (CAMERA_Y < new_y)
+						{
+							CAMERA_Y = new_y;
+						}
 					}
 				}
 			}
-			
 		}
 
 		if (x < 8.0) { x = 8.0; }
