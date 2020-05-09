@@ -64,7 +64,35 @@ bool getKey(int what_want)
 #endif
 
 #if defined(__linux__)
+	if (!(global_frame_counter % 10))
+	{
+		switch (what_want)
+		{
+		case 0x30: return state[SDL_SCANCODE_0];
+		case 0x31: return state[SDL_SCANCODE_1];
+		case 0x32: return state[SDL_SCANCODE_2];
+		case 0x33: return state[SDL_SCANCODE_3];
+		case 0x34: return state[SDL_SCANCODE_4];
+		case 0x35: return state[SDL_SCANCODE_5];
+		case 0x36: return state[SDL_SCANCODE_6];
+		case 0x37: return state[SDL_SCANCODE_7];
+		case 0x38: return state[SDL_SCANCODE_8];
+		case 0x39: return state[SDL_SCANCODE_9];
 
+		case 0x41: return state[SDL_SCANCODE_A];
+		case 0x42: return state[SDL_SCANCODE_B];
+		case 0x43: return state[SDL_SCANCODE_C];
+		case 0x44: return state[SDL_SCANCODE_D];
+		case 0x45: return state[SDL_SCANCODE_E];
+		case 0x46: return state[SDL_SCANCODE_F];
+
+		case 0xBE: return state[SDL_SCANCODE_PERIOD];
+
+		case 0x08: return state[SDL_SCANCODE_BACKSPACE];
+
+		default: break;
+		}
+	}
 #endif
 	return false;
 }
