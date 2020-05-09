@@ -87,11 +87,11 @@ public:
 
 	void get_map_16_details()
 	{
-		int entry = tile * tile_table_size;
-		act_as = map16_entries[entry + act_as_low] + map16_entries[entry + act_as_high] * 256;
+		uint_fast16_t entry = tile * tile_table_size;
+		act_as = map16_entries[entry + act_as_low] + (map16_entries[entry + act_as_high] << 8);
 
-		int integer = map16_entries[entry + collision];
-		for (int i = 0; i < 8; i++)
+		uint_fast8_t integer = map16_entries[entry + collision];
+		for (uint_fast8_t i = 0; i < 8; i++)
 		{
 			logic[i] = ((integer >> (7-i)) & 1) != 0;
 		}
@@ -103,7 +103,7 @@ public:
 	void update_map_tile(uint_fast16_t x, uint_fast16_t y)
 	{
 		uint_fast32_t index = (x % mapWidth) + (y * mapWidth);
-		tile = ServerRAM.RAM[ram_level_low + index] + ServerRAM.RAM[ram_level_high + index] * 256;
+		tile = ServerRAM.RAM[ram_level_low + index] + (ServerRAM.RAM[ram_level_high + index] << 8);
 		get_map_16_details();
 	}
 
@@ -113,7 +113,38 @@ public:
 	void replace_map_tile(uint16_t tile, uint_fast16_t x, uint_fast16_t y)
 	{
 		uint_fast32_t index = (x % mapWidth) + (y * mapWidth);
-		ServerRAM.RAM[ram_level_low + index] = tile % 256; ServerRAM.RAM[ram_level_high + index] = tile / 256;
+		ServerRAM.RAM[ram_level_low + index] = tile & 0xFF; ServerRAM.RAM[ram_level_high + index] = tile >> 8;
+	}
+
+	/*
+		Get ground
+	*/
+	double ground_y(double x_relative, uint_fast16_t x, uint_fast16_t y)
+	{
+		uint_fast16_t tile = get_tile(x, y);
+		if (tile == 0x1AA) //45* slope Right
+		{
+			if (x_relative < -1 || x_relative > 17)
+			{
+				return -9999;
+			}
+			return x_relative;
+		}
+		if (tile == 0x1AF) //45* slope Left
+		{
+			return 16.0 - x_relative;
+		}
+		return 16.0;
+	}
+	/*
+		Check if a tile is sloped
+	*/
+	uint_fast8_t get_slope(uint_fast16_t x, uint_fast16_t y)
+	{
+		if (tile == 0x1AA) { return 1; }
+		if (tile == 0x1AF) { return 2; }
+
+		return 0;
 	}
 
 	/*
@@ -126,7 +157,7 @@ public:
 			uint_fast32_t index = (x % mapWidth) + (y * mapWidth);
 
 
-			uint_fast16_t t = ServerRAM.RAM[ram_level_low + index] + ServerRAM.RAM[ram_level_high + index] * 256;
+			uint_fast16_t t = ServerRAM.RAM[ram_level_low + index] + (ServerRAM.RAM[ram_level_high + index] << 8);
 			if (t == 0x0124 && side == bottom)
 			{
 				ServerRAM.RAM[ram_level_low + index] = 0x32;
@@ -161,7 +192,7 @@ public:
 	uint_fast16_t get_tile(uint_fast16_t x, uint_fast16_t y)
 	{
 		uint_fast32_t index = (x % mapWidth) + (y * mapWidth);
-		return ServerRAM.RAM[ram_level_low + index] + ServerRAM.RAM[ram_level_high + index] * 256;
+		return ServerRAM.RAM[ram_level_low + index] + (ServerRAM.RAM[ram_level_high + index] << 8);
 	}
 
 

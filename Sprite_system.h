@@ -153,7 +153,7 @@ public:
 
 
 				double BelowBlock = double(yB * 16) - y_size;
-				double AboveBlock = double(yB * 16) + 16.0;
+				double AboveBlock = double(yB * 16) + map16_handler.ground_y(NewPositionX + (x_size/2) - (xB * 16), xB, yB);
 				double RightBlock = double(xB * 16) + 16.0;
 				double LeftBlock = double(xB * 16) - x_size;
 

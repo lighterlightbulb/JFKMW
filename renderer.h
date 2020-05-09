@@ -31,22 +31,19 @@ void render_oam(uint_fast16_t offset_o = 0, int CameraX = 0, int CameraY = 0)
 {
 	for (uint_fast16_t i = 0; i < 0x400; i += 8) //Tile, Size, XY (4 bytes), PAL, ANG, in total 8 bytes per entry. 0 to 7.
 	{
-		uint_fast16_t tile = uint_fast16_t(ASM.Get_Ram(offset_o + i, 1)) + (((ServerRAM.RAM[offset_o + i + 6] >> 4) & 1) << 8);
-		uint_fast8_t size = uint_fast8_t(ASM.Get_Ram(offset_o + i + 1, 1));
 
+		uint_fast8_t size = uint_fast8_t(ASM.Get_Ram(offset_o + i + 1, 1));
 		int_fast16_t x_position = int_fast16_t(ASM.Get_Ram(offset_o + i + 2, 2));
 		int_fast16_t y_position = int_fast16_t(ASM.Get_Ram(offset_o + i + 4, 2));
-
+		uint_fast16_t tile = uint_fast16_t(ASM.Get_Ram(offset_o + i, 1)) + (((ServerRAM.RAM[offset_o + i + 6] >> 4) & 1) << 8);
 		uint_fast8_t pal = uint_fast8_t(ASM.Get_Ram(offset_o + i + 6, 1)) & 0xF;
-
 		double angle = (double(ASM.Get_Ram(offset_o + i + 7, 1)) / 256.0) * 360.0;
-
-
-
+		int_fast16_t size_x = (size & 0xF) << 4;
+		int_fast16_t size_y = ((size >> 4) & 0xF) << 4;
 
 		if (tile != 0x0 &&
-			(x_position - CameraX) > -64 && (x_position - CameraX) < (256 + 64) &&
-			(y_position - CameraY) > -64 && (y_position - CameraY) < (224 + 64)			
+			(x_position - CameraX) > -size_x && (x_position - CameraX) < (256 + size_x) &&
+			(y_position - CameraY) > -size_y && (y_position - CameraY) < (224 + size_y)			
 		)
 		{
 			draw_tile_custom(x_position - CameraX, 224 - 32 - y_position + CameraY, size, angle, tile, pal, ((uint_fast8_t(ASM.Get_Ram(offset_o + i + 6, 1)) >> 5) & 1)  );
@@ -84,7 +81,7 @@ void render()
 
 	MPlayer& LocalPlayer = get_mario(SelfPlayerNumber);
 	CameraX = int_fast16_t(LocalPlayer.CAMERA_X - 120.0);
-	CameraY = int_fast16_t(max(0, LocalPlayer.CAMERA_Y - 112.0)) + (ServerRAM.RAM[0x1887] > 0) * ((global_frame_counter % 4) > 1 ? (1 - (global_frame_counter % 2)) : (global_frame_counter % 2));
+	CameraY = int_fast16_t(max(0.0, LocalPlayer.CAMERA_Y - 112.0)) + (ServerRAM.RAM[0x1887] > 0) * ((global_frame_counter % 4) > 1 ? (1 - (global_frame_counter % 2)) : (global_frame_counter % 2));
 
 	if (CameraX < 0) { CameraX = 0; }
 	if (CameraY < 0) { CameraY = 0; }
@@ -227,7 +224,6 @@ void render()
 	}
 
 	//Draw OAM (priority)
-
 	render_oam(0x200, int(CameraX), int(CameraY));
 
 

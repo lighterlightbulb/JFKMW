@@ -13,8 +13,14 @@ public:
 	uint_fast8_t INVINCIBILITY_FRAMES = 0;
 
 	bool invisible = false;
-	bool ON_FL = false;
-	uint_fast16_t P_METER = 0 ;
+	bool ON_FL = false; //ON FLOOR
+	uint_fast8_t SLOPE_TYPE = 0;
+	/*
+		0 : None
+		1 : Right 45*
+		2 : Left 45*
+	*/
+	uint_fast16_t P_METER = 0;
 
 	double X_SPEED = 0.0;
 	double Y_SPEED = 0.0;
@@ -268,7 +274,7 @@ public:
 
 
 				double BelowBlock = double(yB * 16) - (height);
-				double AboveBlock = double(yB * 16) + 16.0;
+				double AboveBlock = double(yB * 16) + map16_handler.ground_y(NewPositionX + 8.0 - (xB * 16), xB, yB);
 				double RightBlock = double(xB * 16) + 16.0;
 				double LeftBlock = double(xB * 16) - 16.0;
 
@@ -314,6 +320,12 @@ public:
 								NewPositionY = AboveBlock;
 							}
 							willreturn = false;
+
+							uint_fast8_t new_s = map16_handler.get_slope(xB, yB);
+							if (new_s != 0 && SLOPE_TYPE == 0)
+							{
+								SLOPE_TYPE = new_s;
+							}
 
 							map16_handler.process_block(xB, yB, top, pressed_y);
 							if (pad[button_down])
@@ -656,6 +668,8 @@ public:
 
 	int Process()
 	{
+		SLOPE_TYPE = 0;
+
 		getInput();
 		if (pad[button_y] != old_y) {
 			old_y = pad[button_y];
@@ -795,12 +809,21 @@ public:
 				GRAV = GRAV * 0.5;
 			}
 
-			double SPEED_X_TO_SET = Calculate_Speed(320.0 + (RUN * 256.0) + (CAN_SPRINT * 192.0)) * WALKING_DIR;
+			double SLOPE_ADD = 0;
+			if (!CROUCH)
+			{
+				if (SLOPE_TYPE == 1)
+				{
+					if (!MOV || (WALKING_DIR == -1 && MOV)) { SLOPE_ADD = Calculate_Speed(-256); }
+					if (MOV) { SLOPE_ADD = Calculate_Speed(-80); }
+				}
+			}
+			double SPEED_X_TO_SET = SLOPE_ADD + (Calculate_Speed(320.0 + (RUN * 256.0) + (CAN_SPRINT * 192.0)) * WALKING_DIR) * MOV;
 			double SPEED_ACCEL_X = Calculate_Speed(24.0);
 			double STOPPING_DECEL = Calculate_Speed(16.0);
 			double SKID_ACCEL = Calculate_Speed(16.0 + (24.0 * RUN) + (CAN_SPRINT * 40.0));
 
-			if (MOV != 0) {
+			if (MOV) {
 				if (X_SPEED > 0.0 && SPEED_X_TO_SET < 0.0 && WALKING_DIR == -1) {
 					SKIDDING = -1;
 					X_SPEED -= SKID_ACCEL;
@@ -828,16 +851,35 @@ public:
 			}
 			else {
 				if (ON_FL == 1.0) {
-					if (X_SPEED > 0.0) {
-						X_SPEED -= STOPPING_DECEL;
+					if (!SLOPE_TYPE)
+					{
+						if (X_SPEED > 0.0) {
+							X_SPEED -= STOPPING_DECEL;
+							if (X_SPEED < 0.0) {
+								X_SPEED = 0.0;
+							}
+						}
 						if (X_SPEED < 0.0) {
-							X_SPEED = 0.0;
+							X_SPEED += STOPPING_DECEL;
+							if (X_SPEED > 0.0) {
+								X_SPEED = 0.0;
+							}
 						}
 					}
-					if (X_SPEED < 0.0) {
-						X_SPEED += STOPPING_DECEL;
-						if (X_SPEED > 0.0) {
-							X_SPEED = 0.0;
+					else
+					{
+						if (X_SPEED > SPEED_X_TO_SET) {
+							X_SPEED -= SPEED_ACCEL_X;
+							if (X_SPEED < SPEED_X_TO_SET) {
+								X_SPEED = SPEED_X_TO_SET;
+							}
+						}
+
+						if (X_SPEED < SPEED_X_TO_SET) {
+							X_SPEED += SPEED_ACCEL_X;
+							if (X_SPEED > SPEED_X_TO_SET) {
+								X_SPEED = SPEED_X_TO_SET;
+							}
 						}
 					}
 				}
@@ -858,7 +900,15 @@ public:
 				X_SPEED = 0.0;
 			}
 			if (!Move(0.0, Y_SPEED + Calculate_Speed(double(int_fast8_t(ServerRAM.RAM[0x7D])) * 16.0))) {
-				Y_SPEED = 0.0;
+				if (SLOPE_TYPE)
+				{
+					if (Y_SPEED > 0) { Y_SPEED = 0; }
+					if (Y_SPEED < Calculate_Speed(-768)) { Y_SPEED = Calculate_Speed(-768); }
+				}
+				else
+				{
+					Y_SPEED = 0;
+				}
 			}
 
 		}
