@@ -256,7 +256,7 @@ void render()
 
 	//Networking symbols
 	VRAM[0xB800 + 20 + 192] = networking ? 0x17 : 0x15; VRAM[0xB801 + 20 + 192] = 6;
-	VRAM[0xB800 + 18 + 192] = 0x50; VRAM[0xB801 + 18 + 192] = 6;
+	VRAM[0xB800 + 18 + 192] = 0x3A; VRAM[0xB801 + 18 + 192] = 6;
 	VRAM[0xB800 + 16 + 192] = isClient ? 0xC : 0x1C; VRAM[0xB801 + 16 + 192] = 6;
 
 	//FCounter
