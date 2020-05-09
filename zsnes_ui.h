@@ -229,6 +229,7 @@ public:
 		}
 
 		
+
 		//Numbers (HOw to otpimize please help)
 		if (getKey(0x30)) { hint = hint + "0"; }
 		if (getKey(0x31)) { hint = hint + "1"; }
@@ -248,9 +249,9 @@ public:
 		if (getKey(0x45)) { hint = hint + "E"; }
 		if (getKey(0x46)) { hint = hint + "F"; }
 		//Period
-		if (getKey(VK_OEM_PERIOD)) { hint = hint + "."; }
+		if (getKey(0xBE)) { hint = hint + "."; }
 		//Delete
-		if (getKey(VK_BACK) && hint.size() > 0) { hint.pop_back(); }
+		if (getKey(0x08) && hint.size() > 0) { hint.pop_back(); }
 
 		draw_string(false, "JFKMW " + GAME_VERSION, 5, 224 - 10);
 		draw_string(false, "Option: " + hint + ((global_frame_counter % 64) > 32 ? "_" : ""), 5, 224 - 16);

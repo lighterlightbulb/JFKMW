@@ -45,7 +45,7 @@ void server_code(string level = "")
 			data_size_current = 0;
 		}
 
-		if (getKey(VK_F1))
+		if (getKey(0x70))
 		{
 			
 			string level = ""; cout << "Enter a level : "; cin >> level; 
@@ -55,14 +55,14 @@ void server_code(string level = "")
 			recent_big_change = true;
 			doing_write = false;
 		}
-		if (getKey(VK_F2))
+		if (getKey(0x71))
 		{
 			cout << green << "[Network] Syncing RAM to other players.." << endl;
 			Set_Server_RAM();
 			recent_big_change = true;
 			
 		}
-		if (getKey(VK_F3))
+		if (getKey(0x72))
 		{
 			DisablePrints = !DisablePrints;
 			if (!DisablePrints)
@@ -75,7 +75,7 @@ void server_code(string level = "")
 			}
 		}
 
-		if (getKey(VK_F4))
+		if (getKey(0x73))
 		{
 			cout << green << "[Network] Syncing music to other players.." << endl;
 			need_sync_music = true;
