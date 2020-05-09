@@ -1,6 +1,6 @@
 #pragma once
 
-string GAME_VERSION = "0.3 Slope preview 1";
+string GAME_VERSION = "A0.3 Slope Test 1";
 
 #define rom_asm_size 0x20000 //128kb
 #define location_rom_levelasm 0x00000 //this will put LevelASM on the start of the ROM
@@ -65,6 +65,7 @@ chrono::duration<double> latest_server_response;
 unsigned int network_update_rate = 16;
 unsigned int packet_wait_time = 16;
 int mouse_x, mouse_y;
+bool mouse_down;
 int data_size_current = 0;
 
 int rendering_device = -1;

@@ -15,11 +15,73 @@ void draw_pixel_to_surface(uint_fast8_t x1, uint_fast8_t y1, uint_fast8_t r, uin
 	}
 }
 
+class ZSNES_letter
+{
+public:
+	bool bits[8][5];
+};
+ZSNES_letter zsnes_font[0xC0];
+void load_zsnes_font()
+{
+	cout << cyan << "[ZUI] Loading zfont.txt" << endl;
+	uint_fast8_t current_letter = 0;
+	uint_fast8_t current_offset = 0;
+	ifstream cFile(path + "zfont.txt");
+	if (cFile.is_open())
+	{
+		string line;
+		while (getline(cFile, line)) {
+			if (line[0] == ';') { current_letter += 1; current_offset = 0; continue; }
+			if (line.empty()) { continue; } 
+
+
+			ZSNES_letter& curr_l = zsnes_font[current_letter];
+			for (uint_fast8_t i = 0; i < 8; i++)
+			{
+				curr_l.bits[i][current_offset] = line.at(i) == '1';
+			}
+
+			current_offset += 1;
+		}
+
+		cout << cyan << "[ZUI] Loaded 0x" << hex << int(current_letter) << dec << " letters." << endl;
+	}
+}
+uint_fast8_t char_to_zsnes_font_letter(char l) //use to convert strings
+{
+	uint_fast8_t new_l = uint_fast8_t(l);
+	if (new_l > 0x60) { return new_l - 0x57; }
+	if (new_l > 0x40) { return new_l - 0x37; }
+	if (new_l >= 0x30) { return new_l - 0x30; }
+	return 0x8C;
+}
+
+class ZSNES_button
+{
+public:
+	string name;
+	int_fast16_t x_s;
+	int_fast16_t y_s;
+	int_fast16_t x_e;
+	int_fast16_t y_e;
+	ZSNES_button(string n_n, int_fast16_t n_x_s, int_fast16_t n_y_s, int_fast16_t n_x_e, int_fast16_t n_y_e)
+	{
+		name = n_n;
+		x_s = n_x_s;
+		y_s = n_y_s;
+		x_e = n_x_e;
+		y_e = n_y_e;
+	}
+};
+
 class ZSNES_ui
 {
 	SDL_Surface* surface; //for drawing
 public:
 	SDL_Texture* texture; //final texture for output
+	vector<ZSNES_button> button;
+	string button_pressed;
+	string hint;
 
 	//variables
 	float snow_x[snow_size];
@@ -29,9 +91,6 @@ public:
 	//initializer. done always
 	ZSNES_ui()
 	{
-
-
-
 		clean_surface();
 		for (int i = 0; i < snow_size; i++)
 		{
@@ -39,6 +98,13 @@ public:
 			snow_y[i] = float(rand() % 256);
 			snow_x_s[i] = float(1 + (rand() % 3)) / 6.f;
 		}
+		hint = GAME_VERSION;
+	}
+
+	//add button
+	void add_button(string name, int_fast16_t x_s, int_fast16_t y_s, int_fast16_t x_e, int_fast16_t y_e)
+	{
+		button.push_back(ZSNES_button(name, x_s, y_s, x_e, y_e));
 	}
 
 	//initializes the ZSNES surface
@@ -69,15 +135,52 @@ public:
 	}
 
 	//draws a button
-	void draw_button(int_fast16_t x_s, int_fast16_t y_s, int_fast16_t x_e, int_fast16_t y_e)
+	void draw_button(bool pressed, int_fast16_t x_s, int_fast16_t y_s, int_fast16_t x_e, int_fast16_t y_e)
 	{
 		draw_rectangle(x_s, x_e, y_s, y_e, 88, 84, 80); //bg.
 
-		draw_rectangle(x_s, x_s + 1, y_s, y_e - 1, 104, 100, 96); //left side
-		draw_rectangle(x_s + 1, x_e, y_s, y_s + 1, 120, 116, 112); //top side
-		draw_rectangle(x_e - 1, x_e, y_s + 1, y_e, 72, 68, 64); //right side
-		draw_rectangle(x_s, x_e - 1, y_e - 1, y_e, 56, 52, 48); //bottom side
+		if (pressed)
+		{
+			draw_rectangle(x_s, x_s + 1, y_s, y_e - 1, 72, 68, 64); //left side 104, 100, 96);
+			draw_rectangle(x_s + 1, x_e, y_s, y_s + 1, 56, 52, 48); //top side 120, 116, 112);
+			draw_rectangle(x_e - 1, x_e, y_s + 1, y_e, 104, 100, 96); //right side 72, 68, 64);
+			draw_rectangle(x_s, x_e - 1, y_e - 1, y_e, 120, 116, 112); //bottom side 56, 52, 48);
+		}
+		else
+		{
+			draw_rectangle(x_s, x_s + 1, y_s, y_e - 1, 104, 100, 96); //left side
+			draw_rectangle(x_s + 1, x_e, y_s, y_s + 1, 120, 116, 112); //top side
+			draw_rectangle(x_e - 1, x_e, y_s + 1, y_e, 72, 68, 64); //right side
+			draw_rectangle(x_s, x_e - 1, y_e - 1, y_e, 56, 52, 48); //bottom side
+		}
+	}
 
+	//draws a string
+	void draw_string(bool dark, string str, int_fast16_t x, int_fast16_t y)
+	{
+		for (int i = 0; i < str.size(); i++) {
+			uint_fast8_t arr_l = char_to_zsnes_font_letter(str.at(i));
+			ZSNES_letter& curr_l = zsnes_font[arr_l];
+
+			for (uint_fast8_t x_l = 0; x_l < 8; x_l++) {
+				for (uint_fast8_t y_l = 0; y_l < 5; y_l++) {
+					if (curr_l.bits[x_l][y_l])
+					{
+						if (dark)
+						{
+							uint_fast8_t formula = 16 + y_l * 16;
+							draw_pixel_to_surface(x + x_l, y + y_l, formula, formula, formula, surface);
+						}
+						else
+						{
+							uint_fast8_t formula = 255 - y_l * 16;
+							draw_pixel_to_surface(x + x_l, y + y_l, formula, formula, formula, surface);
+						}
+					}
+				}
+			}
+			x += 6;
+		}
 	}
 
 	//process ZSNES ui
@@ -103,11 +206,27 @@ public:
 		draw_rectangle(0, 230, 1, 14, 0, 48, 152);
 		draw_rectangle(0, 230, 2, 13, 0, 52, 168);
 		draw_rectangle(0, 230, 3, 12, 0, 56, 184);
+
 		draw_rectangle(0, 230, 4, 11, 0, 60, 200);
 		draw_rectangle(0, 230, 5, 10, 0, 64, 210);
 		draw_rectangle(0, 230, 6, 9, 0, 68, 232);
 		draw_rectangle(0, 230, 7, 8, 0, 72, 248);
 
+		button_pressed = "none";
+
+		for (int i = 0; i < button.size(); i++) {
+			ZSNES_button& b = button[i];
+			bool check = mouse_down && (mouse_x > b.x_s && mouse_x < b.x_e && mouse_y > b.y_s && mouse_y < b.y_e); 
+			if (check == true) {
+				button_pressed = b.name;
+			}
+			draw_button(check, b.x_s, b.y_s, b.x_e, b.y_e);
+			
+			draw_string(true, b.name, b.x_s + 4, b.y_s + 4);
+			draw_string(false, b.name, b.x_s + 3, b.y_s + 3);
+		}
+
+		draw_string(false, hint, 5, 224-10);
 
 
 

@@ -124,12 +124,12 @@ public:
 		uint_fast16_t tile = get_tile(x, y);
 		if (tile == 0x1AA) //45* slope Right
 		{
-			if (x_relative <= -1 || x_relative >= 17) { return -9999; }
+			if (x_relative <= 0 || x_relative >= 16) { return -9999; }
 			return x_relative;
 		}
 		if (tile == 0x1AF) //45* slope Left
 		{
-			if (x_relative <= -1 || x_relative >= 17) { return -9999; }
+			if (x_relative <= 0 || x_relative >= 16) { return -9999; }
 			return 16.0 - x_relative;
 		}
 		return 16.0;

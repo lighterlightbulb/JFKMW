@@ -35,6 +35,9 @@ void check_input()
 		quit = true;
 	}
 	SDL_GetMouseState(&mouse_x, &mouse_y);
+	mouse_x -= sp_offset_x; mouse_x /= scale;
+	mouse_y -= sp_offset_y; mouse_y /= scale;
+	mouse_down = SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT);
 	if (gGameController)
 	{
 		BUTTONS_GAMEPAD[0] = SDL_GameControllerGetButton(gGameController, SDL_CONTROLLER_BUTTON_DPAD_UP) || (SDL_GameControllerGetAxis(gGameController, SDL_CONTROLLER_AXIS_LEFTY) < -24576);

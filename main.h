@@ -7,17 +7,20 @@ void player_code()
 	}
 
 
+	//Initialize ZSNES UI
+	load_zsnes_font();
+	zsnes_ui.add_button("SINGLEPLAYER", 4, 2, 82, 13);
+	zsnes_ui.add_button("MULTIPLAYER", 84, 2, 84+82, 13);
+	zsnes_ui.add_button("RELOAD", 84+84, 2, 84+84+48, 13);
+
+	//Load SDL part
 	screen(resolution_x, resolution_y, "JFK mario world - " + GAME_VERSION);
 	init_input();
 	init_audio();
-
 	Mix_HaltMusic();
-	string file = path + "Sounds/music/_boot.ogg";
-	music = Mix_LoadMUS(file.c_str());
-	Mix_PlayMusic(music, 1);
+	string file = path + "Sounds/music/_boot.ogg"; music = Mix_LoadMUS(file.c_str()); Mix_PlayMusic(music, 1);
 
 	string level = "";
-
 	while (true)
 	{
 		disconnected = false;
@@ -33,9 +36,9 @@ void player_code()
 			{
 				return;
 			}
+
 			cls();
 			zsnes_ui.process();
-			zsnes_ui.draw_button(4, 2, 50, 12);
 			zsnes_ui.finish_processing(ren);
 
 			//we create a rectangle for knowing where it will be drawn, in this case it will cover the whole screen.
@@ -69,7 +72,7 @@ void player_code()
 
 			redraw();
 			check_input();
-			if (state[SDL_SCANCODE_Q]) {
+			if (zsnes_ui.button_pressed == "SINGLEPLAYER") {
 				s_or_c = "t";
 				level = "";
 				break;

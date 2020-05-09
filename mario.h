@@ -320,16 +320,17 @@ public:
 						}
 						if (NewPositionY > AboveBlock - bound_y)
 						{
-							if (Y_SPEED <= 0)
-							{
-								NewPositionY = AboveBlock;
-							}
 							willreturn = false;
 
 							
 							if (new_s != 0 && SLOPE_TYPE == 0)
 							{
 								SLOPE_TYPE = new_s;
+							}
+
+							if (Y_SPEED <= 0)
+							{
+								NewPositionY = AboveBlock;
 							}
 
 							map16_handler.process_block(xB, yB, top, pressed_y);
@@ -896,7 +897,7 @@ public:
 			}
 
 
-			if (!ON_FL) {
+			if (!ON_FL || SLOPE_TYPE) {
 				Y_SPEED += Calculate_Speed(GRAV);
 			}
 			else {
