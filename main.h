@@ -10,8 +10,9 @@ void player_code()
 	//Initialize ZSNES UI
 	load_zsnes_font();
 	zsnes_ui.add_button("SINGLEPLAYER", 4, 2, 82, 13);
-	zsnes_ui.add_button("MULTIPLAYER", 84, 2, 84+82, 13);
-	zsnes_ui.add_button("RELOAD", 84+84, 2, 84+84+48, 13);
+	zsnes_ui.add_button("MULTIPLAYER", 84, 2, 84 + 82, 13);
+	zsnes_ui.add_button("RELOAD", 84 + 84, 2, 84 + 84 + 48, 13);
+	zsnes_ui.add_button("X",  256-13, 2, 256-2, 13);
 
 	//Load SDL part
 	screen(resolution_x, resolution_y, "JFK mario world - " + GAME_VERSION);
@@ -96,6 +97,11 @@ void player_code()
 					s_or_c = "t";
 					break;
 				}
+			}
+
+			if (zsnes_ui.button_pressed == "X")
+			{
+				return;
 			}
 		}
 		/* Load Shit */
