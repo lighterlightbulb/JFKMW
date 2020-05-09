@@ -58,6 +58,8 @@ void put_mario_data_in(MPlayer& CurrentMario)
 
 	CurrentPacket << CurrentMario.CAMERA_X; CurrentPacket << CurrentMario.CAMERA_Y;
 
+	CurrentPacket << CurrentMario.SLOPE_TYPE;
+
 	CurrentPacket << CurrentMario.jump_is_spin;
 
 	CurrentPacket << CurrentMario.skin; CurrentPacket << CurrentMario.in_pipe; CurrentPacket << CurrentMario.pipe_speed;
@@ -83,6 +85,8 @@ void take_mario_data(MPlayer& CurrentMario)
 	CurrentPacket >> CurrentMario.COINS; CurrentPacket >> CurrentMario.player_index;
 
 	CurrentPacket >> CurrentMario.CAMERA_X; CurrentPacket >> CurrentMario.CAMERA_Y;
+
+	CurrentPacket >> CurrentMario.SLOPE_TYPE;
 
 	CurrentPacket >> CurrentMario.jump_is_spin;
 
@@ -217,9 +221,9 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool for_validating = false)
 		}
 		return;
 	}
-	if (!isClient && CurrentPacket.getDataSize() != 86) //Player only sends things to update their data, so they shouldn't send stuff that big.
+	if (!isClient && CurrentPacket.getDataSize() != 87) //Player only sends things to update their data, so they shouldn't send stuff that big.
 	{
-		cout << blue << "[Network] Something's weird, " << whoSentThis.getRemoteAddress() << " sent a packet that wasn't 86 bytes! (" << dec << CurrentPacket.getDataSize() << " bytes) Disconnecting!" << white << endl;
+		cout << blue << "[Network] Something's weird, " << whoSentThis.getRemoteAddress() << " sent a packet that wasn't 87 bytes! (" << dec << CurrentPacket.getDataSize() << " bytes) Disconnecting!" << white << endl;
 		HandleDisconnection(&whoSentThis);
 		return;
 	}
@@ -238,7 +242,7 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool for_validating = false)
 		if (CurrentPacket_header == Header_UpdatePlayerData)
 		{
 			uint_fast8_t PlrNum = 1; CurrentPacket >> PlrNum;
-			if (PlrNum > clients.size() || PlrNum == 0)
+			if (PlrNum > (clients.size()+1) || PlrNum == 0)
 			{
 				cout << blue << "[Network] Something's weird, " << whoSentThis.getRemoteAddress() << " sent a invalid player packet. Disconnecting!" << white << endl;
 				HandleDisconnection(&whoSentThis);
