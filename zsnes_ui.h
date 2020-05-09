@@ -50,6 +50,8 @@ void load_zsnes_font()
 uint_fast8_t char_to_zsnes_font_letter(char l) //use to convert strings
 {
 	uint_fast8_t new_l = uint_fast8_t(l);
+	if (new_l == 0x2E) { return 0x27; }
+	if (new_l == 0x3A) { return 0x3F; }
 	if (new_l > 0x60) { return new_l - 0x57; }
 	if (new_l > 0x40) { return new_l - 0x37; }
 	if (new_l >= 0x30) { return new_l - 0x30; }
@@ -98,7 +100,6 @@ public:
 			snow_y[i] = float(rand() % 256);
 			snow_x_s[i] = float(1 + (rand() % 3)) / 6.f;
 		}
-		hint = GAME_VERSION;
 	}
 
 	//add button
@@ -226,10 +227,32 @@ public:
 			draw_string(false, b.name, b.x_s + 3, b.y_s + 3);
 		}
 
-		draw_string(false, hint, 5, 224-10);
+		
+		//Numbers (HOw to otpimize please help)
+		if (getKey(0x30)) { hint = hint + "0"; }
+		if (getKey(0x31)) { hint = hint + "1"; }
+		if (getKey(0x32)) { hint = hint + "2"; }
+		if (getKey(0x33)) { hint = hint + "3"; }
+		if (getKey(0x34)) { hint = hint + "4"; }
+		if (getKey(0x35)) { hint = hint + "5"; }
+		if (getKey(0x36)) { hint = hint + "6"; }
+		if (getKey(0x37)) { hint = hint + "7"; }
+		if (getKey(0x38)) { hint = hint + "8"; }
+		if (getKey(0x39)) { hint = hint + "9"; }
+		//Letters
+		if (getKey(0x41)) { hint = hint + "A"; }
+		if (getKey(0x42)) { hint = hint + "B"; }
+		if (getKey(0x43)) { hint = hint + "C"; }
+		if (getKey(0x44)) { hint = hint + "D"; }
+		if (getKey(0x45)) { hint = hint + "E"; }
+		if (getKey(0x46)) { hint = hint + "F"; }
+		//Period
+		if (getKey(VK_OEM_PERIOD)) { hint = hint + "."; }
+		//Delete
+		if (getKey(VK_BACK) && hint.size() > 0) { hint.pop_back(); }
 
-
-
+		draw_string(false, "JFKMW " + GAME_VERSION, 5, 224 - 10);
+		draw_string(false, "Option: " + hint, 5, 224 - 16);
 	}
 
 	//finish processing, copy to texture.

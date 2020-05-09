@@ -23,6 +23,7 @@ void player_code()
 	string level = "";
 	while (true)
 	{
+		zsnes_ui.hint = "";
 		disconnected = false;
 		PlayerAmount = 0; SelfPlayerNumber = 1; CheckForPlayers();
 		quit = false;
@@ -31,6 +32,7 @@ void player_code()
 		string s_or_c;
 		while (true)
 		{
+			
 			quit = false;
 			if (done(true))
 			{
@@ -72,22 +74,29 @@ void player_code()
 
 			redraw();
 			check_input();
-			if (zsnes_ui.button_pressed == "SINGLEPLAYER") {
-				s_or_c = "t";
-				level = "";
-				break;
-			}
-			if (state[SDL_SCANCODE_W]) {
-				s_or_c = "c";
-				break;
-			}
-
-			if (state[SDL_SCANCODE_R] || SDL_GameControllerGetButton(gGameController, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER))
+			if (zsnes_ui.hint != "")
 			{
-				s_or_c = "t";
-				break;
+				if (zsnes_ui.button_pressed == "SINGLEPLAYER" || state[SDL_SCANCODE_Q]) {
+					s_or_c = "t";
+					level = zsnes_ui.hint;
+					break;
+				}
+				if (zsnes_ui.button_pressed == "MULTIPLAYER" || state[SDL_SCANCODE_W]) {
+					s_or_c = "c";
+					PORT = 25500;
+					ip = zsnes_ui.hint;
+					break;
+				}
 			}
 
+			if ((zsnes_ui.button_pressed == "RELOAD" || state[SDL_SCANCODE_R]) || SDL_GameControllerGetButton(gGameController, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER))
+			{
+				if (level != "")
+				{
+					s_or_c = "t";
+					break;
+				}
+			}
 		}
 		/* Load Shit */
 
@@ -100,15 +109,12 @@ void player_code()
 
 #if not defined(DISABLE_NETWORK)
 
-			cout << blue << "[Network] Please input the ip : " << green; cin >> ip;
-			cout << blue << "[Network] Please input the port : " << green; cin >> PORT;
-			cout << white;
 			if (!ConnectClient()) {
 				cout << red << "[Network] Failed to connect. Falling back to normal mode." << white << endl;
 				networking = false;
 				isClient = false;
 				disconnected = false;
-				s_or_c = "t";
+				continue;
 			}
 #else
 			cout << "Multiplayer is not supported in this build!" << endl;

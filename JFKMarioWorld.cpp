@@ -129,7 +129,7 @@ int main(int argc, char* argv[])
 		}
 	}
 	else {
-		cout << yellow << "[JFKMW] Welcome to JFK mario world " + GAME_VERSION + "!, Press R to reload the last level you played, Press Q if you want to play singleplayer, or W to connect to a server, then go to the console. We don't have a UI yet. If you want to get updates, join the discord at https://discord.gg/fD5QQK3" << white << endl;
+		cout << yellow << "[JFKMW] Welcome to JFK mario world " + GAME_VERSION + "!, Press R to reload the last level you played, Press Q if you want to play singleplayer, or W to connect to a server. Make sure you have typed in a option first in the UI! If you want to get updates, join the discord at https://discord.gg/fD5QQK3" << white << endl;
 		player_code();
 	}
 #else
