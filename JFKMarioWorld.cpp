@@ -41,6 +41,8 @@ using namespace std;
 
 
 #if defined(__linux__)
+
+#if not defined(DISABLE_NETWORK)
 #define uint_fast8_t sf::Uint8
 #define uint_fast16_t sf::Uint16
 #define uint_fast32_t sf::Uint32
@@ -49,6 +51,7 @@ using namespace std;
 #define int_fast16_t sf::Int16
 #define int_fast32_t sf::Int32
 #define int_fast64_t sf::Int64
+#endif
 
 
 
