@@ -62,5 +62,9 @@ bool getKey(int what_want)
 		return true;
 	}
 #endif
+
+#if defined(__linux__)
+
+#endif
 	return false;
 }

@@ -11,15 +11,15 @@
 #define Delay_Connection 200
 
 string latest_chk = "";
-sf::Socket::Status last_status;
+sf::Socket::Status last_network_status;
 sf::Socket::Status receiveWithTimeout(sf::TcpSocket& socket, sf::Packet& packet, sf::Time timeout, bool blocking)
 {
 	sf::SocketSelector selector;
 	selector.add(socket);
 	if (selector.wait(timeout)){
 		socket.setBlocking(blocking);
-		last_status = socket.receive(packet);
-		return last_status;
+		last_network_status = socket.receive(packet);
+		return last_network_status;
 	}
 	else {
 		return sf::Socket::NotReady;
@@ -143,7 +143,7 @@ void HandleDisconnection(sf::TcpSocket* ToSend = nullptr) {
 	selector.remove(*ToSend);
 
 	ToSend->disconnect();
-	last_status = sf::Socket::Error;
+	last_network_status = sf::Socket::Error;
 	delete ToSend;
 }
 
@@ -196,7 +196,7 @@ void SendPacket(sf::TcpSocket* ToSend = nullptr) {
 
 void ReceivePacket(sf::TcpSocket &whoSentThis, bool for_validating = false)
 {
-	//cout << last_status << endl;
+	//cout << last_network_status << endl;
 	CurrentPacket >> CurrentPacket_header;
 	data_size_current += int(CurrentPacket.getDataSize());
 
@@ -322,7 +322,7 @@ bool receive_all_packets(sf::TcpSocket& socket, bool slower = false, bool for_va
 
 	while (receiveWithTimeout(socket, CurrentPacket, sf::milliseconds(slower ? 2000 : packet_wait_time), !for_validating) != sf::Socket::NotReady)
 	{
-		if (last_status == sf::Socket::Disconnected)
+		if (last_network_status == sf::Socket::Disconnected)
 		{
 			if (!isClient) {
 				HandleDisconnection(&socket);
@@ -346,7 +346,7 @@ bool receive_all_packets(sf::TcpSocket& socket, bool slower = false, bool for_va
 	}
 	if (!isClient)
 	{
-		return !((last_status == sf::Socket::Error) || (last_status == sf::Socket::Disconnected));
+		return !((last_network_status == sf::Socket::Error) || (last_network_status == sf::Socket::Disconnected));
 	}
 	return !disconnected;
 }
@@ -416,7 +416,7 @@ void Server_To_Clients()
 			sf::TcpSocket& client = *clients[i];
 			receive_all_packets(client);
 			
-			if (clients.size() < 1 || last_status == sf::Socket::Error || last_status == sf::Socket::Disconnected)
+			if (clients.size() < 1 || last_network_status == sf::Socket::Error || last_network_status == sf::Socket::Disconnected)
 			{
 				//cout << blue << "[Server] Attempting to recover from player failure. Will stop communication." << white << endl;
 				break;
@@ -434,7 +434,7 @@ void Server_To_Clients()
 
 
 
-			if (clients.size() < 1 || last_status == sf::Socket::Error || last_status == sf::Socket::Disconnected)
+			if (clients.size() < 1 || last_network_status == sf::Socket::Error || last_network_status == sf::Socket::Disconnected)
 			{
 				//cout << blue << "[Server] Attempting to recover from player failure. Will stop communication." << white << endl;
 				break;

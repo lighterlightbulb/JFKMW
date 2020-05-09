@@ -6,7 +6,6 @@
 void Sleep(int time) {
 	usleep(time * 1000);
 }
-//#define DISABLE_NETWORK
 #endif
 
 
