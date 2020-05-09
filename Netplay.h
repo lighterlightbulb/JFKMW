@@ -54,7 +54,7 @@ void put_mario_data_in(MPlayer& CurrentMario)
 	CurrentPacket << CurrentMario.to_scale; CurrentPacket << CurrentMario.SKIDDING; CurrentPacket << CurrentMario.P_METER;
 	CurrentPacket << CurrentMario.FRM; CurrentPacket << CurrentMario.WALKING_DIR;
 
-	CurrentPacket << CurrentMario.COINS; CurrentPacket << CurrentMario.player_index;
+	CurrentPacket << CurrentMario.player_index;
 
 	CurrentPacket << CurrentMario.CAMERA_X; CurrentPacket << CurrentMario.CAMERA_Y;
 
@@ -82,7 +82,7 @@ void take_mario_data(MPlayer& CurrentMario)
 	CurrentPacket >> CurrentMario.to_scale; CurrentPacket >> CurrentMario.SKIDDING; CurrentPacket >> CurrentMario.P_METER;
 	CurrentPacket >> CurrentMario.FRM; CurrentPacket >> CurrentMario.WALKING_DIR;
 
-	CurrentPacket >> CurrentMario.COINS; CurrentPacket >> CurrentMario.player_index;
+	CurrentPacket >> CurrentMario.player_index;
 
 	CurrentPacket >> CurrentMario.CAMERA_X; CurrentPacket >> CurrentMario.CAMERA_Y;
 
@@ -221,9 +221,9 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool for_validating = false)
 		}
 		return;
 	}
-	if (!isClient && CurrentPacket.getDataSize() != 87) //Player only sends things to update their data, so they shouldn't send stuff that big.
+	if (!isClient && CurrentPacket.getDataSize() != 86) //Player only sends things to update their data, so they shouldn't send stuff that big.
 	{
-		cout << blue << "[Network] Something's weird, " << whoSentThis.getRemoteAddress() << " sent a packet that wasn't 87 bytes! (" << dec << CurrentPacket.getDataSize() << " bytes) Disconnecting!" << white << endl;
+		cout << blue << "[Network] Something's weird, " << whoSentThis.getRemoteAddress() << " sent a packet that wasn't 86 bytes! (" << dec << CurrentPacket.getDataSize() << " bytes) Disconnecting!" << white << endl;
 		HandleDisconnection(&whoSentThis);
 		return;
 	}

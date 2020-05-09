@@ -173,6 +173,7 @@ public:
 			{
 				replace_map_tile(0x0025, x, y);
 				ServerRAM.RAM[0x1DFC] = 1;
+				ServerRAM.RAM[0x0DBF] += 1;
 			}
 
 			if (t == 0x012E && pressing_y)

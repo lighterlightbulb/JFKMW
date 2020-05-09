@@ -32,7 +32,6 @@ public:
 	double FRM = 0;
 	float to_scale = 1.f;
 
-	uint_fast8_t COINS = 0;
 	double height = 14.0;
 	double x = 16.0;
 	double y = 16.0;
