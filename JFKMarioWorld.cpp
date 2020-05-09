@@ -1,13 +1,13 @@
 #if defined(_WIN32)
 #include <Windows.h>
-
+#include <cstdint>
 #elif defined(__linux__)
 #include <unistd.h>
 #include <list>
 void Sleep(int time) {
 	usleep(time * 1000);
 }
-#define DISABLE_NETWORK
+//#define DISABLE_NETWORK
 #endif
 
 #include <cmath>
@@ -16,7 +16,6 @@ void Sleep(int time) {
 #include <iostream>
 #include <sstream>
 #include <fstream>
-#include <cstdint>
 #include <iomanip>
 #include <algorithm>
 #include <unordered_map>
@@ -31,7 +30,28 @@ void Sleep(int time) {
 
 using namespace std;
 
+#include <SDL.h>
+#include <SDL_image.h>
+#include <SDL_mixer.h>
+
+#if not defined(DISABLE_NETWORK)
+#include <SFML/Network.hpp>
+#endif
+
+
 #if defined(__linux__)
+#define uint_fast8_t sf::Uint8
+#define uint_fast16_t sf::Uint16
+#define uint_fast32_t sf::Uint32
+#define uint_fast64_t sf::Uint64
+#define int_fast8_t sf::Int8
+#define int_fast16_t sf::Int16
+#define int_fast32_t sf::Int32
+#define int_fast64_t sf::Int64
+
+
+
+
 istream& getline(istream& stream, string& str)
 {
 	char ch;
@@ -47,16 +67,6 @@ istream& getline(istream& stream, string& str)
 	}
 	return stream;
 }
-#endif
-
-
-#include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_mixer.h>
-
-
-#if not defined(DISABLE_NETWORK)
-#include <SFML/Network.hpp>
 #endif
 
 
