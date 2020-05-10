@@ -53,6 +53,7 @@ uint_fast8_t char_to_zsnes_font_letter(char l) //use to convert strings
 	if (new_l == 0x2E) { return 0x27; }
 	if (new_l == 0x3A) { return 0x2D; }
 	if (new_l == 0x5F) { return 0x25; }
+	if (new_l == 0x2D) { return 0x24; }
 	if (new_l > 0x60) { return new_l - 0x57; }
 	if (new_l > 0x40) { return new_l - 0x37; }
 	if (new_l >= 0x30) { return new_l - 0x30; }
@@ -85,6 +86,7 @@ public:
 	vector<ZSNES_button> button;
 	string button_pressed;
 	string hint;
+	string message;
 
 	//variables
 	float snow_x[snow_size];
@@ -218,17 +220,17 @@ public:
 
 		for (int i = 0; i < button.size(); i++) {
 			ZSNES_button& b = button[i];
-			bool check = mouse_down && (mouse_x > b.x_s && mouse_x < b.x_e && mouse_y > b.y_s && mouse_y < b.y_e); 
+			bool check = mouse_down && (mouse_x > b.x_s && mouse_x < b.x_e && mouse_y > b.y_s && mouse_y < b.y_e);
 			if (check == true) {
 				button_pressed = b.name;
 			}
 			draw_button(check, b.x_s, b.y_s, b.x_e, b.y_e);
-			
+
 			draw_string(true, b.name, b.x_s + 4, b.y_s + 4);
 			draw_string(false, b.name, b.x_s + 3, b.y_s + 3);
 		}
 
-		
+
 
 		//Numbers (HOw to otpimize please help)
 		if (getKey(0x30)) { hint = hint + "0"; }
@@ -253,7 +255,7 @@ public:
 		//Delete
 		if (getKey(0x08) && hint.size() > 0) { hint.pop_back(); }
 
-		draw_string(false, "JFKMW " + GAME_VERSION, 5, 224 - 10);
+		draw_string(false, "JFKMW - " + message, 5, 224 - 10);
 		draw_string(false, "Option: " + hint + ((global_frame_counter % 64) > 32 ? "_" : ""), 5, 224 - 16);
 	}
 

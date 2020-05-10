@@ -69,7 +69,7 @@ public:
 
 	void LoadLevelFromString(string DLevel, uint_fast16_t num)
 	{
-		
+		lua_loaded = false;
 		reset_map();
 
 		cout << green
@@ -255,7 +255,6 @@ public:
 
 		ASM.Write_To_Ram(0x36, 0, 1);
 		ASM.Write_To_Ram(0x1493, 0, 1);
-
 	}
 
 	void LoadLevel(uint_fast16_t num)
@@ -265,6 +264,7 @@ public:
 		{
 			level_data.erase(level_data.begin());
 		}
+
 		Initialize_Level();
 		cout << green
 			<< "[Level Manager] Loading level " << int_to_hex(num) << ".."

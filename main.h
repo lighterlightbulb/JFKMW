@@ -24,8 +24,14 @@ void player_code()
 	string level = "";
 	global_frame_counter = 0;
 
+	zsnes_ui.message = "First boot";
+
 	while (true)
 	{
+		if (zsnes_ui.message == "Idle")
+		{
+			Mix_FadeOutMusic(4000); old_1dfb = 0;
+		}
 		zsnes_ui.hint = "";
 		disconnected = false;
 		PlayerAmount = 0; SelfPlayerNumber = 1; CheckForPlayers();
@@ -44,6 +50,32 @@ void player_code()
 			global_frame_counter += 1;
 
 			cls();
+
+			if (zsnes_ui.hint != "")
+			{
+				if (zsnes_ui.button_pressed == "SINGLEPLAYER" || state[SDL_SCANCODE_Q]) {
+					s_or_c = "t";
+					zsnes_ui.message = "Loading level..";
+					level = zsnes_ui.hint;
+				}
+				if (zsnes_ui.button_pressed == "MULTIPLAYER" || state[SDL_SCANCODE_W]) {
+					zsnes_ui.message = "Connecting to " + ip + ":" + to_string(PORT);
+					s_or_c = "c";
+					PORT = 25500;
+					ip = zsnes_ui.hint;
+				}
+			}
+
+			if ((zsnes_ui.button_pressed == "RELOAD" || state[SDL_SCANCODE_R]) || SDL_GameControllerGetButton(gGameController, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER))
+			{
+				zsnes_ui.message = "Reloading";
+				if (level != "")
+				{
+					s_or_c = "t";
+				}
+			}
+
+
 			zsnes_ui.process();
 			zsnes_ui.finish_processing(ren);
 
@@ -74,37 +106,20 @@ void player_code()
 			SDL_RenderCopy(ren, screen_t_l2, nullptr, &DestR);
 
 
+			
 			SDL_RenderCopy(ren, zsnes_ui.texture, NULL, &dest);
 
 			redraw();
 			check_input();
-			if (zsnes_ui.hint != "")
-			{
-				if (zsnes_ui.button_pressed == "SINGLEPLAYER" || state[SDL_SCANCODE_Q]) {
-					s_or_c = "t";
-					level = zsnes_ui.hint;
-					break;
-				}
-				if (zsnes_ui.button_pressed == "MULTIPLAYER" || state[SDL_SCANCODE_W]) {
-					s_or_c = "c";
-					PORT = 25500;
-					ip = zsnes_ui.hint;
-					break;
-				}
-			}
-
-			if ((zsnes_ui.button_pressed == "RELOAD" || state[SDL_SCANCODE_R]) || SDL_GameControllerGetButton(gGameController, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER))
-			{
-				if (level != "")
-				{
-					s_or_c = "t";
-					break;
-				}
-			}
 
 			if (zsnes_ui.button_pressed == "X")
 			{
 				return;
+			}
+
+			if (s_or_c != "")
+			{
+				break;
 			}
 		}
 		global_frame_counter = 0;
@@ -124,6 +139,7 @@ void player_code()
 				networking = false;
 				isClient = false;
 				disconnected = false;
+				zsnes_ui.message = "Failed to connect";
 				continue;
 			}
 #else
@@ -131,6 +147,7 @@ void player_code()
 			networking = false;
 			isClient = false;
 			s_or_c = "t";
+			zsnes_ui.message = "Not supported";
 #endif
 		}
 		
@@ -142,6 +159,7 @@ void player_code()
 				cout << "Enter a level : "; cin >> level;
 			}
 			LevelManager.LoadLevel(stoi(level, nullptr, 16));
+			zsnes_ui.message = "Idle";
 		}
 
 		if (!isClient)
