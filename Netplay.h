@@ -7,10 +7,12 @@
 #define Header_ConnectData 0x04
 #define Header_RAM 0x05
 #define Header_MusicData 0x06
+#define Header_FailedToConnect 0x07
 
 #define Delay_Connection 200
 
-string latest_chk = "";
+string latest_error = "";
+
 sf::Socket::Status last_network_status;
 sf::Socket::Status receiveWithTimeout(sf::TcpSocket& socket, sf::Packet& packet, sf::Time timeout, bool blocking)
 {
@@ -207,17 +209,18 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool for_validating = false)
 		{
 			cout << blue << "[Client] Receiving verification.." << white << endl;
 
-			//string validation;
+			string validation;
 
 			CurrentPacket >> username;
-			//CurrentPacket >> validation;
-			//if (validation == da_epical_function_lol())
-			//{
-			cout << blue << "[Client] " << username << " has passed verification." << white << endl;
-			validated_connection = true;
-			//	return;
-			//}
-			//cout << blue << "[Client] Failed verification." << white << endl;
+			CurrentPacket >> validation;
+			if (validation == GAME_VERSION)
+			{
+				cout << blue << "[Client] " << username << " has passed verification." << white << endl;
+				validated_connection = true;
+				return;
+			}
+			cout << blue << "[Client] " << username << " failed verification. Outdated version or invalid chk? V/C = " << validation << white << endl;
+			latest_error = "Outdated version";
 		}
 		return;
 	}
@@ -233,7 +236,6 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool for_validating = false)
 	if (!isClient)
 	{
 
-		//cout << blue << "[Network] Received packet (" << CurrentPacket_header << ") from " << whoSentThis.getRemoteAddress() << white << endl;
 		/*
 
 		UPDATE PLAYER DATA
@@ -303,6 +305,7 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool for_validating = false)
 		{
 			//cout << blue << "[Client] Received connection data." << white << endl;
 
+
 			CurrentPacket >> PlayerAmount; //Update Plr Amount
 			CheckForPlayers(); //have to update the mario list. so it fits.
 			//cout << blue << "[Client] Receiving server RAM" << white << endl;
@@ -311,6 +314,14 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool for_validating = false)
 			ReceiveMusic(true);
 			validated_connection = true;
 			cout << blue << "[Client] Received." << white << endl;
+		}
+
+		if (CurrentPacket_header == Header_FailedToConnect)
+		{
+			string msg;
+			CurrentPacket >> msg;
+			cout << red << "[Network] Received disconnection reason from server : " << msg << white << endl;
+			validated_connection = false;
 		}
 
 	}
@@ -389,7 +400,13 @@ void PendingConnection()
 		}
 		else
 		{
-			cout << blue << "[Server] " << username << " (" << client->getRemoteAddress() << ", " << latest_chk << ", Player " << dec << int(NewPlayerNumber) << ") Timed out or sent invalid information. Disconnecting." << white << endl;
+			cout << blue << "[Server] " << username << " (" << client->getRemoteAddress() << ", Player " << dec << int(NewPlayerNumber) << ") Timed out or sent invalid information. Disconnecting." << white << endl;
+			PreparePacket(Header_FailedToConnect);
+			CurrentPacket << latest_error;
+			SendPacket(client);
+
+			latest_error = "Unknown";
+
 			client->disconnect(); 
 			delete client;
 		}
@@ -524,6 +541,7 @@ bool ConnectClient(void)
 	{
 		PreparePacket(Header_AttemptJoin);
 		CurrentPacket << username; //CurrentPacket << da_epical_function_lol();
+		CurrentPacket << GAME_VERSION;
 		SendPacket();
 		sf::sleep(sf::milliseconds(500));
 		receive_all_packets(socketG, true);

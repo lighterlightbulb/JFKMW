@@ -51,6 +51,7 @@ void server_code(string level = "")
 			string level = ""; cout << "Enter a level : "; cin >> level; 
 			doing_write = true;
 			LevelManager.LoadLevel(stoi(level, nullptr, 16));
+			game_init();
 			Set_Server_RAM();
 			recent_big_change = true;
 			doing_write = false;
