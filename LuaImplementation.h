@@ -140,19 +140,6 @@ static int draw_to_oam_direct(lua_State* L)
 
 
 static int lua_bitand(lua_State* L) {
-/*
-	local result = 0
-	local bitval = 1
-	while a > 0 and b > 0 do
-	  if a % 2 == 1 and b % 2 == 1 then -- test the rightmost bits
-		  result = result + bitval      -- set the current bit
-	  end
-	  bitval = bitval * 2 -- shift left
-	  a = math.floor(a/2) -- shift right
-	  b = math.floor(b/2)
-	end
-	return result
-*/
 	uint_fast8_t a = (uint_fast8_t)lua_tointeger(L, 1); 
 	uint_fast8_t b = (uint_fast8_t)lua_tointeger(L, 2);
 	
@@ -172,6 +159,18 @@ static int lua_bitand(lua_State* L) {
 	return 1;
 }
 
+static int drawtohud(lua_State* L)
+{
+	uint_fast8_t tile = (uint_fast8_t)lua_tonumber(L, 1);
+	uint_fast8_t prop = (uint_fast8_t)lua_tonumber(L, 2);
+	uint_fast8_t x = (uint_fast8_t)lua_tonumber(L, 3);
+	uint_fast8_t y = (uint_fast8_t)lua_tonumber(L, 4);
+
+	ServerRAM.RAM[0x1B800 + (x % 32) + (y * 32)] = tile;
+	ServerRAM.RAM[0x1B801 + (x % 32) + (y * 32)] = prop;
+	return 0;
+}
+
 /* functions end */
 
 void lua_connect_functions(lua_State* L)
@@ -183,6 +182,7 @@ void lua_connect_functions(lua_State* L)
 	lua_pushcfunction(L, draw_to_oam); lua_setglobal(L, "draw_to_oam");
 	lua_pushcfunction(L, draw_to_oam_direct); lua_setglobal(L, "draw_to_oam_direct");
 	lua_pushcfunction(L, lua_bitand); lua_setglobal(L, "bitand");
+	lua_pushcfunction(L, drawtohud); lua_setglobal(L, "draw_to_hud");
 	lua_register(L, "asm_read", lua_get_ram);
 
 
