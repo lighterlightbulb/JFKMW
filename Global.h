@@ -1,6 +1,6 @@
 #pragma once
 
-string GAME_VERSION = "Alpha 0.3.2 Slope Test";
+string GAME_VERSION = "Alpha 0.3.3 Slope Test";
 
 #define rom_asm_size 0x20000 //128kb
 #define location_rom_levelasm 0x00000 //this will put LevelASM on the start of the ROM

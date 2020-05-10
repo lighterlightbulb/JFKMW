@@ -28,10 +28,6 @@ void player_code()
 
 	while (true)
 	{
-		if (zsnes_ui.message == "Idle")
-		{
-			Mix_FadeOutMusic(4000); old_1dfb = 0;
-		}
 		zsnes_ui.hint = "";
 		disconnected = false;
 		PlayerAmount = 0; SelfPlayerNumber = 1; CheckForPlayers();
@@ -55,22 +51,28 @@ void player_code()
 			{
 				if (zsnes_ui.button_pressed == "SINGLEPLAYER" || state[SDL_SCANCODE_Q]) {
 					s_or_c = "t";
-					zsnes_ui.message = "Loading level..";
 					level = zsnes_ui.hint;
+					zsnes_ui.message = "Loading level " + level + "..";
 				}
 				if (zsnes_ui.button_pressed == "MULTIPLAYER" || state[SDL_SCANCODE_W]) {
+					ip = zsnes_ui.hint; PORT = 25500;
 					zsnes_ui.message = "Connecting to " + ip + ":" + to_string(PORT);
 					s_or_c = "c";
-					PORT = 25500;
-					ip = zsnes_ui.hint;
+				}
+			}
+			else
+			{
+				if (zsnes_ui.button_pressed != "none" || ((state[SDL_SCANCODE_Q] || state[SDL_SCANCODE_R]) || state[SDL_SCANCODE_W]))
+				{
+					zsnes_ui.message = "Uhh u didnt type anything";
 				}
 			}
 
 			if ((zsnes_ui.button_pressed == "RELOAD" || state[SDL_SCANCODE_R]) || SDL_GameControllerGetButton(gGameController, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER))
 			{
-				zsnes_ui.message = "Reloading";
 				if (level != "")
 				{
+					zsnes_ui.message = "Reloading";
 					s_or_c = "t";
 				}
 			}
@@ -159,7 +161,6 @@ void player_code()
 				cout << "Enter a level : "; cin >> level;
 			}
 			LevelManager.LoadLevel(stoi(level, nullptr, 16));
-			zsnes_ui.message = "Idle";
 		}
 
 		if (!isClient)
@@ -192,6 +193,8 @@ void player_code()
 				Sleep(1);
 			}
 
+			zsnes_ui.message = "Idle";
+
 			doing_write = true;
 			chrono::high_resolution_clock::time_point t1 = chrono::high_resolution_clock::now();
 			check_input(); game_loop(); SoundLoop();
@@ -215,7 +218,7 @@ void player_code()
 			doing_write = false;
 
 			if (disconnected) {
-				quit = true; cout << red << "[Network] Disconnected." << white << endl; break;
+				quit = true; cout << red << "[Network] Disconnected." << white << endl; zsnes_ui.message = "Disconnected from server"; break;
 			}
 		}
 

@@ -96,6 +96,7 @@ public:
 	//initializer. done always
 	ZSNES_ui()
 	{
+		button_pressed = "none";
 		clean_surface();
 		for (int i = 0; i < snow_size; i++)
 		{
