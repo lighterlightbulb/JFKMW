@@ -43,7 +43,7 @@ void render_oam(uint_fast16_t offset_o = 0, int CameraX = 0, int CameraY = 0)
 
 		if (tile != 0x0 &&
 			(x_position - CameraX) > -size_x && (x_position - CameraX) < (256 + size_x) &&
-			(y_position - CameraY) > -size_y && (y_position - CameraY) < (256 + size_y)			
+			(y_position - CameraY) > (-16 + -size_y) && (y_position - CameraY) < (224 + size_y)			
 		)
 		{
 			draw_tile_custom(x_position - CameraX, 224 - 32 - y_position + CameraY, size, angle, tile, pal, ((uint_fast8_t(ASM.Get_Ram(offset_o + i + 6, 1)) >> 5) & 1)  );
