@@ -38,7 +38,6 @@ using namespace std;
 #include <SFML/Network.hpp>
 #endif
 
-
 #if defined(__linux__)
 
 #if not defined(DISABLE_NETWORK)
