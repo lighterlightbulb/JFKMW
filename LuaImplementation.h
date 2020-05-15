@@ -161,13 +161,13 @@ static int lua_bitand(lua_State* L) {
 
 static int drawtohud(lua_State* L)
 {
-	uint_fast8_t tile = (uint_fast8_t)lua_tonumber(L, 1);
-	uint_fast8_t prop = (uint_fast8_t)lua_tonumber(L, 2);
-	uint_fast8_t x = (uint_fast8_t)lua_tonumber(L, 3);
-	uint_fast8_t y = (uint_fast8_t)lua_tonumber(L, 4);
+	uint_fast8_t tile = (uint_fast8_t)lua_tonumber(L, 1) & 0x7F;
+	uint_fast8_t prop = (uint_fast8_t)lua_tonumber(L, 2) & 0x0F;
+	uint_fast8_t x = (uint_fast8_t)lua_tonumber(L, 3) & 0x1F;
+	uint_fast8_t y = (uint_fast8_t)lua_tonumber(L, 4) & 0x1F;
 
-	ServerRAM.RAM[0x1B800 + (x % 32) + (y * 32)] = tile;
-	ServerRAM.RAM[0x1B801 + (x % 32) + (y * 32)] = prop;
+	ServerRAM.RAM[0x1B800 + ((x % 32) + (y * 32))*2] = tile & 0x7F;
+	ServerRAM.RAM[0x1B801 + ((x % 32) + (y * 32))*2] = prop;
 	return 0;
 }
 

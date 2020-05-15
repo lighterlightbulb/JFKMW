@@ -8,6 +8,10 @@ void Sleep(int time) {
 }
 #endif
 
+#if defined(DARWIN)
+#error "WE DO NOT SUPPORT MAC"
+#endif
+
 
 #include <cstdint>
 #include <cmath>
