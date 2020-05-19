@@ -271,7 +271,7 @@ void render()
 	//Ping
 	VRAM[0xB800 + 56 + 192] = 0x16;	VRAM[0xB801 + 56 + 192] = 6;
 	VRAM[0xB800 + 58 + 192] = 0x1C;	VRAM[0xB801 + 58 + 192] = 6;
-	draw_number_dec(27, 3, abs(latest_server_response));
+	draw_number_dec(27, 3, abs(latest_server_response) % 1000);
 
 	//FPS
 	VRAM[0xB800 + 44 + 192] = 0xF;	VRAM[0xB801 + 44 + 192] = 6;
