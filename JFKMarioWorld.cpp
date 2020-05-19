@@ -1,6 +1,7 @@
 #if defined(_WIN32)
 #include <Windows.h>
 #elif defined(__linux__)
+#define NDEBUG
 #include <unistd.h>
 #include <list>
 void Sleep(int time) {
