@@ -30,7 +30,11 @@ void load_configuration()
 			if (name == "smooth_camera") { smooth_camera = value == "true"; }
 			if (name == "smooth_camera_speed") { smooth_camera_speed = double(stoi(value)); }
 
-			if (name == "username") { username = value; }
+			if (name == "username") {
+				username = value;
+				std::transform(username.begin(), username.end(), username.begin(),
+					[](unsigned char c) { return std::tolower(c); });
+			}
 			if (name == "skin") { my_skin = uint_fast8_t(stoi(value)); }
 			if (name == "port") { PORT = stoi(value); }
 
@@ -45,6 +49,8 @@ void load_configuration()
 			if (name == "button_right") { input_settings[5] = SDL_GetScancodeFromName(v); }
 			if (name == "button_down") { input_settings[6] = SDL_GetScancodeFromName(v); }
 			if (name == "button_up") { input_settings[7] = SDL_GetScancodeFromName(v); }
+			if (name == "button_select") { input_settings[8] = SDL_GetScancodeFromName(v); }
+			if (name == "button_start") { input_settings[9] = SDL_GetScancodeFromName(v); }
 
 			if (name == "joystick_num") { controller = stoi(value); }
 		}

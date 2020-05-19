@@ -1,6 +1,6 @@
 #pragma once
 
-string GAME_VERSION = "Alpha 0.3.4 Slope Test";
+string GAME_VERSION = "Alpha 0.4.0 The better graphics update LOL";
 
 #define rom_asm_size 0x20000 //128kb
 #define location_rom_levelasm 0x00000 //this will put LevelASM on the start of the ROM
@@ -22,6 +22,9 @@ string GAME_VERSION = "Alpha 0.3.4 Slope Test";
 
 #define SpriteAmount 64
 #define ogg_sample_rate 32000
+
+#define player_expected_packet_size 99
+#define player_name_size 11
 
 int_fast16_t mapWidth = 256;
 int_fast16_t mapHeight = 32;
@@ -79,7 +82,7 @@ bool force_sleep = false;
 
 string username = "No username";
 
-SDL_Scancode input_settings[8] = {
+SDL_Scancode input_settings[10] = {
 	SDL_SCANCODE_S,
 	SDL_SCANCODE_Z,
 	SDL_SCANCODE_X,
@@ -87,7 +90,9 @@ SDL_Scancode input_settings[8] = {
 	SDL_SCANCODE_LEFT,
 	SDL_SCANCODE_RIGHT,
 	SDL_SCANCODE_DOWN,
-	SDL_SCANCODE_UP
+	SDL_SCANCODE_UP,
+	SDL_SCANCODE_RSHIFT,
+	SDL_SCANCODE_RETURN
 };
 
 vector<string> split(const string &s, char delim) {

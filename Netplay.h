@@ -64,10 +64,16 @@ void put_mario_data_in(MPlayer& CurrentMario)
 
 	CurrentPacket << CurrentMario.jump_is_spin;
 
+	CurrentPacket << CurrentMario.KO_counter; CurrentPacket << CurrentMario.WO_counter;
+
 	CurrentPacket << CurrentMario.skin; CurrentPacket << CurrentMario.in_pipe; CurrentPacket << CurrentMario.pipe_speed;
 	for (int inputs = 0; inputs < total_inputs; inputs++)
 	{
 		CurrentPacket << CurrentMario.pad[inputs];
+	}
+	for (int plr_name = 0; plr_name < player_name_size; plr_name++)
+	{
+		CurrentPacket << uint_fast8_t(CurrentMario.player_name_cut[plr_name]);
 	}
 	//copypaste
 }
@@ -92,10 +98,18 @@ void take_mario_data(MPlayer& CurrentMario)
 
 	CurrentPacket >> CurrentMario.jump_is_spin;
 
+	CurrentPacket >> CurrentMario.KO_counter; CurrentPacket >> CurrentMario.WO_counter;
+
 	CurrentPacket >> CurrentMario.skin; CurrentPacket >> CurrentMario.in_pipe; CurrentPacket >> CurrentMario.pipe_speed;
 	for (int inputs = 0; inputs < total_inputs; inputs++)
 	{
 		CurrentPacket >> CurrentMario.pad[inputs];
+	}
+	for (int plr_name = 0; plr_name < player_name_size; plr_name++)
+	{
+		uint_fast8_t new_l = 0;
+		CurrentPacket >> new_l;
+		CurrentMario.player_name_cut[plr_name] = char(new_l);
 	}
 	//copypaste
 }
@@ -224,9 +238,9 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool for_validating = false)
 		}
 		return;
 	}
-	if (!isClient && CurrentPacket.getDataSize() != 86) //Player only sends things to update their data, so they shouldn't send stuff that big.
+	if (!isClient && CurrentPacket.getDataSize() != player_expected_packet_size) //Player only sends things to update their data, so they shouldn't send stuff that big.
 	{
-		cout << blue << "[Network] Something's weird, " << whoSentThis.getRemoteAddress() << " sent a packet that wasn't 86 bytes! (" << dec << CurrentPacket.getDataSize() << " bytes) Disconnecting!" << white << endl;
+		cout << blue << "[Network] Something's weird, " << whoSentThis.getRemoteAddress() << " sent a packet that wasn't " + to_string(player_expected_packet_size) + " bytes! (" << dec << CurrentPacket.getDataSize() << " bytes) Disconnecting!" << white << endl;
 		HandleDisconnection(&whoSentThis);
 		return;
 	}

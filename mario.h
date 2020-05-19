@@ -40,6 +40,11 @@ public:
 	uint_fast8_t skin = 0;
 	uint_fast8_t STATE = 1;
 
+	uint_fast8_t WO_counter = 0;
+	uint_fast8_t KO_counter = 0;
+
+	char player_name_cut[player_name_size] = "       ";
+
 	uint_fast8_t GRABBED_SPRITE = 0xFF; //A sprite index from 0 to 7F
 
 	bool DEAD = false;
@@ -74,13 +79,14 @@ public:
 	{
 		if (!DEAD)
 		{
+			WO_counter += 1;
 			ASM.Write_To_Ram(0x1DFC, 100, 1);
 			DEAD = true;
 			DEATH_TIMER = 27;
 		}
 	}
 
-	void Hurt()
+	bool Hurt()
 	{
 		if (!DEAD && INVINCIBILITY_FRAMES == 0)
 		{
@@ -95,8 +101,10 @@ public:
 			else
 			{
 				Die();
+				return true;
 			}
 		}
+		return false;
 
 	}
 
@@ -1092,7 +1100,11 @@ void PlayerInteraction()
 						{
 							CurrPlayer.Enemy_Jump();
 						}
-						PlrInteract.Hurt();
+
+						if (PlrInteract.Hurt())
+						{
+							CurrPlayer.KO_counter += 1;
+						}
 					}
 				}
 

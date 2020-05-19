@@ -233,18 +233,21 @@ void render()
 	SDL_memset(screen_plane_sequel->pixels, 0, screen_plane_sequel->h * screen_plane_sequel->pitch);
 
 	//Status bar code here
-	string player_name_c = username;
-	transform(player_name_c.begin(), player_name_c.end(), player_name_c.begin(), ::tolower);
 	for (int i = 0; i < 5; i++)
 	{
-		VRAM[0xB804 + (i * 2) + 128] = uint_fast8_t(player_name_c.at(i)) - 0x57;
+
+		uint_fast8_t new_l = uint_fast8_t(LocalPlayer.player_name_cut[i]);
+		if (new_l == 0x20) { new_l = 0x57 + 0x7F; }
+		if (new_l < 0x3A) { new_l = new_l - 0x30 + 0x57; }
+
+		VRAM[0xB804 + (i * 2) + 128] = new_l - 0x57;
 		VRAM[0xB805 + (i * 2) + 128] = 2;
 	}
 
-	//Lives
+	//WO's
 	VRAM[0xB806 + 192] = 0x26;
 	VRAM[0xB807 + 192] = 0x6;
-	draw_number_hex(5, 3, uint_fast16_t(Mario.size()), 2);
+	draw_number_dec(5, 3, LocalPlayer.WO_counter);
 
 	//Player X/Y
 	draw_number_hex(21, 2, int(LocalPlayer.x), 4);
@@ -281,6 +284,61 @@ void render()
 	draw_number_dec(14, 3, data_size_current / 1024);
 
 	data_size_current = 0;
+
+	//Player list
+	if (state[input_settings[8]])
+	{
+		for (int i = 0; i < 32; i++)
+		{
+			for (int e = 16; e < 28; e++)
+			{
+				VRAM[0xB800 + (i << 1) + (e << 6)] = 0x7F;
+				VRAM[0xB801 + (i << 1) + (e << 6)] = 6;
+			}
+		}
+
+
+		int y = 26;
+		int plr_numb = 1;
+		for (list<MPlayer>::iterator item = Mario.begin(); item != Mario.end(); ++item)
+		{
+			MPlayer& CurrentMario = *item;
+			//Draw the PlayerNumber) icon
+			VRAM[0xB802 + (y << 6)] = plr_numb;
+			VRAM[0xB803 + (y << 6)] = 6;
+			VRAM[0xB804 + (y << 6)] = 0x3C;
+			VRAM[0xB805 + (y << 6)] = 6;
+			for (int i = 0; i < player_name_size; i++)
+			{
+				uint_fast8_t new_l = uint_fast8_t(CurrentMario.player_name_cut[i]);
+				if (new_l == 0x20) { new_l = 0x57 + 0x7F; }
+				if (new_l < 0x3A) { new_l = new_l - 0x30 + 0x57; }
+
+				VRAM[0xB808 + (i * 2) + (y << 6)] = new_l - 0x57;
+				VRAM[0xB809 + (i * 2) + (y << 6)] = 6;
+			}
+
+			//KO's
+			draw_number_dec(17, y, CurrentMario.KO_counter);
+			VRAM[0xB826 + (y << 6)] = 0x14; VRAM[0xB827 + (y << 6)] = 6;
+			VRAM[0xB828 + (y << 6)] = 0x18; VRAM[0xB829 + (y << 6)] = 6;
+			VRAM[0xB82A + (y << 6)] = 0x38; VRAM[0xB82B + (y << 6)] = 6;
+			VRAM[0xB82C + (y << 6)] = 0x1C; VRAM[0xB82D + (y << 6)] = 6;
+
+			//WO's
+			draw_number_dec(25, y, CurrentMario.WO_counter);
+			VRAM[0xB836 + (y << 6)] = 0x20; VRAM[0xB837 + (y << 6)] = 6;
+			VRAM[0xB838 + (y << 6)] = 0x18; VRAM[0xB839 + (y << 6)] = 6;
+			VRAM[0xB83A + (y << 6)] = 0x38; VRAM[0xB83B + (y << 6)] = 6;
+			VRAM[0xB83C + (y << 6)] = 0x1C; VRAM[0xB83D + (y << 6)] = 6;
+
+
+
+
+			y -= 1;
+			plr_numb += 1;
+		}
+	}
 
 
 	//Draw L3

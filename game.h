@@ -84,8 +84,19 @@ void game_loop()
 		if (!isClient && networking) {
 			CurrPlayer.PlayerControlled = false;
 		}
-		if (player == SelfPlayerNumber) {
+		if (CurrPlayer.PlayerControlled == true){
 			CurrPlayer.skin = my_skin;
+			for (int i = 0; i < player_name_size; i++)
+			{
+				if (i >= username.length())
+				{
+					CurrPlayer.player_name_cut[i] = ' ';
+				}
+				else
+				{
+					CurrPlayer.player_name_cut[i] = username.at(i);
+				}
+			}
 		}
 		//cout << SelfPlayerNumber;
 		CurrPlayer.player_index = player;
