@@ -63,7 +63,7 @@ uint_fast8_t my_skin = 0;
 uint_fast32_t global_frame_counter = 0;
 
 chrono::duration<double> total_time_ticks;
-chrono::duration<double> latest_server_response;
+int latest_server_response;
 
 unsigned int network_update_rate = 16;
 unsigned int packet_wait_time = 16;

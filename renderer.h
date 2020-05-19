@@ -6,6 +6,9 @@ int_fast16_t CameraX, CameraY;
 uint_fast8_t curr_bg = 0xFF;
 uint_fast8_t screen_darken = 0;
 
+bool showing_player_list;
+bool pressed_select;
+
 void draw_number_hex(uint_fast8_t pos_x, uint_fast8_t pos_y, uint_fast16_t number, int length)
 {
 	for (int i = 0; i < length; i++)
@@ -268,7 +271,7 @@ void render()
 	//Ping
 	VRAM[0xB800 + 56 + 192] = 0x16;	VRAM[0xB801 + 56 + 192] = 6;
 	VRAM[0xB800 + 58 + 192] = 0x1C;	VRAM[0xB801 + 58 + 192] = 6;
-	draw_number_dec(27, 3, int(latest_server_response.count() * 1000.0));
+	draw_number_dec(27, 3, abs(latest_server_response));
 
 	//FPS
 	VRAM[0xB800 + 44 + 192] = 0xF;	VRAM[0xB801 + 44 + 192] = 6;
@@ -285,8 +288,18 @@ void render()
 
 	data_size_current = 0;
 
+	if (bool(state[input_settings[8]]) != pressed_select)
+	{
+		pressed_select = state[input_settings[8]];
+		if (state[input_settings[8]])
+		{
+			ServerRAM.RAM[0x1DFC] = 0x15;
+			showing_player_list = !showing_player_list;
+		}
+	}
+
 	//Player list
-	if (state[input_settings[8]])
+	if (showing_player_list)
 	{
 		for (int i = 0; i < 32; i++)
 		{

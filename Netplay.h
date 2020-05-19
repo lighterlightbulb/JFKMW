@@ -36,7 +36,8 @@ uint_fast8_t GetAmountOfPlayers() {
 }
 
 void PreparePacket(uint8_t header) {
-	CurrentPacket.clear(); CurrentPacket << header; CurrentPacket_header = header;
+	CurrentPacket.clear(); CurrentPacket << header;
+	CurrentPacket_header = header;
 }
 
 /*
@@ -214,6 +215,8 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool for_validating = false)
 {
 	//cout << last_network_status << endl;
 	CurrentPacket >> CurrentPacket_header;
+
+
 	data_size_current += int(CurrentPacket.getDataSize());
 
 	if (for_validating == true)
@@ -289,7 +292,12 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool for_validating = false)
 
 		if (CurrentPacket_header == Header_GlobalUpdate)
 		{
-			//cout << "Received Global Update Packet Of Size " << CurrentPacket.getDataSize() << endl;
+			int_fast32_t timestamp = 0;
+			CurrentPacket >> timestamp;
+			std::chrono::milliseconds ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+				std::chrono::system_clock::now().time_since_epoch()
+				);
+			latest_server_response = int_fast32_t(ms.count()) - timestamp;
 			CurrentPacket >> SelfPlayerNumber; //Me
 			CurrentPacket >> PlayerAmount; //Update Plr Amount
 
@@ -455,6 +463,11 @@ void Server_To_Clients()
 
 
 			PreparePacket(Header_GlobalUpdate);
+			std::chrono::milliseconds ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+				std::chrono::system_clock::now().time_since_epoch()
+				);
+
+			CurrentPacket << int_fast32_t(ms.count());
 			CurrentPacket << PlrNumber;
 			pack_mario_data(PlrNumber);
 
@@ -530,19 +543,13 @@ void NetWorkLoop()
 		CLIENT MODE
 		*/
 		while (Mario.size() == 0) {
-			chrono::high_resolution_clock::time_point t1 = chrono::high_resolution_clock::now();
 			receive_all_packets(socketG);
-			chrono::high_resolution_clock::time_point t2 = chrono::high_resolution_clock::now();
-			latest_server_response = chrono::duration_cast<chrono::duration<double>>(t2 - t1);
 		}
 
 		cout << blue << "[Network] Connected to server. " << int(PlayerAmount) << " player(s) connected." << endl;
 		while (!quit && !disconnected)
 		{
-			chrono::high_resolution_clock::time_point t1 = chrono::high_resolution_clock::now();
 			receive_all_packets(socketG);
-			chrono::high_resolution_clock::time_point t2 = chrono::high_resolution_clock::now();
-			latest_server_response = chrono::duration_cast<chrono::duration<double>>(t2 - t1);
 
 			PreparePacket(Header_UpdatePlayerData); pack_mario_data(); SendPacket();
 		}
