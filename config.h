@@ -32,8 +32,8 @@ void load_configuration()
 
 			if (name == "username") {
 				username = value;
-				std::transform(username.begin(), username.end(), username.begin(),
-					[](unsigned char c) { return std::tolower(c); });
+				transform(username.begin(), username.end(), username.begin(),
+					[](unsigned char c) { return tolower(c); });
 			}
 			if (name == "skin") { my_skin = uint_fast8_t(stoi(value)); }
 			if (name == "port") { PORT = stoi(value); }
