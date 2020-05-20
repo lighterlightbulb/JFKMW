@@ -135,7 +135,7 @@ string int_to_hex(int T, bool add_0 = false)
 #ifdef NDEBUG
 string path = "";
 #else
-string path = "E:/JFKMarioWorld/x64/JFKMarioWorld/Debug/";
+string path = "E:/JFKMarioWorld/Debug/";
 #endif
 
 bool quit = false;
