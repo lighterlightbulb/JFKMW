@@ -124,7 +124,12 @@ istream& getline(istream& stream, string& str)
 int main(int argc, char* argv[])
 {
 	load_configuration();
-
+#if defined(_WIN32)
+	string t = "JFKMW Console - " + GAME_VERSION;
+	std::wstring stemp = std::wstring(t.begin(), t.end());
+	LPCWSTR sw = stemp.c_str();
+	SetConsoleTitle(sw);
+#endif
 #if not defined(DISABLE_NETWORK)
 	bool hosting = false;
 	if (argc > 1)

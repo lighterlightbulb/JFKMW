@@ -26,7 +26,7 @@ SDL_Event event = { 0 };
 //Set fullscreen to false for a window, or to true for fullscreen output
 //text is the caption or title of the window
 //also inits SDL therefore you MUST call screen before any other InstantCG or SDL functions
-void screen(int width, int height, const string& text = "test")
+void screen(int width, int height)
 {
 	cout << cyan << "[SDL] Creating window" << endl;
 	if (win) { SDL_DestroyWindow(win); }
@@ -47,7 +47,7 @@ void screen(int width, int height, const string& text = "test")
 		flags |= SDL_WINDOW_OPENGL;
 	}
 
-	win = SDL_CreateWindow(text.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, w, h, flags);
+	win = SDL_CreateWindow("JFK Mario World Client", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, w, h, flags);
 
 	if (win == NULL) { cout << cyan << "[SDL] Window error: " << SDL_GetError() << white << endl; SDL_Quit(); exit(1); }
 	cout << cyan << "[SDL] Window created, initializing renderer..." << endl;

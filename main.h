@@ -15,7 +15,7 @@ void player_code()
 	zsnes_ui.add_button("X",  256-13, 2, 256-2, 13);
 
 	//Load SDL part
-	screen(resolution_x, resolution_y, "JFK mario world - " + GAME_VERSION);
+	screen(resolution_x, resolution_y);
 	init_input();
 	init_audio();
 	Mix_HaltMusic();
