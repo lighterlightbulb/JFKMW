@@ -398,8 +398,9 @@ void PendingConnection()
 
 		cout << blue << "[Server] A client (assigned to Player " << int(NewPlayerNumber) << ") is trying to connect... (" << client->getRemoteAddress() << ")" << white << endl;
 
-		PreparePacket(Header_Connection); CurrentPacket << NewPlayerNumber; SendPacket(client);
 
+		PreparePacket(Header_Connection); CurrentPacket << NewPlayerNumber; SendPacket(client);
+		sf::sleep(sf::milliseconds(500));
 
 		validated_connection = false;
 		receive_all_packets(*client, true, true);
@@ -564,7 +565,7 @@ bool ConnectClient(void)
 		CurrentPacket << username; //CurrentPacket << da_epical_function_lol();
 		CurrentPacket << GAME_VERSION;
 		SendPacket();
-		sf::sleep(sf::milliseconds(500));
+		sf::sleep(sf::milliseconds(1000));
 		receive_all_packets(socketG, true);
 		validated_connection = false;
 		if (disconnected)
