@@ -96,16 +96,6 @@ public:
 						status = line.substr(1, line.length() - 2);
 						cout << green << "[Level Manager] Status = " << status << white << endl;
 
-						uint_fast32_t size[2] = {
-							request_level_entry("size_x"),
-							request_level_entry("size_y")
-						};
-
-						ASM.Write_To_Ram(0x3F00, size[0], 2);
-						ASM.Write_To_Ram(0x3F02, size[1], 2);
-						mapWidth = size[0];
-						mapHeight = size[1];
-
 						//data.push_back();
 						continue;
 					}
@@ -127,6 +117,16 @@ public:
 						{
 							ASM.Write_To_Ram(0x3F05, stoi(value, nullptr, 16), 1);
 							continue;
+						}
+						if (name == "size_x")
+						{
+							ASM.Write_To_Ram(0x3F00, stoi(value), 2);
+							mapWidth = stoi(value);
+						}
+						if (name == "size_y")
+						{
+							ASM.Write_To_Ram(0x3F02, stoi(value), 2);
+							mapHeight = stoi(value);
 						}
 						// cout << green << "[Level Manager] adding level config entry " << name << " = " << value << white << endl;
 						add_entry(name, stoi(value));
