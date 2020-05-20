@@ -561,6 +561,7 @@ bool ConnectClient(void)
 {
 	if (socketG.connect(ip, PORT) != sf::Socket::Disconnected)
 	{
+		sf::sleep(sf::milliseconds(250));
 		PreparePacket(Header_AttemptJoin);
 		CurrentPacket << username; //CurrentPacket << da_epical_function_lol();
 		CurrentPacket << GAME_VERSION;
