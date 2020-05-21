@@ -190,7 +190,7 @@ public:
 	*/
 	uint_fast16_t get_tile(uint_fast16_t x, uint_fast16_t y)
 	{
-		uint_fast32_t index = (x % mapWidth) + (y * mapWidth);
+		uint_fast32_t index = (x % mapWidth) + ((y % mapHeight) * mapWidth);
 		return ServerRAM.RAM[ram_level_low + index] + (ServerRAM.RAM[ram_level_high + index] << 8);
 	}
 
