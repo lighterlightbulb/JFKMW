@@ -36,8 +36,8 @@ void render_oam(uint_fast16_t offset_o = 0, int CameraX = 0, int CameraY = 0)
 	{
 
 		uint_fast8_t size = uint_fast8_t(ASM.Get_Ram(offset_o + i + 1, 1));
-		int_fast16_t x_position = int_fast16_t(ASM.Get_Ram(offset_o + i + 2, 2));
-		int_fast16_t y_position = int_fast16_t(ASM.Get_Ram(offset_o + i + 4, 2));
+		int x_position = ServerRAM.RAM[offset_o + i + 2] + int_fast8_t(ServerRAM.RAM[offset_o + i + 3]) * 256;
+		int y_position = ServerRAM.RAM[offset_o + i + 4] + int_fast8_t(ServerRAM.RAM[offset_o + i + 5]) * 256;
 		uint_fast16_t tile = uint_fast16_t(ASM.Get_Ram(offset_o + i, 1)) + (((ServerRAM.RAM[offset_o + i + 6] >> 4) & 1) << 8);
 		uint_fast8_t pal = uint_fast8_t(ASM.Get_Ram(offset_o + i + 6, 1)) & 0xF;
 		double angle = (double(ASM.Get_Ram(offset_o + i + 7, 1)) / 256.0) * 360.0;
@@ -186,21 +186,25 @@ void render()
 	SDL_RenderFillRect(ren, NULL);
 	SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_NONE);
 
+
+	//Draw OAM (priority)
+	render_oam(0x200, int(CameraX), int(CameraY));
+
 	//Draw Mario
 	for (list<MPlayer>::iterator item = Mario.begin(); item != Mario.end(); ++item)
 	{
 		MPlayer& CurrentMario = *item;
 
-		if (CurrentMario.x > (CameraX-camBoundX) && CurrentMario.y > (CameraY-camBoundY) && CurrentMario.x < (CameraX+256+camBoundX) && CurrentMario.y < (CameraY + 224 + camBoundY))
+		if (CurrentMario.x > (CameraX - camBoundX) && CurrentMario.y > (CameraY - camBoundY) && CurrentMario.x < (CameraX + 256 + camBoundX) && CurrentMario.y < (CameraY + 224 + camBoundY))
 		{
-			float is_skidding = 1.f - (float(abs(CurrentMario.SKIDDING))*2.f);
+			float is_skidding = 1.f - (float(abs(CurrentMario.SKIDDING)) * 2.f);
 
 			int offs = 0;
 
-			if ((CurrentMario.to_scale*is_skidding) == -1.f) { offs = -8; }
+			if ((CurrentMario.to_scale * is_skidding) == -1.f) { offs = -8; }
 			if (!CurrentMario.invisible)
 			{
-				Sprite Mario(path + "Sprites/mario/" + to_string(CurrentMario.skin) + "/" + CurrentMario.sprite + ".png", int(CurrentMario.x) + offs - int(CameraX), 224 - 32 - int(CurrentMario.y) + int(CameraY), int(CurrentMario.to_scale*is_skidding) * 24, 32);
+				Sprite Mario(path + "Sprites/mario/" + to_string(CurrentMario.skin) + "/" + CurrentMario.sprite + ".png", int(CurrentMario.x) + offs - int(CameraX), 224 - 32 - int(CurrentMario.y) + int(CameraY), int(CurrentMario.to_scale * is_skidding) * 24, 32);
 			}
 
 			if (CurrentMario.GRABBED_SPRITE != 0xFF && !CurrentMario.in_pipe)
@@ -225,9 +229,6 @@ void render()
 
 		}
 	}
-
-	//Draw OAM (priority)
-	render_oam(0x200, int(CameraX), int(CameraY));
 
 
 	//draw layer 3

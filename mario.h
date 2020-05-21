@@ -300,8 +300,8 @@ public:
 		{
 			if (ServerRAM.RAM[0x2000 + sprite] != 0)
 			{
-				double sprite_x = double(ServerRAM.RAM[0x2100 + sprite] + int(ServerRAM.RAM[0x2180 + sprite]) * 256) + double(ServerRAM.RAM[0x2200 + sprite]) / 256.0;
-				double sprite_y = double(ServerRAM.RAM[0x2280 + sprite] + int(ServerRAM.RAM[0x2300 + sprite]) * 256) + double(ServerRAM.RAM[0x2380 + sprite]) / 256.0;
+				double sprite_x = double(ServerRAM.RAM[0x2100 + sprite] + int(int_fast8_t(ServerRAM.RAM[0x2180 + sprite])) * 256) + double(ServerRAM.RAM[0x2200 + sprite]) / 256.0;
+				double sprite_y = double(ServerRAM.RAM[0x2280 + sprite] + int(int_fast8_t(ServerRAM.RAM[0x2300 + sprite])) * 256) + double(ServerRAM.RAM[0x2380 + sprite]) / 256.0;
 				double sprite_x_size = double(ServerRAM.RAM[0x2500 + sprite]);
 				double sprite_y_size = double(ServerRAM.RAM[0x2580 + sprite]);
 

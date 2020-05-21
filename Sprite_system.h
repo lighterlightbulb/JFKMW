@@ -50,8 +50,8 @@ public:
 
 	void process_sprite_logic(uint_fast8_t entry = 0)
 	{
-		x = double(ServerRAM.RAM[0x2100 + entry] + double(ServerRAM.RAM[0x2180 + entry]) * 256.0) + double(ServerRAM.RAM[0x2200 + entry]) / 256.0;
-		y = double(ServerRAM.RAM[0x2280 + entry] + double(ServerRAM.RAM[0x2300 + entry]) * 256.0) + double(ServerRAM.RAM[0x2380 + entry]) / 256.0;
+		x = double(ServerRAM.RAM[0x2100 + entry] + double(int_fast8_t(ServerRAM.RAM[0x2180 + entry])) * 256.0) + double(ServerRAM.RAM[0x2200 + entry]) / 256.0;
+		y = double(ServerRAM.RAM[0x2280 + entry] + double(int_fast8_t(ServerRAM.RAM[0x2300 + entry])) * 256.0) + double(ServerRAM.RAM[0x2380 + entry]) / 256.0;
 
 		if (ServerRAM.RAM[0x2600 + entry] & 0b100000) //if gravity bit is on
 		{
@@ -112,11 +112,15 @@ public:
 			y += yMove;
 		}
 
-		if (x < 8.0)
+		if (x < -x_size)
 		{
-			x = 8.0;
+			for (int i = 0; i < 32; i++)
+			{
+				ServerRAM.RAM[0x2000 + entry + (i * 128)] = 0;
+			}
 		}
-		if (y < 0.0)
+
+		if (y < (-y_size-16))
 		{
 			for (int i = 0; i < 32; i++)
 			{
@@ -125,8 +129,16 @@ public:
 			return;
 		}
 
-		ServerRAM.RAM[0x2100 + entry] = int_fast8_t(int(x) % 256); ServerRAM.RAM[0x2180 + entry] = int_fast8_t(int(x) / 256); ServerRAM.RAM[0x2200 + entry] = int_fast8_t(int(x*256.0) % 256);
-		ServerRAM.RAM[0x2280 + entry] = int_fast8_t(int(y) % 256); ServerRAM.RAM[0x2300 + entry] = int_fast8_t(int(y) / 256); ServerRAM.RAM[0x2380 + entry] = int_fast8_t(int(y*256.0) % 256);
+		ServerRAM.RAM[0x2100 + entry] = uint_fast8_t(int(x));
+		ServerRAM.RAM[0x2180 + entry] = uint_fast8_t(int(x) / 256);
+		ServerRAM.RAM[0x2200 + entry] = uint_fast8_t(int(x*256.0));
+		ServerRAM.RAM[0x2280 + entry] = uint_fast8_t(int(y));
+		ServerRAM.RAM[0x2300 + entry] = uint_fast8_t(int(y) / 256); 
+		ServerRAM.RAM[0x2380 + entry] = uint_fast8_t(int(y*256.0));
+		if (y < 0)
+		{
+			ServerRAM.RAM[0x2300 + entry] -= 1;
+		}
 
 	}
 
