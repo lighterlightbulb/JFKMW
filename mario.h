@@ -271,6 +271,176 @@ public:
 		int_fast16_t startY = PosYBlock - TotalBlocksCollisionCheck;
 		if (startY < 0)
 			startY = 0;
+
+		/*
+			Enemy Collision
+
+			0x2000 - Sprite Status
+			0x2080 - Sprite Number
+			0x2100 - Sprite X Position (L)
+			0x2180 - Sprite X Position (H)
+			0x2200 - Sprite X Position (F)
+			0x2280 - Sprite Y Position (L)
+			0x2300 - Sprite Y Position (H)
+			0x2380 - Sprite Y Position (F)
+			0x2400 - Sprite X Speed
+			0x2480 - Sprite Y Speed
+			0x2500 - Sprite Size X
+			0x2580 - Sprite Size Y
+			0x2600 - Sprite Flags HSGO---
+			0x2680 - Sprite Direction
+
+
+			H = Hurts
+			S = Solid
+			G = Gravity
+			O = Offscreen Processing
+		*/
+		for (uint_fast8_t sprite = 0; sprite < 128; sprite++)
+		{
+			if (ServerRAM.RAM[0x2000 + sprite] != 0)
+			{
+				double sprite_x = double(ServerRAM.RAM[0x2100 + sprite] + int(ServerRAM.RAM[0x2180 + sprite]) * 256) + double(ServerRAM.RAM[0x2200 + sprite]) / 256.0;
+				double sprite_y = double(ServerRAM.RAM[0x2280 + sprite] + int(ServerRAM.RAM[0x2300 + sprite]) * 256) + double(ServerRAM.RAM[0x2380 + sprite]) / 256.0;
+				double sprite_x_size = double(ServerRAM.RAM[0x2500 + sprite]);
+				double sprite_y_size = double(ServerRAM.RAM[0x2580 + sprite]);
+
+				double BelowSprite = sprite_y - height;
+				double AboveSprite = sprite_y + sprite_y_size;
+				double RightSprite = sprite_x + sprite_x_size;
+				double LeftSprite = sprite_x - 16.0;
+
+				bool checkRight = ServerRAM.RAM[0x2600 + sprite] & 0b1;
+				bool checkLeft = ServerRAM.RAM[0x2600 + sprite] & 0b10;
+				bool checkBottom = ServerRAM.RAM[0x2600 + sprite] & 0b100;
+				bool checkTop = ServerRAM.RAM[0x2600 + sprite] & 0b1000;
+
+				bool results[4] = { false,false,false,false };
+
+
+
+				if (NewPositionX < RightSprite && NewPositionX > LeftSprite && NewPositionY < AboveSprite && NewPositionY > BelowSprite)
+				{
+					if (ServerRAM.RAM[0x2600 + sprite] & 0b10000000)
+					{
+						if (ServerRAM.RAM[0x2600 + sprite] & 0b10000)
+						{
+							if (NewPositionY > (AboveSprite - bounds_y))
+							{
+								NewPositionY += 1;
+								Enemy_Jump();
+								if (jump_is_spin)
+								{
+									if (ServerRAM.RAM[0x2880 + sprite] & 1)
+									{
+										ServerRAM.RAM[0x2000 + sprite] = 0;
+										Y_SPEED = Calculate_Speed(128);
+										ASM.Write_To_Ram(0x1DF9, 0x8, 1);
+									}
+									else
+									{
+										Enemy_Jump_Spin();
+									}
+								}
+								else
+								{
+									results[2] = true;
+								}
+							}
+							else
+							{
+								Hurt();
+							}
+						}
+						else
+						{
+							if (jump_is_spin && NewPositionY > (AboveSprite - bounds_y))
+							{
+								Enemy_Jump_Spin();
+							}
+							else
+							{
+								Hurt();
+							}
+						}
+					}
+
+					if (checkRight && xMove < 0.0 && NewPositionX < RightSprite && NewPositionX > RightSprite - bounds_x)
+					{
+						NewPositionX = RightSprite;
+						willreturn = false;
+						results[0] = true;
+					}
+					if (checkLeft && xMove > 0.0 && NewPositionX > LeftSprite && NewPositionX < LeftSprite + bounds_x)
+					{
+						NewPositionX = LeftSprite;
+						willreturn = false;
+						results[1] = true;
+					}
+					if (checkTop && yMove < 0.0 && NewPositionY < AboveSprite && NewPositionY > AboveSprite - bounds_y)
+					{
+						willreturn = false;
+						if (Y_SPEED <= 0)
+						{
+							NewPositionY = AboveSprite;
+							results[2] = true;
+						}
+						if (do_change)
+						{
+							NewPositionX += double(int_fast8_t(ServerRAM.RAM[0x2400 + sprite]) * 16) / 256.0;
+							NewPositionY += double(int_fast8_t(ServerRAM.RAM[0x2480 + sprite]) * 16) / 256.0;
+							xMove = double(int_fast8_t(ServerRAM.RAM[0x2400 + sprite]) * 16) / 256.0;
+						}
+
+
+					}
+					if (checkBottom && yMove > 0.0 && NewPositionY > BelowSprite && NewPositionY < BelowSprite + bounds_y)
+					{
+						NewPositionY = BelowSprite;
+						willreturn = false;
+						results[3] = true;
+					}
+
+					ServerRAM.RAM[0x2700 + sprite] = 0;
+					for (uint_fast8_t i = 0; i < 4; i++)
+					{
+						ServerRAM.RAM[0x2700 + sprite] += results[i] << i;
+					}
+
+					//Powerups
+					if (ServerRAM.RAM[0x2000 + sprite] == 5 && STATE == 0)
+					{
+						STATE = 1;
+						ServerRAM.RAM[0x2000 + sprite] = 0;
+						ASM.Write_To_Ram(0x1DF9, 0xA, 1);
+						INVINCIBILITY_FRAMES = 20;
+					}
+
+					//Grabbing
+					if (GRABBED_SPRITE == 0xFF)
+					{
+						if (ServerRAM.RAM[0x2000 + sprite] == 2 && ServerRAM.RAM[0x2E00 + sprite] == 0)
+						{
+							if (pad[button_y])
+							{
+								ServerRAM.RAM[0x2000 + sprite] = 3;
+								GRABBED_SPRITE = sprite;
+							}
+							else
+							{
+								ServerRAM.RAM[0x2680 + sprite] = int_fast8_t(to_scale);
+								ServerRAM.RAM[0x2000 + sprite] = 4;
+								ServerRAM.RAM[0x2E00 + sprite] = 0x10;
+
+								ASM.Write_To_Ram(0x1DF9, 3, 1);
+							}
+						}
+					}
+
+				}
+			}
+		}
+
 		/*
 		Shitty block collision. Surprised this doesn't lag.
 		*/
@@ -281,8 +451,8 @@ public:
 				map16_handler.update_map_tile(xB, yB);
 
 
-				double BelowBlock = double(yB * 16) - (height);
-				double AboveBlock = double(yB * 16) + map16_handler.ground_y(NewPositionX + 8.0 - (xB * 16), xB, yB);
+				double BelowBlock = double(yB * 16) - (height) - 1;
+				double AboveBlock = double(yB * 16) + map16_handler.ground_y(NewPositionX + 8.0 - (xB * 16), xB, yB) - 1;
 				double RightBlock = double(xB * 16) + 16.0;
 				double LeftBlock = double(xB * 16) - 16.0;
 
@@ -392,175 +562,6 @@ public:
 				}
 			}
 		}
-
-		/*
-			Enemy Collision
-
-			0x2000 - Sprite Status
-			0x2080 - Sprite Number
-			0x2100 - Sprite X Position (L)
-			0x2180 - Sprite X Position (H)
-			0x2200 - Sprite X Position (F)
-			0x2280 - Sprite Y Position (L)
-			0x2300 - Sprite Y Position (H)
-			0x2380 - Sprite Y Position (F)
-			0x2400 - Sprite X Speed
-			0x2480 - Sprite Y Speed
-			0x2500 - Sprite Size X
-			0x2580 - Sprite Size Y
-			0x2600 - Sprite Flags HSGO---
-			0x2680 - Sprite Direction
-
-
-			H = Hurts
-			S = Solid
-			G = Gravity
-			O = Offscreen Processing
-		*/
-		for (uint_fast8_t sprite = 0; sprite < 128; sprite++)
-		{
-			if (ServerRAM.RAM[0x2000 + sprite] != 0)
-			{
-				double sprite_x = double(ServerRAM.RAM[0x2100 + sprite] + int(ServerRAM.RAM[0x2180 + sprite]) * 256) + double(ServerRAM.RAM[0x2200 + sprite]) / 256.0;
-				double sprite_y = double(ServerRAM.RAM[0x2280 + sprite] + int(ServerRAM.RAM[0x2300 + sprite]) * 256) + double(ServerRAM.RAM[0x2380 + sprite]) / 256.0;
-				double sprite_x_size = double(ServerRAM.RAM[0x2500 + sprite]);
-				double sprite_y_size = double(ServerRAM.RAM[0x2580 + sprite]);
-
-				double BelowSprite = sprite_y - height;
-				double AboveSprite = sprite_y + sprite_y_size;
-				double RightSprite = sprite_x + sprite_x_size;
-				double LeftSprite = sprite_x - 16.0;
-
-				bool checkRight = ServerRAM.RAM[0x2600 + sprite] & 0b1;
-				bool checkLeft = ServerRAM.RAM[0x2600 + sprite] & 0b10;
-				bool checkBottom = ServerRAM.RAM[0x2600 + sprite] & 0b100;
-				bool checkTop = ServerRAM.RAM[0x2600 + sprite] & 0b1000;
-
-				bool results[4] = { false,false,false,false };
-
-
-
-				if (NewPositionX < RightSprite && NewPositionX > LeftSprite && NewPositionY < AboveSprite && NewPositionY > BelowSprite)
-				{
-					if (ServerRAM.RAM[0x2600 + sprite] & 0b10000000)
-					{
-						if (ServerRAM.RAM[0x2600 + sprite] & 0b10000)
-						{
-							if (NewPositionY > (AboveSprite-bounds_y))
-							{
-								NewPositionY += 1;
-								Enemy_Jump();
-								if (jump_is_spin)
-								{
-									if (ServerRAM.RAM[0x2880 + sprite] & 1)
-									{
-										ServerRAM.RAM[0x2000 + sprite] = 0;
-										Y_SPEED = Calculate_Speed(128);
-										ASM.Write_To_Ram(0x1DF9, 0x8, 1);
-									}
-									else
-									{
-										Enemy_Jump_Spin();
-									}
-								}
-								else
-								{
-									results[2] = true;
-								}
-							}
-							else
-							{
-								Hurt();
-							}
-						}
-						else
-						{
-							if (jump_is_spin && NewPositionY > (AboveSprite - bounds_y))
-							{
-								Enemy_Jump_Spin();
-							}
-							else
-							{
-								Hurt();
-							}
-						}
-					}
-
-					if (checkRight && xMove < 0.0 && NewPositionX < RightSprite && NewPositionX > RightSprite - bounds_x)
-					{
-						NewPositionX = RightSprite;
-						willreturn = false;
-						results[0] = true;
-					}
-					if (checkLeft && xMove > 0.0 && NewPositionX > LeftSprite && NewPositionX < LeftSprite + bounds_x)
-					{
-						NewPositionX = LeftSprite;
-						willreturn = false;
-						results[1] = true;
-					}
-					if (checkTop && yMove < 0.0 && NewPositionY < AboveSprite && NewPositionY > AboveSprite - bounds_y)
-					{
-						willreturn = false;
-						if (Y_SPEED <= 0)
-						{
-							NewPositionY = AboveSprite;
-							results[2] = true;
-						}
-						if (do_change)
-						{
-							NewPositionX += double(int_fast8_t(ServerRAM.RAM[0x2400 + sprite]) * 16) / 256.0;
-							NewPositionY += double(int_fast8_t(ServerRAM.RAM[0x2480 + sprite]) * 16) / 256.0;
-						}
-
-
-					}
-					if (checkBottom && yMove > 0.0 && NewPositionY > BelowSprite && NewPositionY < BelowSprite + bounds_y)
-					{
-						NewPositionY = BelowSprite;
-						willreturn = false;
-						results[3] = true;
-					}
-
-					ServerRAM.RAM[0x2700 + sprite] = 0;
-					for (uint_fast8_t i = 0; i < 4; i++)
-					{
-						ServerRAM.RAM[0x2700 + sprite] += results[i] << i;
-					}
-
-					//Powerups
-					if (ServerRAM.RAM[0x2000 + sprite] == 5 && STATE == 0)
-					{
-						STATE = 1;
-						ServerRAM.RAM[0x2000 + sprite] = 0;
-						ASM.Write_To_Ram(0x1DF9, 0xA, 1);
-						INVINCIBILITY_FRAMES = 20;
-					}
-
-					//Grabbing
-					if (GRABBED_SPRITE == 0xFF)
-					{
-						if (ServerRAM.RAM[0x2000 + sprite] == 2 && ServerRAM.RAM[0x2E00 + sprite] == 0)
-						{
-							if (pad[button_y])
-							{
-								ServerRAM.RAM[0x2000 + sprite] = 3;
-								GRABBED_SPRITE = sprite;
-							}
-							else
-							{
-								ServerRAM.RAM[0x2680 + sprite] = int_fast8_t(to_scale);
-								ServerRAM.RAM[0x2000 + sprite] = 4;
-								ServerRAM.RAM[0x2E00 + sprite] = 0x10;
-
-								ASM.Write_To_Ram(0x1DF9, 3, 1);
-							}
-						}
-					}
-					
-				}
-			}
-		}
-
 
 		x = NewPositionX;
 		y = NewPositionY;
