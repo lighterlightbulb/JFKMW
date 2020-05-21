@@ -53,6 +53,10 @@ void check_input()
 	}
 }
 
+#if defined(__linux__)
+uint_fast32_t next_type = 0;
+auto typemap = new unordered_map<int, uint_fast32_t>();
+#endif
 
 bool getKey(int what_want)
 {
@@ -64,34 +68,78 @@ bool getKey(int what_want)
 #endif
 
 #if defined(__linux__)
-	if (!(global_frame_counter % 10))
-	{
+	if (global_frame_counter > next_type &&
+		((what_want >= 0x30 && what_want <= 0x46) || what_want == 0xBE ||
+			what_want == 0x08) &&
+			(typemap->find(what_want) == typemap->end() ||
+				typemap->at(what_want) < global_frame_counter)) {
+		next_type = global_frame_counter + 10;
+		auto r = false;
 		switch (what_want)
 		{
-		case 0x30: return state[SDL_SCANCODE_0];
-		case 0x31: return state[SDL_SCANCODE_1];
-		case 0x32: return state[SDL_SCANCODE_2];
-		case 0x33: return state[SDL_SCANCODE_3];
-		case 0x34: return state[SDL_SCANCODE_4];
-		case 0x35: return state[SDL_SCANCODE_5];
-		case 0x36: return state[SDL_SCANCODE_6];
-		case 0x37: return state[SDL_SCANCODE_7];
-		case 0x38: return state[SDL_SCANCODE_8];
-		case 0x39: return state[SDL_SCANCODE_9];
-
-		case 0x41: return state[SDL_SCANCODE_A];
-		case 0x42: return state[SDL_SCANCODE_B];
-		case 0x43: return state[SDL_SCANCODE_C];
-		case 0x44: return state[SDL_SCANCODE_D];
-		case 0x45: return state[SDL_SCANCODE_E];
-		case 0x46: return state[SDL_SCANCODE_F];
-
-		case 0xBE: return state[SDL_SCANCODE_PERIOD];
-
-		case 0x08: return state[SDL_SCANCODE_BACKSPACE];
-
-		default: break;
+		case 0x30:
+			r = state[SDL_SCANCODE_0];
+			break;
+		case 0x31:
+			r = state[SDL_SCANCODE_1];
+			break;
+		case 0x32:
+			r = state[SDL_SCANCODE_2];
+			break;
+		case 0x33:
+			r = state[SDL_SCANCODE_3];
+			break;
+		case 0x34:
+			r = state[SDL_SCANCODE_4];
+			break;
+		case 0x35:
+			r = state[SDL_SCANCODE_5];
+			break;
+		case 0x36:
+			r = state[SDL_SCANCODE_6];
+			break;
+		case 0x37:
+			r = state[SDL_SCANCODE_7];
+			break;
+		case 0x38:
+			r = state[SDL_SCANCODE_8];
+			break;
+		case 0x39:
+			r = state[SDL_SCANCODE_9];
+			break;
+		case 0x41:
+			r = state[SDL_SCANCODE_A];
+			break;
+		case 0x42:
+			r = state[SDL_SCANCODE_B];
+			break;
+		case 0x43:
+			r = state[SDL_SCANCODE_C];
+			break;
+		case 0x44:
+			r = state[SDL_SCANCODE_D];
+			break;
+		case 0x45:
+			r = state[SDL_SCANCODE_E];
+			break;
+		case 0x46:
+			r = state[SDL_SCANCODE_F];
+			break;
+		case 0xBE:
+			r = state[SDL_SCANCODE_PERIOD];
+			break;
+		case 0x08:
+			r = state[SDL_SCANCODE_BACKSPACE];
+			break;
 		}
+		if (!r) {
+			next_type = 0;
+		}
+		else if (what_want != 0x08) {
+			typemap->erase(what_want);
+			typemap->emplace(what_want, global_frame_counter + 30);
+		}
+		return r;
 	}
 #endif
 	return false;
