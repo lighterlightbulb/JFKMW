@@ -38,7 +38,7 @@ public:
 
 	uint_fast8_t player_index = 0;
 	uint_fast8_t skin = 0;
-	uint_fast8_t STATE = 1;
+	uint_fast8_t STATE = 0;
 
 	uint_fast8_t WO_counter = 0;
 	uint_fast8_t KO_counter = 0;
@@ -114,7 +114,7 @@ public:
 		y = LevelManager.start_y;
 		DEATH_TIMER = 0;
 		DEAD = false;
-		STATE = 1;
+		STATE = 0;
 		jump_is_spin = false;
 	}
 
