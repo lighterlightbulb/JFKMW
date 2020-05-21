@@ -93,7 +93,7 @@ public:
 		uint_fast8_t integer = map16_entries[entry + collision];
 		for (uint_fast8_t i = 0; i < 8; i++)
 		{
-			logic[i] = ((integer >> (7-i)) & 1) != 0;
+			logic[i] = ((integer >> (7 - i)) & 1) != 0;
 		}
 	}
 
@@ -163,9 +163,18 @@ public:
 				y *= 16;
 				if ((rand() % 10) < 2)
 				{
-					uint_fast8_t spr = spawnSpriteJFKMarioWorld(0x74, 5, x, y+8, 1, true);
+					uint_fast8_t spr = spawnSpriteJFKMarioWorld(0x74, 5, x, y + 8, 1, true);
 					ServerRAM.RAM[0x2480 + spr] = 0x20;
 				}
+			}
+			if (t == 0x0038)
+			{
+				replace_map_tile(0x0025, x, y);
+				ServerRAM.RAM[0x1DF9] = 5;
+
+				ASM.Write_To_Ram(0x3F0B, x * 16, 2);
+				ASM.Write_To_Ram(0x3F0D, y * 16, 2);
+
 			}
 			if (t == 0x002B)
 			{

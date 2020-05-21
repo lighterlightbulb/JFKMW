@@ -32,6 +32,7 @@ void player_code()
 		disconnected = false;
 		PlayerAmount = 0; SelfPlayerNumber = 1; CheckForPlayers();
 		quit = false;
+		is_reload = false;
 
 		/* Options Loop */
 		string s_or_c;
@@ -64,6 +65,7 @@ void player_code()
 			{
 				if (zsnes_ui.button_pressed != "none" || ((state[SDL_SCANCODE_Q] || state[SDL_SCANCODE_R]) || state[SDL_SCANCODE_W]))
 				{
+					is_reload = false;
 					zsnes_ui.message = "Uhh u didnt type anything";
 				}
 			}
@@ -73,6 +75,7 @@ void player_code()
 				if (level != "")
 				{
 					zsnes_ui.message = "Reloading";
+					is_reload = true;
 					s_or_c = "t";
 				}
 			}
