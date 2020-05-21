@@ -102,7 +102,7 @@ public:
 	*/
 	void update_map_tile(uint_fast16_t x, uint_fast16_t y)
 	{
-		uint_fast32_t index = (x % mapWidth) + (y * mapWidth);
+		uint_fast32_t index = (x % mapWidth) + ((y % mapHeight) * mapWidth);
 		tile = ServerRAM.RAM[ram_level_low + index] + (ServerRAM.RAM[ram_level_high + index] << 8);
 		get_map_16_details();
 	}
@@ -112,7 +112,7 @@ public:
 	*/
 	void replace_map_tile(uint16_t tile, uint_fast16_t x, uint_fast16_t y)
 	{
-		uint_fast32_t index = (x % mapWidth) + (y * mapWidth);
+		uint_fast32_t index = (x % mapWidth) + ((y % mapHeight) * mapWidth);
 		ServerRAM.RAM[ram_level_low + index] = tile & 0xFF; ServerRAM.RAM[ram_level_high + index] = tile >> 8;
 	}
 
