@@ -61,6 +61,9 @@ void game_loop()
 	}
 	mapHeight = ServerRAM.RAM[0x3F02] + ServerRAM.RAM[0x3F03] * 256;
 
+	LevelManager.start_x = ServerRAM.RAM[0x3F0B] + ServerRAM.RAM[0x3F0C] * 256;
+	LevelManager.start_y = ServerRAM.RAM[0x3F0D] + ServerRAM.RAM[0x3F0E] * 256;
+
 	CheckForPlayers();
 
 	process_ex_animation();
