@@ -73,6 +73,8 @@ int data_size_current = 0;
 
 int rendering_device = -1;
 int controller = 0;
+int haptic = 0;
+
 bool fullscreen = false;
 bool opengl = false;
 bool networking = false;

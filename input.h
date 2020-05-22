@@ -2,27 +2,47 @@
 
 const Uint8 *state = SDL_GetKeyboardState(NULL);
 SDL_GameController* gGameController;
+SDL_Haptic* haptic_device;
 bool BUTTONS_GAMEPAD[8];
+
 
 void init_input()
 {
-	if (SDL_NumJoysticks() < 1)
-	{
+	if (SDL_NumJoysticks() < 1) {
 		cout << cyan << "[SDL] No controllers are plugged in." << endl;
 	}
-	else
-	{
-		cout << cyan << "[SDL] There's a controller plugged in!" << white << endl;
+	else {
+		cout << cyan << "[SDL] There's " << SDL_NumJoysticks() << " controllers plugged in, and " << SDL_NumHaptics() << " haptics detected for every controller! Trying to open controller " << controller << " and haptic device " << haptic << "." << white << endl;
 		//Load joystick
 		gGameController = SDL_GameControllerOpen(controller);
-		if (gGameController == NULL)
-		{
+		if (gGameController == NULL) {
 			cout << cyan << "[SDL] Controller " << controller << " error : " << SDL_GetError() << white << endl;
 		}
-		else
-		{
+		else {
 			cout << cyan << "[SDL] Controller " << controller << " is plugged in." << white << endl;
 		}
+		//Load haptic
+		if (haptic >= 0)
+		{
+			haptic_device = SDL_HapticOpen(haptic);
+			if (haptic_device == NULL) {
+				cout << cyan << "[SDL] Haptic " << haptic << " error : " << SDL_GetError() << white << endl;
+			}
+			else {
+				cout << cyan << "[SDL] Haptic " << haptic << " has been connected." << white << endl;
+				if (SDL_HapticRumbleInit(haptic_device) != 0) {
+					cout << cyan << "[SDL] Haptic " << haptic << " rumble init error : " << SDL_GetError() << white << endl;
+				}
+			}
+		}
+	}
+}
+
+void vibrate_controller(double intensity, int time)
+{
+	if (haptic_device != NULL)
+	{
+		SDL_HapticRumblePlay(haptic_device, intensity, time);
 	}
 }
 
