@@ -87,7 +87,7 @@ void render()
 	CameraY = int_fast16_t(max(0.0, LocalPlayer.CAMERA_Y - 112.0));
 	if (ServerRAM.RAM[0x1887] > 0)
 	{
-		CameraY += (global_frame_counter % 3);
+		CameraY += (global_frame_counter % 4);
 	}
 
 	if (CameraX < 0) { CameraX = 0; }
