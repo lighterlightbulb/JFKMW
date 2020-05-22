@@ -84,7 +84,11 @@ void render()
 
 	MPlayer& LocalPlayer = get_mario(SelfPlayerNumber);
 	CameraX = int_fast16_t(LocalPlayer.CAMERA_X - 120.0);
-	CameraY = int_fast16_t(max(0.0, LocalPlayer.CAMERA_Y - 112.0)) + (ServerRAM.RAM[0x1887] > 0) * ((global_frame_counter % 4) > 1 ? (1 - (global_frame_counter % 2)) : (global_frame_counter % 2));
+	CameraY = int_fast16_t(max(0.0, LocalPlayer.CAMERA_Y - 112.0));
+	if (ServerRAM.RAM[0x1887] > 0)
+	{
+		CameraY += (global_frame_counter % 3);
+	}
 
 	if (CameraX < 0) { CameraX = 0; }
 	if (CameraY < 0) { CameraY = 0; }

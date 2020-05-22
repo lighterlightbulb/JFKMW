@@ -40,6 +40,10 @@ void init_input()
 
 void vibrate_controller(double intensity, int time)
 {
+	if (intensity > 1.0)
+	{
+		intensity = 1;
+	}
 	if (haptic_device != NULL)
 	{
 		SDL_HapticRumblePlay(haptic_device, intensity, time);
