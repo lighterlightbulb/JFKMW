@@ -112,13 +112,6 @@ public:
 			y += yMove;
 		}
 
-		if (x < -x_size)
-		{
-			for (int i = 0; i < 32; i++)
-			{
-				ServerRAM.RAM[0x2000 + entry + (i * 128)] = 0;
-			}
-		}
 
 		if (y < (-y_size-16))
 		{

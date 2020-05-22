@@ -3,7 +3,7 @@
 const Uint8 *state = SDL_GetKeyboardState(NULL);
 SDL_GameController* gGameController;
 SDL_Haptic* haptic_device;
-bool BUTTONS_GAMEPAD[8];
+bool BUTTONS_GAMEPAD[10];
 
 
 void init_input()
@@ -73,6 +73,9 @@ void check_input()
 		BUTTONS_GAMEPAD[5] = SDL_GameControllerGetButton(gGameController, SDL_CONTROLLER_BUTTON_B);
 		BUTTONS_GAMEPAD[6] = SDL_GameControllerGetButton(gGameController, SDL_CONTROLLER_BUTTON_X);
 		BUTTONS_GAMEPAD[7] = SDL_GameControllerGetButton(gGameController, SDL_CONTROLLER_BUTTON_Y);
+
+		BUTTONS_GAMEPAD[8] = SDL_GameControllerGetButton(gGameController, SDL_CONTROLLER_BUTTON_START);
+		BUTTONS_GAMEPAD[9] = SDL_GameControllerGetButton(gGameController, SDL_CONTROLLER_BUTTON_BACK);
 
 	}
 }

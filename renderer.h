@@ -293,10 +293,11 @@ void render()
 
 	data_size_current = 0;
 
-	if (bool(state[input_settings[8]]) != pressed_select)
+	bool stat = (state[input_settings[8]]) || BUTTONS_GAMEPAD[9];
+	if (stat != pressed_select)
 	{
-		pressed_select = state[input_settings[8]];
-		if (state[input_settings[8]])
+		pressed_select = stat;
+		if (stat)
 		{
 			ServerRAM.RAM[0x1DFC] = 0x15;
 			showing_player_list = !showing_player_list;
