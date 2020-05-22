@@ -135,11 +135,14 @@ public:
 		ServerRAM.RAM[0x2280 + entry] = uint_fast8_t(int(y));
 		ServerRAM.RAM[0x2300 + entry] = uint_fast8_t(int(y) / 256); 
 		ServerRAM.RAM[0x2380 + entry] = uint_fast8_t(int(y*256.0));
+		if (x < 0)
+		{
+			ServerRAM.RAM[0x2180 + entry] -= 1;
+		}
 		if (y < 0)
 		{
 			ServerRAM.RAM[0x2300 + entry] -= 1;
 		}
-
 	}
 
 	/*
