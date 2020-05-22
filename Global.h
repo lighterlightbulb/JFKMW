@@ -1,6 +1,6 @@
 #pragma once
 
-string GAME_VERSION = "Alpha 0.4.0b - Better Graphics Update LOL";
+string GAME_VERSION = "Alpha 0.4.1 - Better Graphics Update LOL";
 
 #define rom_asm_size 0x20000 //128kb
 #define location_rom_levelasm 0x00000 //this will put LevelASM on the start of the ROM
