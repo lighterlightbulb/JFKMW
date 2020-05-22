@@ -174,7 +174,7 @@ public:
 
 				ASM.Write_To_Ram(0x3F0B, x * 16, 2);
 				ASM.Write_To_Ram(0x3F0D, y * 16, 2);
-
+				midway_activated = true;
 			}
 			if (t == 0x002B)
 			{

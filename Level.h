@@ -1,8 +1,6 @@
 #pragma once
 
 
-bool is_reload = false;
-
 class Level
 {
 public:
@@ -288,7 +286,7 @@ public:
 		decode_graphics_file("Graphics/GFX" + int_to_hex(request_level_entry("sp_3"), true) + ".bin", 14); //SP3
 		decode_graphics_file("Graphics/GFX" + int_to_hex(request_level_entry("sp_4"), true) + ".bin", 15); //SP4
 
-		if (!is_reload)
+		if (!isClient || !midway_activated) //if is server or midway isn't activated, load the start pos
 		{
 			ASM.Write_To_Ram(0x3F0B, request_level_entry("start_x") * 16, 2);
 			ASM.Write_To_Ram(0x3F0D, request_level_entry("start_y") * 16, 2);
