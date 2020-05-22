@@ -53,7 +53,7 @@ void game_loop()
 	{
 		if (!networking || isClient)
 		{
-			vibrate_controller(double(ServerRAM.RAM[0x1887]) / 128.0, 32);
+			vibrate_controller(1.0, 32);
 		}
 		ServerRAM.RAM[0x1887]--;
 	}
