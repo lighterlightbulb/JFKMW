@@ -199,7 +199,7 @@ public:
 	*/
 	uint_fast16_t get_tile(uint_fast16_t x, uint_fast16_t y)
 	{
-		if (y > mapHeight || y < 0)
+		if (y > uint_fast16_t(mapHeight) || y < 0)
 		{
 			return 0x25;
 		}

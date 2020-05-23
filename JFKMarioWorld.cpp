@@ -37,7 +37,7 @@ using namespace std;
 
 #include <SDL.h>
 #include <SDL_image.h>
-#include <SDL_mixer.h>
+#include <SDL2/SDL_mixer_ext.h>
 
 #if not defined(DISABLE_NETWORK)
 #include <SFML/Network.hpp>

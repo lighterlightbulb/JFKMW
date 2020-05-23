@@ -107,7 +107,7 @@ void SoundLoop()
 			{
 				old_1dfb = ASM.Get_Ram(0x1DFB, 1);
 
-				string file = path + "Sounds/music/" + int_to_hex(old_1dfb, true) + ".ogg";
+				string file = path + "Sounds/music/" + int_to_hex(old_1dfb, true) + ".spc";
 				music = Mix_LoadMUS(file.c_str());
 
 				if (music == NULL)
@@ -140,7 +140,7 @@ void SoundLoop()
 			{
 				need_sync_music = false;
 				SDL_RWops* rw = SDL_RWFromMem(music_data, music_data_size);
-				Mix_Music* music = Mix_LoadMUSType_RW(rw, MUS_OGG, 0);
+				Mix_Music* music = Mix_LoadMUSType_RW(rw, MUS_MOD, 0);
 				if (music == NULL)
 				{
 					Mix_HaltMusic();
