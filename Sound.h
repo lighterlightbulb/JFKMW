@@ -164,7 +164,7 @@ void SoundLoop()
 		if (ASM.Get_Ram(0x1DFB, 1) != old_1dfb)
 		{
 			old_1dfb = ASM.Get_Ram(0x1DFB, 1);
-			string file = path + "Sounds/music/" + int_to_hex(old_1dfb, true) + ".ogg";
+			string file = path + "Sounds/music/" + int_to_hex(old_1dfb, true) + ".spc";
 			std::ifstream input(file, std::ios::in | std::ios::binary | std::ios::ate);
 			if (input.is_open())
 			{
