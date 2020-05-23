@@ -51,11 +51,15 @@ void game_loop()
 
 	if (!isClient && ServerRAM.RAM[0x1887] > 0)
 	{
+		ServerRAM.RAM[0x1887]--;
+	}
+
+	if (ServerRAM.RAM[0x1887] > 0)
+	{
 		if (!networking || isClient)
 		{
 			vibrate_controller(1.0, 32);
 		}
-		ServerRAM.RAM[0x1887]--;
 	}
 
 	mapWidth = ServerRAM.RAM[0x3F00] + ServerRAM.RAM[0x3F01] * 256;
