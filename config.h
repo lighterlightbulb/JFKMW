@@ -32,7 +32,7 @@ void load_configuration()
 
 			if (name == "username") {
 				username = value;
-				username = username.substr(0, 13);
+				username = username.substr(0, player_name_size);
 				transform(username.begin(), username.end(), username.begin(),
 					[](unsigned char c) { return tolower(c); });
 			}
