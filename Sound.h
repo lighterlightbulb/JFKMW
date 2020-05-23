@@ -140,7 +140,7 @@ void SoundLoop()
 			{
 				need_sync_music = false;
 				SDL_RWops* rw = SDL_RWFromMem(music_data, music_data_size);
-				Mix_Music* music = Mix_LoadMUSType_RW(rw, MUS_MOD, 0);
+				Mix_Music* music = Mix_LoadMUSType_RW(rw, MUS_GME, 0);
 				if (music == NULL)
 				{
 					Mix_HaltMusic();
