@@ -205,10 +205,9 @@ void render()
 
 			int offs = 0;
 
-			if ((CurrentMario.to_scale * is_skidding) == -1.f) { offs = -8; }
 			if (!CurrentMario.invisible)
 			{
-				Sprite Mario(path + "Sprites/mario/" + to_string(CurrentMario.skin) + "/" + CurrentMario.sprite + ".png", int(CurrentMario.x) + offs - int(CameraX), 224 - 32 - int(CurrentMario.y) + int(CameraY), int(CurrentMario.to_scale * is_skidding) * 24, 32);
+				Sprite Mario(path + "Sprites/mario/" + to_string(CurrentMario.skin) + "/" + CurrentMario.sprite + ".png", -8 + int(CurrentMario.x) - int(CameraX), 224 - 32 - int(CurrentMario.y) + int(CameraY), int(CurrentMario.to_scale * is_skidding) * 32, 32);
 			}
 
 			if (CurrentMario.GRABBED_SPRITE != 0xFF && !CurrentMario.in_pipe)
