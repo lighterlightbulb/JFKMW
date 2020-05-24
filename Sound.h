@@ -20,6 +20,7 @@ bool init_audio()
 	return true;
 }
 
+bool spc_or_ogg = false; //false = SPC, true = OGG
 char *music_data;
 int music_data_size;
 #if not defined(DISABLE_NETWORK)
@@ -30,6 +31,7 @@ void SendMusic()
 	}
 	doing_read = true;
 	cout << green << "[Network] Packing music data.." << endl;
+	CurrentPacket << spc_or_ogg;
 	CurrentPacket << music_data_size;
 	for (int i = 0; i < music_data_size; i++)
 	{
@@ -53,6 +55,7 @@ void ReceiveMusic(bool dont_care = false)
 	doing_read = true;
 	cout << green << "[Network] Downloading music from server.." << endl;
 
+	CurrentPacket >> spc_or_ogg;
 	CurrentPacket >> music_data_size;
 	delete[] music_data;
 	music_data = new char[music_data_size];
@@ -107,8 +110,16 @@ void SoundLoop()
 			{
 				old_1dfb = ASM.Get_Ram(0x1DFB, 1);
 
-				string file = path + "Sounds/music/" + int_to_hex(old_1dfb, true) + ".spc";
-				music = Mix_LoadMUS(file.c_str());
+				string file1 = path + "Sounds/music/" + int_to_hex(old_1dfb, true) + ".spc";
+				string file2 = path + "Sounds/music/" + int_to_hex(old_1dfb, true) + ".ogg";
+				if (is_file_exist(file1.c_str())) {
+					music = Mix_LoadMUS(file1.c_str());
+					spc_or_ogg = false;
+				}
+				else {
+					music = Mix_LoadMUS(file2.c_str());
+					spc_or_ogg = true;
+				}
 
 				if (music == NULL)
 				{
@@ -122,7 +133,7 @@ void SoundLoop()
 						Mix_HaltMusic();
 					}
 					Mix_PlayMusic(music, -1);
-					cout << purple << "[Audio] Playing " << file << white << endl;
+					cout << purple << "[Audio] Playing song 0x" << hex << int_to_hex(old_1dfb, true) << dec << white << endl;
 				}
 			}
 		}
@@ -140,7 +151,7 @@ void SoundLoop()
 			{
 				need_sync_music = false;
 				SDL_RWops* rw = SDL_RWFromMem(music_data, music_data_size);
-				Mix_Music* music = Mix_LoadMUSType_RW(rw, MUS_GME, 0);
+				Mix_Music* music = Mix_LoadMUSType_RW(rw, spc_or_ogg ? MUS_OGG : MUS_GME, 0);
 				if (music == NULL)
 				{
 					Mix_HaltMusic();
@@ -164,8 +175,19 @@ void SoundLoop()
 		if (ASM.Get_Ram(0x1DFB, 1) != old_1dfb)
 		{
 			old_1dfb = ASM.Get_Ram(0x1DFB, 1);
-			string file = path + "Sounds/music/" + int_to_hex(old_1dfb, true) + ".spc";
-			std::ifstream input(file, std::ios::in | std::ios::binary | std::ios::ate);
+			string file1 = path + "Sounds/music/" + int_to_hex(old_1dfb, true) + ".spc";
+			string file2 = path + "Sounds/music/" + int_to_hex(old_1dfb, true) + ".ogg";
+			string file_picked;
+			if (is_file_exist(file1.c_str())) {
+				file_picked = file1;
+				spc_or_ogg = false;
+			}
+			else {
+				file_picked = file2;
+				spc_or_ogg = true;
+			}
+
+			std::ifstream input(file_picked, std::ios::in | std::ios::binary | std::ios::ate);
 			if (input.is_open())
 			{
 				delete[] music_data;
@@ -174,12 +196,12 @@ void SoundLoop()
 				input.seekg(0, std::ios::beg);
 				input.read(music_data, music_data_size);
 				input.close();
-				cout << purple << "[Audio] Loaded " << file << white << endl;
+				cout << purple << "[Audio] Loaded " << file_picked << white << endl;
 				need_sync_music = true;
 			}
 			else
 			{
-				cout << purple << "[Audio] Failed to load " << file << white << endl;
+				cout << purple << "[Audio] Failed to load " << file_picked << white << endl;
 			}
 		}
 	}

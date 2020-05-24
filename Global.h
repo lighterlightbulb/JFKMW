@@ -109,6 +109,12 @@ vector<string> split(const string &s, char delim) {
 	return result;
 }
 
+bool is_file_exist(const char* fileName)
+{
+	ifstream infile(fileName);
+	return infile.good();
+}
+
 double Calculate_Speed(double speed)
 {
 	return speed / 256.0;
