@@ -35,21 +35,30 @@ void render_oam(uint_fast16_t offset_o = 0, int CameraX = 0, int CameraY = 0)
 	for (uint_fast16_t i = 0; i < 0x400; i += 8) //Tile, Size, XY (4 bytes), PAL, ANG, in total 8 bytes per entry. 0 to 7.
 	{
 
-		uint_fast8_t size = uint_fast8_t(ASM.Get_Ram(offset_o + i + 1, 1));
+		uint_fast8_t size = ServerRAM.RAM[offset_o + i + 1];
 		int x_position = ServerRAM.RAM[offset_o + i + 2] + int_fast8_t(ServerRAM.RAM[offset_o + i + 3]) * 256;
 		int y_position = ServerRAM.RAM[offset_o + i + 4] + int_fast8_t(ServerRAM.RAM[offset_o + i + 5]) * 256;
-		uint_fast16_t tile = uint_fast16_t(ASM.Get_Ram(offset_o + i, 1)) + (((ServerRAM.RAM[offset_o + i + 6] >> 4) & 1) << 8);
-		uint_fast8_t pal = uint_fast8_t(ASM.Get_Ram(offset_o + i + 6, 1)) & 0xF;
-		double angle = (double(ASM.Get_Ram(offset_o + i + 7, 1)) / 256.0) * 360.0;
+
+		uint_fast8_t flags = ServerRAM.RAM[offset_o + i + 6] >> 4;
+		uint_fast16_t tile = ServerRAM.RAM[offset_o + i] + ((flags & 1) << 8);
+		uint_fast8_t pal = ServerRAM.RAM[offset_o + i + 6] & 0xF;
+		double angle = (double(ServerRAM.RAM[offset_o + i + 7]) / 256.0) * 360.0;
 		int_fast16_t size_x = (size & 0xF) << 4;
 		int_fast16_t size_y = ((size >> 4) & 0xF) << 4;
+		
 
 		if (tile != 0x0 &&
 			(x_position - CameraX) > -size_x && (x_position - CameraX) < (256 + size_x) &&
 			(y_position - CameraY) > (-16 + -size_y) && (y_position - CameraY) < (224 + size_y)			
 		)
 		{
-			draw_tile_custom(x_position - CameraX, 224 - 32 - y_position + CameraY, size, angle, tile, pal, ((uint_fast8_t(ASM.Get_Ram(offset_o + i + 6, 1)) >> 5) & 1)  );
+		
+			draw_tile_custom(x_position - CameraX, 224 - 32 - y_position + CameraY, size, angle, tile, pal, 
+				SDL_RendererFlip(
+				((flags >> 1) & 1) +
+				(((flags >> 2) & 1) << 1)
+				)
+			);
 		}
 	}
 }
@@ -226,7 +235,7 @@ void render()
 					(y_position - CameraY) > -64 && (y_position - CameraY) < (224 + 64)
 					)
 				{
-					draw_tile_custom(x_position - CameraX, 224 - 32 - y_position + CameraY, size, angle, tile, pal, false);
+					draw_tile_custom(x_position - CameraX, 224 - 32 - y_position + CameraY, size, angle, tile, pal, SDL_FLIP_NONE);
 				}
 			}
 

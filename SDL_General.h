@@ -331,7 +331,7 @@ void draw8x8_tile_2bpp(uint_fast8_t x, uint_fast8_t y, uint_fast16_t tile, uint_
 
 //drawtilecustom, if anyone knew how to fucking optimize this, i'd fucking love you for life.
 
-void draw_tile_custom(int_fast16_t x, int_fast16_t y, uint_fast8_t size, double angle, uint_fast16_t tile, uint_fast8_t palette, bool flip)
+void draw_tile_custom(int_fast16_t x, int_fast16_t y, uint_fast8_t size, double angle, uint_fast16_t tile, uint_fast8_t palette, SDL_RendererFlip flip)
 {
 	/* SDL interprets each pixel as a 32-bit number, so our masks must depend
 	   on the endianness (byte order) of the machine */
@@ -401,8 +401,7 @@ void draw_tile_custom(int_fast16_t x, int_fast16_t y, uint_fast8_t size, double 
 	SourceR.y = (y * scale) + sp_offset_y;
 	SourceR.w = (size_x << 3) * scale; //Same bs as above.
 	SourceR.h = (size_y << 3) * scale;
-	SDL_RendererFlip flip_r = flip ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
-	SDL_RenderCopyEx(ren, drawnTex, NULL, &SourceR, angle, NULL, flip_r);
+	SDL_RenderCopyEx(ren, drawnTex, NULL, &SourceR, angle, NULL, flip);
 	SDL_FreeSurface(ti);
 	SDL_DestroyTexture(drawnTex);
 }
