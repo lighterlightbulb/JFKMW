@@ -5,7 +5,7 @@ void process_ex_animation()
 {
 	if (!networking || (networking && !isClient))
 	{
-		//Bruh crap
+		//Question block (Corrected)
 		for (int i = 0; i < 4; i++)
 		{
 			for (int b = 0; b < 32; b++)
@@ -14,7 +14,7 @@ void process_ex_animation()
 			}
 		}
 
-		//? Question block
+		//Brown block
 		for (int i = 0; i < 4; i++)
 		{
 			for (int b = 0; b < 32; b++)
@@ -38,6 +38,26 @@ void process_ex_animation()
 			for (int b = 0; b < 32; b++)
 			{
 				ServerRAM.RAM[VRAM_Location + (32 * 0x6C) + (i * 32) + b] = ServerRAM.RAM[VRAM_Location + 0x8000 + (0xCC * 32) + b + (i * 32) + (((global_frame_counter / 8) % 4) * 0x10 * 32)];
+			}
+		}
+
+		//On/Off Switch
+		for (int i = 0; i < 4; i++)
+		{
+			for (int b = 0; b < 32; b++)
+			{
+				ServerRAM.RAM[VRAM_Location + (32 * 0xDA) + (i * 32) + b] = ServerRAM.RAM[VRAM_Location + 0x8000 + ((0xA0 + (ServerRAM.RAM[0x14AF] << 4)) * 32) + b + (i * 32)];
+			}
+		}
+
+
+		//On/Off Switch Blocks
+		for (int i = 0; i < 4; i++)
+		{
+			for (int b = 0; b < 32; b++)
+			{
+				ServerRAM.RAM[VRAM_Location + (32 * 0xAC) + (i * 32) + b] = ServerRAM.RAM[VRAM_Location + 0x8000 + ((0xC8 + (ServerRAM.RAM[0x14AF] << 5)) * 32) + b + (i * 32)];
+				ServerRAM.RAM[VRAM_Location + (32 * 0xCC) + (i * 32) + b] = ServerRAM.RAM[VRAM_Location + 0x8000 + ((0xE8 - (ServerRAM.RAM[0x14AF] << 5)) * 32) + b + (i * 32)];
 			}
 		}
 	}

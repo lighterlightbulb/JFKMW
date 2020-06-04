@@ -53,7 +53,8 @@ public:
 
 	bool in_pipe = false;
 	bool jump_is_spin = false; //If a jump is a spinjump
-	int_fast8_t pipe_speed = 0;
+	int_fast8_t pipe_speed_x = 0;
+	int_fast8_t pipe_speed_y = 0;
 
 
 	int_fast8_t DEATH_TIMER = 0;
@@ -477,6 +478,20 @@ public:
 							willreturn = false;
 
 							map16_handler.process_block(xB, yB, right, pressed_y);
+
+							if (pad[button_left])
+							{
+								if (
+									map16_handler.get_tile(xB, yB) == 0x13F &&
+									ON_FL
+									)
+								{
+									in_pipe = true;
+									pipe_speed_x = -2;
+									pipe_speed_y = 0;
+									ASM.Write_To_Ram(0x1DF9, 0x4, 1);
+								}
+							}
 						}
 					}
 					if (xMove > 0.0 && checkLeft)
@@ -487,6 +502,19 @@ public:
 							willreturn = false;
 							map16_handler.process_block(xB, yB, left, pressed_y);
 
+							if (pad[button_right])
+							{
+								if (
+									map16_handler.get_tile(xB, yB) == 0x13F &&
+									ON_FL
+									)
+								{
+									in_pipe = true;
+									pipe_speed_x = 2;
+									pipe_speed_y = 0;
+									ASM.Write_To_Ram(0x1DF9, 0x4, 1);
+								}
+							}
 						}
 					}
 					if (yMove < 0.0 && checkTop)
@@ -521,7 +549,8 @@ public:
 									)
 								{
 									in_pipe = true;
-									pipe_speed = -2;
+									pipe_speed_x = 0;
+									pipe_speed_y = -2;
 									ASM.Write_To_Ram(0x1DF9, 0x4, 1);
 								}
 							}
@@ -546,7 +575,8 @@ public:
 									)
 								{
 									in_pipe = true;
-									pipe_speed = 2;
+									pipe_speed_x = 0;
+									pipe_speed_y = 2;
 									ASM.Write_To_Ram(0x1DF9, 0x4, 1);
 								}
 							}
@@ -665,17 +695,24 @@ public:
 
 	void in_pipe_process()
 	{
-		y += pipe_speed*3;
-		uint_fast16_t check_y_1 = uint_fast16_t((y + height) / 16.0);
-		uint_fast16_t check_y_2 = uint_fast16_t((y) / 16.0);
-		uint_fast16_t check_x = uint_fast16_t((x+8.0)/16.0);
+		y += pipe_speed_y * 3;
+		x += pipe_speed_x * 3;
+		uint_fast16_t check_y_1 = uint_fast16_t((y + height - 1) / 16.0);
+		uint_fast16_t check_y_2 = uint_fast16_t((y + 1) / 16.0);
+		uint_fast16_t check_x_1 = uint_fast16_t((x)/16.0);
+		uint_fast16_t check_x_2 = uint_fast16_t((x + 16.0) / 16.0);
 		CROUCH = false;
 		X_SPEED = 0;
 		Y_SPEED = 0;
-		if (map16_handler.get_tile(check_x, check_y_1) < 0x100 && map16_handler.get_tile(check_x, check_y_2) < 0x100)
+		if (
+			map16_handler.get_tile(check_x_1, check_y_1) < 0x100 && map16_handler.get_tile(check_x_1, check_y_2) < 0x100 &&
+			map16_handler.get_tile(check_x_2, check_y_1) < 0x100 && map16_handler.get_tile(check_x_2, check_y_2) < 0x100
+			
+			)
 		{
 			in_pipe = false;
-			pipe_speed = 0;
+			pipe_speed_x = 0;
+			pipe_speed_y = 0;
 			ASM.Write_To_Ram(0x1DF9, 0x4, 1);
 		}
 		invisible = true;

@@ -57,7 +57,7 @@ public:
 		{
 			if (int_fast8_t(ServerRAM.RAM[0x2480 + entry]) > -82)
 			{
-				ServerRAM.RAM[0x2480 + entry] -= 3;
+				ServerRAM.RAM[0x2480 + entry] = max(-82, ServerRAM.RAM[0x2480 + entry]-3);
 			}
 		}
 
@@ -93,13 +93,14 @@ public:
 		if (ServerRAM.RAM[0x2600 + entry] & 0b1000000) //if solid bit is on
 		{
 			ServerRAM.RAM[0x2780 + entry] = 0;
-			if (!Move(xMove, 0.0, x_size, y_size))
+			bool g = ServerRAM.RAM[0x2000 + entry] == 2 || ServerRAM.RAM[0x2000 + entry] == 4;
+			if (!Move(xMove, 0.0, x_size, y_size, g))
 			{
 				//ServerRAM.RAM[0x2680 + entry] *= -1;
 				ServerRAM.RAM[0x2780 + entry] |= 0b00000001;
 			}
 
-			if (!Move(0.0, yMove, x_size, y_size))
+			if (!Move(0.0, yMove, x_size, y_size, g))
 			{
 				//ServerRAM.RAM[0x2480 + entry] = 0;
 				ServerRAM.RAM[0x2780 + entry] |= 0b00000010;
@@ -141,7 +142,7 @@ public:
 	/*
 		Shitty Movement Code
 	*/
-	bool Move(double xMove, double yMove, double x_size, double y_size)
+	bool Move(double xMove, double yMove, double x_size, double y_size, bool kickedgrabbed)
 	{
 		bool finna_return = true;
 		double NewPositionX = x + xMove;
@@ -179,6 +180,11 @@ public:
 						{
 							NewPositionX = RightBlock;
 							finna_return = false;
+
+							if (kickedgrabbed)
+							{
+								map16_handler.process_block(xB, yB, bottom);
+							}
 						}
 					}
 					if (xMove > 0.0 && checkLeft)
@@ -187,6 +193,11 @@ public:
 						{
 							NewPositionX = LeftBlock;
 							finna_return = false;
+
+							if (kickedgrabbed)
+							{
+								map16_handler.process_block(xB, yB, bottom);
+							}
 						}
 					}
 					if (yMove < 0.0 && checkTop)
@@ -210,6 +221,11 @@ public:
 						{
 							NewPositionY = BelowBlock;
 							finna_return = false;
+
+							if (kickedgrabbed)
+							{
+								map16_handler.process_block(xB, yB, bottom);
+							}
 						}
 					}
 

@@ -1,6 +1,6 @@
 #pragma once
 
-string GAME_VERSION = "Alpha 0.4.2b - SPC is more superior than OGG";
+string GAME_VERSION = "Alpha 0.4.5";
 
 #define rom_asm_size 0x20000 //128kb
 #define location_rom_levelasm 0x00000 //this will put LevelASM on the start of the ROM
@@ -21,9 +21,9 @@ string GAME_VERSION = "Alpha 0.4.2b - SPC is more superior than OGG";
 #define total_inputs 7
 
 #define SpriteAmount 64
-#define ogg_sample_rate 32000
+#define ogg_sample_rate 44100
 
-#define player_expected_packet_size 99
+#define player_expected_packet_size 100
 #define player_name_size 11
 
 int_fast16_t mapWidth = 256;

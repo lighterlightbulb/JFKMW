@@ -14,8 +14,7 @@
 #define ram_level_low 0x8000
 #define ram_level_high 0xC000
 
-
-uint_fast8_t map16_entries[tile_table_size * 0x10000];
+uint_fast8_t map16_entries[tile_table_size * 0x200];
 uint_fast8_t spawned_grabbable = 0xFF;
 
 void reset_map()
@@ -81,8 +80,8 @@ void initialize_map16()
 class map16blockhandler //Map16 loaded block
 {
 public:
-	int tile;
-	int act_as;
+	uint_fast16_t tile;
+	uint_fast16_t act_as;
 	bool logic[8];
 
 	void get_map_16_details()
@@ -94,6 +93,12 @@ public:
 		for (uint_fast8_t i = 0; i < 8; i++)
 		{
 			logic[i] = ((integer >> (7 - i)) & 1) != 0;
+		}
+
+		if (tile >= 0x166 && tile <= 0x167)
+		{
+			bool solid = tile == 0x166 ? (!ServerRAM.RAM[0x14AF]) : (ServerRAM.RAM[0x14AF]);
+			logic[0] = solid; logic[1] = solid; logic[2] = solid; logic[3] = solid;
 		}
 	}
 
@@ -166,6 +171,11 @@ public:
 					uint_fast8_t spr = spawnSpriteJFKMarioWorld(0x74, 5, x, y + 8, 1, true);
 					ServerRAM.RAM[0x2480 + spr] = 0x20;
 				}
+			}
+			if (t == 0x0112 && side == bottom)
+			{
+				ServerRAM.RAM[0x14AF] = !ServerRAM.RAM[0x14AF];
+				ServerRAM.RAM[0x1DF9] = 0xB;
 			}
 			if (t == 0x0038)
 			{

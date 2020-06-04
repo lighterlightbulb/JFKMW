@@ -379,6 +379,19 @@ void Sync_Server_RAM(bool compressed = false)
 		//Get screen stuff
 		CurrentPacket >> ServerRAM.RAM[0x1411];
 		CurrentPacket >> ServerRAM.RAM[0x1412];
+
+		//receive on/off status
+		CurrentPacket >> ServerRAM.RAM[0x14AF];
+
+		//receive clear status & brightness flag
+		CurrentPacket >> ServerRAM.RAM[0x1493];
+
+		//recieve level start
+		CurrentPacket >> ServerRAM.RAM[0x3F0B];
+		CurrentPacket >> ServerRAM.RAM[0x3F0C];
+		CurrentPacket >> ServerRAM.RAM[0x3F0D];
+		CurrentPacket >> ServerRAM.RAM[0x3F0E];
+
 		//Could be a loop once again
 		CurrentPacket >> ServerRAM.RAM[0x1462];
 		CurrentPacket >> ServerRAM.RAM[0x1463];
@@ -477,6 +490,19 @@ void Push_Server_RAM(bool compress = false)
 		//Send screen stuff
 		CurrentPacket << ServerRAM.RAM[0x1411];
 		CurrentPacket << ServerRAM.RAM[0x1412];
+
+		//Send on/off status
+		CurrentPacket << ServerRAM.RAM[0x14AF];
+
+		//Send level clear status
+		CurrentPacket << ServerRAM.RAM[0x1493];
+
+		//Send level start
+		CurrentPacket << ServerRAM.RAM[0x3F0B];
+		CurrentPacket << ServerRAM.RAM[0x3F0C];
+		CurrentPacket << ServerRAM.RAM[0x3F0D];
+		CurrentPacket << ServerRAM.RAM[0x3F0E];
+
 		//Could put these in a loop but I don't care right now
 		CurrentPacket << ServerRAM.RAM[0x1462];
 		CurrentPacket << ServerRAM.RAM[0x1463];
