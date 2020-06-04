@@ -70,6 +70,7 @@ unsigned int packet_wait_time = 16;
 int mouse_x, mouse_y;
 bool mouse_down;
 int data_size_current = 0;
+int data_size_now = 0;
 
 int rendering_device = -1;
 int controller = 0;
