@@ -36,23 +36,20 @@ void render_oam(uint_fast16_t offset_o = 0, int CameraX = 0, int CameraY = 0)
 	{
 
 		uint_fast8_t size = ServerRAM.RAM[offset_o + i + 1];
-		int x_position = ServerRAM.RAM[offset_o + i + 2] + int_fast8_t(ServerRAM.RAM[offset_o + i + 3]) * 256;
-		int y_position = ServerRAM.RAM[offset_o + i + 4] + int_fast8_t(ServerRAM.RAM[offset_o + i + 5]) * 256;
-
-		uint_fast8_t flags = ServerRAM.RAM[offset_o + i + 6] >> 4;
-		uint_fast16_t tile = ServerRAM.RAM[offset_o + i] + ((flags & 1) << 8);
-		uint_fast8_t pal = ServerRAM.RAM[offset_o + i + 6] & 0xF;
-		double angle = (double(ServerRAM.RAM[offset_o + i + 7]) / 256.0) * 360.0;
 		int_fast16_t size_x = (size & 0xF) << 4;
 		int_fast16_t size_y = ((size >> 4) & 0xF) << 4;
-		
+		int x_position = ServerRAM.RAM[offset_o + i + 2] + int_fast8_t(ServerRAM.RAM[offset_o + i + 3]) * 256;
+		int y_position = ServerRAM.RAM[offset_o + i + 4] + int_fast8_t(ServerRAM.RAM[offset_o + i + 5]) * 256;
+		uint_fast8_t flags = ServerRAM.RAM[offset_o + i + 6] >> 4;
+		uint_fast16_t tile = ServerRAM.RAM[offset_o + i] + ((flags & 1) << 8);
 
 		if (tile != 0x0 &&
 			(x_position - CameraX) > -size_x && (x_position - CameraX) < (256 + size_x) &&
 			(y_position - CameraY) > (-16 + -size_y) && (y_position - CameraY) < (224 + size_y)			
 		)
 		{
-		
+			uint_fast8_t pal = ServerRAM.RAM[offset_o + i + 6] & 0xF;
+			double angle = (double(ServerRAM.RAM[offset_o + i + 7]) / 256.0) * 360.0;
 			draw_tile_custom(x_position - CameraX, 224 - 32 - y_position + CameraY, size, angle, tile, pal, 
 				SDL_RendererFlip(
 				((flags >> 1) & 1) +
@@ -117,9 +114,9 @@ void render()
 
 	//Draw BG
 
-	if (ASM.Get_Ram(0x3F05, 1) != curr_bg)
+	if (ServerRAM.RAM[0x3F05] != curr_bg)
 	{
-		curr_bg = ASM.Get_Ram(0x3F05, 1);
+		curr_bg = ServerRAM.RAM[0x3F05];
 		SDL_DestroyTexture(bg_texture);
 		SDL_FreeSurface(bg_surface);
 		bg_surface = loadSurface(path + "Sprites/backgrounds/Background" + to_string(int(curr_bg)) + ".png");
