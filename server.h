@@ -40,9 +40,10 @@ void server_code(string level = "")
 			{
 				cout << green << "[Network] latest loop : "
 					<< dec << total_time_ticks.count() * 1000.0 << " ms. "
-					<< (double(data_size_current) / 1024.0) << "kb/s" << white << endl;
+					<< (double(data_size_current) / 1024.0) << "kb/s in, " << (double(data_size_now) / 1024.0) << "kb/s out" << white << endl;
 			}
 			data_size_current = 0;
+			data_size_now = 0;
 		}
 
 		if (getKey(0x70))

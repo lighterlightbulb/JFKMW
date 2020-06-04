@@ -190,6 +190,7 @@ void SendPacket(sf::TcpSocket* ToSend = nullptr) {
 	//Client will send a packet to server, server receives it.
 
 	if (!isClient) {
+		data_size_now += int(CurrentPacket.getDataSize());
 		if (ToSend != nullptr) {
 			ToSend->setBlocking(false);
 			send_not_blocking(ToSend);
