@@ -2,9 +2,20 @@
 
 string GAME_VERSION = "Alpha 0.4.5";
 
-#define rom_asm_size 0x20000 //128kb
-#define location_rom_levelasm 0x00000 //this will put LevelASM on the start of the ROM
-#define location_temp_sprite_asm 0x10000
+#define rom_asm_size 0x008000 //32kb, 1 bank ($00:8000 to $00:FFFF)
+#define location_rom_levelasm 0x008000 //this will put LevelASM on the start of the ROM, this is a SNES PC btw
+
+
+/*
+	These conversions will do for now, but when we expand the ROM, we have to fix these.
+*/
+uint_fast32_t snestopc(uint_fast32_t snes) {
+	return snes - 0x8000;
+}
+
+uint_fast32_t pctosnes(uint_fast32_t pc) {
+	return pc + 0x8000;
+}
 
 #define TotalBlocksCollisionCheck 2
 #define TotalBlocksCollisionCheckSprite 4
@@ -164,9 +175,6 @@ double smooth_camera_speed = 0;
 uint_fast8_t SelfPlayerNumber = 1;
 int PlayerAmount = 0;
 
-//Obsfucated version check
-//string da_epical_function_lol() { string KylesmomistheonethatstartedthatdamncluballbecauseshesabigfatstupidbDontsayitCartmanWEEEEELLLLLDontdoitCartmanWEEELLLLLLImwarningyouOkokImgettingprettysickofhimcallingmymomaWEEELLKylemomsabitchshesabigfatbitchshesthebiggestbitchinthewholewideworldshesastupidbitchifthereeverwasabitchshesabitchtoalltheboysandgirlsSHUTYOURFUCKINGMOUTHCARTMAN = "dlroWoiraMKFJ"; int len = int(KylesmomistheonethatstartedthatdamncluballbecauseshesabigfatstupidbDontsayitCartmanWEEEEELLLLLDontdoitCartmanWEEELLLLLLImwarningyouOkokImgettingprettysickofhimcallingmymomaWEEELLKylemomsabitchshesabigfatbitchshesthebiggestbitchinthewholewideworldshesastupidbitchifthereeverwasabitchshesabitchtoalltheboysandgirlsSHUTYOURFUCKINGMOUTHCARTMAN.length()); int n = len - 1; for (int i = 0; i < (len / 2); i++) { swap(KylesmomistheonethatstartedthatdamncluballbecauseshesabigfatstupidbDontsayitCartmanWEEEEELLLLLDontdoitCartmanWEEELLLLLLImwarningyouOkokImgettingprettysickofhimcallingmymomaWEEELLKylemomsabitchshesabigfatbitchshesthebiggestbitchinthewholewideworldshesastupidbitchifthereeverwasabitchshesabitchtoalltheboysandgirlsSHUTYOURFUCKINGMOUTHCARTMAN[i], KylesmomistheonethatstartedthatdamncluballbecauseshesabigfatstupidbDontsayitCartmanWEEEEELLLLLDontdoitCartmanWEEELLLLLLImwarningyouOkokImgettingprettysickofhimcallingmymomaWEEELLKylemomsabitchshesabigfatbitchshesthebiggestbitchinthewholewideworldshesastupidbitchifthereeverwasabitchshesabitchtoalltheboysandgirlsSHUTYOURFUCKINGMOUTHCARTMAN[n]); n = n - 1; } string nigga = path + KylesmomistheonethatstartedthatdamncluballbecauseshesabigfatstupidbDontsayitCartmanWEEEEELLLLLDontdoitCartmanWEEELLLLLLImwarningyouOkokImgettingprettysickofhimcallingmymomaWEEELLKylemomsabitchshesabigfatbitchshesthebiggestbitchinthewholewideworldshesastupidbitchifthereeverwasabitchshesabitchtoalltheboysandgirlsSHUTYOURFUCKINGMOUTHCARTMAN + ".exe"; char* nigganame = &nigga[0u]; ifstream POOOOOOOOOOOOOOOP(nigganame); stringstream bitch_ass_fuck_ass_i_farted; if (!POOOOOOOOOOOOOOOP.is_open()) { return ""; } uint32_t magic = 3932; char c; while (POOOOOOOOOOOOOOOP.get(c)) { magic = ((magic << 5) + magic) + c; } bitch_ass_fuck_ass_i_farted << hex << setw(8) << setfill('0') << magic; return bitch_ass_fuck_ass_i_farted.str(); }
-
 //Network
 string ip = "127.0.0.1"; int PORT = 0;
 
@@ -175,9 +183,8 @@ string ip = "127.0.0.1"; int PORT = 0;
 sf::TcpSocket socketG; sf::SocketSelector selector; //no idea how this works
 sf::TcpListener listener; vector<sf::TcpSocket*> clients;
 
-sf::Packet CurrentPacket; uint8_t CurrentPacket_header;
+uint_fast8_t CurrentPacket_header;
+//TO-DO : add packet compression.
+sf::Packet CurrentPacket;
 
 #endif
-
-//Sprites
-#define sprite_size 0x80

@@ -157,7 +157,7 @@ public:
 							ASM.load_asm("Levels/" + int_to_hex(num) + "/" + name, location_rom_levelasm);
 							if (value == "init")
 							{
-								ASM.start_JFK_thread(location_rom_levelasm);
+								ASM.start_JFK_thread();
 							}
 							else
 							{

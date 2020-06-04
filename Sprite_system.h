@@ -292,9 +292,9 @@ public:
 				}
 				else
 				{
-					ASM.load_asm("Code/Sprites/" + to_string(ServerRAM.RAM[0x2080 + i]) + ".jasm", location_temp_sprite_asm);
+					ASM.load_asm("Code/Sprites/" + to_string(ServerRAM.RAM[0x2080 + i]) + ".oasm");
 					ASM.x = i;
-					ASM.start_JFK_thread(location_temp_sprite_asm);
+					ASM.start_JFK_thread();
 					if (ASM.crashed)
 					{
 						ServerRAM.RAM[0x2000 + i] = 0;

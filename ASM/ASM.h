@@ -17,9 +17,15 @@ ASM_RAM ServerRAM_old;
 class JFKASM
 {
 public:
-	uint_fast32_t x, y, a, temp_, temp__;
+	/*
+	
+	This is just a very shitty SNES 65C16 emulator. It can do most stuff fine, but it'll have issues with some things.
+	
+	*/
+	uint_fast16_t x, y, a, temp_, temp__;
+	uint_fast8_t st;
+	uint_fast32_t pointer;
 	uint_fast8_t access_size = 1;
-	//int client_access = 0;
 
 	bool flags[4];
 
@@ -39,14 +45,16 @@ public:
 		if (temp_ <= temp__) { flags[3] = true; }
 
 	}
-	void start_JFK_thread(int pointer = 0x000000) //This runs the ASM.
+	void start_JFK_thread() //This runs the ASM.
 	{
+		pointer = 0;
 
 		string broke_reason = "invalid opcode";
 		while (pointer < rom_asm_size)
 		{
+			access_size = (st & 0x20) ? 2 : 1;
+
 			uint_fast8_t opcode = rom[pointer];
-			//cout << red << "[ASM] Opcode " << hex << int(opcode) << white << endl;
 
 			pointer += 1;
 			switch (opcode) {
@@ -62,7 +70,7 @@ public:
 			case 0xA9:
 				temp_ = 0;
 				for (int i = 0; i < access_size; i++) {
-					temp_ += rom[pointer + i] * int(pow(2, i * 8));
+					temp_ += rom[pointer + i] << (i * 8);
 				}
 
 				pointer += access_size;
@@ -79,7 +87,7 @@ public:
 			case 0xAD:
 			case 0xAE:
 			case 0xAC:
-				temp_ = Get_Ram(rom[pointer] + (opcode < 0xAA ? 0 : rom[pointer + 1] * 256), access_size);
+				temp_ = Get_Ram(rom[pointer] + (opcode < 0xAA ? 0 : (rom[pointer + 1] << 8)), access_size);
 				pointer += (opcode < 0xAA ? 1 : 2);
 
 				if (opcode == 0xAD) { a = temp_; } if (opcode == 0xAE) { x = temp_; } if (opcode == 0xAC) { y = temp_; }
@@ -89,19 +97,20 @@ public:
 			*/
 			case 0x85:
 			case 0x86:
-			case 0x84:
+			case 0x84: //da fuq? its not 87?
 			case 0x8D:
 			case 0x8E:
 			case 0x8C:
+				if (opcode == 0x85) { temp_ = a; } if (opcode == 0x86) { temp_ = x; } if (opcode == 0x84) { temp_ = y; }
 				if (opcode == 0x8D) { temp_ = a; } if (opcode == 0x8E) { temp_ = x; } if (opcode == 0x8C) { temp_ = y; }
-				Write_To_Ram(rom[pointer] + rom[pointer + 1] * 256, temp_, access_size);
+				Write_To_Ram(rom[pointer] + (rom[pointer + 1] << 8) * (opcode >= 0x8A), temp_, access_size);
 				pointer += (opcode < 0x8A ? 1 : 2);
 				break;
 			/*
-				STA $xx/$xxxx,x
+				STA $xxxx,x
 			*/
 			case 0x9D:
-				Write_To_Ram((rom[pointer] + rom[pointer + 1] * 256) + x, a, access_size);
+				Write_To_Ram((rom[pointer] + (rom[pointer + 1] << 8)) + x, a, access_size);
 				pointer += 2;
 				break;
 			/*
@@ -153,7 +162,7 @@ public:
 			case 0xE9:
 				temp_ = 0;
 				for (int i = 0; i < access_size; i++) {
-					temp_ += rom[pointer + i] * int(pow(2, i * 8));
+					temp_ += rom[pointer + i] << (i * 8);
 				}
 
 				pointer += access_size;
@@ -196,7 +205,7 @@ public:
 			case 0xC0:
 				temp__ = 0;
 				for (int i = 0; i < access_size; i++) {
-					temp__ += rom[pointer + i] * int(pow(2, i * 8));
+					temp__ += rom[pointer + i] << (i * 8);
 				}
 				if (opcode == 0xC9) { temp_ = a; CMP(); }
 				if (opcode == 0xE0) { temp_ = x; CMP(); }
@@ -210,11 +219,11 @@ public:
 			case 0x49:
 				temp__ = 0;
 				for (int i = 0; i < access_size; i++) {
-					temp__ += rom[pointer + i] * int(pow(2, i * 8));
+					temp__ += rom[pointer + i] << (i * 8);
 				}
 
 
-				a = uint_fast32_t(int_fast8_t(a)*-1);
+				a |= temp__;
 
 				pointer += access_size;
 				break;
@@ -224,7 +233,7 @@ public:
 			case 0x29:
 				temp__ = 0;
 				for (int i = 0; i < access_size; i++) {
-					temp__ += rom[pointer + i] * int(pow(2, i * 8));
+					temp__ += rom[pointer + i] << (i * 8);
 				}
 
 				a &= temp__;
@@ -251,11 +260,11 @@ public:
 				REP/SEP
 			*/
 			case 0xC2:
-				access_size = rom[pointer] / 16;
+				st |= rom[pointer];
 				pointer += 1;
 				break;
 			case 0xE2:
-				access_size = 1;
+				st &= rom[pointer];
 				pointer += 1;
 				break;
 			/*
@@ -289,7 +298,9 @@ public:
 				cout << red << "[ASM] Crash at pointer 0x" << hex << pointer << " : " << broke_reason << endl; 
 				cout << "Information about crash (probably won't help much, you probably did something wrong)" << endl;
 				cout << "Current opcode : " << int(opcode) << endl;
-				cout << "A, X, Y = " << a << ", " << x << ", " << y << endl;
+				cout << "PC : $" << int(pointer) << " (SNES : $" << pctosnes(pointer) << endl;
+				cout << "A, X, Y = " << int(a) << ", " << int(x) << ", " << int(y) << endl;
+				cout << "ST = " << int(st) << endl;
 				cout << "Flags = ";
 				for (int i = 0; i < 8; i++)
 				{
@@ -444,6 +455,14 @@ void Sync_Server_RAM(bool compressed = false)
 	//cout << red << "received ram" << white << endl;
 }
 
+bool checkRAMarea_net(uint_fast32_t i)
+{
+	return 
+		((i < 0x200 || i > 0x5FF) && (i < 0x2000 || i >= 0x3000)) && //OAM and SPR
+		(i < 0x5000 || i > 0x5FFF) //PLR ram
+		;
+}
+
 void Push_Server_RAM(bool compress = false)
 {
 	while (doing_write) {
@@ -465,7 +484,7 @@ void Push_Server_RAM(bool compress = false)
 		uint_fast32_t entries = 0;
 		for (uint_fast32_t i = 0; i < RAM_Size; i++)
 		{
-			if ((i < 0x200 || i > 0x5FF) && (i < 0x2000 || i >= 0x3000))
+			if (checkRAMarea_net(i))
 			{
 				if (ServerRAM.RAM[i] != ServerRAM_old.RAM[i])
 				{
@@ -477,7 +496,7 @@ void Push_Server_RAM(bool compress = false)
 
 		for (uint_fast32_t i = 0; i < RAM_Size; i++)
 		{
-			if ((i < 0x200 || i > 0x5FF) && (i < 0x2000 || i >= 0x3000))
+			if (checkRAMarea_net(i))
 			{
 				if (ServerRAM.RAM[i] != ServerRAM_old.RAM[i])
 				{
@@ -559,9 +578,6 @@ void Push_Server_RAM(bool compress = false)
 	}
 
 	doing_read = false;
-
-
-	//cout << red << "[ASM] Pushed SE-RAM to packet." << white << endl;
 }
 #endif
 

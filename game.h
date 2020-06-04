@@ -138,7 +138,7 @@ void game_loop()
 			ASM.Write_To_Ram(0x1464, uint_fast32_t(camera_total_y), 2);
 		}
 		if (asm_loaded) {
-			ASM.start_JFK_thread(location_rom_levelasm); //This runs the ASM.
+			ASM.start_JFK_thread(); //This runs the ASM.
 		}
 		if (lua_loaded) {
 			lua_run_main();
