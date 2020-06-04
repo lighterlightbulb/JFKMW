@@ -463,7 +463,7 @@ void Push_Server_RAM(bool compress = false)
 	else
 	{
 		uint_fast32_t entries = 0;
-		for (uint_fast32_t i = 0; i < 0x10000; i++)
+		for (uint_fast32_t i = 0; i < RAM_Size; i++)
 		{
 			if ((i < 0x200 || i > 0x5FF) && (i < 0x2000 || i >= 0x3000))
 			{
@@ -475,7 +475,7 @@ void Push_Server_RAM(bool compress = false)
 		}
 		CurrentPacket << entries;
 
-		for (uint_fast32_t i = 0; i < 0x10000; i++)
+		for (uint_fast32_t i = 0; i < RAM_Size; i++)
 		{
 			if ((i < 0x200 || i > 0x5FF) && (i < 0x2000 || i >= 0x3000))
 			{
