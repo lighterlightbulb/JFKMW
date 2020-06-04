@@ -3,8 +3,8 @@
 
 void process_ex_animation()
 {
-	//if (!networking || (networking && !isClient))
-	//{
+	if (!networking || (networking && isClient))
+	{
 		//Question block (Corrected)
 		for (int i = 0; i < 4; i++)
 		{
@@ -60,5 +60,5 @@ void process_ex_animation()
 				ServerRAM.RAM[VRAM_Location + (32 * 0xCC) + (i * 32) + b] = ServerRAM.RAM[VRAM_Location + 0x8000 + ((0xE8 - (ServerRAM.RAM[0x14AF] << 5)) * 32) + b + (i * 32)];
 			}
 		}
-	//}
+	}
 }
