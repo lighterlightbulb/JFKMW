@@ -116,10 +116,29 @@ void game_loop()
 		camera_total_x += int((CurrPlayer.CAMERA_X - 128.0) > 0 ? (CurrPlayer.CAMERA_X - 128.0) : 0);
 		camera_total_y += int((CurrPlayer.CAMERA_Y - 112.0) > 0 ? (CurrPlayer.CAMERA_Y - 112.0) : 0);
 
+		uint_fast16_t x_r = uint_fast16_t(CurrPlayer.x);
+		uint_fast16_t y_r = uint_fast16_t(CurrPlayer.y);
+		uint_fast8_t x_s_r = uint_fast8_t(CurrPlayer.X_SPEED * 16.0);
+		uint_fast8_t y_s_r = uint_fast8_t(CurrPlayer.Y_SPEED * 16.0);
+
+		ServerRAM.RAM[0x5000 + player] = x_r;
+		ServerRAM.RAM[0x5100 + player] = x_r >> 8;
+		ServerRAM.RAM[0x5200 + player] = y_r;
+		ServerRAM.RAM[0x5300 + player] = y_r >> 8;
+		ServerRAM.RAM[0x5400 + player] = x_s_r;
+		ServerRAM.RAM[0x5500 + player] = y_s_r;
+		ServerRAM.RAM[0x5600 + player] = CurrPlayer.KO_counter;
+		ServerRAM.RAM[0x5700 + player] = CurrPlayer.WO_counter;
+		ServerRAM.RAM[0x5800 + player] = CurrPlayer.STATE;
+		ServerRAM.RAM[0x5900 + player] = CurrPlayer.DEAD;
+
+
 		player += 1;
 
 
 	}
+	ServerRAM.RAM[0x3F0F] = uint_fast8_t(Mario.size());
+
 	PlayerInteraction();
 
 	camera_total_x /= uint_fast32_t(Mario.size());
