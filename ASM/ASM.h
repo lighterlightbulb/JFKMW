@@ -50,7 +50,7 @@ public:
 		pointer = 0;
 
 		string broke_reason = "invalid opcode";
-		while (pointer < rom_asm_size)
+		while (true)
 		{
 			access_size = (st & 0x20) ? 2 : 1;
 
