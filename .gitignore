@@ -8,3 +8,5 @@ JFKMarioWorld.vcxproj.user
 *.tlog
 *.obj
 *.pdb
+pch.cpp
+pch.h
