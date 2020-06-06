@@ -21,7 +21,8 @@ void lua_print(string text)
 
 //lua functions to bind to jfk mario world.
 static int lua_write(lua_State* L) {
-	const char* str = lua_tostring(L, 1); // get function argument
+	string str = (string)lua_tostring(L, 1); // get function argument
+	//cout << "Print called" << endl;
 	lua_print(str);
 	return 0; // nothing to return!
 }

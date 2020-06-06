@@ -1106,6 +1106,10 @@ MPlayer& get_mario(uint_fast8_t number)
 //player interaction with other players, for now it's just mario combat
 void PlayerInteraction()
 {
+	if (!pvp)
+	{
+		return;
+	}
 	for (list<MPlayer>::iterator curr_p = Mario.begin(); curr_p != Mario.end(); ++curr_p)
 	{
 		MPlayer& CurrPlayer = *curr_p;

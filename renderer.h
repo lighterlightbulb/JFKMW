@@ -235,15 +235,14 @@ void render()
 					draw_tile_custom(x_position - CameraX, 224 - 32 - y_position + CameraY, size, angle, tile, pal, SDL_FLIP_NONE);
 				}
 			}
-
 		}
 	}
 
-
-	//draw layer 3
+	//Start draw to layer 3
 	SDL_LockSurface(&screen_s_l2);
-	SDL_Surface *screen_plane_sequel = &screen_s_l2;
-	SDL_memset(screen_plane_sequel->pixels, 0, screen_plane_sequel->h * screen_plane_sequel->pitch);
+	SDL_Surface* screen_plane_sequel = &screen_s_l2;
+	SDL_memset(screen_plane_sequel->pixels, 0, screen_plane_sequel->h* screen_plane_sequel->pitch);
+
 
 	//Status bar code here
 	for (int i = 0; i < 5; i++)
@@ -364,6 +363,23 @@ void render()
 
 			y -= 1;
 			plr_numb += 1;
+		}
+	}
+
+	for (list<MPlayer>::iterator item = Mario.begin(); item != Mario.end(); ++item)
+	{
+		MPlayer& CurrentMario = *item;
+
+		if (!CurrentMario.PlayerControlled && CurrentMario.x > (CameraX - camBoundX) && CurrentMario.y > (CameraY - camBoundY) && CurrentMario.x < (CameraX + 256 + camBoundX) && CurrentMario.y < (CameraY + 224 + camBoundY))
+		{
+			for (int i = 0; i < 5; i++)
+			{
+				uint_fast8_t new_l = uint_fast8_t(CurrentMario.player_name_cut[i]);
+				if (new_l == 0x20) { new_l = 0x57 + 0x7F; }
+				if (new_l < 0x3A) { new_l = new_l - 0x30 + 0x57; }
+
+				draw8x8_tile_2bpp(-12 + int(CurrentMario.x) - int(CameraX) + i * 8, 224 - int(CurrentMario.y + (CurrentMario.STATE ? 40 : 32)) + int(CameraY), new_l - 0x57, 6);
+			}
 		}
 	}
 

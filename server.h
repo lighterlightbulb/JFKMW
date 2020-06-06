@@ -14,7 +14,7 @@ void server_code(string level = "")
 	networking = true;
 	bool DisablePrints = true;
 	
-	cout << green << "[Network] Server starting. To load a new level, press F1, to sync the ram to all players, press F2." << white << endl;
+	cout << green << "[Network] Server starting. To load a new level, press F1, to sync the ram to all players, press F2, Disable network prints by pressing F3. To sync the music to all players, press F4, To change a RAM variable, press F5, to toggle PVP, press F6." << white << endl;
 	data_size_current = 0;
 	thread = new sf::Thread(&NetWorkLoop); thread->launch();
 	Sleep(100);
@@ -81,6 +81,17 @@ void server_code(string level = "")
 		{
 			cout << green << "[Network] Syncing music to other players.." << endl;
 			need_sync_music = true;
+		}
+		if (getKey(0x74))
+		{
+
+			string r = ""; cout << "RAM $ to modify : "; cin >> r;
+			string v = ""; cout << "New Value (hex) : "; cin >> v;
+			ServerRAM.RAM[stoi(r, nullptr, 16)] = uint_fast8_t(stoi(v, nullptr, 16));
+		}
+		if (getKey(0x75))
+		{
+			pvp = !pvp;
 		}
 		Sleep(16);
 	}

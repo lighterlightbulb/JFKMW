@@ -301,6 +301,7 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool for_validating = false)
 				std::chrono::system_clock::now().time_since_epoch()
 				);
 			latest_server_response = int_fast32_t(ms.count()) - timestamp;
+			CurrentPacket >> pvp;
 			CurrentPacket >> SelfPlayerNumber; //Me
 			CurrentPacket >> PlayerAmount; //Update Plr Amount
 
@@ -472,6 +473,7 @@ void Server_To_Clients()
 				);
 
 			CurrentPacket << int_fast32_t(ms.count());
+			CurrentPacket << pvp;
 			CurrentPacket << PlrNumber;
 			pack_mario_data(PlrNumber);
 

@@ -169,6 +169,7 @@ bool isClient = false;
 
 
 //Game
+bool pvp = true;
 bool smooth_camera = false;
 bool midway_activated = false;
 double smooth_camera_speed = 0;

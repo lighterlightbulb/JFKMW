@@ -90,6 +90,13 @@ bool getKey(int what_want)
 #if defined(_WIN32)
 	if (GetAsyncKeyState(what_want) & 0x7FFF)
 	{
+		if (!isClient && networking)
+		{
+			if (GetConsoleWindow() != GetForegroundWindow())
+			{
+				return false;
+			}
+		}
 		return true;
 	}
 #endif
