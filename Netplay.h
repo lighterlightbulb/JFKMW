@@ -107,6 +107,7 @@ void take_mario_data(MPlayer& CurrentMario)
 
 	CurrentPacket >> CurrentMario.skin; CurrentPacket >> CurrentMario.in_pipe;
 	CurrentPacket >> CurrentMario.pipe_speed_x; CurrentPacket >> CurrentMario.pipe_speed_y;
+
 	for (int inputs = 0; inputs < total_inputs; inputs++)
 	{
 		CurrentPacket >> CurrentMario.pad[inputs];

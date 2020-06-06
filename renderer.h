@@ -306,17 +306,19 @@ void render()
 		//Congrats this will do it
 
 		string C_String = Chatting ? (Typing_In_Chat + ((global_frame_counter % 20) > 10 ? "." : "")) : Curr_ChatString;
+		int C_len = int(Chatting ? Typing_In_Chat.length() : Curr_ChatString.length());
+
 		for (int i = 0; i < C_String.length(); i++)
 		{
-			
+			int y = (C_len > 31) ? 25 : 26;
 			uint_fast8_t new_l = uint_fast8_t(C_String.at(i));
 			if (new_l == 0x20) { new_l = 0x57 + 0x7F; }
 			if (C_String.at(i) == '<') { new_l = 0x2C + 0x57; }
 			if (C_String.at(i) == '>') { new_l = 0x2D + 0x57; }
 			if (new_l < 0x3A) { new_l = new_l - 0x30 + 0x57; }
 
-			VRAM[0xB802 + (i * 2) + (26 << 6)] = new_l - 0x57;
-			VRAM[0xB803 + (i * 2) + (26 << 6)] = 6;
+			VRAM[0xB802 + (i * 2) + (y << 6)] = new_l - 0x57;
+			VRAM[0xB803 + (i * 2) + (y << 6)] = 6;
 
 		}
 
@@ -393,7 +395,7 @@ void render()
 	{
 		MPlayer& CurrentMario = *item;
 
-		if (!CurrentMario.PlayerControlled && CurrentMario.x > CameraX && CurrentMario.y > CameraY && CurrentMario.x < (CameraX + 256) && CurrentMario.y < (CameraY + 224))
+		if (!CurrentMario.PlayerControlled && CurrentMario.x > (CameraX + 16) && CurrentMario.y > (CameraY) && CurrentMario.x < (CameraX + 224) && CurrentMario.y < (CameraY + 160))
 		{
 			for (int i = 0; i < 5; i++)
 			{

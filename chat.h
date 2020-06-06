@@ -13,6 +13,7 @@ void Chat_ServerSide()
 		{
 			CurrPlayer.last_chat_string = CurrPlayer.curr_chat_string;
 			Curr_ChatString = CurrPlayer.curr_chat_string;
+			cout << lua_color << "[Chat S] " << Curr_ChatString << white << endl;
 		}
 	}
 }
@@ -24,6 +25,7 @@ void Chat_ClientSide()
 		Old_ChatString = Curr_ChatString;
 		Time_ChatString = 300;
 		ServerRAM.RAM[0x1DFC] = 0x15;
+		cout << lua_color << "[Chat C] " << Curr_ChatString << white << endl;
 	}
 
 	if (Time_ChatString > 0)
