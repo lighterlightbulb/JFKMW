@@ -140,6 +140,7 @@ void game_loop()
 	ServerRAM.RAM[0x3F0F] = uint_fast8_t(Mario.size());
 
 	PlayerInteraction();
+	ProcessChat();
 
 	camera_total_x /= uint_fast32_t(Mario.size());
 	camera_total_y /= uint_fast32_t(Mario.size());

@@ -104,6 +104,8 @@ istream& getline(istream& stream, string& str)
 #include "Sprite_system.h"
 #include "mario.h"
 
+#include "chat.h"
+
 #include "game.h"
 
 

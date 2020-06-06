@@ -66,6 +66,13 @@ public:
 
 	bool CAN_SPRINT = false;
 	string sprite = "STAND_0";
+
+	//Chat strings (THIS IS ONLY SENT. NOT RECEIVED!)
+	string curr_chat_string = "";
+
+	//This is not sent, the server will compare curr_chat_string to this, and then update the thing.
+	string last_chat_string = "";
+
 	//Sounds
 	MPlayer(double newX = 0.0, double newY = 0.0)
 	{
