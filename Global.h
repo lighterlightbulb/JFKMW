@@ -29,6 +29,9 @@ uint_fast32_t pctosnes(uint_fast32_t pc) {
 #define button_up 5
 #define button_down 6
 
+#define camBoundX 32.0
+#define camBoundY 32.0
+
 #define total_inputs 7
 
 #define SpriteAmount 64
@@ -108,6 +111,8 @@ SDL_Scancode input_settings[10] = {
 	SDL_SCANCODE_RSHIFT,
 	SDL_SCANCODE_RETURN
 };
+bool BUTTONS_GAMEPAD[10];
+
 
 vector<string> split(const string &s, char delim) {
 	vector<string> result;
@@ -170,6 +175,16 @@ bool isClient = false;
 
 //Game
 bool pvp = true;
+bool Chatting = false;
+string Typing_In_Chat = "";
+int_fast16_t CameraX, CameraY;
+uint_fast8_t curr_bg = 0xFF;
+uint_fast8_t screen_darken = 0;
+
+bool showing_player_list;
+bool pressed_select;
+bool pressed_start;
+
 bool smooth_camera = false;
 bool midway_activated = false;
 double smooth_camera_speed = 0;

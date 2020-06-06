@@ -83,6 +83,13 @@ public:
 		CAMERA_Y = y;
 	}
 
+	void Chat(string new_c)
+	{
+		curr_chat_string = "<";
+		curr_chat_string += username.substr(0, 5);
+		curr_chat_string += "> " + new_c;
+	}
+
 	void Die()
 	{
 		if (!DEAD)
@@ -131,7 +138,7 @@ public:
 		//Controller buttons currently held down. Format: byetUDLR.
 		//b = A or B; y = X or Y; e = select; t = Start; U = up; D = down; L = left, R = right.
 
-		if (ServerRAM.RAM[0x1493] > 0)
+		if (ServerRAM.RAM[0x1493] > 0 || Chatting)
 		{
 			for (int inputs = 0; inputs < total_inputs; inputs++)
 			{

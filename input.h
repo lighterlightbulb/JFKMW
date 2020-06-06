@@ -3,8 +3,6 @@
 const Uint8 *state = SDL_GetKeyboardState(NULL);
 SDL_GameController* gGameController;
 SDL_Haptic* haptic_device;
-bool BUTTONS_GAMEPAD[10];
-
 
 void init_input()
 {
@@ -85,20 +83,30 @@ uint_fast32_t next_type = 0;
 auto typemap = new unordered_map<int, uint_fast32_t>();
 #endif
 
+#if defined(_WIN32)
+bool KeyStates[0x100];
+#endif
+
 bool getKey(int what_want)
 {
 #if defined(_WIN32)
-	if (GetAsyncKeyState(what_want) & 0x7FFF)
+	bool stat = GetKeyState(what_want) & 0x8000;
+	if (!isClient && networking)
 	{
-		if (!isClient && networking)
+		if (GetConsoleWindow() != GetForegroundWindow())
 		{
-			if (GetConsoleWindow() != GetForegroundWindow())
-			{
-				return false;
-			}
+			return false;
 		}
-		return true;
 	}
+	if (KeyStates[what_want] != stat)
+	{
+		KeyStates[what_want] = stat;
+		if (stat)
+		{
+			return true;
+		}
+	}
+	return false;
 #endif
 
 #if defined(__linux__)

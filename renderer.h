@@ -1,14 +1,5 @@
 #pragma once
 
-#define camBoundX 32.0
-#define camBoundY 32.0
-int_fast16_t CameraX, CameraY;
-uint_fast8_t curr_bg = 0xFF;
-uint_fast8_t screen_darken = 0;
-
-bool showing_player_list;
-bool pressed_select;
-
 void draw_number_hex(uint_fast8_t pos_x, uint_fast8_t pos_y, uint_fast16_t number, int length)
 {
 	for (int i = 0; i < length; i++)
@@ -299,7 +290,39 @@ void render()
 	}
 	draw_number_dec(14, 3, data_size_now / 1024);
 
+	//Render chat
+	if (Time_ChatString > 0 || Chatting)
+	{
+		for (int i = 0; i < 32; i++)
+		{
+			for (int e = 16; e < 28; e++)
+			{
+				VRAM[0xB800 + (i << 1) + (e << 6)] = 0x7F;
+				VRAM[0xB801 + (i << 1) + (e << 6)] = 6;
+			}
+		}
 
+
+		//Congrats this will do it
+
+		string C_String = Chatting ? (Typing_In_Chat + ((global_frame_counter % 20) > 10 ? "." : "")) : Curr_ChatString;
+		for (int i = 0; i < C_String.length(); i++)
+		{
+			
+			uint_fast8_t new_l = uint_fast8_t(C_String.at(i));
+			if (new_l == 0x20) { new_l = 0x57 + 0x7F; }
+			if (C_String.at(i) == '<') { new_l = 0x2C + 0x57; }
+			if (C_String.at(i) == '>') { new_l = 0x2D + 0x57; }
+			if (new_l < 0x3A) { new_l = new_l - 0x30 + 0x57; }
+
+			VRAM[0xB802 + (i * 2) + (26 << 6)] = new_l - 0x57;
+			VRAM[0xB803 + (i * 2) + (26 << 6)] = 6;
+
+		}
+
+	}
+
+	//Player list logic (shouldn't be here, but oh well)
 	bool stat = (state[input_settings[8]]) || BUTTONS_GAMEPAD[9];
 	if (stat != pressed_select)
 	{
@@ -370,7 +393,7 @@ void render()
 	{
 		MPlayer& CurrentMario = *item;
 
-		if (!CurrentMario.PlayerControlled && CurrentMario.x > (CameraX - camBoundX) && CurrentMario.y > (CameraY - camBoundY) && CurrentMario.x < (CameraX + 256 + camBoundX) && CurrentMario.y < (CameraY + 224 + camBoundY))
+		if (!CurrentMario.PlayerControlled && CurrentMario.x > CameraX && CurrentMario.y > CameraY && CurrentMario.x < (CameraX + 256) && CurrentMario.y < (CameraY + 224))
 		{
 			for (int i = 0; i < 5; i++)
 			{
