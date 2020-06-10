@@ -466,8 +466,9 @@ public:
 				map16_handler.update_map_tile(xB, yB);
 
 
-				double BelowBlock = double(yB * 16) - (height) - 1;
-				double AboveBlock = double(yB * 16) + map16_handler.ground_y(NewPositionX + 8.0 - (xB * 16), xB, yB) - 1;
+				double f_h = map16_handler.ground_y(NewPositionX + 8.0 - (xB * 16), xB, yB);
+				double BelowBlock = double(yB * 16) + (f_h - 16.0) - (height) - 1;
+				double AboveBlock = double(yB * 16) + (f_h) - 1;
 				double RightBlock = double(xB * 16) + 16.0;
 				double LeftBlock = double(xB * 16) - 16.0;
 
