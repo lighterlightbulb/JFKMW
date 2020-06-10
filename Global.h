@@ -90,6 +90,8 @@ int rendering_device = -1;
 int controller = 0;
 int haptic = 0;
 
+#define spawn_bound_x 192 //Sprite spawn bound for camera. This should be good for now.
+
 bool fullscreen = false;
 bool opengl = false;
 bool networking = false;

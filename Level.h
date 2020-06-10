@@ -1,5 +1,36 @@
 #pragma once
 
+class LevelSprite {
+public:
+	bool is_lua = false;
+	uint_fast8_t number = 0;
+	uint_fast16_t x_pos = 0;
+	uint_fast16_t y_pos = 0;
+	uint_fast8_t newstate = 0;
+	uint_fast8_t dir = 0;
+
+	void spawn()
+	{
+		spawnSpriteJFKMarioWorld(number, newstate, x_pos, y_pos, dir, is_lua);
+	}
+};
+
+vector<LevelSprite> LevelSprites; //U know what they say. All toasters toast.
+
+void CheckSpritesInCam(int x_pos)
+{
+	for (int i = 0; i < LevelSprites.size(); i++)
+	{
+		LevelSprite& CSprite = LevelSprites[i];
+		int x = int(CSprite.x_pos);
+		if (x > (x_pos - spawn_bound_x) && x < (x_pos + spawn_bound_x))
+		{
+			CSprite.spawn();
+			LevelSprites.erase(LevelSprites.begin() + i);
+			i--;
+		}
+	}
+}
 
 class Level
 {
@@ -80,7 +111,9 @@ public:
 
 		istringstream str(DLevel); // string
 
-		int spr_index = 0;
+
+		LevelSprites.clear();
+		//int spr_index = 0;
 		while (getline(str, line)) {
 			// using printf() in all tests for consistency
 			if (line != "")
@@ -213,8 +246,9 @@ public:
 					{
 						vector<string> v = split(line.c_str(), ',');
 
-						ServerRAM.RAM[0x2800 + spr_index] = v[0] == "lua" ? 1 : 0;
-						
+
+						/*ServerRAM.RAM[0x2800 + spr_index] = v[0] == "lua" ? 1 : 0;
+
 						ServerRAM.RAM[0x2000 + spr_index] = 1;
 						ServerRAM.RAM[0x2080 + spr_index] = stoi(v[1], nullptr, 16);
 						ServerRAM.RAM[0x2100 + spr_index] = stoi(v[2]) % 256;
@@ -226,9 +260,18 @@ public:
 						ServerRAM.RAM[0x2380 + spr_index] = 0;
 
 						ServerRAM.RAM[0x2680 + spr_index] = stoi(v[4]);
-						ServerRAM.RAM[0x2F80 + spr_index] = 0;
+						ServerRAM.RAM[0x2F80 + spr_index] = 0;*/
 
-						spr_index += 1;
+						LevelSprites.push_back(
+							LevelSprite{
+								v[0] == "lua",
+								uint_fast8_t(stoi(v[1], nullptr, 16)),
+								uint_fast16_t(stoi(v[2])),
+								uint_fast16_t(stoi(v[3])),
+								1,
+								uint_fast8_t(stoi(v[4]))
+							}
+						);
 					}
 
 				}

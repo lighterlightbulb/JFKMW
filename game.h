@@ -113,8 +113,8 @@ void game_loop()
 		CurrPlayer.player_index = player;
 		CurrPlayer.Process();
 
-		camera_total_x += int((CurrPlayer.CAMERA_X - 128.0) > 0 ? (CurrPlayer.CAMERA_X - 128.0) : 0);
-		camera_total_y += int((CurrPlayer.CAMERA_Y - 112.0) > 0 ? (CurrPlayer.CAMERA_Y - 112.0) : 0);
+		camera_total_x += max(0, CurrPlayer.CAMERA_X - 128.0);
+		camera_total_y += max(0, CurrPlayer.CAMERA_Y - 112.0);
 
 		uint_fast16_t x_r = uint_fast16_t(CurrPlayer.x);
 		uint_fast16_t y_r = uint_fast16_t(CurrPlayer.y);
@@ -132,6 +132,10 @@ void game_loop()
 		ServerRAM.RAM[0x5800 + player] = CurrPlayer.STATE;
 		ServerRAM.RAM[0x5900 + player] = CurrPlayer.DEAD;
 
+		if (!isClient)
+		{
+			CheckSpritesInCam(int(max(0, CurrPlayer.CAMERA_X)));
+		}
 
 		player += 1;
 
