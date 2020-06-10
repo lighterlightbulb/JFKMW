@@ -259,8 +259,8 @@ void draw8x8_tile(int_fast16_t x, int_fast16_t y, uint_fast16_t tile, uint_fast8
 {
 	palette = palette << 4;	tile = tile << 5;
 	uint_fast8_t color1 = 0;
-	uint_fast8_t i;
-	uint_fast8_t index;
+	uint_fast8_t i = 0;
+	uint_fast8_t index = 0;
 
 	uint_fast8_t graphics_array[32];
 	/*copy(VRAM + tile,

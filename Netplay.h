@@ -256,6 +256,7 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool for_validating = false)
 		HandleDisconnection(&whoSentThis);
 		return;
 	}
+	//cout << "Size : " << CurrentPacket.getDataSize() << endl;
 	/*
 	SERVER BEHAVIOUR
 	*/

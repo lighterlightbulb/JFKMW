@@ -9,7 +9,7 @@ void Chat_ServerSide()
 	for (list<MPlayer>::iterator item = Mario.begin(); item != Mario.end(); ++item)
 	{
 		MPlayer& CurrPlayer = *item;
-		if (CurrPlayer.last_chat_string != CurrPlayer.curr_chat_string)
+		if (CurrPlayer.last_chat_string != CurrPlayer.curr_chat_string && CurrPlayer.curr_chat_string != "")
 		{
 			CurrPlayer.last_chat_string = CurrPlayer.curr_chat_string;
 			Curr_ChatString = CurrPlayer.curr_chat_string;
@@ -26,6 +26,10 @@ void Chat_ClientSide()
 		Time_ChatString = 300;
 		ServerRAM.RAM[0x1DFC] = 0x15;
 		cout << lua_color << "[Chat C] " << Curr_ChatString << white << endl;
+
+		MPlayer& LocalPlayer = get_mario(SelfPlayerNumber);
+		LocalPlayer.Chat(Typing_In_Chat);
+		LocalPlayer.curr_chat_string = "";
 	}
 
 	if (Time_ChatString > 0)
