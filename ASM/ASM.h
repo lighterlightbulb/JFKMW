@@ -397,6 +397,9 @@ void Sync_Server_RAM(bool compressed = false)
 		//receive clear status & brightness flag
 		CurrentPacket >> ServerRAM.RAM[0x1493];
 
+		//receive shake timer
+		CurrentPacket >> ServerRAM.RAM[0x1887];
+
 		//recieve level start
 		CurrentPacket >> ServerRAM.RAM[0x3F0B];
 		CurrentPacket >> ServerRAM.RAM[0x3F0C];
@@ -515,6 +518,9 @@ void Push_Server_RAM(bool compress = false)
 
 		//Send level clear status
 		CurrentPacket << ServerRAM.RAM[0x1493];
+
+		//Send shake timer
+		CurrentPacket << ServerRAM.RAM[0x1887];
 
 		//Send level start
 		CurrentPacket << ServerRAM.RAM[0x3F0B];
