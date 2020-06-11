@@ -121,23 +121,23 @@ void game_loop()
 		uint_fast8_t x_s_r = uint_fast8_t(CurrPlayer.X_SPEED * 16.0);
 		uint_fast8_t y_s_r = uint_fast8_t(CurrPlayer.Y_SPEED * 16.0);
 
-		ServerRAM.RAM[0x5000 + player] = x_r;
-		ServerRAM.RAM[0x5100 + player] = x_r >> 8;
-		ServerRAM.RAM[0x5200 + player] = y_r;
-		ServerRAM.RAM[0x5300 + player] = y_r >> 8;
-		ServerRAM.RAM[0x5400 + player] = x_s_r;
-		ServerRAM.RAM[0x5500 + player] = y_s_r;
-		ServerRAM.RAM[0x5600 + player] = CurrPlayer.KO_counter;
-		ServerRAM.RAM[0x5700 + player] = CurrPlayer.WO_counter;
-		ServerRAM.RAM[0x5800 + player] = CurrPlayer.STATE;
-		ServerRAM.RAM[0x5900 + player] = CurrPlayer.DEAD;
+		ServerRAM.RAM[0x5000 + player - 1] = x_r;
+		ServerRAM.RAM[0x5100 + player - 1] = x_r >> 8;
+		ServerRAM.RAM[0x5200 + player - 1] = y_r;
+		ServerRAM.RAM[0x5300 + player - 1] = y_r >> 8;
+		ServerRAM.RAM[0x5400 + player - 1] = x_s_r;
+		ServerRAM.RAM[0x5500 + player - 1] = y_s_r;
+		ServerRAM.RAM[0x5600 + player - 1] = CurrPlayer.KO_counter;
+		ServerRAM.RAM[0x5700 + player - 1] = CurrPlayer.WO_counter;
+		ServerRAM.RAM[0x5800 + player - 1] = CurrPlayer.STATE;
+		ServerRAM.RAM[0x5900 + player - 1] = CurrPlayer.DEAD;
 
 		if (!isClient)
 		{
-			CheckSpritesInCam(int(max(0, CurrPlayer.CAMERA_X)));
+			CheckSpritesInCam(int(max(128, CurrPlayer.CAMERA_X)));
 		}
 
-		player += 1;
+		player++;
 
 
 	}
