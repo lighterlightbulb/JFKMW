@@ -28,6 +28,7 @@ void player_code()
 
 	while (true)
 	{
+		LevelSprites.clear();
 		zsnes_ui.hint = "";
 		disconnected = false;
 		PlayerAmount = 0; SelfPlayerNumber = 1; CheckForPlayers();
@@ -66,7 +67,7 @@ void player_code()
 			{
 				if (zsnes_ui.button_pressed != "none" || ((state[SDL_SCANCODE_Q] || state[SDL_SCANCODE_R]) || state[SDL_SCANCODE_W]))
 				{
-					zsnes_ui.message = "Uhh u didnt type anything";
+					zsnes_ui.message = "bruh type something";
 				}
 			}
 

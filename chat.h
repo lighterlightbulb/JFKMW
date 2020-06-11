@@ -13,14 +13,24 @@ void Chat_ServerSide()
 		{
 			CurrPlayer.last_chat_string = CurrPlayer.curr_chat_string;
 			Curr_ChatString = CurrPlayer.curr_chat_string;
+			Time_ChatString = 300;
 			cout << lua_color << "[Chat S] " << Curr_ChatString << white << endl;
+		}
+	}
+
+	if (Time_ChatString > 0)
+	{
+		Time_ChatString--;
+		if (Time_ChatString == 0)
+		{
+			Curr_ChatString = "";
 		}
 	}
 }
 
 void Chat_ClientSide()
 {
-	if (Old_ChatString != Curr_ChatString)
+	if (Old_ChatString != Curr_ChatString && Curr_ChatString != "")
 	{
 		Old_ChatString = Curr_ChatString;
 		Time_ChatString = 300;

@@ -4,7 +4,7 @@
 	the zsnes like UI for jfk mario world
 */
 
-#define snow_size 99 //Amount of snow particles.
+#define snow_size 100 //Amount of snow particles.
 void draw_pixel_to_surface(uint_fast8_t x1, uint_fast8_t y1, uint_fast8_t r, uint_fast8_t g, uint_fast8_t b, SDL_Surface* screen_s)
 {
 	if (x1 > -1 && x1 < screen_s->w && y1 > -1 && y1 < screen_s->h)
@@ -91,7 +91,9 @@ public:
 	//variables
 	float snow_x[snow_size];
 	float snow_y[snow_size];
+	float snow_s;
 	float snow_x_s[snow_size];
+	vector<string> levels_found;
 
 	//initializer. done always
 	ZSNES_ui()
@@ -103,6 +105,19 @@ public:
 			snow_x[i] = float(rand() % 256);
 			snow_y[i] = float(rand() % 256);
 			snow_x_s[i] = float(1 + (rand() % 3)) / 6.f;
+		}
+		snow_s = 0.f;
+
+		std::string patht = path + "Levels";
+		for (const auto& entry : fs::directory_iterator(patht))
+		{
+			string st = entry.path().string();
+			st = st.substr(st.length() - 2, st.length());
+			if (st.substr(0, 1) == "\\")
+			{
+				st = "0" + st.substr(1, 2);
+			}
+			levels_found.push_back(st);
 		}
 	}
 
@@ -201,11 +216,13 @@ public:
 
 		for (int i = 0; i < snow_size; i++)
 		{
-			snow_x[i] += snow_x_s[i] + (float(rand() % 10) - 5.f) / 10.f;
-			snow_y[i] += 1.f;
+			snow_x[i] += (snow_s/2) + snow_x_s[i] + (float(rand() % 10) - 5.f) / 10.f;
+			snow_y[i] += (snow_s) + (float(rand() % 2)/2.f);
 
 			draw_pixel_to_surface(uint_fast8_t(snow_x[i]), uint_fast8_t(snow_y[i]), 176, 180, 200, surface);
 		}
+
+		snow_s = min(1.f, snow_s + 0.001f);
 
 		draw_rectangle(0, 230, 0, 15, 0, 44, 136);
 		draw_rectangle(0, 230, 1, 14, 0, 48, 152);
@@ -256,8 +273,18 @@ public:
 		//Delete
 		if (getKey(0x08) && hint.size() > 0) { hint.pop_back(); }
 
-		draw_string(false, "JFKMW - " + message, 5, 224 - 10);
-		draw_string(false, "Option: " + hint + ((global_frame_counter % 64) > 32 ? "_" : ""), 5, 224 - 16);
+		hint = hint.substr(0, 15);
+
+		draw_string(false, "JFKMW " + GAME_VERSION + " - " + message, 5, 224 - 16);
+		draw_string(false, "Option: " + hint + ((global_frame_counter % 64) > 32 ? "_" : ""), 5, 224 - 22);
+		draw_string(false, "Type a option then press a button.", 5, 224 - 10);
+
+
+		draw_string(false, "Levels Found:", 5, 20);
+		for (int i = 0; i < levels_found.size(); i++)
+		{
+			draw_string(false, levels_found[i], 5, 30 + i * 6);
+		}
 	}
 
 	//finish processing, copy to texture.

@@ -13,7 +13,6 @@ void Sleep(int time) {
 #error "WE DO NOT SUPPORT MAC"
 #endif
 
-
 #include <cstdint>
 #include <cmath>
 #include <string>
@@ -32,8 +31,10 @@ void Sleep(int time) {
 #include <ctype.h>
 #include <cstring>
 #include <cassert>
+#include <filesystem>
 
 using namespace std;
+namespace fs = std::experimental::filesystem;
 
 #include <SDL.h>
 #include <SDL_image.h>
