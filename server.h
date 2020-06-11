@@ -14,7 +14,13 @@ void server_code(string level = "")
 	networking = true;
 	bool DisablePrints = true;
 	
-	cout << green << "[Network] Server starting. To load a new level, press F1, to sync the ram to all players, press F2, Disable network prints by pressing F3. To sync the music to all players, press F4, To change a RAM variable, press F5, to toggle PVP, press F6." << white << endl;
+	cout << green << "[Network] Server starting. Commands :" << endl;
+	cout << "F1 = Load a new level" << endl;
+	cout << "F2 = Sync RAM to all players" << endl;
+	cout << "F3 = Status Prints Toggle" << endl;
+	cout << "F4 = Sync Music" << endl;
+	cout << "F5 = Change RAM Variable" << endl;
+	cout << "F6 = PVP Toggle" << white << endl;
 	data_size_current = 0;
 	thread = new sf::Thread(&NetWorkLoop); thread->launch();
 	Sleep(100);
@@ -92,6 +98,14 @@ void server_code(string level = "")
 		if (getKey(0x75))
 		{
 			pvp = !pvp;
+			if (!pvp)
+			{
+				cout << green << "[Network] Disabled PVP." << endl;
+			}
+			else
+			{
+				cout << green << "[Network] Enabled PVP." << endl;
+			}
 		}
 		Sleep(16);
 	}

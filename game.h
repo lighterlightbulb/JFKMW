@@ -113,8 +113,8 @@ void game_loop()
 		CurrPlayer.player_index = player;
 		CurrPlayer.Process();
 
-		camera_total_x += max(0, CurrPlayer.CAMERA_X - 128.0);
-		camera_total_y += max(0, CurrPlayer.CAMERA_Y - 112.0);
+		camera_total_x += max(0, int(CurrPlayer.CAMERA_X - 128.0));
+		camera_total_y += max(0, int(CurrPlayer.CAMERA_Y - 112.0));
 
 		uint_fast16_t x_r = uint_fast16_t(CurrPlayer.x);
 		uint_fast16_t y_r = uint_fast16_t(CurrPlayer.y);
