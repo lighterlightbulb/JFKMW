@@ -287,6 +287,15 @@ public:
 					}
 					ServerRAM.RAM[0x2F80 + i] = 1;
 				}
+				else
+				{
+					process_sprite_logic(uint_fast8_t(i));
+
+					if (ServerRAM.RAM[0x2000 + i] == 0)
+					{
+						continue;
+					}
+				}
 				if (ServerRAM.RAM[0x2800 + i])
 				{
 					call_sprite_lua(i);
@@ -303,7 +312,7 @@ public:
 
 				
 				}
-				process_sprite_logic(uint_fast8_t(i));
+				
 			}
 		}
 	}
