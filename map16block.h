@@ -139,6 +139,16 @@ public:
 		}
 		return 16.0;
 	}
+
+	double ground_s(uint_fast16_t x, uint_fast16_t y)
+	{
+		uint_fast16_t tile = get_tile(x, y);
+		if (tile == 0x1AA || tile == 0x1AF) //45* slope Right/Left
+		{
+			return 17.0;
+		}
+		return 15.0;
+	}
 	/*
 		Check if a tile is sloped
 	*/
