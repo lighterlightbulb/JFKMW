@@ -305,6 +305,7 @@ void draw8x8_tile(int_fast16_t x, int_fast16_t y, uint_fast16_t tile, uint_fast8
 void draw8x8_tile_2bpp(uint_fast8_t x, uint_fast8_t y, uint_fast16_t tile, uint_fast8_t palette_offs)
 {
 
+	palette_offs = palette_offs << 2;
 	uint_fast8_t color1;
 	uint8_t graphics_array[16];
 	tile = tile << 4;
@@ -316,7 +317,7 @@ void draw8x8_tile_2bpp(uint_fast8_t x, uint_fast8_t y, uint_fast16_t tile, uint_
 		{
 			color1 = ((graphics_array[0 + index] >> i) & 1) + (((graphics_array[1 + index] >> i) & 1) << 1);
 			if (color1 != 0) {
-				uint_fast16_t c = palette_array[color1 + (palette_offs << 2)];
+				uint_fast16_t c = palette_array[color1 + palette_offs];
 				Uint32* p_screen = (Uint32*)(&screen_s_l2)->pixels + (7 - i + x) + ((y + (index >> 1)) << 8);
 				*p_screen = 0xFF000000 +
 					(((c & 0x1F) << 3)) +
