@@ -41,6 +41,8 @@ void load_configuration()
 
 			if (value == "LeftShift") value = "Left Shift";
 			if (value == "RightShift") value = "Right Shift";
+
+			if (value == "LeftCtrl") value = "Left Ctrl";
 			const char *v = value.c_str();
 			if (name == "button_y") { input_settings[0] = SDL_GetScancodeFromName(v); }
 			if (name == "button_b") { input_settings[1] = SDL_GetScancodeFromName(v); }
