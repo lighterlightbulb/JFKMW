@@ -369,6 +369,7 @@ void Sync_Server_RAM(bool compressed = false)
 	doing_read = true;
 	if (!compressed)
 	{
+		ClearSpriteCache();
 		for (uint_fast32_t i = 0; i < RAM_Size; i++)
 		{
 			CurrentPacket >> ServerRAM.RAM[i];

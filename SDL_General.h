@@ -177,6 +177,10 @@ void read_from_palette(string file)
 
 void decode_graphics_file(string file, int offset = 0)
 {
+	if ((offset*4096) >= 0xc000)
+	{
+		ClearSpriteCache();
+	}
 	file = path + file;
 
 	ifstream input(file, ios::binary);
@@ -304,73 +308,82 @@ void draw_tile_custom(int_fast16_t x, int_fast16_t y, uint_fast8_t size, double 
 {
 	/* SDL interprets each pixel as a 32-bit number, so our masks must depend
 	   on the endianness (byte order) of the machine */
-	Uint32 rmask, gmask, bmask, amask;
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-	rmask = 0xff000000; gmask = 0x00ff0000; bmask = 0x0000ff00; amask = 0x000000ff;
-#else
-	rmask = 0x000000ff; gmask = 0x0000ff00; bmask = 0x00ff0000; amask = 0xff000000;
-#endif
+	//SDL_Texture* drawnTex;
+	uint_fast32_t flags = tile + (size << 16) + (palette << 24);
 	uint_fast8_t size_x = (size % 16) + 1;
 	uint_fast8_t size_y = (size / 16) + 1;
-	SDL_Surface* ti = SDL_CreateRGBSurface(0, size_x * 8, size_y * 8, 32,
-		rmask, gmask, bmask, amask);
+	SDL_Texture* drawnTex = loadSprTexture(flags);
 
-	//set up
-	palette = palette << 4;
-	SDL_LockSurface(ti);
-
-	uint_fast8_t color1 = 0;
-	for (uint_fast8_t x_b = 0; x_b < size_x; x_b++) //Shitty loop thing sorry
+	if (drawnTex == NULL)
 	{
-		for (uint_fast8_t y_b = 0; y_b < size_y; y_b++)
+		Uint32 rmask, gmask, bmask, amask;
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+		rmask = 0xff000000; gmask = 0x00ff0000; bmask = 0x0000ff00; amask = 0x000000ff;
+#else
+		rmask = 0x000000ff; gmask = 0x0000ff00; bmask = 0x00ff0000; amask = 0xff000000;
+#endif
+		SDL_Surface* ti = SDL_CreateRGBSurface(0, size_x * 8, size_y * 8, 32,
+			rmask, gmask, bmask, amask);
+
+		//set up
+		palette = palette << 4;
+		SDL_LockSurface(ti);
+
+		uint_fast8_t color1 = 0;
+		for (uint_fast8_t x_b = 0; x_b < size_x; x_b++) //Shitty loop thing sorry
 		{
-			uint_fast8_t x_off_t = x_b << 3;
-			uint_fast8_t y_off_t = y_b << 3;
-
-			//cout << dec << int(x_b) << ", " << int(y_b) << endl;
-			uint_fast16_t curr_tile = ((tile + x_b + (y_b << 4)) << 5) + 0xC000;
-			if (curr_tile > 0xFFE0) //Fix a crash
+			for (uint_fast8_t y_b = 0; y_b < size_y; y_b++)
 			{
-				curr_tile = 0xFFE0;
-			}
+				uint_fast8_t x_off_t = x_b << 3;
+				uint_fast8_t y_off_t = y_b << 3;
 
-			uint_fast8_t graphics_array[32];
-			memcpy(graphics_array, &VRAM[curr_tile], 32 * sizeof(uint_fast8_t));
-
-			//drawing a block now.
-			for (uint_fast8_t index = 0; index < 8; index++)
-			{
-				//stupid method here, can be optimized as fuck.
-				uint_fast8_t ind = index << 1;
-
-				for (uint_fast8_t i = 0; i < 8; i++)
+				//cout << dec << int(x_b) << ", " << int(y_b) << endl;
+				uint_fast16_t curr_tile = ((tile + x_b + (y_b << 4)) << 5) + 0xC000;
+				if (curr_tile > 0xFFE0) //Fix a crash
 				{
-					color1 =
-						((graphics_array[0 + ind] >> i) & 1) +
-						(((graphics_array[1 + ind] >> i) & 1) << 1) +
-						(((graphics_array[16 + ind] >> i) & 1) << 2) +
-						(((graphics_array[17 + ind] >> i) & 1) << 3)
-						;
+					curr_tile = 0xFFE0;
+				}
 
-					if (color1 != 0)
+				uint_fast8_t graphics_array[32];
+				memcpy(graphics_array, &VRAM[curr_tile], 32 * sizeof(uint_fast8_t));
+
+				//drawing a block now.
+				for (uint_fast8_t index = 0; index < 8; index++)
+				{
+					//stupid method here, can be optimized as fuck.
+					uint_fast8_t ind = index << 1;
+
+					for (uint_fast8_t i = 0; i < 8; i++)
 					{
-						drawRect(7 - i + x_off_t, index + y_off_t, color1 + palette, ti);
+						color1 =
+							((graphics_array[0 + ind] >> i) & 1) +
+							(((graphics_array[1 + ind] >> i) & 1) << 1) +
+							(((graphics_array[16 + ind] >> i) & 1) << 2) +
+							(((graphics_array[17 + ind] >> i) & 1) << 3)
+							;
+
+						if (color1 != 0)
+						{
+							drawRect(7 - i + x_off_t, index + y_off_t, color1 + palette, ti);
+						}
 					}
 				}
 			}
 		}
+
+
+		SDL_Texture* NewTex = SDL_CreateTextureFromSurface(ren, ti);
+		drawnTex = NewTex;
+		addSprTexture(flags, NewTex);
+
+
+		SDL_FreeSurface(ti);
 	}
 
-
-
-
-	SDL_Texture* drawnTex = SDL_CreateTextureFromSurface(ren, ti);
 	SDL_Rect SourceR;
 	SourceR.x = (x * scale) + sp_offset_x;
 	SourceR.y = (y * scale) + sp_offset_y;
 	SourceR.w = (size_x << 3) * scale; //Same bs as above.
 	SourceR.h = (size_y << 3) * scale;
 	SDL_RenderCopyEx(ren, drawnTex, NULL, &SourceR, angle, NULL, flip);
-	SDL_FreeSurface(ti);
-	SDL_DestroyTexture(drawnTex);
 }

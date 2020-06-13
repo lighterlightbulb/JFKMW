@@ -206,3 +206,34 @@ uint_fast8_t CurrentPacket_header;
 sf::Packet CurrentPacket;
 
 #endif
+
+//Rendering
+
+unordered_map<uint_fast32_t, SDL_Texture*> SpriteTextures;
+SDL_Texture* loadSprTexture(uint_fast32_t fl)
+{
+	auto entry = SpriteTextures.find(fl);
+	if (entry != SpriteTextures.end())
+	{
+		return entry->second;
+	}
+	return NULL;
+}
+
+void addSprTexture(uint_fast32_t fl, SDL_Texture* newTex)
+{
+	SpriteTextures.insert(make_pair(fl, newTex));
+}
+
+void ClearSpriteCache()
+{
+	if (SpriteTextures.size() > 0)
+	{
+		cout << yellow << "[GFX] Clearing Sprite Cache" << white << endl;
+		for (unordered_map<uint_fast32_t, SDL_Texture*>::iterator it = SpriteTextures.begin(); it != SpriteTextures.end(); ++it)
+		{
+			SDL_DestroyTexture(it->second);
+		}
+		SpriteTextures.clear();
+	}
+}
