@@ -118,13 +118,12 @@ void drawRect(int_fast16_t x1, int_fast16_t y1, uint_fast8_t color, SDL_Surface 
 	}
 }
 
-
-
 void cls()
 {
 	SDL_SetRenderDrawColor(ren, 0, 0, 0, 0);
 	SDL_RenderClear(ren);
 }
+
 void redraw()
 {
 	SDL_SetRenderDrawColor(ren, 0, 0, 0, 0);
@@ -136,8 +135,6 @@ void redraw()
 		rect = { 0,0,sp_offset_x, h }; SDL_RenderFillRect(ren, &rect);
 		rect = { w - sp_offset_x,0,sp_offset_x,h }; SDL_RenderFillRect(ren, &rect);
 	}
-
-
 	SDL_RenderPresent(ren);
 }
 
@@ -157,34 +154,22 @@ void read_from_palette(string file)
 
 	ifstream input(file, ios::binary);
 	vector<unsigned char> buffer(istreambuf_iterator<char>(input), {});
-
-	//print
-	int curr = 0;
-	int curr_p = 0;
-	uint8_t current_buffer[2];
-
-
+	uint_fast8_t curr = 0;
+	uint_fast8_t curr_p = 0;
+	uint_fast8_t current_buffer[2];
 	for (auto &v : buffer)
 	{
 		current_buffer[curr] = uint8_t(v);
 
-		//cout << hex << current_buffer[curr] << ",";
-
-		if (curr == 1)
+		if (curr)
 		{
-			ASM.Write_To_Ram(0x3D00 + curr_p, current_buffer[0], 1);
-			ASM.Write_To_Ram(0x3E00 + curr_p, current_buffer[1], 1);
-			//ServerRAM.RAM[0x3D00 + curr_p] = current_buffer[0];
-			//ServerRAM.RAM[0x3E00 + curr_p] = current_buffer[1];
+			ServerRAM.RAM[0x3D00 + curr_p] = current_buffer[0];
+			ServerRAM.RAM[0x3E00 + curr_p] = current_buffer[1];
 
-			curr_p += 1;
-			curr = 0;
-		}
-		else
-		{
-			curr += 1;
+			curr_p++;
 		}
 
+		curr = (curr + 1) % 2;	
 	}
 
 }
@@ -201,11 +186,10 @@ void decode_graphics_file(string file, int offset = 0)
 	for (auto &v : buffer)
 	{
 		ServerRAM.RAM[VRAM_Location + (offset*4096) + current_byte] = uint_fast8_t(v);
-		//cout << hex << int(VRAM[(4096 * offset) + current_byte]) << ",";
-		current_byte += 1;
+		current_byte++;
 	}
 
-	cout << yellow << "[GFX] Loading File " << file << " at 0x" << int_to_hex(offset*4096) << " " << current_byte << " bytes loaded" << white << endl;
+	cout << yellow << "[GFX] Loading File " << file << " at 0x" << int_to_hex(0x10000 + offset*4096) << " " << current_byte << " bytes loaded" << white << endl;
 
 
 }
@@ -245,12 +229,6 @@ topleft-most pixel will use colour 7. Just look at the colour possibilities tabl
 second-highest bit, x1 the second-lowest and x0 the lowest. That together forms colour 7. If x0, x1, x10 and x11 are all $80, the top-leftmost 
 pixel will use colour F. As you would expect, each 8x8 tile requires 32 bytes.
 */
-
-uint_fast8_t get_bit(uint_fast8_t num, uint_fast8_t k)
-{
-	return (num >> k) & 1;
-}
-
 
 void draw8x8_tile(int_fast16_t x, int_fast16_t y, uint_fast16_t tile, uint_fast8_t palette)
 {
