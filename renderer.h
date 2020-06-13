@@ -89,13 +89,13 @@ void render()
 
 	if (CameraX < 0) { CameraX = 0; }
 	if (CameraY < 0) { CameraY = 0; }
-	if (CameraX > (-256 + mapWidth * 16))
+	if (CameraX > (-256 + int_fast16_t(mapWidth) * 16))
 	{
-		CameraX = (-256 + mapWidth * 16);
+		CameraX = (-256 + int_fast16_t(mapWidth) * 16);
 	}
-	if (CameraY > (-224 + mapHeight * 16))
+	if (CameraY > (-224 + int_fast16_t(mapHeight) * 16))
 	{
-		CameraY = (-224 + mapHeight * 16);
+		CameraY = (-224 + int_fast16_t(mapHeight) * 16);
 	}
 
 	int_fast16_t offsetX = int_fast16_t(CameraX / 16.0);

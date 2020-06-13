@@ -36,6 +36,7 @@ void game_loop()
 		{
 			if (ASM.Get_Ram(0x3F0A, 2) != 0)
 			{
+				midway_activated = false;
 				LevelManager.LoadLevel(uint_fast16_t(ASM.Get_Ram(0x3F0A, 2)));
 
 				game_init();
@@ -132,7 +133,7 @@ void game_loop()
 		ServerRAM.RAM[0x5800 + player - 1] = CurrPlayer.STATE;
 		ServerRAM.RAM[0x5900 + player - 1] = CurrPlayer.DEAD;
 
-		if (!isClient)
+		if (!isClient && !CurrPlayer.DEAD)
 		{
 			CheckSpritesInCam(int(max(128, CurrPlayer.CAMERA_X)));
 		}

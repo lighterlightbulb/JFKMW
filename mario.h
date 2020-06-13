@@ -94,8 +94,11 @@ public:
 	{
 		if (!DEAD)
 		{
-			WO_counter += 1;
-			ASM.Write_To_Ram(0x1DFC, 100, 1);
+			if (ServerRAM.RAM[0x1493] == 0)
+			{
+				WO_counter += 1;
+				ASM.Write_To_Ram(0x1DFC, 100, 1);
+			}
 			DEAD = true;
 			DEATH_TIMER = 27;
 		}
@@ -127,6 +130,9 @@ public:
 	{
 		x = LevelManager.start_x;
 		y = LevelManager.start_y;
+
+
+
 		DEATH_TIMER = 0;
 		DEAD = false;
 		STATE = 0;
@@ -469,8 +475,8 @@ public:
 				double f_h = map16_handler.ground_y(NewPositionX + 8.0 - (xB * 16), xB, yB);
 				double BelowBlock = double(yB * 16) + (f_h - 16.0) - (height) - 1;
 				double AboveBlock = double(yB * 16) + (f_h) - 1;
-				double RightBlock = double(xB * 16) + 16.0;
-				double LeftBlock = double(xB * 16) - 16.0;
+				double RightBlock = double(xB * 16) + 15.0;
+				double LeftBlock = double(xB * 16) - 15.0;
 
 				bool checkLeft = map16_handler.logic[3];
 				bool checkRight = map16_handler.logic[2];
@@ -736,6 +742,15 @@ public:
 
 	int Process()
 	{
+		if (ServerRAM.RAM[0x1493] > 0 && ServerRAM.RAM[0x1493] < 8)
+		{
+			CAMERA_X /= 2;
+			CAMERA_Y /= 2;
+			if (!DEAD)
+			{
+				Die(); //This is so we can get warped
+			}
+		}
 		SLOPE_TYPE = 0;
 
 		getInput();
