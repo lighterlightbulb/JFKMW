@@ -73,7 +73,12 @@ void render()
 
 	for (uint_fast16_t i = 0; i < 256; i++)
 	{
-		palette_array[i] = ServerRAM.RAM[0x3D00 + i] + (ServerRAM.RAM[0x3E00 + i] << 8);
+		uint_fast16_t c = ServerRAM.RAM[0x3D00 + i] + (ServerRAM.RAM[0x3E00 + i] << 8);
+
+		palette_array[i] = 
+			0xFF000000 + (((c & 0x1F) << 3)) +
+			((((c >> 5) & 0x1F) << 3) << 8) +
+			(((c >> 10) << 3) << 16);
 	}
 	memcpy(VRAM, &ServerRAM.RAM[VRAM_Location], VRAM_Size * sizeof(uint_fast8_t));
 

@@ -111,13 +111,10 @@ void drawRect(int_fast16_t x1, int_fast16_t y1, uint_fast8_t color, SDL_Surface 
 {
 	if (x1 > -1 && x1 < screen_s->w && y1 > -1 && y1 < screen_s->h)
 	{
-		uint_fast16_t c = palette_array[color];
+		//uint_fast16_t c = palette_array[color];
 		Uint32* p_screen = (Uint32*)screen_s->pixels;
 		p_screen += y1 * screen_s->w + x1;
-		*p_screen = 0xFF000000 + 
-					(((c & 0x1F) << 3)) + 
-					((((c >> 5) & 0x1F) << 3) << 8) +
-					(((c >> 10) << 3) << 16); //SDL_MapRGBA(screen_s->format, r, g, b, 255);
+		*p_screen = palette_array[color]; //SDL_MapRGBA(screen_s->format, r, g, b, 255);
 	}
 }
 
@@ -288,12 +285,9 @@ void draw8x8_tile(int_fast16_t x, int_fast16_t y, uint_fast16_t tile, uint_fast8
 			{
 				//drawPixelScreen(7 - i + x, y + index, color1 + palette);
 
-				uint_fast16_t c = palette_array[color1 + palette];
+				//uint_fast16_t c = palette_array[color1 + palette];
 				Uint32* p_screen = (Uint32*)(&screen_s_l1)->pixels + ((y_p << 8) + x_p);
-				*p_screen = 0xFF000000 +
-					(((c & 0x1F) << 3)) +
-					(((c >> 5) & 0x1F) << 11) +
-					((c >> 10) << 19); //SDL_MapRGBA(screen_s->format, r, g, b, 255);
+				*p_screen = palette_array[color1 + palette]; //SDL_MapRGBA(screen_s->format, r, g, b, 255);
 			}
 		}
 	}
@@ -317,12 +311,8 @@ void draw8x8_tile_2bpp(uint_fast8_t x, uint_fast8_t y, uint_fast16_t tile, uint_
 		{
 			color1 = ((graphics_array[0 + index] >> i) & 1) + (((graphics_array[1 + index] >> i) & 1) << 1);
 			if (color1 != 0) {
-				uint_fast16_t c = palette_array[color1 + palette_offs];
 				Uint32* p_screen = (Uint32*)(&screen_s_l2)->pixels + (7 - i + x) + ((y + (index >> 1)) << 8);
-				*p_screen = 0xFF000000 +
-					(((c & 0x1F) << 3)) +
-					(((c >> 5) & 0x1F) << 11) +
-					((c >> 10) << 19);
+				*p_screen = palette_array[color1 + palette_offs];
 			}
 		}
 	}
