@@ -5,7 +5,7 @@ The code hosted here contains no copyrighted assets or any stolen code. Most thi
 
 ## The features?
 * Fully working engine with tons of features.
-* Physics ripped and recoded from the original game to be as close as possible to the original (except collision, which was recoded entirely).
+* Physics reverse engineered and recoded from the original game to be as close as possible to the original (except collision, which was recoded entirely).
 * Unfinished, but working ASM 65c18 processor/emulator for running ASM scripts.
 * Lua Support for scripting levels and sprites.
 * Selling Feature : Multiplayer. Play the game with other people!
