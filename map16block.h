@@ -107,7 +107,7 @@ public:
 	*/
 	void update_map_tile(uint_fast16_t x, uint_fast16_t y)
 	{
-		uint_fast32_t index = (x % mapWidth) + (max(0, min(mapHeight, y)) * mapWidth);
+		uint_fast32_t index = (x % mapWidth) + (max(uint_fast16_t(0), min(mapHeight, y)) * mapWidth);
 		tile = ServerRAM.RAM[ram_level_low + index] + (ServerRAM.RAM[ram_level_high + index] << 8);
 		get_map_16_details();
 	}
@@ -117,7 +117,7 @@ public:
 	*/
 	void replace_map_tile(uint16_t tile, uint_fast16_t x, uint_fast16_t y)
 	{
-		uint_fast32_t index = (x % mapWidth) + (max(0, min(mapHeight, y)) * mapWidth);
+		uint_fast32_t index = (x % mapWidth) + (max(uint_fast16_t(0), min(mapHeight, y)) * mapWidth);
 		ServerRAM.RAM[ram_level_low + index] = tile & 0xFF; ServerRAM.RAM[ram_level_high + index] = tile >> 8;
 	}
 
@@ -220,7 +220,7 @@ public:
 	*/
 	uint_fast16_t get_tile(uint_fast16_t x, uint_fast16_t y)
 	{
-		uint_fast32_t index = (x % mapWidth) + (max(0,min(mapHeight,y)) * mapWidth);
+		uint_fast32_t index = (x % mapWidth) + (max(uint_fast16_t(0),min(mapHeight,y)) * mapWidth);
 		return ServerRAM.RAM[ram_level_low + index] + (ServerRAM.RAM[ram_level_high + index] << 8);
 	}
 
