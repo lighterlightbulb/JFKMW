@@ -176,7 +176,7 @@ public:
 	{
 		flash_t = 0x18; //15 time, type 1
 		flash_x = int_fast16_t(x);
-		flash_y = int_fast16_t(y - 16.0);
+		flash_y = int_fast16_t(y - 24.0);
 		if (!jump_is_spin)
 		{
 			if (pad[button_b])
@@ -194,7 +194,7 @@ public:
 	{
 		flash_t = 0x18; //15 time, type 1
 		flash_x = int_fast16_t(x);
-		flash_y = int_fast16_t(y - 16.0);
+		flash_y = int_fast16_t(y - 24.0);
 		ASM.Write_To_Ram(0x1DF9, 0x2, 1);
 		if (pad[button_b] || pad[button_a])
 		{
@@ -367,7 +367,14 @@ public:
 								{
 									if (ServerRAM.RAM[0x2880 + sprite] & 1)
 									{
-										ServerRAM.RAM[0x2000 + sprite] = 0;
+										if (ServerRAM.RAM[0x2880 + sprite] & 2)
+										{
+											ServerRAM.RAM[0x2A00 + sprite] = 0x01;
+										}
+										else
+										{
+											ServerRAM.RAM[0x2000 + sprite] = 0;
+										}
 										Y_SPEED = Calculate_Speed(128);
 										ASM.Write_To_Ram(0x1DF9, 0x8, 1);
 									}
@@ -462,11 +469,21 @@ public:
 							}
 							else
 							{
-								ServerRAM.RAM[0x2680 + sprite] = int_fast8_t(to_scale);
-								ServerRAM.RAM[0x2000 + sprite] = 4;
-								ServerRAM.RAM[0x2E00 + sprite] = 0x10;
+								if ((ServerRAM.RAM[0x2880 + sprite] & 2) && jump_is_spin && ServerRAM.RAM[0x2080 + sprite] != 0x53)
+								{
+									ServerRAM.RAM[0x2A00 + sprite] = 0x01;
+									ServerRAM.RAM[0x2000 + sprite] = 0x01;
+									Y_SPEED = Calculate_Speed(128);
+									ASM.Write_To_Ram(0x1DF9, 0x8, 1);
+								}
+								else
+								{
+									ServerRAM.RAM[0x2680 + sprite] = int_fast8_t(to_scale);
+									ServerRAM.RAM[0x2000 + sprite] = 4;
+									ServerRAM.RAM[0x2E00 + sprite] = 0x10;
 
-								ASM.Write_To_Ram(0x1DF9, 3, 1);
+									ASM.Write_To_Ram(0x1DF9, 3, 1);
+								}
 							}
 						}
 					}
@@ -779,7 +796,7 @@ public:
 			ServerRAM.RAM[0x204 + oam_index] = flash_y;
 			ServerRAM.RAM[0x205 + oam_index] = flash_y >> 8;
 
-			ServerRAM.RAM[0x206 + oam_index] = 0x08 | (((flash_timer & 0x7) > 3) * 0x20);
+			ServerRAM.RAM[0x206 + oam_index] = 0x08 | (((flash_timer / 3) % 2) * 0x20);
 			ServerRAM.RAM[0x207 + oam_index] = 0;
 
 			flash_timer -= 1;
