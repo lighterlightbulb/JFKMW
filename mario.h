@@ -174,7 +174,7 @@ public:
 
 	void Enemy_Jump()
 	{
-		flash_t = 0x18; //15 time, type 1
+		flash_t = 0x1C; //15 time, type 1
 		flash_x = int_fast16_t(x);
 		flash_y = int_fast16_t(y - 24.0);
 		if (!jump_is_spin)
@@ -192,7 +192,7 @@ public:
 
 	void Enemy_Jump_Spin()
 	{
-		flash_t = 0x18; //15 time, type 1
+		flash_t = 0x1C; //15 time, type 1
 		flash_x = int_fast16_t(x);
 		flash_y = int_fast16_t(y - 24.0);
 		ASM.Write_To_Ram(0x1DF9, 0x2, 1);

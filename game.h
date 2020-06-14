@@ -40,6 +40,10 @@ void game_loop()
 				LevelManager.LoadLevel(uint_fast16_t(ASM.Get_Ram(0x3F0A, 2)));
 
 				game_init();
+#if not defined(DISABLE_NETWORK)
+				Set_Server_RAM();
+#endif
+				recent_big_change = true;
 
 				ASM.Write_To_Ram(0x3F0A, 0, 2);
 			}

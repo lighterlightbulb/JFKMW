@@ -57,10 +57,13 @@ void server_code(string level = "")
 			
 			string level = ""; cout << "Enter a level : "; cin >> level; 
 			doing_write = true;
-			LevelManager.LoadLevel(stoi(level, nullptr, 16));
-			game_init();
-			Set_Server_RAM();
-			recent_big_change = true;
+			//LevelManager.LoadLevel(stoi(level, nullptr, 16));
+
+			ASM.Write_To_Ram(0x3F0A, stoi(level, nullptr, 16), 2);
+			ASM.Write_To_Ram(0x1497, 0x06, 1);
+			//game_init();
+			//Set_Server_RAM();
+			//recent_big_change = true;
 			doing_write = false;
 		}
 		if (getKey(0x71))
