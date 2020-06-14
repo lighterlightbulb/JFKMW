@@ -135,7 +135,7 @@ void game_loop()
 
 		if (!isClient && !CurrPlayer.DEAD)
 		{
-			CheckSpritesInCam(int(max(128, CurrPlayer.CAMERA_X)));
+			CheckSpritesInCam(int(max(128.0, CurrPlayer.CAMERA_X)));
 		}
 
 		player++;
