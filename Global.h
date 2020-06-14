@@ -40,8 +40,8 @@ uint_fast32_t pctosnes(uint_fast32_t pc) {
 #define player_expected_packet_size 104 //Strings apparently add 4 so we have to make sure of this so it wont crash.
 #define player_name_size 11
 
-uint_fast16_t mapWidth = 256;
-uint_fast16_t mapHeight = 32;
+uint_fast32_t mapWidth = 256;
+uint_fast32_t mapHeight = 32;
 
 #define RAM_Size 0x20000
 #define VRAM_Size 0x10000
