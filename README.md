@@ -24,7 +24,7 @@ If you know how to code, submit fixes. If you like to test stuff, make levels an
 * SFML
 * Lua 5.3
 
-## Social
+## Social (and where you can get a release)
 You can join the official discord for the game (and other projects) here : https://discord.gg/fD5QQK3
 
 ## Videos
