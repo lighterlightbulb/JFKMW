@@ -253,7 +253,7 @@ public:
 			{
 				
 				uint_fast16_t x_position = uint_fast16_t(double(x + to_scale * -15.0));
-				uint_fast16_t y_position = uint_fast16_t(double(y - (STATE > 0 ? 13.0 : 16.0)) + 16.0);
+				uint_fast16_t y_position = uint_fast16_t(double(y - (STATE > 0 ? 13.0 : 16.0)) + 17.0);
 				ServerRAM.RAM[0x2100 + GRABBED_SPRITE] = uint_fast8_t(x_position & 0xFF);
 				ServerRAM.RAM[0x2180 + GRABBED_SPRITE] = uint_fast8_t(x_position >> 8);
 				ServerRAM.RAM[0x2200 + GRABBED_SPRITE] = 0x00;

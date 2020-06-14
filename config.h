@@ -54,6 +54,8 @@ void load_configuration()
 			if (name == "button_up") { input_settings[7] = SDL_GetScancodeFromName(v); }
 			if (name == "button_select") { input_settings[8] = SDL_GetScancodeFromName(v); }
 			if (name == "button_start") { input_settings[9] = SDL_GetScancodeFromName(v); }
+			if (name == "button_chat") { input_settings[10] = SDL_GetScancodeFromName(v); }
+			if (name == "button_togglehud") { input_settings[11] = SDL_GetScancodeFromName(v); }
 
 			if (name == "joystick_num") { controller = stoi(value); }
 			if (name == "haptic_num") { haptic = stoi(value); }

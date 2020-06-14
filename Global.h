@@ -98,10 +98,11 @@ bool networking = false;
 bool renderer_accelerated = true;
 bool v_sync = true;
 bool force_sleep = false;
+bool drawHud = true;
 
 string username = "No username";
 
-SDL_Scancode input_settings[10] = {
+SDL_Scancode input_settings[12] = {
 	SDL_SCANCODE_S,
 	SDL_SCANCODE_Z,
 	SDL_SCANCODE_X,
@@ -111,7 +112,9 @@ SDL_Scancode input_settings[10] = {
 	SDL_SCANCODE_DOWN,
 	SDL_SCANCODE_UP,
 	SDL_SCANCODE_RSHIFT,
-	SDL_SCANCODE_RETURN
+	SDL_SCANCODE_RETURN,
+	SDL_SCANCODE_T,
+	SDL_SCANCODE_1
 };
 bool BUTTONS_GAMEPAD[10];
 
@@ -185,6 +188,7 @@ uint_fast8_t screen_darken = 0;
 
 bool showing_player_list;
 bool pressed_select;
+bool pressed_hide;
 bool pressed_start;
 
 bool smooth_camera = false;

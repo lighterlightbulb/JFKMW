@@ -75,7 +75,7 @@ void Chat_ClientSide()
 
 		Typing_In_Chat = Typing_In_Chat.substr(0, min(55, int(Typing_In_Chat.length())));
 	}
-	bool stat = Chatting ? (state[input_settings[9]]) : state[SDL_SCANCODE_T];
+	bool stat = Chatting ? (state[input_settings[9]]) : state[input_settings[10]];
 	if (stat != pressed_start)
 	{
 		pressed_start = stat;

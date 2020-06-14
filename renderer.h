@@ -128,7 +128,7 @@ void render()
 		{
 			RenderBackground(
 				(-int(double(CameraX) * (double(ServerRAM.RAM[0x3F06]) / 16.0) + ASM.Get_Ram(0x1466, 2)) % 512) + x*512,
-				-256 + (int(double(CameraY) * (double(ServerRAM.RAM[0x3F07]) / 16.0) + ASM.Get_Ram(0x1468, 2)) % 512) + y*-512);
+				-272 + (int(double(CameraY) * (double(ServerRAM.RAM[0x3F07]) / 16.0) + ASM.Get_Ram(0x1468, 2)) % 512) + y*-512);
 		}
 	}
 
@@ -242,60 +242,73 @@ void render()
 	SDL_memset(screen_plane_sequel->pixels, 0, screen_plane_sequel->h* screen_plane_sequel->pitch);
 
 
-	//Status bar code here
-	for (int i = 0; i < 5; i++)
+	bool stat = state[input_settings[11]];
+	if (stat != pressed_hide)
 	{
-
-		uint_fast8_t new_l = uint_fast8_t(LocalPlayer.player_name_cut[i]);
-		if (new_l == 0x20) { new_l = 0x57 + 0x7F; }
-		if (new_l < 0x3A) { new_l = new_l - 0x30 + 0x57; }
-
-		VRAM[0xB804 + (i * 2) + 128] = new_l - 0x57;
-		VRAM[0xB805 + (i * 2) + 128] = 2;
+		pressed_hide = stat;
+		if (stat)
+		{
+			ServerRAM.RAM[0x1DFC] = 0x15;
+			drawHud = !drawHud;
+		}
 	}
-
-	//WO's
-	VRAM[0xB806 + 192] = 0x26;
-	VRAM[0xB807 + 192] = 0x6;
-	draw_number_dec(5, 3, LocalPlayer.WO_counter);
-
-	//Player X/Y
-	draw_number_hex(21, 2, int(LocalPlayer.x), 4);
-	draw_number_hex(26, 2, int(LocalPlayer.y), 4);
-
-	//Player Speed X/Y
-	draw_number_hex(16, 2, uint_fast16_t(LocalPlayer.Y_SPEED * 256.0), 4);
-	draw_number_hex(11, 2, uint_fast16_t(LocalPlayer.X_SPEED * 256.0), 4);
-
-	//Networking symbols
-	VRAM[0xB800 + 20 + 192] = networking ? 0x17 : 0x15; VRAM[0xB801 + 20 + 192] = 6;
-	VRAM[0xB800 + 18 + 192] = 0x3A; VRAM[0xB801 + 18 + 192] = 6;
-	VRAM[0xB800 + 16 + 192] = isClient ? 0xC : 0x1C; VRAM[0xB801 + 16 + 192] = 6;
-
-	//FCounter
-	draw_number_hex(29, 2, ServerRAM.RAM[0x14], 2);
-
-	//Ping
-	VRAM[0xB800 + 56 + 192] = 0x16;	VRAM[0xB801 + 56 + 192] = 6;
-	VRAM[0xB800 + 58 + 192] = 0x1C;	VRAM[0xB801 + 58 + 192] = 6;
-	draw_number_dec(27, 3, ((abs(latest_server_response) % 3600) % 1000)/3);
-
-	//FPS
-	VRAM[0xB800 + 44 + 192] = 0xF;	VRAM[0xB801 + 44 + 192] = 6;
-	VRAM[0xB800 + 46 + 192] = 0x19;	VRAM[0xB801 + 46 + 192] = 6;
-	VRAM[0xB800 + 48 + 192] = 0x1C;	VRAM[0xB801 + 48 + 192] = 6;
-	draw_number_dec(21, 3, int(1.0 / (total_time_ticks.count() / 1.0)));
-
-	//KB
-	//VRAM[0xB800 + 26 + 192] = 0x24;	VRAM[0xB801 + 26 + 192] = 6;
-	VRAM[0xB800 + 30 + 192] = 0x14;	VRAM[0xB801 + 30 + 192] = 6;
-	VRAM[0xB800 + 32 + 192] = 0x0B;	VRAM[0xB801 + 32 + 192] = 6;
-	if (!(global_frame_counter % 60))
+	if (drawHud)
 	{
-		data_size_now = data_size_current;
-		data_size_current = 0;
+		//Status bar code here
+		for (int i = 0; i < 5; i++)
+		{
+
+			uint_fast8_t new_l = uint_fast8_t(LocalPlayer.player_name_cut[i]);
+			if (new_l == 0x20) { new_l = 0x57 + 0x7F; }
+			if (new_l < 0x3A) { new_l = new_l - 0x30 + 0x57; }
+
+			VRAM[0xB804 + (i * 2) + 128] = new_l - 0x57;
+			VRAM[0xB805 + (i * 2) + 128] = 2;
+		}
+
+		//WO's
+		VRAM[0xB806 + 192] = 0x26;
+		VRAM[0xB807 + 192] = 0x6;
+		draw_number_dec(5, 3, LocalPlayer.WO_counter);
+
+		//Player X/Y
+		draw_number_hex(21, 2, int(LocalPlayer.x), 4);
+		draw_number_hex(26, 2, int(LocalPlayer.y), 4);
+
+		//Player Speed X/Y
+		draw_number_hex(16, 2, uint_fast16_t(LocalPlayer.Y_SPEED * 256.0), 4);
+		draw_number_hex(11, 2, uint_fast16_t(LocalPlayer.X_SPEED * 256.0), 4);
+
+		//Networking symbols
+		VRAM[0xB800 + 20 + 192] = networking ? 0x17 : 0x15; VRAM[0xB801 + 20 + 192] = 6;
+		VRAM[0xB800 + 18 + 192] = 0x3A; VRAM[0xB801 + 18 + 192] = 6;
+		VRAM[0xB800 + 16 + 192] = isClient ? 0xC : 0x1C; VRAM[0xB801 + 16 + 192] = 6;
+
+		//FCounter
+		draw_number_hex(29, 2, ServerRAM.RAM[0x14], 2);
+
+		//Ping
+		VRAM[0xB800 + 56 + 192] = 0x16;	VRAM[0xB801 + 56 + 192] = 6;
+		VRAM[0xB800 + 58 + 192] = 0x1C;	VRAM[0xB801 + 58 + 192] = 6;
+		draw_number_dec(27, 3, ((abs(latest_server_response) % 3600) % 1000) / 3);
+
+		//FPS
+		VRAM[0xB800 + 44 + 192] = 0xF;	VRAM[0xB801 + 44 + 192] = 6;
+		VRAM[0xB800 + 46 + 192] = 0x19;	VRAM[0xB801 + 46 + 192] = 6;
+		VRAM[0xB800 + 48 + 192] = 0x1C;	VRAM[0xB801 + 48 + 192] = 6;
+		draw_number_dec(21, 3, int(1.0 / (total_time_ticks.count() / 1.0)));
+
+		//KB
+		//VRAM[0xB800 + 26 + 192] = 0x24;	VRAM[0xB801 + 26 + 192] = 6;
+		VRAM[0xB800 + 30 + 192] = 0x14;	VRAM[0xB801 + 30 + 192] = 6;
+		VRAM[0xB800 + 32 + 192] = 0x0B;	VRAM[0xB801 + 32 + 192] = 6;
+		if (!(global_frame_counter % 60))
+		{
+			data_size_now = data_size_current;
+			data_size_current = 0;
+		}
+		draw_number_dec(14, 3, data_size_now / 1024);
 	}
-	draw_number_dec(14, 3, data_size_now / 1024);
 
 	//Render chat
 	if (Time_ChatString > 0 || Chatting)
@@ -312,7 +325,7 @@ void render()
 
 		//Congrats this will do it
 
-		string C_String = Chatting ? (Typing_In_Chat + ((global_frame_counter % 20) > 10 ? "." : "")) : Curr_ChatString;
+		string C_String = Chatting ? (Typing_In_Chat + ((global_frame_counter % 20) > 10 ? "\x94" : "")) : Curr_ChatString;
 		int C_len = int(Chatting ? Typing_In_Chat.length() : Curr_ChatString.length());
 
 		for (int i = 0; i < C_String.length(); i++)
@@ -332,7 +345,7 @@ void render()
 	}
 
 	//Player list logic (shouldn't be here, but oh well)
-	bool stat = (state[input_settings[8]]) || BUTTONS_GAMEPAD[9];
+	stat = (state[input_settings[8]]) || BUTTONS_GAMEPAD[9];
 	if (stat != pressed_select)
 	{
 		pressed_select = stat;
@@ -421,7 +434,7 @@ void render()
 	{
 		for (uint_fast8_t t3_y = 0; t3_y < 28; t3_y++)
 		{
-			if (VRAM[0xB800 + (t3_x * 2) + t3_y * 64] < 0x3D)
+			if (VRAM[0xB800 + (t3_x * 2) + t3_y * 64] < 0x3E)
 			{
 				draw8x8_tile_2bpp(t3_x * 8, t3_y * 8, VRAM[0xB800 + (t3_x * 2) + t3_y * 64], VRAM[0xB801 + (t3_x * 2) + t3_y * 64]);
 			}
