@@ -73,7 +73,7 @@ void Chat_ClientSide()
 		//Delete last
 		if (getKey(0x08) && Typing_In_Chat.size() > 0) { Typing_In_Chat.pop_back(); }
 
-		Typing_In_Chat = Typing_In_Chat.substr(0, min(55, Typing_In_Chat.length()));
+		Typing_In_Chat = Typing_In_Chat.substr(0, min(55, int(Typing_In_Chat.length())));
 	}
 	bool stat = Chatting ? (state[input_settings[9]]) : state[SDL_SCANCODE_T];
 	if (stat != pressed_start)
