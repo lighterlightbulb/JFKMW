@@ -87,7 +87,7 @@ operator<<(basic_ostream<_Elem, _Traits>& i, color& c)
 	SetConsoleTextAttribute(hStdout, c.m_color);
 	return i;
 }
-#elif defined(__linux__)
+#else
 string blue = "";
 string red = "";
 string green = "";

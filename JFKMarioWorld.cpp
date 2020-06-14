@@ -22,6 +22,12 @@ void Sleep(int time) {
 }
 #endif
 
+#if defined(DARWIN)
+
+#define DISABLE_NETWORK
+
+#endif
+
 #include <cstdint>
 #include <cmath>
 #include <string>
