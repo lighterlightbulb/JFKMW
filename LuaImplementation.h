@@ -168,7 +168,7 @@ static int drawtohud(lua_State* L)
 	uint_fast8_t x = (uint_fast8_t)lua_tonumber(L, 3) & 0x1F;
 	uint_fast8_t y = (uint_fast8_t)lua_tonumber(L, 4) & 0x1F;
 
-	ServerRAM.RAM[0x1B800 + ((x % 32) + (y * 32))*2] = tile & 0x7F;
+	ServerRAM.RAM[0x1B800 + ((x % 32) + (y * 32))*2] = tile;
 	ServerRAM.RAM[0x1B801 + ((x % 32) + (y * 32))*2] = prop;
 	return 0;
 }

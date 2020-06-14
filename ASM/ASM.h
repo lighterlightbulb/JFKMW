@@ -454,6 +454,19 @@ void Sync_Server_RAM(bool compressed = false)
 			}
 		}
 
+		//Decompress T3
+		uint_fast16_t T3_entries;
+		CurrentPacket >> T3_entries;
+		for (uint_fast16_t i = 0; i < T3_entries; i++) {
+			uint_fast16_t p;
+			CurrentPacket >> p;
+			uint_fast8_t t1; uint_fast8_t t2;
+			CurrentPacket >> t1; CurrentPacket >> t2;
+			ServerRAM.RAM[VRAM_Location + 0xB800 + p] = t1;
+			ServerRAM.RAM[VRAM_Location + 0xB801 + p] = t2;
+
+		}
+
 	}
 	doing_read = false;
 	//cout << red << "received ram" << white << endl;
@@ -581,6 +594,25 @@ void Push_Server_RAM(bool compress = false)
 		}
 
 		
+		//Compress T3
+		uint_fast16_t T3_entries = 0;
+		uint_fast16_t T3_loop = 0;
+		while(T3_loop < 0x800) {
+			if (ServerRAM.RAM[VRAM_Location + 0xB800 + T3_loop] < MAX_L3_TILES) { //This tile exists
+				T3_entries += 1;
+			}
+			T3_loop += 2;
+		}
+		CurrentPacket << T3_entries;
+
+		T3_loop = 0;
+		while (T3_loop < 0x800) {
+			if (ServerRAM.RAM[VRAM_Location + 0xB800 + T3_loop] < MAX_L3_TILES) { //This tile exists
+				CurrentPacket << T3_loop;
+				CurrentPacket << ServerRAM.RAM[VRAM_Location + 0xB800 + T3_loop];
+				CurrentPacket << ServerRAM.RAM[VRAM_Location + 0xB801 + T3_loop];
+			}
+		}
 		
 	}
 

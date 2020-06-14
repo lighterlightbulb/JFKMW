@@ -434,7 +434,7 @@ void render()
 	{
 		for (uint_fast8_t t3_y = 0; t3_y < 28; t3_y++)
 		{
-			if (VRAM[0xB800 + (t3_x * 2) + t3_y * 64] < 0x3E)
+			if (VRAM[0xB800 + (t3_x * 2) + t3_y * 64] < MAX_L3_TILES)
 			{
 				draw8x8_tile_2bpp(t3_x * 8, t3_y * 8, VRAM[0xB800 + (t3_x * 2) + t3_y * 64], VRAM[0xB801 + (t3_x * 2) + t3_y * 64]);
 			}
