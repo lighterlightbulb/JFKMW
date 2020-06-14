@@ -382,6 +382,7 @@ public:
 									{
 										Enemy_Jump_Spin();
 									}
+									break;
 								}
 								else
 								{
