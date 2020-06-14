@@ -174,7 +174,7 @@ public:
 
 	void Enemy_Jump()
 	{
-		flash_t = 0x1C; //15 time, type 1
+		flash_t = 0x18; //15 time, type 1
 		flash_x = int_fast16_t(x);
 		flash_y = int_fast16_t(y - 24.0);
 		if (!jump_is_spin)
@@ -192,7 +192,7 @@ public:
 
 	void Enemy_Jump_Spin()
 	{
-		flash_t = 0x1C; //15 time, type 1
+		flash_t = 0x18; //15 time, type 1
 		flash_x = int_fast16_t(x);
 		flash_y = int_fast16_t(y - 24.0);
 		ASM.Write_To_Ram(0x1DF9, 0x2, 1);
@@ -804,7 +804,7 @@ public:
 			ServerRAM.RAM[0x204 + oam_index] = flash_y;
 			ServerRAM.RAM[0x205 + oam_index] = flash_y >> 8;
 
-			ServerRAM.RAM[0x206 + oam_index] = 0x08 | (((flash_timer / 3) % 2) * 0x20);
+			ServerRAM.RAM[0x206 + oam_index] = 0x08 | (((flash_timer / 2) % 2) * 0x20);
 			ServerRAM.RAM[0x207 + oam_index] = 0;
 
 			flash_timer -= 1;
