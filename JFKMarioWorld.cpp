@@ -1,5 +1,6 @@
 #if defined(_WIN32)
 #include <Windows.h>
+#define USE_SDLMIXER_X
 #elif defined(__linux__)
 #define NDEBUG
 #include <unistd.h>
@@ -42,7 +43,11 @@ namespace fs = std::experimental::filesystem;
 
 #include <SDL.h>
 #include <SDL_image.h>
+#if defined(USE_SDLMIXER_X)
 #include <SDL2/SDL_mixer_ext.h>
+#else
+#include <SDL_mixer.h>
+#endif
 
 #if not defined(DISABLE_NETWORK)
 #include <SFML/Network.hpp>

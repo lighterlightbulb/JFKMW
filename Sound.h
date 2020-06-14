@@ -110,8 +110,9 @@ void SoundLoop()
 			{
 				old_1dfb = ASM.Get_Ram(0x1DFB, 1);
 
-				string file1 = path + "Sounds/music/" + int_to_hex(old_1dfb, true) + ".spc";
 				string file2 = path + "Sounds/music/" + int_to_hex(old_1dfb, true) + ".ogg";
+#if defined(USE_SDLMIXER_X)
+				string file1 = path + "Sounds/music/" + int_to_hex(old_1dfb, true) + ".spc";
 				if (is_file_exist(file1.c_str())) {
 					music = Mix_LoadMUS(file1.c_str());
 					spc_or_ogg = false;
@@ -120,6 +121,10 @@ void SoundLoop()
 					music = Mix_LoadMUS(file2.c_str());
 					spc_or_ogg = true;
 				}
+#else
+				music = Mix_LoadMUS(file2.c_str());
+				spc_or_ogg = true;
+#endif
 
 				if (music == NULL)
 				{
@@ -151,7 +156,17 @@ void SoundLoop()
 			{
 				need_sync_music = false;
 				SDL_RWops* rw = SDL_RWFromMem(music_data, music_data_size);
+#if defined(USE_SDLMIXER_X)
 				Mix_Music* music = Mix_LoadMUSType_RW(rw, spc_or_ogg ? MUS_OGG : MUS_GME, 0);
+#else
+				//Linux users wont get sdl mixer x.
+				Mix_Music* music;
+				if (spc_or_ogg)
+				{
+					music = Mix_LoadMUSType_RW(rw, MUS_OGG, 0);
+				}
+				
+#endif
 				if (music == NULL)
 				{
 					Mix_HaltMusic();
