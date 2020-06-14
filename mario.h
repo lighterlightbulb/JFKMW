@@ -43,6 +43,10 @@ public:
 	uint_fast8_t WO_counter = 0;
 	uint_fast8_t KO_counter = 0;
 
+	uint_fast8_t flash_t = 0; //xxxxTTTT
+	int_fast16_t flash_x = 0;
+	int_fast16_t flash_y = 0;
+
 	char player_name_cut[player_name_size] = "       ";
 
 	uint_fast8_t GRABBED_SPRITE = 0xFF; //A sprite index from 0 to 7F
@@ -135,7 +139,7 @@ public:
 		y = LevelManager.start_y;
 
 
-
+		flash_t = 0;
 		DEATH_TIMER = 0;
 		DEAD = false;
 		STATE = 0;
@@ -170,6 +174,9 @@ public:
 
 	void Enemy_Jump()
 	{
+		flash_t = 0x18; //15 time, type 1
+		flash_x = int_fast16_t(x);
+		flash_y = int_fast16_t(y - 16.0);
 		if (!jump_is_spin)
 		{
 			if (pad[button_b])
@@ -185,6 +192,9 @@ public:
 
 	void Enemy_Jump_Spin()
 	{
+		flash_t = 0x18; //15 time, type 1
+		flash_x = int_fast16_t(x);
+		flash_y = int_fast16_t(y - 16.0);
 		ASM.Write_To_Ram(0x1DF9, 0x2, 1);
 		if (pad[button_b] || pad[button_a])
 		{
@@ -744,6 +754,39 @@ public:
 
 	}
 
+	void FlashProcess()
+	{
+		uint_fast8_t flash_timer = flash_t & 0xF;
+
+		if (flash_timer > 0)
+		{
+			uint_fast16_t oam_index = 0;
+			while (oam_index < 0x400)
+			{
+				if (ServerRAM.RAM[0x200 + oam_index] == 0 && ServerRAM.RAM[0x206 + oam_index] == 0) { //Empty OAM slot found
+					break;
+				}
+				oam_index += 8;
+			}
+
+
+			ServerRAM.RAM[0x200 + oam_index] = 0x44;
+			ServerRAM.RAM[0x201 + oam_index] = 0x11;
+
+			ServerRAM.RAM[0x202 + oam_index] = flash_x;
+			ServerRAM.RAM[0x203 + oam_index] = flash_x >> 8;
+
+			ServerRAM.RAM[0x204 + oam_index] = flash_y;
+			ServerRAM.RAM[0x205 + oam_index] = flash_y >> 8;
+
+			ServerRAM.RAM[0x206 + oam_index] = 0x08 | (((flash_timer & 0x7) > 3) * 0x20);
+			ServerRAM.RAM[0x207 + oam_index] = 0;
+
+			flash_timer -= 1;
+		}
+		flash_t = flash_timer;
+	}
+
 	int Process()
 	{
 		if (ServerRAM.RAM[0x1493] > 0 && ServerRAM.RAM[0x1493] < 8)
@@ -1095,6 +1138,7 @@ public:
 		if (x > double(-24 + mapWidth * 16)) { x = double(-24 + mapWidth * 16); }
 
 		ProcessGrabbed();
+		FlashProcess();
 		return 1;
 	}
 };
