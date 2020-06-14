@@ -448,6 +448,14 @@ public:
 						ServerRAM.RAM[0x2700 + sprite] += results[i] << i;
 					}
 
+					//Death kick
+					if (ServerRAM.RAM[0x2880 + sprite] & 4)
+					{
+						ServerRAM.RAM[0x2000 + sprite] = 0;
+
+						ASM.Write_To_Ram(0x1DF9, 3, 1);
+					}
+
 					//Powerups
 					if (ServerRAM.RAM[0x2000 + sprite] == 5 && STATE == 0)
 					{
