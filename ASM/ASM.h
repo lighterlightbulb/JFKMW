@@ -458,13 +458,11 @@ void Sync_Server_RAM(bool compressed = false)
 		uint_fast16_t T3_entries;
 		CurrentPacket >> T3_entries;
 		for (uint_fast16_t i = 0; i < T3_entries; i++) {
-			uint_fast16_t p;
+			uint_fast16_t p; uint_fast8_t t1; uint_fast8_t t2;
 			CurrentPacket >> p;
-			uint_fast8_t t1; uint_fast8_t t2;
 			CurrentPacket >> t1; CurrentPacket >> t2;
 			ServerRAM.RAM[VRAM_Location + 0xB800 + p] = t1;
 			ServerRAM.RAM[VRAM_Location + 0xB801 + p] = t2;
-
 		}
 
 	}
@@ -476,7 +474,7 @@ bool checkRAMarea_net(uint_fast32_t i)
 {
 	return 
 		((i < 0x200 || i > 0x5FF) && (i < 0x2000 || i >= 0x3000)) && //OAM and SPR
-		(i < 0x5000 || i > 0x5FFF) //PLR ram
+		((i < 0x5000 || i > 0x5FFF) && (i < 0x1B800 || i >= 0x1C000)) //PLR ram
 		;
 }
 
@@ -599,7 +597,7 @@ void Push_Server_RAM(bool compress = false)
 		uint_fast16_t T3_loop = 0;
 		while(T3_loop < 0x800) {
 			if (ServerRAM.RAM[VRAM_Location + 0xB800 + T3_loop] < MAX_L3_TILES) { //This tile exists
-				T3_entries += 1;
+				T3_entries++;
 			}
 			T3_loop += 2;
 		}
