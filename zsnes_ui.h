@@ -107,6 +107,7 @@ public:
 			snow_x_s[i] = float(1 + (rand() % 3)) / 6.f;
 		}
 		snow_s = 0.f;
+#if defined(_WIN32)
 
 		std::string patht = path + "Levels";
 		for (const auto& entry : fs::directory_iterator(patht))
@@ -119,6 +120,9 @@ public:
 			}
 			levels_found.push_back(st);
 		}
+#else
+		levels_found.push_back("search not supported");
+#endif
 	}
 
 	//add button

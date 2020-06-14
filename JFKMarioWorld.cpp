@@ -31,10 +31,14 @@ void Sleep(int time) {
 #include <ctype.h>
 #include <cstring>
 #include <cassert>
+#if defined(_WIN32)
 #include <filesystem>
+#endif
 
 using namespace std;
+#if defined(_WIN32)
 namespace fs = std::experimental::filesystem;
+#endif
 
 #include <SDL.h>
 #include <SDL_image.h>
