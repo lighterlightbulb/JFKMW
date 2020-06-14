@@ -594,17 +594,14 @@ void Push_Server_RAM(bool compress = false)
 		
 		//Compress T3
 		uint_fast16_t T3_entries = 0;
-		uint_fast16_t T3_loop = 0;
-		while(T3_loop < 0x800) {
+		for (uint_fast16_t T3_loop = 0; T3_loop < 0x800; T3_loop += 2) {
 			if (ServerRAM.RAM[VRAM_Location + 0xB800 + T3_loop] < MAX_L3_TILES) { //This tile exists
 				T3_entries++;
 			}
-			T3_loop += 2;
 		}
 		CurrentPacket << T3_entries;
 
-		T3_loop = 0;
-		while (T3_loop < 0x800) {
+		for(uint_fast16_t T3_loop = 0; T3_loop < 0x800; T3_loop+=2) {
 			if (ServerRAM.RAM[VRAM_Location + 0xB800 + T3_loop] < MAX_L3_TILES) { //This tile exists
 				CurrentPacket << T3_loop;
 				CurrentPacket << ServerRAM.RAM[VRAM_Location + 0xB800 + T3_loop];
