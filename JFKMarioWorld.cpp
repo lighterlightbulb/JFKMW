@@ -1,3 +1,10 @@
+/*
+
+	JFK Mario World cpp file. This is the main file of jfk mario world and the start of the game.
+
+	Linux users do not support some features.
+
+*/
 #if defined(_WIN32)
 #include <Windows.h>
 #define USE_SDLMIXER_X
@@ -8,10 +15,6 @@
 void Sleep(int time) {
 	usleep(time * 1000);
 }
-#endif
-
-#if defined(DARWIN)
-#error "WE DO NOT SUPPORT MAC"
 #endif
 
 #include <cstdint>
@@ -55,7 +58,6 @@ namespace fs = std::experimental::filesystem;
 
 
 #if defined(__linux__)
-
 #if not defined(DISABLE_NETWORK)
 #define uint_fast8_t sf::Uint8
 #define uint_fast16_t sf::Uint32
@@ -66,9 +68,6 @@ namespace fs = std::experimental::filesystem;
 #define int_fast32_t sf::Int32
 #define int_fast64_t sf::Int64
 #endif
-
-
-
 
 istream& getline(istream& stream, string& str)
 {
