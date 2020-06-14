@@ -1,7 +1,7 @@
 # JFK Mario World
 A remake/fangame of super mario world in C++, It's sort of a engine, like SMBX. But for super mario world.
 
-The code hosted here contains no copyrighted assets.
+The code hosted here contains no copyrighted assets or any stolen code. Most things have been reverse engineered and recoded completely from the original game.
 
 ## The features?
 * Fully working engine with tons of features.
