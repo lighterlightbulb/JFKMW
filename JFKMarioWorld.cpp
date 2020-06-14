@@ -7,9 +7,14 @@
 */
 #if defined(_WIN32)
 #include <Windows.h>
+
 #define USE_SDLMIXER_X
+#define USE_FILESYSTEM
+
 #elif defined(__linux__)
+
 #define NDEBUG
+
 #include <unistd.h>
 #include <list>
 void Sleep(int time) {
@@ -35,12 +40,12 @@ void Sleep(int time) {
 #include <ctype.h>
 #include <cstring>
 #include <cassert>
-#if defined(_WIN32)
+#if defined(USE_FILESYSTEM)
 #include <filesystem>
 #endif
 
 using namespace std;
-#if defined(_WIN32)
+#if defined(USE_FILESYSTEM)
 namespace fs = std::experimental::filesystem;
 #endif
 
