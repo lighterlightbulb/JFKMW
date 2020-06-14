@@ -455,6 +455,13 @@ void Sync_Server_RAM(bool compressed = false)
 		}
 
 		//Decompress T3
+		for (uint_fast16_t T3_loop = 0; T3_loop < 0x800; T3_loop += 2) {
+			if (ServerRAM.RAM[VRAM_Location + 0xB800 + T3_loop] < MAX_L3_TILES) { //This tile exists
+				ServerRAM.RAM[VRAM_Location + 0xB800 + T3_loop] = 0x7F;
+				ServerRAM.RAM[VRAM_Location + 0xB800 + T3_loop + 1] = 0x00;
+			}
+		}
+
 		uint_fast16_t T3_entries;
 		CurrentPacket >> T3_entries;
 		for (uint_fast16_t i = 0; i < T3_entries; i++) {
