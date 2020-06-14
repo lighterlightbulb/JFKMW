@@ -70,7 +70,7 @@ public:
 
 		for (uint_fast8_t spr = 0; spr < 0x80; spr++)
 		{
-			if (spr != entry && ServerRAM.RAM[0x2000 + spr] > 1 && ServerRAM.RAM[0x2000 + spr] < 5)
+			if (spr != entry && ServerRAM.RAM[0x2000 + spr] == 4)
 			{
 				double t_x = double(ServerRAM.RAM[0x2100 + spr] + double(ServerRAM.RAM[0x2180 + spr]) * 256.0) + double(ServerRAM.RAM[0x2200 + spr]) / 256.0;
 				double t_y = double(ServerRAM.RAM[0x2280 + spr] + double(ServerRAM.RAM[0x2300 + spr]) * 256.0) + double(ServerRAM.RAM[0x2380 + spr]) / 256.0;
@@ -83,8 +83,6 @@ public:
 					)
 				{
 					ServerRAM.RAM[0x2700 + entry] = 0xFF;
-					//ServerRAM.RAM[0x2780 + spr] |= 0b00000011;
-
 				}
 			}
 		}
