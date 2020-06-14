@@ -24,7 +24,7 @@
 0x2700 - Sprite interacing with... (player number in hex)
 0x2780 - Sprite block flags
 0x2800 - Sprite is lua/asm type
-0x2880 - Sprite Flags 2 -----ksS
+0x2880 - Sprite Flags 2 ----lksS
 0x2A00 - Spinjump death timer for sprites, otherwise unused
 
 0x2E00 - Unused, used in the throwblock and grabbed sprites for a "how much frames til we can hurt mario" timer
@@ -37,6 +37,7 @@ flags 2:
 S - Death By Spinjump
 s - Uses custom spinjump death
 k - Collision kills sprite
+l - Lower grav
 
 Flags :
 H = Hurts
@@ -63,7 +64,9 @@ public:
 		{
 			if (int_fast8_t(ServerRAM.RAM[0x2480 + entry]) > -82)
 			{
-				ServerRAM.RAM[0x2480 + entry] = max(-82, ServerRAM.RAM[0x2480 + entry]-3);
+				int grav = ServerRAM.RAM[0x2880 + entry] & 0b1000 ? 2 : 3;
+
+				ServerRAM.RAM[0x2480 + entry] = max(-82, ServerRAM.RAM[0x2480 + entry] - grav);
 			}
 		}
 

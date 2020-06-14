@@ -361,8 +361,8 @@ public:
 						{
 							if (NewPositionY > (AboveSprite - bounds_y))
 							{
-								NewPositionY += 1;
 								Enemy_Jump();
+								NewPositionY += 1;
 								if (jump_is_spin)
 								{
 									if (ServerRAM.RAM[0x2880 + sprite] & 1)
@@ -382,7 +382,6 @@ public:
 									{
 										Enemy_Jump_Spin();
 									}
-									break;
 								}
 								else
 								{
