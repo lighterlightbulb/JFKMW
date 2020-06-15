@@ -186,6 +186,11 @@ void render()
 
 	SDL_DestroyTexture(screen_t_l1);
 	screen_t_l1 = SDL_CreateTextureFromSurface(ren, &screen_s_l1);
+
+	if (ServerRAM.RAM[0x40] != 0)
+	{
+		SDL_SetTextureBlendMode(screen_t_l1, SDL_BlendMode(ServerRAM.RAM[0x40]));
+	}
 	SDL_RenderCopy(ren, screen_t_l1, nullptr, &DestR);
 
 	//Draw screen darkening
