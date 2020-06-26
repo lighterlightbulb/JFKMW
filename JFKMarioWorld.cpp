@@ -7,6 +7,7 @@
 */
 #if defined(_WIN32)
 #include <Windows.h>
+#include "psapi.h"
 
 #define USE_SDLMIXER_X
 #define USE_FILESYSTEM

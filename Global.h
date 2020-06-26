@@ -107,6 +107,7 @@ bool pressed_diag = false;
 int fps_diag[128];
 int ping_diag[112];
 int block_diag[112];
+int ram_diag[16];
 int blocks_on_screen = 0;
 
 //Yep
