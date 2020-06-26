@@ -34,13 +34,11 @@ void screen(int width, int height)
 	w = width;
 	h = height;
 
-	sp_offset_x = (width / 2) - 128*scale;
-	sp_offset_y = (height / 2) - 112*scale;
-
-	int flags = SDL_WINDOW_SHOWN;
+	int flags = SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE;
 	if (fullscreen)
 	{
 		flags |= SDL_WINDOW_FULLSCREEN;
+		flags &= SDL_WINDOW_RESIZABLE;
 	}
 	if (opengl)
 	{
@@ -99,6 +97,19 @@ void screen(int width, int height)
 
 }
 
+void PrepareRendering()
+{
+	if (!fullscreen)
+	{
+		SDL_GetWindowSize(win, &resolution_x, &resolution_y);
+		w = resolution_x;
+		h = resolution_y;
+	}
+	scale = resolution_y / 224;
+	sp_offset_x = (w / 2) - (128 * scale);
+	sp_offset_y = (h / 2) - (112 * scale) + (resolution_y % 2 == 1);
+
+}
 
 void end_game()
 {
@@ -120,6 +131,8 @@ void drawRect(int_fast16_t x1, int_fast16_t y1, uint_fast8_t color, SDL_Surface 
 
 void cls()
 {
+	PrepareRendering();
+
 	SDL_SetRenderDrawColor(ren, 0, 0, 0, 0);
 	SDL_RenderClear(ren);
 }
@@ -177,23 +190,24 @@ void read_from_palette(string file)
 
 void decode_graphics_file(string file, int offset = 0)
 {
-	if ((offset*4096) >= 0xc000)
+	offset *= 4096;
+	if (offset >= 0xc000)
 	{
 		ClearSpriteCache();
 	}
+
 	file = path + file;
 
 	ifstream input(file, ios::binary);
 	vector<unsigned char> buffer(istreambuf_iterator<char>(input), {});
-
 	int current_byte = 0;
-	for (auto &v : buffer)
+	for (auto& v : buffer)
 	{
-		ServerRAM.RAM[VRAM_Location + (offset*4096) + current_byte] = uint_fast8_t(v);
+		ServerRAM.RAM[VRAM_Location + (offset)+current_byte] = uint_fast8_t(v);
 		current_byte++;
 	}
 
-	cout << yellow << "[GFX] Loading File " << file << " at 0x" << int_to_hex(0x10000 + offset*4096) << " " << current_byte << " bytes loaded" << white << endl;
+	cout << yellow << "[GFX] Loading File " << file << " at 0x" << int_to_hex(0x10000 + offset) << " " << current_byte << " bytes loaded" << white << endl;
 
 
 }

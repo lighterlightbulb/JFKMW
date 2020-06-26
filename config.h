@@ -16,7 +16,6 @@ void load_configuration()
 			auto name = line.substr(0, delimiterPos);
 			auto value = line.substr(delimiterPos + 1);
 			cout << cyan << "[CONFIG] Loading " << name << " = " << value << white << '\n';
-			if (name == "scale") { scale = stoi(value); }
 			if (name == "resolution_x") { resolution_x = stoi(value); }
 			if (name == "resolution_y") { resolution_y = stoi(value); }
 			if (name == "fullscreen") { fullscreen = value == "true"; }
@@ -56,6 +55,7 @@ void load_configuration()
 			if (name == "button_start") { input_settings[9] = SDL_GetScancodeFromName(v); }
 			if (name == "button_chat") { input_settings[10] = SDL_GetScancodeFromName(v); }
 			if (name == "button_togglehud") { input_settings[11] = SDL_GetScancodeFromName(v); }
+			if (name == "button_togglediag") { input_settings[12] = SDL_GetScancodeFromName(v); }
 
 			if (name == "joystick_num") { controller = stoi(value); }
 			if (name == "haptic_num") { haptic = stoi(value); }

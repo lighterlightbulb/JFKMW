@@ -39,6 +39,10 @@ void render_oam(uint_fast16_t offset_o = 0, int CameraX = 0, int CameraY = 0)
 			(y_position - CameraY) > (-16 + -size_y) && (y_position - CameraY) < (224 + size_y)			
 		)
 		{
+			if (drawDiag)
+			{
+				blocks_on_screen += ((size_x >> 4) * (size_y >> 4)) * 4;
+			}
 			uint_fast8_t pal = ServerRAM.RAM[offset_o + i + 6] & 0xF;
 			double angle = (double(ServerRAM.RAM[offset_o + i + 7]) / 256.0) * 360.0;
 			draw_tile_custom(x_position - CameraX, 224 - 32 - y_position + CameraY, size, angle, tile, pal, 
@@ -53,6 +57,9 @@ void render_oam(uint_fast16_t offset_o = 0, int CameraX = 0, int CameraY = 0)
 
 void render()
 {
+	PrepareRendering();
+
+	blocks_on_screen = 0;
 	CheckForPlayers();
 	if (Mario.size() < 1 || SelfPlayerNumber < 1)
 	{
@@ -139,8 +146,6 @@ void render()
 
 
 	//Draw scenery
-	uint_fast8_t blocks_on_screen = 0;
-	
 	for (uint_fast8_t x = 0; x < 17; x++)
 	{
 		for (uint_fast8_t y = 0; y < 15; y++)
@@ -148,7 +153,7 @@ void render()
 			uint_fast16_t tile = map16_handler.get_tile(x + offsetX, y + offsetY);
 			if (tile != 0x25)
 			{
-				blocks_on_screen += 1;
+				
 				uint_fast16_t entry = tile * tile_table_size;
 
 				//Block 8x8 tiles
@@ -160,6 +165,10 @@ void render()
 
 					if (block_index != 0xF8)
 					{
+						if (drawDiag)
+						{
+							blocks_on_screen++;
+						}
 						draw8x8_tile(
 							((i << 3) & 0xF) - offsetXPixel + (x << 4),
 							208 - (i > 1 ? -8 : 0) + offsetYPixel - (y << 4),
@@ -257,6 +266,18 @@ void render()
 			drawHud = !drawHud;
 		}
 	}
+
+	stat = state[input_settings[12]];
+	if (stat != pressed_diag)
+	{
+		pressed_diag = stat;
+		if (stat)
+		{
+			ServerRAM.RAM[0x1DFC] = 0x15;
+			drawDiag = !drawDiag;
+		}
+	}
+
 	if (drawHud)
 	{
 		//Status bar code here
@@ -445,6 +466,59 @@ void render()
 			}
 		}
 	}
+
+
+	if (drawDiag)
+	{
+		SDL_Rect rect;
+		rect.x = 0; rect.w = 128;
+		rect.y = 224 - 128; rect.h = 128;
+		SDL_FillRect(&screen_s_l2, &rect, 0x7F000000);
+
+		rect.x = 144; rect.w = 112;
+		rect.y = 224 - 96; rect.h = 96;
+		SDL_FillRect(&screen_s_l2, &rect, 0x7F000000);
+
+
+		int ping_c = ((abs(latest_server_response) % 3600) % 1000) / 3;
+		int fps = int(1.0 / (total_time_ticks.count() / 1.0));
+		fps_diag[127] = fps;
+		ping_diag[111] = ping_c;
+		block_diag[111] = blocks_on_screen;
+
+		memcpy(fps_diag, &fps_diag[1], 127 * sizeof(int));
+		memcpy(ping_diag, &ping_diag[1], 111 * sizeof(int));
+		memcpy(block_diag, &block_diag[1], 111 * sizeof(int));
+
+
+		for (uint_fast8_t l = 0; l < 128; l++)
+		{
+			int curr_t = fps_diag[l] / 8;
+
+			rect.x = l; rect.w = 1;
+			rect.y = 224 - curr_t; rect.h = curr_t;
+			int g = min(255, curr_t * 4);
+			int r = 255 - g;
+			SDL_FillRect(&screen_s_l2, &rect, 0x7F000000 + r + (g << 8));
+		}
+
+		for (uint_fast8_t l = 0; l < 112; l++)
+		{
+			int curr_t = block_diag[l] / 8;
+			rect.x = 144 + l; rect.w = 1;
+			rect.y = 224 - curr_t; rect.h = curr_t;
+			SDL_FillRect(&screen_s_l2, &rect, 0x7FFF7F7F);
+
+			curr_t = ping_diag[l] / 2;
+			rect.x = 144 + l; rect.w = 1;
+			rect.y = 223 - curr_t; rect.h = 1;
+			SDL_FillRect(&screen_s_l2, &rect, 0x7F0000FF);
+
+
+		}
+	}
+
+
 
 	SDL_UnlockSurface(&screen_s_l2);
 

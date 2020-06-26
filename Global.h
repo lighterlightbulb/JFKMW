@@ -66,8 +66,6 @@ sf::Thread* thread = 0;
 #endif
 
 //ASM
-
-
 uint_fast8_t scale = 1;
 int resolution_x = 320;
 int resolution_y = 240;
@@ -100,11 +98,22 @@ bool networking = false;
 bool renderer_accelerated = true;
 bool v_sync = true;
 bool force_sleep = false;
+
+//Stuff hud toggles here and hud stuff
 bool drawHud = true;
+bool drawDiag = false;
+bool pressed_hide = false;
+bool pressed_diag = false;
+int fps_diag[128];
+int ping_diag[112];
+int block_diag[112];
+int blocks_on_screen = 0;
+
+//Yep
 
 string username = "No username";
 
-SDL_Scancode input_settings[12] = {
+SDL_Scancode input_settings[13] = {
 	SDL_SCANCODE_S,
 	SDL_SCANCODE_Z,
 	SDL_SCANCODE_X,
@@ -116,7 +125,8 @@ SDL_Scancode input_settings[12] = {
 	SDL_SCANCODE_RSHIFT,
 	SDL_SCANCODE_RETURN,
 	SDL_SCANCODE_T,
-	SDL_SCANCODE_1
+	SDL_SCANCODE_1,
+	SDL_SCANCODE_2
 };
 bool BUTTONS_GAMEPAD[10];
 
@@ -190,7 +200,6 @@ uint_fast8_t screen_darken = 0;
 
 bool showing_player_list;
 bool pressed_select;
-bool pressed_hide;
 bool pressed_start;
 
 bool smooth_camera = false;

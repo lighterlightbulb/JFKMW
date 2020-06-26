@@ -13,7 +13,7 @@ void Chat_ServerSide()
 		{
 			CurrPlayer.last_chat_string = CurrPlayer.curr_chat_string;
 			Curr_ChatString = CurrPlayer.curr_chat_string;
-			Time_ChatString = 300;
+			Time_ChatString = 420;
 			cout << lua_color << "[Chat S] " << Curr_ChatString << white << endl;
 		}
 	}
@@ -33,8 +33,7 @@ void Chat_ClientSide()
 	if (Old_ChatString != Curr_ChatString && Curr_ChatString != "")
 	{
 		Old_ChatString = Curr_ChatString;
-		Time_ChatString = 300;
-		ServerRAM.RAM[0x1DFC] = 0x15;
+		Time_ChatString = 420;
 		cout << lua_color << "[Chat C] " << Curr_ChatString << white << endl;
 
 		MPlayer& LocalPlayer = get_mario(SelfPlayerNumber);

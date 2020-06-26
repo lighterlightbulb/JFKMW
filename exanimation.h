@@ -1,6 +1,5 @@
 #pragma once
 /*
-
 	This should only be done in the client, if there's need for, a better implementation will be done later.
 	Why it's not done on the server : It would be laggy
 */

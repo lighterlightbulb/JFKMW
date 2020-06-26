@@ -491,6 +491,10 @@ public:
 									ServerRAM.RAM[0x2E00 + sprite] = 0x10;
 
 									ASM.Write_To_Ram(0x1DF9, 3, 1);
+
+									flash_t = 0x18; //15 time, type 1
+									flash_x = int_fast16_t(x + X_SPEED);
+									flash_y = int_fast16_t(y - 16.0);
 								}
 							}
 						}
