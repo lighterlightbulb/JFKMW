@@ -266,7 +266,8 @@ void draw8x8_tile(int_fast16_t x, int_fast16_t y, uint_fast16_t tile, uint_fast8
 		uint_fast8_t ind = index << 1;
 		for (i = 0; i < 8; i++)
 		{
-			uint_fast16_t y_p = y + index; uint_fast16_t x_p = 7 - i + x;
+			uint_fast16_t x_p = 7 - i + x;
+			uint_fast16_t y_p = y + index;
 			if (y_p < 0 || y_p > 223 || x_p < 0 || x_p > 255) {
 				continue;
 			}

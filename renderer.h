@@ -470,32 +470,25 @@ void render()
 
 	if (drawDiag)
 	{
+
 		SDL_Rect rect;
-		rect.x = 0; rect.w = 128;
+		rect.x = 0; rect.w = 256;
 		rect.y = 224 - 128; rect.h = 128;
-		SDL_FillRect(&screen_s_l2, &rect, 0x7F000000);
-
-		rect.x = 128; rect.w = 16;
-		rect.y = 224 - 80; rect.h = 80;
-		SDL_FillRect(&screen_s_l2, &rect, 0x7F000000);
-
-
-		rect.x = 144; rect.w = 112;
-		rect.y = 224 - 96; rect.h = 96;
-		SDL_FillRect(&screen_s_l2, &rect, 0x7F000000);
+		SDL_FillRect(&screen_s_l2, &rect, 0x3F000000);
 
 		int ping_c = ((abs(latest_server_response) % 3600) % 1000) / 3;
 		int fps = int(1.0 / (total_time_ticks.count() / 1.0));
 		fps_diag[127] = fps;
 		ping_diag[111] = ping_c;
 		block_diag[111] = blocks_on_screen;
+		kbs_diag[111] = data_size_now / 512;
 
 #if defined(_WIN32)
 		PROCESS_MEMORY_COUNTERS_EX pmc;
 		GetProcessMemoryInfo(GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS*)& pmc, sizeof(pmc));
 		SIZE_T virtualMemUsedByMe = pmc.PrivateUsage;
 
-		int ram_u = (virtualMemUsedByMe / 1024) / 1024;
+		int ram_u = (int(virtualMemUsedByMe) / 1024) / 1024;
 		ram_diag[15] = ram_u;
 #endif
 
@@ -503,7 +496,11 @@ void render()
 		{
 			memcpy(ram_diag, &ram_diag[1], 15 * sizeof(int));
 		}
-		memcpy(fps_diag, &fps_diag[1], 127 * sizeof(int));
+		if (!(global_frame_counter % 2))
+		{
+			memcpy(fps_diag, &fps_diag[1], 127 * sizeof(int));
+		}
+		memcpy(kbs_diag, &kbs_diag[1], 111 * sizeof(int));
 		memcpy(ping_diag, &ping_diag[1], 111 * sizeof(int));
 		memcpy(block_diag, &block_diag[1], 111 * sizeof(int));
 
@@ -516,7 +513,7 @@ void render()
 			rect.y = 224 - curr_t; rect.h = curr_t;
 			int g = min(255, curr_t * 4);
 			int r = 255 - g;
-			SDL_FillRect(&screen_s_l2, &rect, 0x7F000000 + r + (g << 8));
+			SDL_FillRect(&screen_s_l2, &rect, 0xBF000000 + r + (g << 8));
 		}
 
 		for (uint_fast8_t l = 0; l < 16; l++)
@@ -526,7 +523,7 @@ void render()
 			rect.x = 128 + l; rect.w = 1;
 			rect.y = 224 - curr_t; rect.h = curr_t;
 
-			SDL_FillRect(&screen_s_l2, &rect, 0x7F7F7FFF);
+			SDL_FillRect(&screen_s_l2, &rect, 0xBF7F7FFF);
 		}
 
 		for (uint_fast8_t l = 0; l < 112; l++)
@@ -534,13 +531,20 @@ void render()
 			int curr_t = block_diag[l] / 8;
 			rect.x = 144 + l; rect.w = 1;
 			rect.y = 224 - curr_t; rect.h = curr_t;
-			SDL_FillRect(&screen_s_l2, &rect, 0x7FFF7F7F);
+			SDL_FillRect(&screen_s_l2, &rect, 0xBFFF7F7F);
 
 			curr_t = ping_diag[l] / 2;
 			rect.x = 144 + l; rect.w = 1;
 			rect.y = 223 - curr_t; rect.h = 1;
-			SDL_FillRect(&screen_s_l2, &rect, 0x7F0000FF);
+			SDL_FillRect(&screen_s_l2, &rect, 0xBF0000FF);
+
+			curr_t = kbs_diag[l] / 2;
+			rect.x = 144 + l; rect.w = 1;
+			rect.y = 223 - curr_t; rect.h = 1;
+			SDL_FillRect(&screen_s_l2, &rect, 0xBFFF00FF);
 		}
+
+		draw_string(false, "perflogs fps - ram - rend - net", 3, 96 + 3, &screen_s_l2);
 	}
 
 

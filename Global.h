@@ -1,6 +1,6 @@
 #pragma once
 
-string GAME_VERSION = "0.6.5a";
+string GAME_VERSION = "0.6.7a";
 
 #define rom_asm_size 0x008000 //32kb, 1 bank ($00:8000 to $00:FFFF)
 #define location_rom_levelasm 0x008000 //this will put LevelASM on the start of the ROM, this is a SNES PC btw
@@ -108,6 +108,7 @@ int fps_diag[128];
 int ping_diag[112];
 int block_diag[112];
 int ram_diag[16];
+int kbs_diag[112];
 int blocks_on_screen = 0;
 
 //Yep

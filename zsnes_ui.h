@@ -60,6 +60,34 @@ uint_fast8_t char_to_zsnes_font_letter(char l) //use to convert strings
 	return 0x8C;
 }
 
+//draws a string
+void draw_string(bool dark, string str, int_fast16_t x, int_fast16_t y, SDL_Surface* surface)
+{
+	for (int i = 0; i < str.size(); i++) {
+		uint_fast8_t arr_l = char_to_zsnes_font_letter(str.at(i));
+		ZSNES_letter& curr_l = zsnes_font[arr_l];
+
+		for (uint_fast8_t x_l = 0; x_l < 8; x_l++) {
+			for (uint_fast8_t y_l = 0; y_l < 5; y_l++) {
+				if (curr_l.bits[x_l][y_l])
+				{
+					if (dark)
+					{
+						uint_fast8_t formula = 16 + y_l * 16;
+						draw_pixel_to_surface(x + x_l, y + y_l, formula, formula, formula, surface);
+					}
+					else
+					{
+						uint_fast8_t formula = 255 - y_l * 16;
+						draw_pixel_to_surface(x + x_l, y + y_l, formula, formula, formula, surface);
+					}
+				}
+			}
+		}
+		x += 6;
+	}
+}
+
 class ZSNES_button
 {
 public:
@@ -179,34 +207,6 @@ public:
 		}
 	}
 
-	//draws a string
-	void draw_string(bool dark, string str, int_fast16_t x, int_fast16_t y)
-	{
-		for (int i = 0; i < str.size(); i++) {
-			uint_fast8_t arr_l = char_to_zsnes_font_letter(str.at(i));
-			ZSNES_letter& curr_l = zsnes_font[arr_l];
-
-			for (uint_fast8_t x_l = 0; x_l < 8; x_l++) {
-				for (uint_fast8_t y_l = 0; y_l < 5; y_l++) {
-					if (curr_l.bits[x_l][y_l])
-					{
-						if (dark)
-						{
-							uint_fast8_t formula = 16 + y_l * 16;
-							draw_pixel_to_surface(x + x_l, y + y_l, formula, formula, formula, surface);
-						}
-						else
-						{
-							uint_fast8_t formula = 255 - y_l * 16;
-							draw_pixel_to_surface(x + x_l, y + y_l, formula, formula, formula, surface);
-						}
-					}
-				}
-			}
-			x += 6;
-		}
-	}
-
 	//process ZSNES ui
 	void process()
 	{
@@ -248,8 +248,8 @@ public:
 			}
 			draw_button(check, b.x_s, b.y_s, b.x_e, b.y_e);
 
-			draw_string(true, b.name, b.x_s + 4, b.y_s + 4);
-			draw_string(false, b.name, b.x_s + 3, b.y_s + 3);
+			draw_string(true, b.name, b.x_s + 4, b.y_s + 4, surface);
+			draw_string(false, b.name, b.x_s + 3, b.y_s + 3, surface);
 		}
 
 
@@ -279,15 +279,15 @@ public:
 
 		hint = hint.substr(0, 15);
 
-		draw_string(false, "JFKMW " + GAME_VERSION + " - " + message, 5, 224 - 16);
-		draw_string(false, "Option: " + hint + ((global_frame_counter % 64) > 32 ? "_" : ""), 5, 224 - 22);
-		draw_string(false, "Type a option then press a button.", 5, 224 - 10);
+		draw_string(false, "JFKMW " + GAME_VERSION + " - " + message, 5, 224 - 16, surface);
+		draw_string(false, "Option: " + hint + ((global_frame_counter % 64) > 32 ? "_" : ""), 5, 224 - 22, surface);
+		draw_string(false, "Type a option then press a button.", 5, 224 - 10, surface);
 
 
-		draw_string(false, "Levels Found:", 5, 20);
+		draw_string(false, "Levels Found:", 5, 20, surface);
 		for (int i = 0; i < levels_found.size(); i++)
 		{
-			draw_string(false, levels_found[i], 5, 30 + i * 6);
+			draw_string(false, levels_found[i], 5, 30 + i * 6, surface);
 		}
 	}
 
