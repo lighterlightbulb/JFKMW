@@ -1,6 +1,6 @@
 #pragma once
 
-string GAME_VERSION = "0.6.7a";
+string GAME_VERSION = "0.6.9a";
 
 #define rom_asm_size 0x008000 //32kb, 1 bank ($00:8000 to $00:FFFF)
 #define location_rom_levelasm 0x008000 //this will put LevelASM on the start of the ROM, this is a SNES PC btw
@@ -66,11 +66,6 @@ sf::Thread* thread = 0;
 #endif
 
 //ASM
-uint_fast8_t scale = 1;
-int resolution_x = 320;
-int resolution_y = 240;
-int sp_offset_x = 32;
-int sp_offset_y = 28;
 bool need_sync_music = false;
 bool kill_music = false;
 uint_fast8_t my_skin = 0;
@@ -225,6 +220,14 @@ sf::Packet CurrentPacket;
 #endif
 
 //Rendering
+uint_fast16_t int_res_x = 256;
+uint_fast16_t int_res_y = 224;
+int resolution_x = 320;
+int resolution_y = 240;
+uint_fast8_t scale = 1;
+int sp_offset_x = 32;
+int sp_offset_y = 28;
+
 
 unordered_map<uint_fast32_t, SDL_Texture*> SpriteTextures;
 SDL_Texture* loadSprTexture(uint_fast32_t fl)

@@ -35,8 +35,8 @@ void render_oam(uint_fast16_t offset_o = 0, int CameraX = 0, int CameraY = 0)
 		uint_fast16_t tile = ServerRAM.RAM[offset_o + i] + ((flags & 1) << 8);
 
 		if (tile != 0x0 &&
-			(x_position - CameraX) > -size_x && (x_position - CameraX) < (256 + size_x) &&
-			(y_position - CameraY) > (-16 + -size_y) && (y_position - CameraY) < (224 + size_y)			
+			(x_position - CameraX) > (-size_x) && (x_position - CameraX) < (int(int_res_x) + size_x) &&
+			(y_position - CameraY) > (-16-size_y) && (y_position - CameraY) < (int(int_res_y) + size_y)			
 		)
 		{
 			if (drawDiag)
@@ -45,7 +45,7 @@ void render_oam(uint_fast16_t offset_o = 0, int CameraX = 0, int CameraY = 0)
 			}
 			uint_fast8_t pal = ServerRAM.RAM[offset_o + i + 6] & 0xF;
 			double angle = (double(ServerRAM.RAM[offset_o + i + 7]) / 256.0) * 360.0;
-			draw_tile_custom(x_position - CameraX, 224 - 32 - y_position + CameraY, size, angle, tile, pal, 
+			draw_tile_custom(x_position - CameraX, int_res_y - 32 - y_position + CameraY, size, angle, tile, pal, 
 				SDL_RendererFlip(
 				((flags >> 1) & 1) +
 				(((flags >> 2) & 1) << 1)
@@ -94,8 +94,8 @@ void render()
 
 
 	MPlayer& LocalPlayer = get_mario(SelfPlayerNumber);
-	CameraX = int_fast16_t(LocalPlayer.CAMERA_X - 120.0);
-	CameraY = int_fast16_t(max(0.0, LocalPlayer.CAMERA_Y - 112.0));
+	CameraX = int_fast16_t(LocalPlayer.CAMERA_X - ((int_res_x/2) - 8));
+	CameraY = int_fast16_t(max(0.0, LocalPlayer.CAMERA_Y - (int_res_y/2)));
 	if (ServerRAM.RAM[0x1887] > 0)
 	{
 		CameraY += (global_frame_counter % 3);
@@ -103,13 +103,13 @@ void render()
 
 	if (CameraX < 0) { CameraX = 0; }
 	if (CameraY < 0) { CameraY = 0; }
-	if (CameraX > (-256 + int_fast16_t(mapWidth) * 16))
+	if (CameraX > (-int_fast16_t(int_res_x) + int_fast16_t(mapWidth) * 16))
 	{
-		CameraX = (-256 + int_fast16_t(mapWidth) * 16);
+		CameraX = (-int_fast16_t(int_res_x) + int_fast16_t(mapWidth) * 16);
 	}
-	if (CameraY > (-224 + int_fast16_t(mapHeight) * 16))
+	if (CameraY > (-int_fast16_t(int_res_y) + int_fast16_t(mapHeight) * 16))
 	{
-		CameraY = (-224 + int_fast16_t(mapHeight) * 16);
+		CameraY = (-int_fast16_t(int_res_y) + int_fast16_t(mapHeight) * 16);
 	}
 
 	int_fast16_t offsetX = int_fast16_t(CameraX / 16.0);
@@ -135,7 +135,7 @@ void render()
 		{
 			RenderBackground(
 				(-int(double(CameraX) * (double(ServerRAM.RAM[0x3F06]) / 16.0) + ASM.Get_Ram(0x1466, 2)) % 512) + x*512,
-				-272 + (int(double(CameraY) * (double(ServerRAM.RAM[0x3F07]) / 16.0) + ASM.Get_Ram(0x1468, 2)) % 512) + y*-512);
+				-272 + (int_res_y - 224) + (int(double(CameraY) * (double(ServerRAM.RAM[0x3F07]) / 16.0) + ASM.Get_Ram(0x1468, 2)) % 512) + y*-512);
 		}
 	}
 
@@ -146,9 +146,12 @@ void render()
 
 
 	//Draw scenery
-	for (uint_fast8_t x = 0; x < 17; x++)
+	uint_fast8_t int_b_x = uint_fast8_t(int_res_x / 16) + 1;
+	uint_fast8_t int_b_y = uint_fast8_t(int_res_y / 16) + 1;
+
+	for (uint_fast8_t x = 0; x < int_b_x; x++)
 	{
-		for (uint_fast8_t y = 0; y < 15; y++)
+		for (uint_fast8_t y = 0; y < int_b_y; y++)
 		{
 			uint_fast16_t tile = map16_handler.get_tile(x + offsetX, y + offsetY);
 			if (tile != 0x25)
@@ -171,7 +174,7 @@ void render()
 						}
 						draw8x8_tile(
 							((i << 3) & 0xF) - offsetXPixel + (x << 4),
-							208 - (i > 1 ? -8 : 0) + offsetYPixel - (y << 4),
+							(int_res_y - 16) - (i > 1 ? -8 : 0) + offsetYPixel - (y << 4),
 							block_index, block_palette
 						);
 					}
@@ -190,8 +193,8 @@ void render()
 
 	DestR.x = sp_offset_x;
 	DestR.y = sp_offset_y;
-	DestR.w = 256 * scale;
-	DestR.h = 224 * scale;
+	DestR.w = int_res_x * scale;
+	DestR.h = int_res_y * scale;
 
 	SDL_DestroyTexture(screen_t_l1);
 	screen_t_l1 = SDL_CreateTextureFromSurface(ren, &screen_s_l1);
@@ -217,7 +220,7 @@ void render()
 	{
 		MPlayer& CurrentMario = *item;
 
-		if (CurrentMario.x > (CameraX - camBoundX) && CurrentMario.y > (CameraY - camBoundY) && CurrentMario.x < (CameraX + 256 + camBoundX) && CurrentMario.y < (CameraY + 224 + camBoundY))
+		if (CurrentMario.x > (CameraX - camBoundX) && CurrentMario.y > (CameraY - camBoundY) && CurrentMario.x < (CameraX + int_res_x + camBoundX) && CurrentMario.y < (CameraY + int_res_y + camBoundY))
 		{
 			float is_skidding = 1.f - (float(abs(CurrentMario.SKIDDING)) * 2.f);
 
@@ -225,7 +228,7 @@ void render()
 
 			if (!CurrentMario.invisible)
 			{
-				Sprite Mario(path + "Sprites/mario/" + to_string(CurrentMario.skin) + "/" + CurrentMario.sprite + ".png", -8 + int(CurrentMario.x) - int(CameraX), 224 - 32 - int(CurrentMario.y) + int(CameraY), int(CurrentMario.to_scale * is_skidding) * 32, 32);
+				Sprite Mario(path + "Sprites/mario/" + to_string(CurrentMario.skin) + "/" + CurrentMario.sprite + ".png", -8 + int(CurrentMario.x) - int(CameraX), int_res_y - 32 - int(CurrentMario.y) + int(CameraY), int(CurrentMario.to_scale * is_skidding) * 32, 32);
 			}
 
 			if (CurrentMario.GRABBED_SPRITE != 0xFF && !CurrentMario.in_pipe)
@@ -240,11 +243,11 @@ void render()
 
 				double angle = 0.0;
 				if (tile != 0x0 &&
-					(x_position - CameraX) > -64 && (x_position - CameraX) < (256 + 64) &&
-					(y_position - CameraY) > -64 && (y_position - CameraY) < (224 + 64)
+					(x_position - CameraX) > -64 && (x_position - CameraX) < (int_res_x + 64) &&
+					(y_position - CameraY) > -64 && (y_position - CameraY) < (int_res_y + 64)
 					)
 				{
-					draw_tile_custom(x_position - CameraX, 224 - 32 - y_position + CameraY, size, angle, tile, pal, SDL_FLIP_NONE);
+					draw_tile_custom(x_position - CameraX, int_res_y - 32 - y_position + CameraY, size, angle, tile, pal, SDL_FLIP_NONE);
 				}
 			}
 		}
@@ -437,11 +440,14 @@ void render()
 		}
 	}
 
+	//Draw L3 player names
 	for (list<MPlayer>::iterator item = Mario.begin(); item != Mario.end(); ++item)
 	{
 		MPlayer& CurrentMario = *item;
 
-		if (!CurrentMario.PlayerControlled && CurrentMario.x > (CameraX + 16) && CurrentMario.y > (CameraY) && CurrentMario.x < (CameraX + 224) && CurrentMario.y < (CameraY + 160))
+		int s_off_x = (int_res_x - 256) / 2;
+		int s_off_y = (int_res_y - 224) / 2;
+		if (!CurrentMario.PlayerControlled && CurrentMario.x > (CameraX + 16 + s_off_x) && CurrentMario.y > (CameraY + s_off_y) && CurrentMario.x < (CameraX + 224 + s_off_x) && CurrentMario.y < (CameraY + 160 + s_off_y)) //!CurrentMario.PlayerControlled && 
 		{
 			for (int i = 0; i < 5; i++)
 			{
@@ -449,7 +455,7 @@ void render()
 				if (new_l == 0x20) { new_l = 0x57 + 0x7F; }
 				if (new_l < 0x3A) { new_l = new_l - 0x30 + 0x57; }
 
-				draw8x8_tile_2bpp(-12 + int(CurrentMario.x) - int(CameraX) + i * 8, 224 - int(CurrentMario.y + (CurrentMario.STATE ? 40 : 32)) + int(CameraY), new_l - 0x57, 6);
+				draw8x8_tile_2bpp(-s_off_x + -12 + int(CurrentMario.x) - int(CameraX) + i * 8, s_off_y + 224 - int(CurrentMario.y + (CurrentMario.STATE ? 40 : 32)) + int(CameraY), new_l - 0x57, 6);
 			}
 		}
 	}
@@ -553,6 +559,11 @@ void render()
 
 	SDL_DestroyTexture(screen_t_l2);
 	screen_t_l2 = SDL_CreateTextureFromSurface(ren, &screen_s_l2);
+
+	DestR.x = sp_offset_x + ((int_res_x - 256) * scale) / 2;
+	DestR.y = sp_offset_y + ((int_res_y - 224) * scale) / 2;
+	DestR.w = 256 * scale;
+	DestR.h = 224 * scale;
 	SDL_RenderCopy(ren, screen_t_l2, nullptr, &DestR);
 
 }

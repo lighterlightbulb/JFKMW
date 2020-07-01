@@ -88,17 +88,13 @@ void player_code()
 			zsnes_ui.process();
 			zsnes_ui.finish_processing(ren);
 
-			//we create a rectangle for knowing where it will be drawn, in this case it will cover the whole screen.
-			SDL_Rect dest;
-			dest.x = sp_offset_x; dest.y = sp_offset_y; dest.w = 256 * scale; dest.h = 224 * scale;
 
 			//we copy it to the renderer, for your program, if you want to have a ingame thing (variable or w/e), you just simply don't do this and render what your game has instead.
 			SDL_Rect DestR;
-
 			DestR.x = sp_offset_x;
 			DestR.y = sp_offset_y;
-			DestR.w = 256 * scale;
-			DestR.h = 224 * scale;
+			DestR.w = int_res_x * scale;
+			DestR.h = int_res_y * scale;
 
 			//Copied from renderer.h
 			for (int x = 0; x < 2; x++)
@@ -107,18 +103,21 @@ void player_code()
 				{
 					RenderBackground(
 						(-int(double(CameraX) * (double(ServerRAM.RAM[0x3F06]) / 16.0)) % 512) + x * 512,
-						-272 + (int(double(CameraY) * (double(ServerRAM.RAM[0x3F07]) / 16.0)) % 512) + y * -512);
+						-272 + (int_res_y - 224) +(int(double(CameraY) * (double(ServerRAM.RAM[0x3F07]) / 16.0)) % 512) + y * -512);
 				}
 			}
 			//Copied from renderer.h
 			SDL_RenderCopy(ren, screen_t_l1, nullptr, &DestR);
+
+			DestR.x = sp_offset_x + ((int_res_x - 256) * scale) / 2;
+			DestR.y = sp_offset_y + ((int_res_y - 224) * scale) / 2;
+			DestR.w = 256 * scale;
+			DestR.h = 224 * scale;
+
 			SDL_RenderCopy(ren, screen_t_l2, nullptr, &DestR);
+			SDL_RenderCopy(ren, zsnes_ui.texture, NULL, &DestR);
 
-
-			
-			SDL_RenderCopy(ren, zsnes_ui.texture, NULL, &dest);
-
-			redraw();
+			redraw87();
 			check_input();
 
 			if (zsnes_ui.button_pressed == "X")

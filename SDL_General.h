@@ -90,7 +90,7 @@ void screen(int width, int height)
 	amask = 0xff000000;
 #endif
 
-	screen_s_l1 = *SDL_CreateRGBSurface(0, 256, 224, 32,
+	screen_s_l1 = *SDL_CreateRGBSurface(0, int_res_x, int_res_y, 32,
 		rmask, gmask, bmask, amask);
 	screen_s_l2 = *SDL_CreateRGBSurface(0, 256, 224, 32,
 		rmask, gmask, bmask, amask);
@@ -105,9 +105,9 @@ void PrepareRendering()
 		w = resolution_x;
 		h = resolution_y;
 	}
-	scale = resolution_y / 224;
-	sp_offset_x = (w / 2) - (128 * scale);
-	sp_offset_y = (h / 2) - (112 * scale) + (resolution_y % 2 == 1);
+	scale = resolution_y / int_res_y;
+	sp_offset_x = (w / 2) - ((int_res_x/2) * scale);
+	sp_offset_y = (h / 2) - ((int_res_y/2) * scale) + (resolution_y % 2 == 1);
 
 }
 
@@ -141,13 +141,26 @@ void redraw()
 {
 	SDL_SetRenderDrawColor(ren, 0, 0, 0, 0);
 	SDL_Rect rect;
-	if (w != (scale * 256) || h != (scale * 224))
+	if (w != (scale * int_res_x) || h != (scale * int_res_y))
 	{
 		rect = { 0,0,w, sp_offset_y}; SDL_RenderFillRect(ren, &rect);
 		rect = { 0,h - sp_offset_y,w,sp_offset_y }; SDL_RenderFillRect(ren, &rect);
 		rect = { 0,0,sp_offset_x, h }; SDL_RenderFillRect(ren, &rect);
 		rect = { w - sp_offset_x,0,sp_offset_x,h }; SDL_RenderFillRect(ren, &rect);
 	}
+	SDL_RenderPresent(ren);
+}
+
+void redraw87()
+{
+	SDL_SetRenderDrawColor(ren, 0, 0, 0, 0);
+	int f_x = (w / 2) - (128 * scale);
+	int f_y = (h / 2) - (112 * scale) + (resolution_y % 2 == 1);
+	SDL_Rect rect;
+	rect = { 0,0,w, f_y }; SDL_RenderFillRect(ren, &rect);
+	rect = { 0,h - f_y,w,f_y }; SDL_RenderFillRect(ren, &rect);
+	rect = { 0,0,f_x, h }; SDL_RenderFillRect(ren, &rect);
+	rect = { w - f_x,0,f_x,h }; SDL_RenderFillRect(ren, &rect);
 	SDL_RenderPresent(ren);
 }
 
@@ -268,7 +281,7 @@ void draw8x8_tile(int_fast16_t x, int_fast16_t y, uint_fast16_t tile, uint_fast8
 		{
 			uint_fast16_t x_p = 7 - i + x;
 			uint_fast16_t y_p = y + index;
-			if (y_p < 0 || y_p > 223 || x_p < 0 || x_p > 255) {
+			if (y_p < 0 || y_p >= int_res_y || x_p < 0 || x_p >= int_res_x) {
 				continue;
 			}
 			color1 =
@@ -283,7 +296,7 @@ void draw8x8_tile(int_fast16_t x, int_fast16_t y, uint_fast16_t tile, uint_fast8
 				//drawPixelScreen(7 - i + x, y + index, color1 + palette);
 
 				//uint_fast16_t c = palette_array[color1 + palette];
-				Uint32* p_screen = (Uint32*)(&screen_s_l1)->pixels + ((y_p << 8) + x_p);
+				Uint32* p_screen = (Uint32*)(&screen_s_l1)->pixels + ((y_p * int_res_x) + x_p);
 				*p_screen = palette_array[color1 + palette]; //SDL_MapRGBA(screen_s->format, r, g, b, 255);
 			}
 		}
