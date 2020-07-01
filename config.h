@@ -61,6 +61,8 @@ void load_configuration()
 
 			if (name == "joystick_num") { controller = stoi(value); }
 			if (name == "haptic_num") { haptic = stoi(value); }
+
+			if (name == "discord_webhook") { discord_webhook = value; }
 		}
 
 	}

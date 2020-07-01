@@ -162,6 +162,8 @@ Disconnection handler
 
 
 void HandleDisconnection(sf::TcpSocket* ToSend = nullptr) {
+	discord_message("Someone just disconnected.");
+
 	cout << blue << "[Server] " << ToSend->getRemoteAddress() << " has disconnected." << white << endl;
 
 	clients.erase(remove(clients.begin(), clients.end(), ToSend));
@@ -433,6 +435,9 @@ void PendingConnection()
 
 
 			GetAmountOfPlayers(); //Update player amount.
+
+			//Send msg to discord
+			discord_message(username + " has connected.");
 		}
 		else
 		{
@@ -536,6 +541,10 @@ void NetWorkLoop()
 	{
 		listener.listen(PORT); selector.add(listener);
 		cout << blue << "[Server] Server is running on port " << dec << PORT << white << endl;
+
+		//Discord
+		discord_message("JFK mario world server (" + GAME_VERSION + ") is up.");
+
 		// Endless loop that waits for new connections
 		while (!quit)
 		{

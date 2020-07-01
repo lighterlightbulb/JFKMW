@@ -15,6 +15,13 @@ void Chat_ServerSide()
 			Curr_ChatString = CurrPlayer.curr_chat_string;
 			Time_ChatString = 420;
 			cout << lua_color << "[Chat S] " << Curr_ChatString << white << endl;
+
+			string New_ChatString = Curr_ChatString;
+			replaceAll(New_ChatString, "<", "");
+			replaceAll(New_ChatString, ">", ":");
+			replaceAll(New_ChatString, ",", "");
+
+			discord_message(New_ChatString);
 		}
 	}
 

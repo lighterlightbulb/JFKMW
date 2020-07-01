@@ -140,6 +140,16 @@ vector<string> split(const string &s, char delim) {
 	return result;
 }
 
+void replaceAll(std::string& str, const std::string& from, const std::string& to) {
+	if (from.empty())
+		return;
+	size_t start_pos = 0;
+	while ((start_pos = str.find(from, start_pos)) != std::string::npos) {
+		str.replace(start_pos, from.length(), to);
+		start_pos += to.length(); // In case 'to' contains 'from', like replacing 'x' with 'yx'
+	}
+}
+
 bool is_file_exist(const char* fileName)
 {
 	ifstream infile(fileName);
@@ -257,3 +267,52 @@ void ClearSpriteCache()
 		SpriteTextures.clear();
 	}
 }
+
+/*
+
+Discord Logging
+
+*/
+
+
+#if defined(_WIN32)
+string discord_webhook;
+
+void do_d_msg(string msg)
+{
+	time_t currentTime;
+	struct tm localTime;
+
+	time(&currentTime);                   // Get the current time
+	localtime_s(&localTime, &currentTime);  // Convert the current time to the local time
+
+	int Hour = localTime.tm_hour;
+	int Min = localTime.tm_min;
+	int Sec = localTime.tm_sec;
+
+	string H, M, S;
+	H = Hour < 10 ? ("0" + to_string(Hour)) : to_string(Hour);
+	M = Min < 10 ? ("0" + to_string(Min)) : to_string(Min);
+	S = Sec < 10 ? ("0" + to_string(Sec)) : to_string(Sec);
+
+	msg = "[" + H + ":" + M + ":" + S + "] " + msg;
+	string cmd = "curl --silent -o nul -i -H \"Accept: application/json\" -H \"Content-Type:application/json\" -X POST --data \"{\\\"content\\\": \\\"" + msg + "\\\"}\" " + discord_webhook;
+	system(cmd.c_str());
+	return;
+}
+
+void discord_message(string msg)
+{
+	if (discord_webhook != "")
+	{
+		sf::Thread t1(do_d_msg, msg);
+		t1.launch();
+		cout << lua_color << "[Logging] Thread started with \"" << msg << "\"" << white << endl;
+	}
+}
+#else
+string discord_webhook;
+void discord_message(string msg)
+{
+}
+#endif

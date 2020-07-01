@@ -242,13 +242,7 @@ void render()
 				uint_fast8_t pal = uint_fast8_t(ASM.Get_Ram(0x2E80 + CurrentMario.GRABBED_SPRITE, 1) & 0xF);
 
 				double angle = 0.0;
-				if (tile != 0x0 &&
-					(x_position - CameraX) > -64 && (x_position - CameraX) < (int_res_x + 64) &&
-					(y_position - CameraY) > -64 && (y_position - CameraY) < (int_res_y + 64)
-					)
-				{
-					draw_tile_custom(x_position - CameraX, int_res_y - 32 - y_position + CameraY, size, angle, tile, pal, SDL_FLIP_NONE);
-				}
+				draw_tile_custom(x_position - CameraX, int_res_y - 32 - y_position + CameraY, size, angle, tile, pal, SDL_FLIP_NONE);
 			}
 		}
 	}
