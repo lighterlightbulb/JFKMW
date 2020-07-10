@@ -86,7 +86,7 @@ public:
 
 	void get_map_16_details()
 	{
-		uint_fast16_t entry = tile * tile_table_size;
+		uint_fast16_t entry = (tile & 0x1FF) * tile_table_size;
 		act_as = map16_entries[entry + act_as_low] + (map16_entries[entry + act_as_high] << 8);
 
 		uint_fast8_t integer = map16_entries[entry + collision];
