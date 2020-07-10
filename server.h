@@ -61,10 +61,10 @@ void server_code(string level = "")
 
 			ASM.Write_To_Ram(0x3f08, stoi(level, nullptr, 16), 2);
 			ASM.Write_To_Ram(0x1493, 0x06, 1);
-			//game_init();
-			//Set_Server_RAM();
-			//recent_big_change = true;
+
 			doing_write = false;
+
+			discord_message("Switched to level " + level);
 		}
 		if (getKey(0x71))
 		{
@@ -109,6 +109,10 @@ void server_code(string level = "")
 			{
 				cout << green << "[Network] Enabled PVP." << endl;
 			}
+
+			Time_ChatString = 300;
+			Curr_ChatString = pvp ? "pvp is now enabled" : "pvp is now off";
+
 		}
 		Sleep(16);
 	}

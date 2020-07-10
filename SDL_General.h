@@ -24,8 +24,11 @@ SDL_Event event = { 0 };
 HWND sdl_window;
 
 //Namespace variables/Defines
-static HMENU hHelp;
 static HMENU hFile;
+static HMENU hInput;
+static HMENU hSound;
+static HMENU hVideo;
+static HMENU hHelp;
 static HMENU hMenuBar;
 
 
@@ -43,16 +46,29 @@ void getSDLWinHandle()
 void ActivateMenu()
 {
 	hMenuBar = CreateMenu();
+	hFile = CreateMenu();
+	hInput = CreateMenu();
+	hSound = CreateMenu();
+	hVideo = CreateMenu();
 	hHelp = CreateMenu();
 
+	
 	AppendMenu(hMenuBar, MF_POPUP, (UINT_PTR)hFile, L"File");
-	AppendMenu(hMenuBar, MF_POPUP, (UINT_PTR)hHelp, L"About");
+	AppendMenu(hFile, MF_STRING, 1, L"theres nothing here yet lol");
+	AppendMenu(hFile, MF_STRING, 2, L"maybe in a next update");
 
+	AppendMenu(hMenuBar, MF_POPUP, (UINT_PTR)hInput, L"Input");
+
+	AppendMenu(hMenuBar, MF_POPUP, (UINT_PTR)hSound, L"Sound");
+
+	AppendMenu(hMenuBar, MF_POPUP, (UINT_PTR)hVideo, L"Video");
+
+	AppendMenu(hMenuBar, MF_POPUP, (UINT_PTR)hHelp, L"Help");
 	string s = "Version: " + GAME_VERSION;
 	wstring stemp = wstring(s.begin(), s.end());
 	LPCWSTR sw = stemp.c_str();
-
-	AppendMenu(hHelp, MF_STRING, 1, sw);
+	AppendMenu(hHelp, MF_STRING, 3, sw);
+	AppendMenu(hHelp, MF_STRING, 4, L"About");
 
 	SetMenu(sdl_window, hMenuBar);
 }
