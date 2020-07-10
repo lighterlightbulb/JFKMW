@@ -78,6 +78,57 @@ void render()
 		screen_darken = 0;
 	}
 
+
+	//Initialize destR variable were gonna use later for rendering
+	SDL_Rect DestR;
+
+
+	/*
+	Debug input checks
+	*/
+	bool stat = state[input_settings[11]];
+	if (stat != pressed_hide) {
+		pressed_hide = stat;
+		if (stat) {
+			drawHud = !drawHud;
+		}
+	}
+
+	stat = state[input_settings[12]];
+	if (stat != pressed_diag) {
+		pressed_diag = stat;
+		if (stat) {
+			drawDiag = !drawDiag;
+		}
+	}
+
+	stat = state[input_settings[13]];
+	if (stat != pressed_drawl1) {
+		pressed_drawl1 = stat;
+		if (stat) {
+			drawL1 = !drawL1;
+		}
+	}
+
+	stat = state[input_settings[14]];
+	if (stat != pressed_bg) {
+		pressed_bg = stat;
+		if (stat) {
+			drawBg = !drawBg;
+		}
+	}
+
+	stat = state[input_settings[15]];
+	if (stat != pressed_drawsprites) {
+		pressed_drawsprites = stat;
+		if (stat) {
+			drawSprites = !drawSprites;
+		}
+	}
+	/*
+		Sorry for shitcode
+	*/
+
 	/*
 		Convert 16bit palette to 32bit palette (for speed)
 	*/
@@ -129,81 +180,83 @@ void render()
 
 	}
 
-	for (int x = 0; x < 2; x++)
-	{
-		for (int y = 0; y < 2; y++)
-		{
-			RenderBackground(
-				(-int(double(CameraX) * (double(ServerRAM.RAM[0x3F06]) / 16.0) + ASM.Get_Ram(0x1466, 2)) % 512) + x*512,
-				-272 + (int_res_y - 224) + (int(double(CameraY) * (double(ServerRAM.RAM[0x3F07]) / 16.0) + ASM.Get_Ram(0x1468, 2)) % 512) + y*-512);
-		}
-	}
 
-	// Start rendering, by locking surface.
-	SDL_LockSurface(&screen_s_l1);
-	SDL_Surface *screen_plane = &screen_s_l1;
-	SDL_memset(screen_plane->pixels, 0, screen_plane->h * screen_plane->pitch);
-
-
-	//Draw scenery
-	uint_fast8_t int_b_x = uint_fast8_t(int_res_x / 16) + 1;
-	uint_fast8_t int_b_y = uint_fast8_t(int_res_y / 16) + 1;
-
-	for (uint_fast8_t x = 0; x < int_b_x; x++)
-	{
-		for (uint_fast8_t y = 0; y < int_b_y; y++)
-		{
-			uint_fast16_t tile = map16_handler.get_tile(x + offsetX, y + offsetY);
-			if (tile != 0x25)
-			{
-				
-				uint_fast16_t entry = tile * tile_table_size;
-
-				//Block 8x8 tiles
-				for (uint_fast8_t i = 0; i < 4; i++)
-				{
-					uint_fast16_t block_index = map16_entries[entry + 1 + (i << 1)] + (map16_entries[entry + (i << 1)] << 8);
-					uint_fast8_t index = map16_entries[(i <= 1 ? entry + tile_palette_1 : entry + tile_palette_2)];
-					uint_fast8_t block_palette = (i & 1) ? (index & 0xF) : (index >> 4);
-
-					if (block_index != 0xF8)
-					{
-						if (drawDiag)
-						{
-							blocks_on_screen++;
-						}
-						draw8x8_tile(
-							((i << 3) & 0xF) - offsetXPixel + (x << 4),
-							(int_res_y - 16) - (i > 1 ? -8 : 0) + offsetYPixel - (y << 4),
-							block_index, block_palette
-						);
-					}
-
-				}
+	if (drawBg) {
+		for (int x = 0; x < 2; x++) {
+			for (int y = 0; y < 2; y++) {
+				RenderBackground(
+					(-int(double(CameraX) * (double(ServerRAM.RAM[0x3F06]) / 16.0) + ASM.Get_Ram(0x1466, 2)) % 512) + x * 512,
+					-272 + (int_res_y - 224) + (int(double(CameraY) * (double(ServerRAM.RAM[0x3F07]) / 16.0) + ASM.Get_Ram(0x1468, 2)) % 512) + y * -512);
 			}
 		}
 	}
 
-
-	//End rendering
-	SDL_UnlockSurface(&screen_s_l1);
-	//We can now draw the screen finished product.
-
-	SDL_Rect DestR;
-
-	DestR.x = sp_offset_x;
-	DestR.y = sp_offset_y;
-	DestR.w = int_res_x * scale;
-	DestR.h = int_res_y * scale;
-
-	SDL_DestroyTexture(screen_t_l1);
-	screen_t_l1 = SDL_CreateTextureFromSurface(ren, &screen_s_l1);
-
-	if (ServerRAM.RAM[0x40] != 0)
+	if (drawL1)
 	{
-		SDL_SetTextureBlendMode(screen_t_l1, SDL_BlendMode(ServerRAM.RAM[0x40]));
+		// Start rendering, by locking surface.
+		SDL_LockSurface(&screen_s_l1);
+		SDL_Surface* screen_plane = &screen_s_l1;
+		SDL_memset(screen_plane->pixels, 0, screen_plane->h * screen_plane->pitch);
+
+
+		//Draw scenery
+		uint_fast8_t int_b_x = uint_fast8_t(int_res_x / 16) + 1;
+		uint_fast8_t int_b_y = uint_fast8_t(int_res_y / 16) + 1;
+
+		for (uint_fast8_t x = 0; x < int_b_x; x++)
+		{
+			for (uint_fast8_t y = 0; y < int_b_y; y++)
+			{
+				uint_fast16_t tile = map16_handler.get_tile(x + offsetX, y + offsetY);
+
+				if (tile != 0x25)
+				{
+
+					uint_fast16_t entry = tile * tile_table_size;
+
+					//Block 8x8 tiles
+					for (uint_fast8_t i = 0; i < 4; i++)
+					{
+						uint_fast16_t block_index = map16_entries[entry + 1 + (i << 1)] + (map16_entries[entry + (i << 1)] << 8);
+						uint_fast8_t index = map16_entries[(i <= 1 ? entry + tile_palette_1 : entry + tile_palette_2)];
+						uint_fast8_t block_palette = (i & 1) ? (index & 0xF) : (index >> 4);
+
+						if (block_index != 0xF8)
+						{
+							if (drawDiag)
+							{
+								blocks_on_screen++;
+							}
+							draw8x8_tile(
+								((i << 3) & 0xF) - offsetXPixel + (x << 4),
+								(int_res_y - 16) - (i > 1 ? -8 : 0) + offsetYPixel - (y << 4),
+								block_index, block_palette
+							);
+						}
+					}
+				}
+			}
+		}
+
+
+		//End rendering
+		SDL_UnlockSurface(&screen_s_l1);
+		//We can now draw the screen finished product.
+
+		DestR.x = sp_offset_x;
+		DestR.y = sp_offset_y;
+		DestR.w = int_res_x * scale;
+		DestR.h = int_res_y * scale;
+
+		SDL_DestroyTexture(screen_t_l1);
+		screen_t_l1 = SDL_CreateTextureFromSurface(ren, &screen_s_l1);
+
+		if (ServerRAM.RAM[0x40] != 0)
+		{
+			SDL_SetTextureBlendMode(screen_t_l1, SDL_BlendMode(ServerRAM.RAM[0x40]));
+		}
+		SDL_RenderCopy(ren, screen_t_l1, nullptr, &DestR);
 	}
-	SDL_RenderCopy(ren, screen_t_l1, nullptr, &DestR);
 
 	//Draw screen darkening
 	SDL_SetRenderDrawColor(ren, 0, 0, 0, (screen_darken >> 3) << 3);
@@ -213,7 +266,10 @@ void render()
 
 
 	//Draw OAM (priority)
-	render_oam(0x200, int(CameraX), int(CameraY));
+	if (drawSprites)
+	{
+		render_oam(0x200, int(CameraX), int(CameraY));
+	}
 
 	//Draw Mario
 	for (list<MPlayer>::iterator item = Mario.begin(); item != Mario.end(); ++item)
@@ -251,29 +307,6 @@ void render()
 	SDL_LockSurface(&screen_s_l2);
 	SDL_Surface* screen_plane_sequel = &screen_s_l2;
 	SDL_memset(screen_plane_sequel->pixels, 0, screen_plane_sequel->h* screen_plane_sequel->pitch);
-
-
-	bool stat = state[input_settings[11]];
-	if (stat != pressed_hide)
-	{
-		pressed_hide = stat;
-		if (stat)
-		{
-			ServerRAM.RAM[0x1DFC] = 0x15;
-			drawHud = !drawHud;
-		}
-	}
-
-	stat = state[input_settings[12]];
-	if (stat != pressed_diag)
-	{
-		pressed_diag = stat;
-		if (stat)
-		{
-			ServerRAM.RAM[0x1DFC] = 0x15;
-			drawDiag = !drawDiag;
-		}
-	}
 
 	if (drawHud)
 	{

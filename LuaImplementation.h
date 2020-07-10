@@ -149,7 +149,7 @@ static int lua_bitand(lua_State* L) {
 	uint_fast8_t bitval = 1;
 	while (a > 0 && b > 0)
 	{
-		if ((a % 2) == 1 && (b % 2) == 1)
+		if ((a & 1) == 1 && (b & 1) == 1)
 		{
 			result = result + bitval;
 		}

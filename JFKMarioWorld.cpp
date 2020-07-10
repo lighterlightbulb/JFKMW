@@ -57,6 +57,9 @@ namespace fs = std::experimental::filesystem;
 #endif
 
 #include <SDL.h>
+#if defined(_WIN32)
+#include <SDL_syswm.h>
+#endif
 #include <SDL_image.h>
 #if defined(USE_SDLMIXER_X)
 #include <SDL2/SDL_mixer_ext.h>

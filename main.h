@@ -208,7 +208,7 @@ void player_code()
 			render();
 			chrono::high_resolution_clock::time_point t2 = chrono::high_resolution_clock::now();
 
-			redraw();
+			redraw(); cls();
 			
 			total_time_ticks = chrono::duration_cast<chrono::duration<double>>(t2 - t1);
 			int fps = int(1.0 / (total_time_ticks.count() / 1.0));

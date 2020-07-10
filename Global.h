@@ -97,8 +97,16 @@ bool force_sleep = false;
 //Stuff hud toggles here and hud stuff
 bool drawHud = true;
 bool drawDiag = false;
+bool drawBg = true;
+bool drawSprites = true;
+bool drawL1 = true;
+
 bool pressed_hide = false;
 bool pressed_diag = false;
+bool pressed_drawl1 = false;
+bool pressed_bg = false;
+bool pressed_drawsprites = false;
+
 int fps_diag[128];
 int ping_diag[112];
 int block_diag[112];
@@ -110,7 +118,7 @@ int blocks_on_screen = 0;
 
 string username = "No username";
 
-SDL_Scancode input_settings[13] = {
+SDL_Scancode input_settings[16] = {
 	SDL_SCANCODE_S,
 	SDL_SCANCODE_Z,
 	SDL_SCANCODE_X,
@@ -123,7 +131,10 @@ SDL_Scancode input_settings[13] = {
 	SDL_SCANCODE_RETURN,
 	SDL_SCANCODE_T,
 	SDL_SCANCODE_1,
-	SDL_SCANCODE_2
+	SDL_SCANCODE_2,
+	SDL_SCANCODE_3,
+	SDL_SCANCODE_4,
+	SDL_SCANCODE_5
 };
 bool BUTTONS_GAMEPAD[10];
 

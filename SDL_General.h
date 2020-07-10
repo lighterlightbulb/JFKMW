@@ -20,6 +20,41 @@ SDL_Event event = { 0 };
 //BASIC SCREEN FUNCTIONS////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
+#if defined(_WIN32)
+HWND sdl_window;
+
+//Namespace variables/Defines
+static HMENU hHelp;
+static HMENU hMenuBar;
+
+
+//Function which retrieves the address/Handle of an SDL window
+//Also retrieves the specific subsystem used by SDL to create that window which is platform specific (Windows, MAC OS x, IOS, etc...)
+void getSDLWinHandle()
+{
+	SDL_SysWMinfo wmInfo;
+	SDL_VERSION(&wmInfo.version);
+	SDL_GetWindowWMInfo(win, &wmInfo);
+
+	sdl_window = wmInfo.info.win.window;
+}
+
+void ActivateMenu()
+{
+	hMenuBar = CreateMenu();
+	hHelp = CreateMenu();
+
+	AppendMenu(hMenuBar, MF_POPUP, (UINT_PTR)hHelp, L"About");
+
+	string s = "Version: " + GAME_VERSION;
+	wstring stemp = wstring(s.begin(), s.end());
+	LPCWSTR sw = stemp.c_str();
+
+	AppendMenu(hHelp, MF_STRING, 1, sw);
+
+	SetMenu(sdl_window, hMenuBar);
+}
+#endif
 
 //The screen function: sets up the window for 32-bit color graphics.
 //Creates a graphical screen of width*height pixels in 32-bit color.
@@ -32,13 +67,22 @@ void screen(int width, int height)
 	if (win) { SDL_DestroyWindow(win); }
 
 	w = width;
-	h = height;
 
-	int flags = SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE;
+#if defined(_WIN32)
+
+	h = height + (fullscreen ? 0 : 20);
+#else
+	h = height;
+#endif
+
+	int flags = SDL_WINDOW_SHOWN;
 	if (fullscreen)
 	{
 		flags |= SDL_WINDOW_FULLSCREEN;
-		flags &= SDL_WINDOW_RESIZABLE;
+	}
+	else
+	{
+		flags |= SDL_WINDOW_RESIZABLE;
 	}
 	if (opengl)
 	{
@@ -95,6 +139,13 @@ void screen(int width, int height)
 	screen_s_l2 = *SDL_CreateRGBSurface(0, 256, 224, 32,
 		rmask, gmask, bmask, amask);
 
+#if defined(_WIN32)
+	if (!fullscreen)
+	{
+		getSDLWinHandle();
+		ActivateMenu();
+	}
+#endif
 }
 
 void PrepareRendering()
@@ -281,7 +332,7 @@ void draw8x8_tile(int_fast16_t x, int_fast16_t y, uint_fast16_t tile, uint_fast8
 		{
 			uint_fast16_t x_p = 7 - i + x;
 			uint_fast16_t y_p = y + index;
-			if (y_p < 0 || y_p >= int_res_y || x_p < 0 || x_p >= int_res_x) {
+			if (y_p >= int_res_y || x_p >= int_res_x) {
 				continue;
 			}
 			color1 =
