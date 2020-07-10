@@ -59,7 +59,7 @@ void server_code(string level = "")
 			doing_write = true;
 			//LevelManager.LoadLevel(stoi(level, nullptr, 16));
 
-			ASM.Write_To_Ram(0x3F0A, stoi(level, nullptr, 16), 2);
+			ASM.Write_To_Ram(0x3f08, stoi(level, nullptr, 16), 2);
 			ASM.Write_To_Ram(0x1493, 0x06, 1);
 			//game_init();
 			//Set_Server_RAM();

@@ -459,10 +459,24 @@ public:
 					//Powerups
 					if (ServerRAM.RAM[0x2000 + sprite] == 5 && STATE == 0)
 					{
-						STATE = 1;
-						ServerRAM.RAM[0x2000 + sprite] = 0;
-						ASM.Write_To_Ram(0x1DF9, 0xA, 1);
-						INVINCIBILITY_FRAMES = 20;
+
+						if (!networking)
+						{
+							ServerRAM.RAM[0x2000 + sprite] = 0;
+
+							STATE = 1;
+							ASM.Write_To_Ram(0x1DF9, 0xA, 1);
+							INVINCIBILITY_FRAMES = 20;
+						}
+						else
+						{
+							if (STATE == 0)
+							{
+								STATE = 1;
+								ASM.Write_To_Ram(0x1DF9, 0xA, 1);
+								INVINCIBILITY_FRAMES = 20;
+							}
+						}
 					}
 
 					//Grabbing

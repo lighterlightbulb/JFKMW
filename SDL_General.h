@@ -184,7 +184,8 @@ void cls()
 {
 	PrepareRendering();
 
-	SDL_SetRenderDrawColor(ren, 0, 0, 0, 0);
+	uint_fast16_t c = ServerRAM.RAM[0x3D00] + (ServerRAM.RAM[0x3E00] << 8);
+	SDL_SetRenderDrawColor(ren, (c & 0x1F) << 3, ((c >> 5) & 0x1F) << 3, (c >> 10) << 3, 255);
 	SDL_RenderClear(ren);
 }
 

@@ -34,10 +34,10 @@ void game_loop()
 		}
 		if (ServerRAM.RAM[0x1493] == 0)
 		{
-			if (ASM.Get_Ram(0x3F0A, 2) != 0)
+			if (ASM.Get_Ram(0x3f08, 2) != 0)
 			{
 				midway_activated = false;
-				LevelManager.LoadLevel(uint_fast16_t(ASM.Get_Ram(0x3F0A, 2)));
+				LevelManager.LoadLevel(uint_fast16_t(ASM.Get_Ram(0x3f08, 2)));
 
 				game_init();
 #if not defined(DISABLE_NETWORK)
@@ -45,7 +45,7 @@ void game_loop()
 #endif
 				recent_big_change = true;
 
-				ASM.Write_To_Ram(0x3F0A, 0, 2);
+				ASM.Write_To_Ram(0x3f08, 0, 2);
 			}
 			else
 			{
@@ -73,6 +73,8 @@ void game_loop()
 		mapWidth = 256;
 	}
 	mapHeight = ServerRAM.RAM[0x3F02] + ServerRAM.RAM[0x3F03] * 256;
+
+	ServerRAM.RAM[0x3F0A] = networking;
 
 	LevelManager.start_x = ServerRAM.RAM[0x3F0B] + ServerRAM.RAM[0x3F0C] * 256;
 	LevelManager.start_y = ServerRAM.RAM[0x3F0D] + ServerRAM.RAM[0x3F0E] * 256;
