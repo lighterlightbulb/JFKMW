@@ -25,6 +25,7 @@ HWND sdl_window;
 
 //Namespace variables/Defines
 static HMENU hHelp;
+static HMENU hFile;
 static HMENU hMenuBar;
 
 
@@ -44,6 +45,7 @@ void ActivateMenu()
 	hMenuBar = CreateMenu();
 	hHelp = CreateMenu();
 
+	AppendMenu(hMenuBar, MF_POPUP, (UINT_PTR)hFile, L"File");
 	AppendMenu(hMenuBar, MF_POPUP, (UINT_PTR)hHelp, L"About");
 
 	string s = "Version: " + GAME_VERSION;
