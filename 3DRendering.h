@@ -12,8 +12,6 @@ uint_fast16_t render_h = 112;
 
 int p_w;
 int p_h;
-uint_fast8_t background_x = 0;
-uint_fast8_t background_y = 0;
 
 void draw_pixel(int_fast16_t x1, int_fast16_t y1, uint_fast8_t r, uint_fast8_t g, uint_fast8_t b, SDL_Surface* screen_s)
 {
@@ -29,19 +27,38 @@ class PlayerObj
 {
 public:
 	double pos_x, pos_y = 16.0, pos_z;
-	double angle, pitch = 180.0;
+
+	double posX = 22, posY = 12;  //x and y start position
+	double dirX = -1, dirY = 0; //initial direction vector
+	double planeX = 0, planeY = 0.66; //the 2d raycaster version of camera plane
+
 
 	void process()
 	{
 
 		MPlayer& LocalPlayer = get_mario(SelfPlayerNumber);
-		if (LocalPlayer.pad[button_left])
-		{
-			angle += 2.0;
-		}
+
+		double rotSpeed = 0.1;
 		if (LocalPlayer.pad[button_right])
 		{
-			angle -= 2.0;
+			//both camera direction and camera plane must be rotated
+			double oldDirX = dirX;
+			dirX = dirX * cos(-rotSpeed) - dirY * sin(-rotSpeed);
+			dirY = oldDirX * sin(-rotSpeed) + dirY * cos(-rotSpeed);
+			double oldPlaneX = planeX;
+			planeX = planeX * cos(-rotSpeed) - planeY * sin(-rotSpeed);
+			planeY = oldPlaneX * sin(-rotSpeed) + planeY * cos(-rotSpeed);
+		}
+		//rotate to the left
+		if (LocalPlayer.pad[button_left])
+		{
+			//both camera direction and camera plane must be rotated
+			double oldDirX = dirX;
+			dirX = dirX * cos(rotSpeed) - dirY * sin(rotSpeed);
+			dirY = oldDirX * sin(rotSpeed) + dirY * cos(rotSpeed);
+			double oldPlaneX = planeX;
+			planeX = planeX * cos(rotSpeed) - planeY * sin(rotSpeed);
+			planeY = oldPlaneX * sin(rotSpeed) + planeY * cos(rotSpeed);
 		}
 
 		if (LocalPlayer.pad[button_b])
@@ -54,13 +71,10 @@ public:
 			pos_y -= 2.0;
 		}
 
-		double sp_x = cos(angle * PI / 180.0) * (LocalPlayer.pad[button_up] - LocalPlayer.pad[button_down]);
-		double sp_y = sin(angle * PI / 180.0) * (LocalPlayer.pad[button_up] - LocalPlayer.pad[button_down]);
+		double sp_x = dirX * (LocalPlayer.pad[button_up] - LocalPlayer.pad[button_down]);
+		double sp_y = dirY * (LocalPlayer.pad[button_up] - LocalPlayer.pad[button_down]);
 		pos_x += sp_x;
 		pos_z += sp_y;
-
-		background_x = uint_fast8_t(double(int(angle) * 8 % 360) / 1.40625);
-		background_y = uint_fast8_t(double(int(pitch - 180.0 - 90.0) % 360) / 1.40625);
 
 	}
 };
@@ -118,6 +132,7 @@ void inicializar_map()
 
 double distance_3d(double x, double x2, double y, double y2, double z, double z2)
 {
+
 	return sqrt(pow((x - x2), 2) + pow((y - y2), 2) + pow((z - z2), 2));
 }
 
@@ -127,29 +142,27 @@ double distance_2d(double x, double y, double a, double b) {
 
 void renderizar()
 {
-	double angle_PlayerObj = PlayerObjLocal.angle;
-	double pitch_PlayerObj = PlayerObjLocal.pitch - 180.f;
-
 
 	for (uint_fast16_t x = 0; x < render_w; x++)
 	{
 
-		double angle_ray = angle_PlayerObj - double(int(x) - int(render_w / 2)) / 4.0;
+		double cameraX = 2 * x / (double)render_w - 1; //x-coordinate in camera space
 
-		double d_x = cos(angle_ray * PI / 180.0) / 2;
-		double d_z = sin(angle_ray * PI / 180.0) / 2;
+		double d_x = PlayerObjLocal.dirX + PlayerObjLocal.planeX * cameraX;
+		double d_z = PlayerObjLocal.dirY + PlayerObjLocal.planeY * cameraX;
+
 
 		for (uint_fast16_t y = 0; y < render_h; y++)
 		{
-			double pitch_ray = pitch_PlayerObj - double(int(y) - int(render_h / 2)) / 16.0;
-			double d_y = pitch_ray / 4.0;
+			double pitch_ray = double(int(y) - int(render_h / 2)) / 16.0;
+			double d_y = -pitch_ray / 8.0;
 
 			double pos_x = PlayerObjLocal.pos_x,
 				pos_y = PlayerObjLocal.pos_y,
 				pos_z = PlayerObjLocal.pos_z;
 
 			bool touched = false; double distance = 0.0;
-			while (!touched && distance < 128.0)
+			while (!touched && distance < 256.0)
 			{
 				pos_x += d_x; pos_y += d_y; pos_z += d_z;
 				distance = distance_3d(
