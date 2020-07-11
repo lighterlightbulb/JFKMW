@@ -192,7 +192,9 @@ void player_code()
 			Sleep(16);
 		}
 		
-
+#if defined(EXPERIMENTAL)
+		Launch3D();
+#endif
 		while (!done(true))
 		{
 			while (doing_read) {
@@ -207,7 +209,9 @@ void player_code()
 
 			render();
 			chrono::high_resolution_clock::time_point t2 = chrono::high_resolution_clock::now();
-
+#if defined(EXPERIMENTAL)
+			DrawExperimental3D();
+#endif
 			redraw(); cls();
 			
 			total_time_ticks = chrono::duration_cast<chrono::duration<double>>(t2 - t1);
