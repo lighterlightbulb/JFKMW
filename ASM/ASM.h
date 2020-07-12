@@ -328,6 +328,10 @@ public:
 
 	void Write_To_Ram(uint_fast32_t pointer, uint_fast32_t value, uint_fast8_t size = 1)
 	{
+		if (pointer >= RAM_Size)
+		{
+			return;
+		}
 		for (uint_fast8_t i = 0; i < size; i++) {
 			ServerRAM.RAM[pointer + i] = uint_fast8_t(value >> (i * 8));
 		}
@@ -335,6 +339,10 @@ public:
 
 	uint_fast32_t Get_Ram(uint_fast32_t pointer, uint_fast8_t size = 1)
 	{
+		if (pointer >= RAM_Size)
+		{
+			return -1;
+		}
 		uint_fast32_t temp = 0;
 		for (uint_fast8_t i = 0; i < size; i++) {
 			temp += ServerRAM.RAM[pointer + i] << (i * 8);
@@ -423,11 +431,12 @@ void Sync_Server_RAM(bool compressed = false)
 		}
 
 		uint_fast8_t oam_entries = 0;
+		uint_fast16_t pointer = 0;
 		CurrentPacket >> oam_entries;
 		for (uint_fast8_t i = 0; i < oam_entries; i++)
 		{
-			uint_fast16_t pointer;
-			CurrentPacket >> pointer;
+			//uint_fast16_t pointer;
+			//CurrentPacket >> pointer;
 			CurrentPacket >> ServerRAM.RAM[0x0200 + pointer];
 			CurrentPacket >> ServerRAM.RAM[0x0201 + pointer];
 			CurrentPacket >> ServerRAM.RAM[0x0202 + pointer];
@@ -436,6 +445,7 @@ void Sync_Server_RAM(bool compressed = false)
 			CurrentPacket >> ServerRAM.RAM[0x0205 + pointer];
 			CurrentPacket >> ServerRAM.RAM[0x0206 + pointer];
 			CurrentPacket >> ServerRAM.RAM[0x0207 + pointer];
+			pointer += 8;
 		}
 
 
@@ -445,13 +455,15 @@ void Sync_Server_RAM(bool compressed = false)
 
 		//Decompress sprite entries (Fuck do you mean )
 		uint_fast8_t spr_entries;
+		uint_fast8_t p = 0;
 		CurrentPacket >> spr_entries;
 		for (uint_fast8_t i = 0; i < spr_entries; i++) {
-			uint_fast8_t p;
-			CurrentPacket >> p;
+			//uint_fast8_t p;
+			//CurrentPacket >> p;
 			for (uint_fast16_t n = 0; n < 0x20; n++) {
 				CurrentPacket >> ServerRAM.RAM[0x2000 + (n << 7) + p];
 			}
+			p++;
 		}
 
 		//Decompress T3
@@ -568,7 +580,7 @@ void Push_Server_RAM(bool compress = false)
 
 		for (uint_fast16_t i = 0; i < 0x400; i += 8) {
 			if (ServerRAM.RAM[0x200 + i] != 0 || ServerRAM.RAM[0x206 + i] != 0) {
-				CurrentPacket << i;
+				//CurrentPacket << i;
 				CurrentPacket << ServerRAM.RAM[0x0200 + i];
 				CurrentPacket << ServerRAM.RAM[0x0201 + i];
 				CurrentPacket << ServerRAM.RAM[0x0202 + i];
@@ -591,7 +603,6 @@ void Push_Server_RAM(bool compress = false)
 		CurrentPacket << spr_entries;
 		for (uint_fast8_t i = 0; i < 0x80; i++) {
 			if (ServerRAM.RAM[0x2000 + i] != 0) {
-				CurrentPacket << i;
 				for (uint_fast16_t n = 0; n < 0x20; n++) {
 					CurrentPacket << ServerRAM.RAM[0x2000 + (n << 7) + i];
 				}
