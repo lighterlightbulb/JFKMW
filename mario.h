@@ -870,7 +870,7 @@ public:
 			INVINCIBILITY_FRAMES -= 1;
 		}
 
-		double GRAV = -ServerRAM.RAM[0x7D];
+		double GRAV = -double(ServerRAM.RAM[0x7C]);
 		bool RUN = false;
 		bool MOV = false;
 		bool SLIGHT_HIGH_SPEED = false;
