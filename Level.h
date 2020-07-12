@@ -296,6 +296,8 @@ public:
 
 		ASM.Write_To_Ram(0x14AF, 0, 1);
 
+		ASM.Write_To_Ram(0x7D, 96, 1);
+
 
 		ASM.Write_To_Ram(0x36, 0, 1);
 		ASM.Write_To_Ram(0x40, 0, 1);

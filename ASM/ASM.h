@@ -409,6 +409,9 @@ void Sync_Server_RAM(bool compressed = false)
 		//receive shake timer
 		CurrentPacket >> ServerRAM.RAM[0x1887];
 
+		//receive grav
+		CurrentPacket >> ServerRAM.RAM[0x7D];
+
 		//recieve level start
 		CurrentPacket >> ServerRAM.RAM[0x3F0B];
 		CurrentPacket >> ServerRAM.RAM[0x3F0C];
@@ -552,6 +555,9 @@ void Push_Server_RAM(bool compress = false)
 
 		//Send shake timer
 		CurrentPacket << ServerRAM.RAM[0x1887];
+
+		//Send grav
+		CurrentPacket << ServerRAM.RAM[0x7D];
 
 		//Send level start
 		CurrentPacket << ServerRAM.RAM[0x3F0B];

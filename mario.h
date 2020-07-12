@@ -836,6 +836,7 @@ public:
 
 	int Process()
 	{
+		//X_SPEED = 10;
 		if (ServerRAM.RAM[0x1493] > 0 && ServerRAM.RAM[0x1493] < 8)
 		{
 			CAMERA_X /= 2;
@@ -869,7 +870,7 @@ public:
 			INVINCIBILITY_FRAMES -= 1;
 		}
 
-		double GRAV = -96.0;
+		double GRAV = -ServerRAM.RAM[0x7D];
 		bool RUN = false;
 		bool MOV = false;
 		bool SLIGHT_HIGH_SPEED = false;
