@@ -178,4 +178,6 @@ void game_loop()
 		ServerRAM.RAM[0x14] = global_frame_counter % 256;
 	}
 
+	ProcessHDMA();
+
 }

@@ -58,6 +58,8 @@ uint_fast8_t VRAM[VRAM_Size];
 #define right 1
 #define inside 0
 
+//DMA/DHMA
+int_fast16_t layer1_shift[224];
 
 //threads
 

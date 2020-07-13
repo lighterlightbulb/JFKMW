@@ -110,6 +110,7 @@ istream& getline(istream& stream, string& str)
 
 #include "Global.h"
 #include "ASM/ASM.h"
+#include "HDMA.h"
 #include "config.h"
 
 #include "Sprite_shared.h"

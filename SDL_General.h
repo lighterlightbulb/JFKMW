@@ -352,8 +352,12 @@ void draw8x8_tile(int_fast16_t x, int_fast16_t y, uint_fast16_t tile, uint_fast8
 		uint_fast8_t ind = index << 1;
 		for (i = 0; i < 8; i++)
 		{
-			uint_fast16_t x_p = 7 - i + x;
 			uint_fast16_t y_p = y + index;
+			uint_fast16_t x_p = 7 - i + x;
+			if (y_p < 224)
+			{
+				x_p += layer1_shift[y_p];
+			}
 			if (y_p >= int_res_y || x_p >= int_res_x) {
 				continue;
 			}

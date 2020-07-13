@@ -368,6 +368,7 @@ JFKASM ASM;
 
 
 
+
 #if not defined(DISABLE_NETWORK)
 void Sync_Server_RAM(bool compressed = false)
 {
