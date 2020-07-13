@@ -7,8 +7,8 @@ void game_init()
 	decode_graphics_file("Graphics/hud.bin", 11);
 	for (uint_fast16_t l = 0; l < 0x800; l += 2)
 	{
-		ServerRAM.RAM[VRAM_Location + 0xB800 + l] = 0x7F;
-		ServerRAM.RAM[VRAM_Location + 0xB800 + l + 1] = 0x00;
+		RAM[VRAM_Location + 0xB800 + l] = 0x7F;
+		RAM[VRAM_Location + 0xB800 + l + 1] = 0x00;
 
 	}
 }
@@ -26,13 +26,13 @@ void game_loop()
 		}
 	}
 #endif
-	if (!isClient && ServerRAM.RAM[0x1493] > 0)
+	if (!isClient && RAM[0x1493] > 0)
 	{
 		if ((global_frame_counter % 3) == 0)
 		{
-			ServerRAM.RAM[0x1493] -= 1;
+			RAM[0x1493] -= 1;
 		}
-		if (ServerRAM.RAM[0x1493] == 0)
+		if (RAM[0x1493] == 0)
 		{
 			if (ASM.Get_Ram(0x3f08, 2) != 0)
 			{
@@ -54,12 +54,12 @@ void game_loop()
 		}
 	}
 
-	if (!isClient && ServerRAM.RAM[0x1887] > 0)
+	if (!isClient && RAM[0x1887] > 0)
 	{
-		ServerRAM.RAM[0x1887]--;
+		RAM[0x1887]--;
 	}
 
-	if (ServerRAM.RAM[0x1887] > 0)
+	if (RAM[0x1887] > 0)
 	{
 		if (!networking || isClient)
 		{
@@ -67,17 +67,17 @@ void game_loop()
 		}
 	}
 
-	mapWidth = ServerRAM.RAM[0x3F00] + ServerRAM.RAM[0x3F01] * 256;
+	mapWidth = RAM[0x3F00] + RAM[0x3F01] * 256;
 	if (mapWidth == 0)
 	{
 		mapWidth = 256;
 	}
-	mapHeight = ServerRAM.RAM[0x3F02] + ServerRAM.RAM[0x3F03] * 256;
+	mapHeight = RAM[0x3F02] + RAM[0x3F03] * 256;
 
-	ServerRAM.RAM[0x3F0A] = networking;
+	RAM[0x3F0A] = networking;
 
-	LevelManager.start_x = ServerRAM.RAM[0x3F0B] + ServerRAM.RAM[0x3F0C] * 256;
-	LevelManager.start_y = ServerRAM.RAM[0x3F0D] + ServerRAM.RAM[0x3F0E] * 256;
+	LevelManager.start_x = RAM[0x3F0B] + RAM[0x3F0C] * 256;
+	LevelManager.start_y = RAM[0x3F0D] + RAM[0x3F0E] * 256;
 
 	CheckForPlayers();
 
@@ -87,7 +87,7 @@ void game_loop()
 	{
 		for (uint_fast16_t i = 0; i < 0x400; i++) //Clear OAM loop
 		{
-			ServerRAM.RAM[0x200 + i] = 0;
+			RAM[0x200 + i] = 0;
 		}
 		Sprites.process_all_sprites(); //we're processing sprites. we're either the server or a player in local mode.
 	}
@@ -128,16 +128,16 @@ void game_loop()
 		uint_fast8_t x_s_r = uint_fast8_t(CurrPlayer.X_SPEED * 16.0);
 		uint_fast8_t y_s_r = uint_fast8_t(CurrPlayer.Y_SPEED * 16.0);
 
-		ServerRAM.RAM[0x5000 + player - 1] = x_r;
-		ServerRAM.RAM[0x5100 + player - 1] = x_r >> 8;
-		ServerRAM.RAM[0x5200 + player - 1] = y_r;
-		ServerRAM.RAM[0x5300 + player - 1] = y_r >> 8;
-		ServerRAM.RAM[0x5400 + player - 1] = x_s_r;
-		ServerRAM.RAM[0x5500 + player - 1] = y_s_r;
-		ServerRAM.RAM[0x5600 + player - 1] = CurrPlayer.KO_counter;
-		ServerRAM.RAM[0x5700 + player - 1] = CurrPlayer.WO_counter;
-		ServerRAM.RAM[0x5800 + player - 1] = CurrPlayer.STATE;
-		ServerRAM.RAM[0x5900 + player - 1] = CurrPlayer.DEAD;
+		RAM[0x5000 + player - 1] = x_r;
+		RAM[0x5100 + player - 1] = x_r >> 8;
+		RAM[0x5200 + player - 1] = y_r;
+		RAM[0x5300 + player - 1] = y_r >> 8;
+		RAM[0x5400 + player - 1] = x_s_r;
+		RAM[0x5500 + player - 1] = y_s_r;
+		RAM[0x5600 + player - 1] = CurrPlayer.KO_counter;
+		RAM[0x5700 + player - 1] = CurrPlayer.WO_counter;
+		RAM[0x5800 + player - 1] = CurrPlayer.STATE;
+		RAM[0x5900 + player - 1] = CurrPlayer.DEAD;
 
 		if (!isClient && !CurrPlayer.DEAD)
 		{
@@ -148,7 +148,7 @@ void game_loop()
 
 
 	}
-	ServerRAM.RAM[0x3F0F] = uint_fast8_t(Mario.size());
+	RAM[0x3F0F] = uint_fast8_t(Mario.size());
 
 	PlayerInteraction();
 	ProcessChat();
@@ -160,11 +160,11 @@ void game_loop()
 	{
 		//cout << "clearing OAM";
 
-		if (ServerRAM.RAM[0x1411] != 0)
+		if (RAM[0x1411] != 0)
 		{
 			ASM.Write_To_Ram(0x1462, uint_fast32_t(camera_total_x), 2);
 		}
-		if (ServerRAM.RAM[0x1412] != 0)
+		if (RAM[0x1412] != 0)
 		{
 			ASM.Write_To_Ram(0x1464, uint_fast32_t(camera_total_y), 2);
 		}
@@ -175,7 +175,7 @@ void game_loop()
 			lua_run_main();
 		}
 
-		ServerRAM.RAM[0x14] = global_frame_counter % 256;
+		RAM[0x14] = global_frame_counter % 256;
 	}
 
 	ProcessHDMA();

@@ -26,13 +26,13 @@ void render_oam(uint_fast16_t offset_o = 0, int CameraX = 0, int CameraY = 0)
 	for (uint_fast16_t i = 0; i < 0x400; i += 8) //Tile, Size, XY (4 bytes), PAL, ANG, in total 8 bytes per entry. 0 to 7.
 	{
 
-		uint_fast8_t size = ServerRAM.RAM[offset_o + i + 1];
+		uint_fast8_t size = RAM[offset_o + i + 1];
 		int_fast16_t size_x = (size & 0xF) << 4;
 		int_fast16_t size_y = ((size >> 4) & 0xF) << 4;
-		int x_position = ServerRAM.RAM[offset_o + i + 2] + int_fast8_t(ServerRAM.RAM[offset_o + i + 3]) * 256;
-		int y_position = ServerRAM.RAM[offset_o + i + 4] + int_fast8_t(ServerRAM.RAM[offset_o + i + 5]) * 256;
-		uint_fast8_t flags = ServerRAM.RAM[offset_o + i + 6] >> 4;
-		uint_fast16_t tile = ServerRAM.RAM[offset_o + i] + ((flags & 1) << 8);
+		int x_position = RAM[offset_o + i + 2] + int_fast8_t(RAM[offset_o + i + 3]) * 256;
+		int y_position = RAM[offset_o + i + 4] + int_fast8_t(RAM[offset_o + i + 5]) * 256;
+		uint_fast8_t flags = RAM[offset_o + i + 6] >> 4;
+		uint_fast16_t tile = RAM[offset_o + i] + ((flags & 1) << 8);
 
 		if (tile != 0x0 &&
 			(x_position - CameraX) > (-size_x) && (x_position - CameraX) < (int(int_res_x) + size_x) &&
@@ -43,8 +43,8 @@ void render_oam(uint_fast16_t offset_o = 0, int CameraX = 0, int CameraY = 0)
 			{
 				blocks_on_screen += ((size_x >> 4) * (size_y >> 4)) * 4;
 			}
-			uint_fast8_t pal = ServerRAM.RAM[offset_o + i + 6] & 0xF;
-			double angle = (double(ServerRAM.RAM[offset_o + i + 7]) / 256.0) * 360.0;
+			uint_fast8_t pal = RAM[offset_o + i + 6] & 0xF;
+			double angle = (double(RAM[offset_o + i + 7]) / 256.0) * 360.0;
 			draw_tile_custom(x_position - CameraX, int_res_y - 32 - y_position + CameraY, size, angle, tile, pal, 
 				SDL_RendererFlip(
 				((flags >> 1) & 1) +
@@ -66,7 +66,7 @@ void render()
 		return;
 	}
 
-	if (ServerRAM.RAM[0x1493] > 0)
+	if (RAM[0x1493] > 0)
 	{
 		if (screen_darken < 255)
 		{
@@ -134,20 +134,20 @@ void render()
 	*/
 	for (uint_fast16_t i = 0; i < 256; i++)
 	{
-		uint_fast16_t c = ServerRAM.RAM[0x3D00 + i] + (ServerRAM.RAM[0x3E00 + i] << 8);
+		uint_fast16_t c = RAM[0x3D00 + i] + (RAM[0x3E00 + i] << 8);
 		palette_array[i] = 
 			0xFF000000 + (((c & 0x1F) << 3)) +
 			((((c >> 5) & 0x1F) << 3) << 8) +
 			(((c >> 10) << 3) << 16);
 	}
-	memcpy(VRAM, &ServerRAM.RAM[VRAM_Location], VRAM_Size * sizeof(uint_fast8_t));
+	memcpy(VRAM, &RAM[VRAM_Location], VRAM_Size * sizeof(uint_fast8_t));
 
 
 
 	MPlayer& LocalPlayer = get_mario(SelfPlayerNumber);
 	CameraX = int_fast16_t(LocalPlayer.CAMERA_X - ((int_res_x/2) - 8));
 	CameraY = int_fast16_t(max(0.0, LocalPlayer.CAMERA_Y - (int_res_y/2)));
-	if (ServerRAM.RAM[0x1887] > 0)
+	if (RAM[0x1887] > 0)
 	{
 		CameraY += (global_frame_counter % 3);
 	}
@@ -170,9 +170,9 @@ void render()
 
 	//Draw BG
 
-	if (ServerRAM.RAM[0x3F05] != curr_bg)
+	if (RAM[0x3F05] != curr_bg)
 	{
-		curr_bg = ServerRAM.RAM[0x3F05];
+		curr_bg = RAM[0x3F05];
 		SDL_DestroyTexture(bg_texture);
 		SDL_FreeSurface(bg_surface);
 		bg_surface = loadSurface(path + "Sprites/backgrounds/Background" + to_string(int(curr_bg)) + ".png");
@@ -185,8 +185,8 @@ void render()
 		for (int x = 0; x < 2; x++) {
 			for (int y = 0; y < 2; y++) {
 				RenderBackground(
-					(-int(double(CameraX) * (double(ServerRAM.RAM[0x3F06]) / 16.0) + ASM.Get_Ram(0x1466, 2)) % 512) + x * 512,
-					-272 + (int_res_y - 224) + (int(double(CameraY) * (double(ServerRAM.RAM[0x3F07]) / 16.0) + ASM.Get_Ram(0x1468, 2)) % 512) + y * -512);
+					(-int(double(CameraX) * (double(RAM[0x3F06]) / 16.0) + ASM.Get_Ram(0x1466, 2)) % 512) + x * 512,
+					-272 + (int_res_y - 224) + (int(double(CameraY) * (double(RAM[0x3F07]) / 16.0) + ASM.Get_Ram(0x1468, 2)) % 512) + y * -512);
 			}
 		}
 	}
@@ -251,9 +251,9 @@ void render()
 		SDL_DestroyTexture(screen_t_l1);
 		screen_t_l1 = SDL_CreateTextureFromSurface(ren, &screen_s_l1);
 
-		if (ServerRAM.RAM[0x40] != 0)
+		if (RAM[0x40] != 0)
 		{
-			SDL_SetTextureBlendMode(screen_t_l1, SDL_BlendMode(ServerRAM.RAM[0x40]));
+			SDL_SetTextureBlendMode(screen_t_l1, SDL_BlendMode(RAM[0x40]));
 		}
 		SDL_RenderCopy(ren, screen_t_l1, nullptr, &DestR);
 	}
@@ -341,7 +341,7 @@ void render()
 		VRAM[0xB800 + 16 + 192] = isClient ? 0xC : 0x1C; VRAM[0xB801 + 16 + 192] = 6;
 
 		//FCounter
-		draw_number_hex(29, 2, ServerRAM.RAM[0x14], 2);
+		draw_number_hex(29, 2, RAM[0x14], 2);
 
 		//Ping
 		VRAM[0xB800 + 56 + 192] = 0x16;	VRAM[0xB801 + 56 + 192] = 6;
@@ -407,7 +407,7 @@ void render()
 		pressed_select = stat;
 		if (stat)
 		{
-			ServerRAM.RAM[0x1DFC] = 0x15;
+			RAM[0x1DFC] = 0x15;
 			showing_player_list = !showing_player_list;
 		}
 	}

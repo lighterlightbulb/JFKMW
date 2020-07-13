@@ -58,32 +58,32 @@ public:
 
 	void process_sprite_logic(uint_fast8_t entry = 0)
 	{
-		x = double(ServerRAM.RAM[0x2100 + entry] + double(int_fast8_t(ServerRAM.RAM[0x2180 + entry])) * 256.0) + double(ServerRAM.RAM[0x2200 + entry]) / 256.0;
-		y = double(ServerRAM.RAM[0x2280 + entry] + double(int_fast8_t(ServerRAM.RAM[0x2300 + entry])) * 256.0) + double(ServerRAM.RAM[0x2380 + entry]) / 256.0;
+		x = double(RAM[0x2100 + entry] + double(int_fast8_t(RAM[0x2180 + entry])) * 256.0) + double(RAM[0x2200 + entry]) / 256.0;
+		y = double(RAM[0x2280 + entry] + double(int_fast8_t(RAM[0x2300 + entry])) * 256.0) + double(RAM[0x2380 + entry]) / 256.0;
 
-		if (ServerRAM.RAM[0x2600 + entry] & 0b100000) //if gravity bit is on
+		if (RAM[0x2600 + entry] & 0b100000) //if gravity bit is on
 		{
-			if (int_fast8_t(ServerRAM.RAM[0x2480 + entry]) > -82)
+			if (int_fast8_t(RAM[0x2480 + entry]) > -82)
 			{
-				int grav = ServerRAM.RAM[0x2880 + entry] & 0b1000 ? 2 : 3;
+				int grav = RAM[0x2880 + entry] & 0b1000 ? 2 : 3;
 
-				ServerRAM.RAM[0x2480 + entry] = max(-82, ServerRAM.RAM[0x2480 + entry] - grav);
+				RAM[0x2480 + entry] = max(-82, RAM[0x2480 + entry] - grav);
 			}
 		}
 
 
-		double xMove = double(double(int_fast8_t(ServerRAM.RAM[0x2400 + entry]))*16)/256.0;
-		double yMove = double(double(int_fast8_t(ServerRAM.RAM[0x2480 + entry]))*16)/256.0;
+		double xMove = double(double(int_fast8_t(RAM[0x2400 + entry]))*16)/256.0;
+		double yMove = double(double(int_fast8_t(RAM[0x2480 + entry]))*16)/256.0;
 
-		double x_size = double(ServerRAM.RAM[0x2500 + entry]);
-		double y_size = double(ServerRAM.RAM[0x2580 + entry]);
+		double x_size = double(RAM[0x2500 + entry]);
+		double y_size = double(RAM[0x2580 + entry]);
 
 		for (uint_fast8_t spr = 0; spr < 0x80; spr++)
 		{
-			if (spr != entry && ServerRAM.RAM[0x2000 + spr] == 4)
+			if (spr != entry && RAM[0x2000 + spr] == 4)
 			{
-				double t_x = double(ServerRAM.RAM[0x2100 + spr] + double(ServerRAM.RAM[0x2180 + spr]) * 256.0) + double(ServerRAM.RAM[0x2200 + spr]) / 256.0;
-				double t_y = double(ServerRAM.RAM[0x2280 + spr] + double(ServerRAM.RAM[0x2300 + spr]) * 256.0) + double(ServerRAM.RAM[0x2380 + spr]) / 256.0;
+				double t_x = double(RAM[0x2100 + spr] + double(RAM[0x2180 + spr]) * 256.0) + double(RAM[0x2200 + spr]) / 256.0;
+				double t_y = double(RAM[0x2280 + spr] + double(RAM[0x2300 + spr]) * 256.0) + double(RAM[0x2380 + spr]) / 256.0;
 
 				if (
 					t_x > (x - 16.0) &&
@@ -92,31 +92,31 @@ public:
 					t_y < (y + y_size)
 					)
 				{
-					ServerRAM.RAM[0x2700 + entry] = 0xFF;
+					RAM[0x2700 + entry] = 0xFF;
 				}
 			}
 		}
 
 		
-		if (ServerRAM.RAM[0x2600 + entry] & 0b1000000) //if solid bit is on
+		if (RAM[0x2600 + entry] & 0b1000000) //if solid bit is on
 		{
-			ServerRAM.RAM[0x2780 + entry] = 0;
-			bool g = ServerRAM.RAM[0x2000 + entry] == 2 || ServerRAM.RAM[0x2000 + entry] == 4;
+			RAM[0x2780 + entry] = 0;
+			bool g = RAM[0x2000 + entry] == 2 || RAM[0x2000 + entry] == 4;
 			if (!Move(xMove, 0.0, x_size, y_size, g))
 			{
-				//ServerRAM.RAM[0x2680 + entry] *= -1;
-				ServerRAM.RAM[0x2780 + entry] |= 0b00000001;
+				//RAM[0x2680 + entry] *= -1;
+				RAM[0x2780 + entry] |= 0b00000001;
 			}
 
 			if (!Move(0.0, yMove, x_size, y_size, g))
 			{
-				//ServerRAM.RAM[0x2480 + entry] = 0;
-				ServerRAM.RAM[0x2780 + entry] |= 0b00000010;
+				//RAM[0x2480 + entry] = 0;
+				RAM[0x2780 + entry] |= 0b00000010;
 			}
 		}
 		else
 		{
-			ServerRAM.RAM[0x2780 + entry] = 0;
+			RAM[0x2780 + entry] = 0;
 			x += xMove;
 			y += yMove;
 		}
@@ -126,24 +126,24 @@ public:
 		{
 			for (int i = 0; i < 32; i++)
 			{
-				ServerRAM.RAM[0x2000 + entry + (i * 128)] = 0;
+				RAM[0x2000 + entry + (i * 128)] = 0;
 			}
 			return;
 		}
 
-		ServerRAM.RAM[0x2100 + entry] = uint_fast8_t(int(x));
-		ServerRAM.RAM[0x2180 + entry] = uint_fast8_t(int(x) / 256);
-		ServerRAM.RAM[0x2200 + entry] = uint_fast8_t(int(x*256.0));
-		ServerRAM.RAM[0x2280 + entry] = uint_fast8_t(int(y));
-		ServerRAM.RAM[0x2300 + entry] = uint_fast8_t(int(y) / 256); 
-		ServerRAM.RAM[0x2380 + entry] = uint_fast8_t(int(y*256.0));
+		RAM[0x2100 + entry] = uint_fast8_t(int(x));
+		RAM[0x2180 + entry] = uint_fast8_t(int(x) / 256);
+		RAM[0x2200 + entry] = uint_fast8_t(int(x*256.0));
+		RAM[0x2280 + entry] = uint_fast8_t(int(y));
+		RAM[0x2300 + entry] = uint_fast8_t(int(y) / 256); 
+		RAM[0x2380 + entry] = uint_fast8_t(int(y*256.0));
 		if (x < 0)
 		{
-			ServerRAM.RAM[0x2180 + entry] -= 1;
+			RAM[0x2180 + entry] -= 1;
 		}
 		if (y < 0)
 		{
-			ServerRAM.RAM[0x2300 + entry] -= 1;
+			RAM[0x2300 + entry] -= 1;
 		}
 	}
 
@@ -271,7 +271,7 @@ public:
 			//lua_print("Error occurred when calling luaL_loadfile()");
 			lua_print("Error: " + string(lua_tostring(SPR_STATE[index], -1)));
 			//lua_close(SPR_STATE[index]);
-			ServerRAM.RAM[0x2000 + index] = 0;
+			RAM[0x2000 + index] = 0;
 			return;
 		}
 
@@ -285,37 +285,37 @@ public:
 	{
 		for (uint_fast32_t i = 0; i < 128; i++)
 		{
-			if (ServerRAM.RAM[0x2000 + i] != 0) //If sprite exists..
+			if (RAM[0x2000 + i] != 0) //If sprite exists..
 			{
-				if (ServerRAM.RAM[0x2F80 + i] == 0)
+				if (RAM[0x2F80 + i] == 0)
 				{
-					if (ServerRAM.RAM[0x2800 + i])
+					if (RAM[0x2800 + i])
 					{
-						init_sprite_lua(int(i), "Code/Sprites/" + int_to_hex(ServerRAM.RAM[0x2080 + i], true) + ".lua");
+						init_sprite_lua(int(i), "Code/Sprites/" + int_to_hex(RAM[0x2080 + i], true) + ".lua");
 					}
-					ServerRAM.RAM[0x2F80 + i] = 1;
+					RAM[0x2F80 + i] = 1;
 				}
 				else
 				{
 					process_sprite_logic(uint_fast8_t(i));
 
-					if (ServerRAM.RAM[0x2000 + i] == 0)
+					if (RAM[0x2000 + i] == 0)
 					{
 						continue;
 					}
 				}
-				if (ServerRAM.RAM[0x2800 + i])
+				if (RAM[0x2800 + i])
 				{
 					call_sprite_lua(i);
 				}
 				else
 				{
-					ASM.load_asm("Code/Sprites/" + to_string(ServerRAM.RAM[0x2080 + i]) + ".oasm");
+					ASM.load_asm("Code/Sprites/" + to_string(RAM[0x2080 + i]) + ".oasm");
 					ASM.x = i;
 					ASM.start_JFK_thread();
 					if (ASM.crashed)
 					{
-						ServerRAM.RAM[0x2000 + i] = 0;
+						RAM[0x2000 + i] = 0;
 					}
 
 				

@@ -12,7 +12,7 @@ void process_ex_animation()
 		{
 			for (int b = 0; b < 32; b++)
 			{
-				ServerRAM.RAM[VRAM_Location + (32 * 0x60) + (i * 32) + b] = ServerRAM.RAM[VRAM_Location + 0x8000 + (0xC0 * 32) + b + (i * 32) + (((global_frame_counter / 8) % 4) * 0x10 * 32)];
+				RAM[VRAM_Location + (32 * 0x60) + (i * 32) + b] = RAM[VRAM_Location + 0x8000 + (0xC0 * 32) + b + (i * 32) + (((global_frame_counter / 8) % 4) * 0x10 * 32)];
 			}
 		}
 
@@ -21,7 +21,7 @@ void process_ex_animation()
 		{
 			for (int b = 0; b < 32; b++)
 			{
-				ServerRAM.RAM[VRAM_Location + (32 * 0x58) + (i * 32) + b] = ServerRAM.RAM[VRAM_Location + 0x8000 + (0xB4 * 32) + b + (i * 32)];
+				RAM[VRAM_Location + (32 * 0x58) + (i * 32) + b] = RAM[VRAM_Location + 0x8000 + (0xB4 * 32) + b + (i * 32)];
 			}
 		}
 
@@ -30,7 +30,7 @@ void process_ex_animation()
 		{
 			for (int b = 0; b < 32; b++)
 			{
-				ServerRAM.RAM[VRAM_Location + (32 * 0x5C) + (i * 32) + b] = ServerRAM.RAM[VRAM_Location + 0x8000 + b + ((0xF8 + 0x40) * 32) + (i * 32) + ((global_frame_counter / 8) % 2) * 0x80];
+				RAM[VRAM_Location + (32 * 0x5C) + (i * 32) + b] = RAM[VRAM_Location + 0x8000 + b + ((0xF8 + 0x40) * 32) + (i * 32) + ((global_frame_counter / 8) % 2) * 0x80];
 			}
 		}
 
@@ -39,7 +39,7 @@ void process_ex_animation()
 		{
 			for (int b = 0; b < 32; b++)
 			{
-				ServerRAM.RAM[VRAM_Location + (32 * 0x6C) + (i * 32) + b] = ServerRAM.RAM[VRAM_Location + 0x8000 + (0xCC * 32) + b + (i * 32) + (((global_frame_counter / 8) % 4) * 0x10 * 32)];
+				RAM[VRAM_Location + (32 * 0x6C) + (i * 32) + b] = RAM[VRAM_Location + 0x8000 + (0xCC * 32) + b + (i * 32) + (((global_frame_counter / 8) % 4) * 0x10 * 32)];
 			}
 		}
 
@@ -48,7 +48,7 @@ void process_ex_animation()
 		{
 			for (int b = 0; b < 32; b++)
 			{
-				ServerRAM.RAM[VRAM_Location + (32 * 0xDA) + (i * 32) + b] = ServerRAM.RAM[VRAM_Location + 0x8000 + ((0xA0 + (ServerRAM.RAM[0x14AF] << 4)) * 32) + b + (i * 32)];
+				RAM[VRAM_Location + (32 * 0xDA) + (i * 32) + b] = RAM[VRAM_Location + 0x8000 + ((0xA0 + (RAM[0x14AF] << 4)) * 32) + b + (i * 32)];
 			}
 		}
 
@@ -58,8 +58,8 @@ void process_ex_animation()
 		{
 			for (int b = 0; b < 32; b++)
 			{
-				ServerRAM.RAM[VRAM_Location + (32 * 0xAC) + (i * 32) + b] = ServerRAM.RAM[VRAM_Location + 0x8000 + ((0xC8 + (ServerRAM.RAM[0x14AF] << 5)) * 32) + b + (i * 32)];
-				ServerRAM.RAM[VRAM_Location + (32 * 0xCC) + (i * 32) + b] = ServerRAM.RAM[VRAM_Location + 0x8000 + ((0xE8 - (ServerRAM.RAM[0x14AF] << 5)) * 32) + b + (i * 32)];
+				RAM[VRAM_Location + (32 * 0xAC) + (i * 32) + b] = RAM[VRAM_Location + 0x8000 + ((0xC8 + (RAM[0x14AF] << 5)) * 32) + b + (i * 32)];
+				RAM[VRAM_Location + (32 * 0xCC) + (i * 32) + b] = RAM[VRAM_Location + 0x8000 + ((0xE8 - (RAM[0x14AF] << 5)) * 32) + b + (i * 32)];
 			}
 		}
 	}

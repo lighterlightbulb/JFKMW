@@ -96,7 +96,7 @@ void server_code(string level = "")
 
 			string r = ""; cout << "RAM $ to modify : "; cin >> r;
 			string v = ""; cout << "New Value (hex) : "; cin >> v;
-			ServerRAM.RAM[stoi(r, nullptr, 16)] = uint_fast8_t(stoi(v, nullptr, 16));
+			RAM[stoi(r, nullptr, 16)] = uint_fast8_t(stoi(v, nullptr, 16));
 		}
 		if (getKey(0x75))
 		{

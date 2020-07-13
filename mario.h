@@ -98,7 +98,7 @@ public:
 	{
 		if (!DEAD)
 		{
-			if (ServerRAM.RAM[0x1493] == 0)
+			if (RAM[0x1493] == 0)
 			{
 				WO_counter += 1;
 				ASM.Write_To_Ram(0x1DFC, 100, 1);
@@ -151,7 +151,7 @@ public:
 		//Controller buttons currently held down. Format: byetUDLR.
 		//b = A or B; y = X or Y; e = select; t = Start; U = up; D = down; L = left, R = right.
 
-		if (ServerRAM.RAM[0x1493] > 0 || Chatting)
+		if (RAM[0x1493] > 0 || Chatting)
 		{
 			for (int inputs = 0; inputs < total_inputs; inputs++)
 			{
@@ -249,41 +249,41 @@ public:
 		{
 			
 			//cout << "Player 1 is holding sprite " << int(GRABBED_SPRITE) << endl;
-			if (!in_pipe && ((!pad[button_y] || DEAD) || ServerRAM.RAM[0x2000 + GRABBED_SPRITE] != 3))
+			if (!in_pipe && ((!pad[button_y] || DEAD) || RAM[0x2000 + GRABBED_SPRITE] != 3))
 			{
 				
 				uint_fast16_t x_position = uint_fast16_t(double(x + to_scale * -15.0));
 				uint_fast16_t y_position = uint_fast16_t(double(y - (STATE > 0 ? 13.0 : 16.0)) + 17.0);
-				ServerRAM.RAM[0x2100 + GRABBED_SPRITE] = uint_fast8_t(x_position & 0xFF);
-				ServerRAM.RAM[0x2180 + GRABBED_SPRITE] = uint_fast8_t(x_position >> 8);
-				ServerRAM.RAM[0x2200 + GRABBED_SPRITE] = 0x00;
+				RAM[0x2100 + GRABBED_SPRITE] = uint_fast8_t(x_position & 0xFF);
+				RAM[0x2180 + GRABBED_SPRITE] = uint_fast8_t(x_position >> 8);
+				RAM[0x2200 + GRABBED_SPRITE] = 0x00;
 
-				ServerRAM.RAM[0x2280 + GRABBED_SPRITE] = uint_fast8_t(y_position & 0xFF);
-				ServerRAM.RAM[0x2300 + GRABBED_SPRITE] = uint_fast8_t(y_position >> 8);
-				ServerRAM.RAM[0x2380 + GRABBED_SPRITE] = 0x00;
-				ServerRAM.RAM[0x2E00 + GRABBED_SPRITE] = 0x10;
-				ServerRAM.RAM[0x2780 + GRABBED_SPRITE] = 0;
+				RAM[0x2280 + GRABBED_SPRITE] = uint_fast8_t(y_position & 0xFF);
+				RAM[0x2300 + GRABBED_SPRITE] = uint_fast8_t(y_position >> 8);
+				RAM[0x2380 + GRABBED_SPRITE] = 0x00;
+				RAM[0x2E00 + GRABBED_SPRITE] = 0x10;
+				RAM[0x2780 + GRABBED_SPRITE] = 0;
 
-				ServerRAM.RAM[0x2000 + GRABBED_SPRITE] = 0x02;
+				RAM[0x2000 + GRABBED_SPRITE] = 0x02;
 
 
 
-				ServerRAM.RAM[0x2480 + GRABBED_SPRITE] = 0;
-				ServerRAM.RAM[0x2400 + GRABBED_SPRITE] = uint_fast8_t(int_fast8_t(to_scale * -4)) + uint_fast8_t(int_fast8_t(X_SPEED * 16.0));
+				RAM[0x2480 + GRABBED_SPRITE] = 0;
+				RAM[0x2400 + GRABBED_SPRITE] = uint_fast8_t(int_fast8_t(to_scale * -4)) + uint_fast8_t(int_fast8_t(X_SPEED * 16.0));
 
 				if (pad[button_up])
 				{
-					ServerRAM.RAM[0x2480 + GRABBED_SPRITE] = 0x70;
-					ServerRAM.RAM[0x2400 + GRABBED_SPRITE] = uint_fast8_t(int_fast8_t(X_SPEED * 8.0));
+					RAM[0x2480 + GRABBED_SPRITE] = 0x70;
+					RAM[0x2400 + GRABBED_SPRITE] = uint_fast8_t(int_fast8_t(X_SPEED * 8.0));
 					ASM.Write_To_Ram(0x1DF9, 0x3, 1);
 				}
 				if (!pad[button_up])
 				{
-					if ((ServerRAM.RAM[0x2E80 + GRABBED_SPRITE] > 0x80 && (!pad[button_down])) || (pad[button_right] || pad[button_left]))
+					if ((RAM[0x2E80 + GRABBED_SPRITE] > 0x80 && (!pad[button_down])) || (pad[button_right] || pad[button_left]))
 					{
-						ServerRAM.RAM[0x2680 + GRABBED_SPRITE] = int_fast8_t(to_scale);
-						ServerRAM.RAM[0x2000 + GRABBED_SPRITE] = 0x04;
-						ServerRAM.RAM[0x2480 + GRABBED_SPRITE] = 0x00;
+						RAM[0x2680 + GRABBED_SPRITE] = int_fast8_t(to_scale);
+						RAM[0x2000 + GRABBED_SPRITE] = 0x04;
+						RAM[0x2480 + GRABBED_SPRITE] = 0x00;
 						ASM.Write_To_Ram(0x1DF9, 0x3, 1);
 					}
 				}
@@ -332,22 +332,22 @@ public:
 		*/
 		for (uint_fast8_t sprite = 0; sprite < 128; sprite++)
 		{
-			if (ServerRAM.RAM[0x2000 + sprite] != 0)
+			if (RAM[0x2000 + sprite] != 0)
 			{
-				double sprite_x = double(ServerRAM.RAM[0x2100 + sprite] + int(int_fast8_t(ServerRAM.RAM[0x2180 + sprite])) * 256) + double(ServerRAM.RAM[0x2200 + sprite]) / 256.0;
-				double sprite_y = double(ServerRAM.RAM[0x2280 + sprite] + int(int_fast8_t(ServerRAM.RAM[0x2300 + sprite])) * 256) + double(ServerRAM.RAM[0x2380 + sprite]) / 256.0;
-				double sprite_x_size = double(ServerRAM.RAM[0x2500 + sprite]);
-				double sprite_y_size = double(ServerRAM.RAM[0x2580 + sprite]);
+				double sprite_x = double(RAM[0x2100 + sprite] + int(int_fast8_t(RAM[0x2180 + sprite])) * 256) + double(RAM[0x2200 + sprite]) / 256.0;
+				double sprite_y = double(RAM[0x2280 + sprite] + int(int_fast8_t(RAM[0x2300 + sprite])) * 256) + double(RAM[0x2380 + sprite]) / 256.0;
+				double sprite_x_size = double(RAM[0x2500 + sprite]);
+				double sprite_y_size = double(RAM[0x2580 + sprite]);
 
 				double BelowSprite = sprite_y - height;
 				double AboveSprite = sprite_y + sprite_y_size;
 				double RightSprite = sprite_x + sprite_x_size;
 				double LeftSprite = sprite_x - 16.0;
 
-				bool checkRight = ServerRAM.RAM[0x2600 + sprite] & 0b1;
-				bool checkLeft = ServerRAM.RAM[0x2600 + sprite] & 0b10;
-				bool checkBottom = ServerRAM.RAM[0x2600 + sprite] & 0b100;
-				bool checkTop = ServerRAM.RAM[0x2600 + sprite] & 0b1000;
+				bool checkRight = RAM[0x2600 + sprite] & 0b1;
+				bool checkLeft = RAM[0x2600 + sprite] & 0b10;
+				bool checkBottom = RAM[0x2600 + sprite] & 0b100;
+				bool checkTop = RAM[0x2600 + sprite] & 0b1000;
 
 				bool results[4] = { false,false,false,false };
 
@@ -355,9 +355,9 @@ public:
 
 				if (NewPositionX < RightSprite && NewPositionX > LeftSprite && NewPositionY < AboveSprite && NewPositionY > BelowSprite)
 				{
-					if (ServerRAM.RAM[0x2600 + sprite] & 0b10000000)
+					if (RAM[0x2600 + sprite] & 0b10000000)
 					{
-						if (ServerRAM.RAM[0x2600 + sprite] & 0b10000)
+						if (RAM[0x2600 + sprite] & 0b10000)
 						{
 							if (NewPositionY > (AboveSprite - bounds_y))
 							{
@@ -365,15 +365,15 @@ public:
 								NewPositionY += 1;
 								if (jump_is_spin)
 								{
-									if (ServerRAM.RAM[0x2880 + sprite] & 1)
+									if (RAM[0x2880 + sprite] & 1)
 									{
-										if (ServerRAM.RAM[0x2880 + sprite] & 2)
+										if (RAM[0x2880 + sprite] & 2)
 										{
-											ServerRAM.RAM[0x2A00 + sprite] = 0x01;
+											RAM[0x2A00 + sprite] = 0x01;
 										}
 										else
 										{
-											ServerRAM.RAM[0x2000 + sprite] = 0;
+											RAM[0x2000 + sprite] = 0;
 										}
 										Y_SPEED = Calculate_Speed(128);
 										ASM.Write_To_Ram(0x1DF9, 0x8, 1);
@@ -428,9 +428,9 @@ public:
 						}
 						if (do_change)
 						{
-							NewPositionX += double(int_fast8_t(ServerRAM.RAM[0x2400 + sprite]) * 16) / 256.0;
-							NewPositionY += double(int_fast8_t(ServerRAM.RAM[0x2480 + sprite]) * 16) / 256.0;
-							xMove = double(int_fast8_t(ServerRAM.RAM[0x2400 + sprite]) * 16) / 256.0;
+							NewPositionX += double(int_fast8_t(RAM[0x2400 + sprite]) * 16) / 256.0;
+							NewPositionY += double(int_fast8_t(RAM[0x2480 + sprite]) * 16) / 256.0;
+							xMove = double(int_fast8_t(RAM[0x2400 + sprite]) * 16) / 256.0;
 						}
 
 
@@ -442,27 +442,27 @@ public:
 						results[3] = true;
 					}
 
-					ServerRAM.RAM[0x2700 + sprite] = 0;
+					RAM[0x2700 + sprite] = 0;
 					for (uint_fast8_t i = 0; i < 4; i++)
 					{
-						ServerRAM.RAM[0x2700 + sprite] += results[i] << i;
+						RAM[0x2700 + sprite] += results[i] << i;
 					}
 
 					//Death kick
-					if (ServerRAM.RAM[0x2880 + sprite] & 4)
+					if (RAM[0x2880 + sprite] & 4)
 					{
-						ServerRAM.RAM[0x2000 + sprite] = 0;
+						RAM[0x2000 + sprite] = 0;
 
 						ASM.Write_To_Ram(0x1DF9, 3, 1);
 					}
 
 					//Powerups
-					if (ServerRAM.RAM[0x2000 + sprite] == 5)
+					if (RAM[0x2000 + sprite] == 5)
 					{
 
 						if (!networking)
 						{
-							ServerRAM.RAM[0x2000 + sprite] = 0;
+							RAM[0x2000 + sprite] = 0;
 
 							if (STATE == 0)
 							{
@@ -486,27 +486,27 @@ public:
 					//Grabbing
 					if (GRABBED_SPRITE == 0xFF)
 					{
-						if (ServerRAM.RAM[0x2000 + sprite] == 2 && ServerRAM.RAM[0x2E00 + sprite] == 0)
+						if (RAM[0x2000 + sprite] == 2 && RAM[0x2E00 + sprite] == 0)
 						{
 							if (pad[button_y])
 							{
-								ServerRAM.RAM[0x2000 + sprite] = 3;
+								RAM[0x2000 + sprite] = 3;
 								GRABBED_SPRITE = sprite;
 							}
 							else
 							{
-								if ((ServerRAM.RAM[0x2880 + sprite] & 2) && jump_is_spin && ServerRAM.RAM[0x2080 + sprite] != 0x53)
+								if ((RAM[0x2880 + sprite] & 2) && jump_is_spin && RAM[0x2080 + sprite] != 0x53)
 								{
-									ServerRAM.RAM[0x2A00 + sprite] = 0x01;
-									ServerRAM.RAM[0x2000 + sprite] = 0x01;
+									RAM[0x2A00 + sprite] = 0x01;
+									RAM[0x2000 + sprite] = 0x01;
 									Y_SPEED = Calculate_Speed(128);
 									ASM.Write_To_Ram(0x1DF9, 0x8, 1);
 								}
 								else
 								{
-									ServerRAM.RAM[0x2680 + sprite] = int_fast8_t(to_scale);
-									ServerRAM.RAM[0x2000 + sprite] = 4;
-									ServerRAM.RAM[0x2E00 + sprite] = 0x10;
+									RAM[0x2680 + sprite] = int_fast8_t(to_scale);
+									RAM[0x2000 + sprite] = 4;
+									RAM[0x2E00 + sprite] = 0x10;
 
 									ASM.Write_To_Ram(0x1DF9, 3, 1);
 
@@ -668,7 +668,7 @@ public:
 					if (spawned_grabbable != 0xFF)
 					{
 						GRABBED_SPRITE = spawned_grabbable;
-						ServerRAM.RAM[0x2000 + GRABBED_SPRITE] = 0x03;
+						RAM[0x2000 + GRABBED_SPRITE] = 0x03;
 					}
 					spawned_grabbable = 0xFF;
 				}
@@ -810,24 +810,24 @@ public:
 			uint_fast16_t oam_index = 0;
 			while (oam_index < 0x400)
 			{
-				if (ServerRAM.RAM[0x200 + oam_index] == 0 && ServerRAM.RAM[0x206 + oam_index] == 0) { //Empty OAM slot found
+				if (RAM[0x200 + oam_index] == 0 && RAM[0x206 + oam_index] == 0) { //Empty OAM slot found
 					break;
 				}
 				oam_index += 8;
 			}
 
 
-			ServerRAM.RAM[0x200 + oam_index] = 0x44;
-			ServerRAM.RAM[0x201 + oam_index] = 0x11;
+			RAM[0x200 + oam_index] = 0x44;
+			RAM[0x201 + oam_index] = 0x11;
 
-			ServerRAM.RAM[0x202 + oam_index] = flash_x;
-			ServerRAM.RAM[0x203 + oam_index] = flash_x >> 8;
+			RAM[0x202 + oam_index] = flash_x;
+			RAM[0x203 + oam_index] = flash_x >> 8;
 
-			ServerRAM.RAM[0x204 + oam_index] = flash_y;
-			ServerRAM.RAM[0x205 + oam_index] = flash_y >> 8;
+			RAM[0x204 + oam_index] = flash_y;
+			RAM[0x205 + oam_index] = flash_y >> 8;
 
-			ServerRAM.RAM[0x206 + oam_index] = 0x08 | (((flash_timer / 2) % 2) * 0x20);
-			ServerRAM.RAM[0x207 + oam_index] = 0;
+			RAM[0x206 + oam_index] = 0x08 | (((flash_timer / 2) % 2) * 0x20);
+			RAM[0x207 + oam_index] = 0;
 
 			flash_timer -= 1;
 		}
@@ -837,7 +837,7 @@ public:
 	int Process()
 	{
 		//X_SPEED = 10;
-		if (ServerRAM.RAM[0x1493] > 0 && ServerRAM.RAM[0x1493] < 8)
+		if (RAM[0x1493] > 0 && RAM[0x1493] < 8)
 		{
 			CAMERA_X /= 2;
 			CAMERA_Y /= 2;
@@ -870,7 +870,7 @@ public:
 			INVINCIBILITY_FRAMES -= 1;
 		}
 
-		double GRAV = -double(ServerRAM.RAM[0x7C]);
+		double GRAV = -double(RAM[0x7C]);
 		bool RUN = false;
 		bool MOV = false;
 		bool SLIGHT_HIGH_SPEED = false;
@@ -1079,10 +1079,10 @@ public:
 				Y_SPEED = Calculate_Speed(-1312.0);
 			}
 
-			if (!Move(X_SPEED + Calculate_Speed(double(int_fast8_t(ServerRAM.RAM[0x7B])) * 16.0), 0.0)) {
+			if (!Move(X_SPEED + Calculate_Speed(double(int_fast8_t(RAM[0x7B])) * 16.0), 0.0)) {
 				X_SPEED = 0.0;
 			}
-			if (!Move(0.0, Y_SPEED + Calculate_Speed(double(int_fast8_t(ServerRAM.RAM[0x7D])) * 16.0))) {
+			if (!Move(0.0, Y_SPEED + Calculate_Speed(double(int_fast8_t(RAM[0x7D])) * 16.0))) {
 				if (SLOPE_TYPE)
 				{
 					if (Y_SPEED > 0) { Y_SPEED = 0; }
@@ -1098,9 +1098,9 @@ public:
 		pressed_y = false;
 		Get_Sprite();
 
-		if (ServerRAM.RAM[0x1411] == 0)
+		if (RAM[0x1411] == 0)
 		{
-			int min_x = ServerRAM.RAM[0x1462] + ServerRAM.RAM[0x1463] * 256;
+			int min_x = RAM[0x1462] + RAM[0x1463] * 256;
 			if (int(x) < (min_x + 8))
 			{
 				x = double(min_x + 8);
@@ -1109,13 +1109,13 @@ public:
 			{
 				x = double(min_x + 256 - 24);
 			}
-			CAMERA_X = double(120 + ServerRAM.RAM[0x1462] + ServerRAM.RAM[0x1463] * 256);
+			CAMERA_X = double(120 + RAM[0x1462] + RAM[0x1463] * 256);
 		}
 		else
 		{
 			//Camera lol
 
-			if (ServerRAM.RAM[0x1493] == 0)
+			if (RAM[0x1493] == 0)
 			{
 				double new_x = x;
 
@@ -1147,11 +1147,11 @@ public:
 			}
 		}
 
-		if (ServerRAM.RAM[0x1412] == 0) {
-			CAMERA_Y = double(104 + ServerRAM.RAM[0x1464] + ServerRAM.RAM[0x1465] * 256);
+		if (RAM[0x1412] == 0) {
+			CAMERA_Y = double(104 + RAM[0x1464] + RAM[0x1465] * 256);
 		}
 		else {
-			if (ServerRAM.RAM[0x1493] == 0)
+			if (RAM[0x1493] == 0)
 			{
 				double new_y = (y + 16);
 

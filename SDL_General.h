@@ -205,7 +205,7 @@ void cls()
 {
 	PrepareRendering();
 
-	uint_fast16_t c = ServerRAM.RAM[0x3D00] + (ServerRAM.RAM[0x3E00] << 8);
+	uint_fast16_t c = RAM[0x3D00] + (RAM[0x3E00] << 8);
 	SDL_SetRenderDrawColor(ren, (c & 0x1F) << 3, ((c >> 5) & 0x1F) << 3, (c >> 10) << 3, 255);
 	SDL_RenderClear(ren);
 }
@@ -262,8 +262,8 @@ void read_from_palette(string file)
 
 		if (curr)
 		{
-			ServerRAM.RAM[0x3D00 + curr_p] = current_buffer[0];
-			ServerRAM.RAM[0x3E00 + curr_p] = current_buffer[1];
+			RAM[0x3D00 + curr_p] = current_buffer[0];
+			RAM[0x3E00 + curr_p] = current_buffer[1];
 
 			curr_p++;
 		}
@@ -289,7 +289,7 @@ void decode_graphics_file(string file, int offset = 0)
 	int current_byte = 0;
 	for (auto& v : buffer)
 	{
-		ServerRAM.RAM[VRAM_Location + (offset)+current_byte] = uint_fast8_t(v);
+		RAM[VRAM_Location + (offset)+current_byte] = uint_fast8_t(v);
 		current_byte++;
 	}
 

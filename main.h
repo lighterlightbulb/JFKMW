@@ -102,8 +102,8 @@ void player_code()
 				for (int y = 0; y < 2; y++)
 				{
 					RenderBackground(
-						(-int(double(CameraX) * (double(ServerRAM.RAM[0x3F06]) / 16.0)) % 512) + x * 512,
-						-272 + (int_res_y - 224) +(int(double(CameraY) * (double(ServerRAM.RAM[0x3F07]) / 16.0)) % 512) + y * -512);
+						(-int(double(CameraX) * (double(RAM[0x3F06]) / 16.0)) % 512) + x * 512,
+						-272 + (int_res_y - 224) +(int(double(CameraY) * (double(RAM[0x3F07]) / 16.0)) % 512) + y * -512);
 				}
 			}
 			//Copied from renderer.h

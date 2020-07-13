@@ -77,7 +77,7 @@ static int draw_to_oam(lua_State* L)
 	uint_fast16_t oam_index = 0;
 	while (oam_index < 0x400)
 	{
-		if (ServerRAM.RAM[0x200 + oam_index] == 0 && ServerRAM.RAM[0x206 + oam_index] == 0) //Founmd a empty OAM slot
+		if (RAM[0x200 + oam_index] == 0 && RAM[0x206 + oam_index] == 0) //Founmd a empty OAM slot
 		{
 			break;
 		}
@@ -85,22 +85,22 @@ static int draw_to_oam(lua_State* L)
 	}
 
 
-	ServerRAM.RAM[0x200 + oam_index] = tile;
-	ServerRAM.RAM[0x201 + oam_index] = size;
+	RAM[0x200 + oam_index] = tile;
+	RAM[0x201 + oam_index] = size;
 
 
-	uint_fast16_t sprite_x_position = uint_fast16_t(int(offset_x + ServerRAM.RAM[0x2100 + sprite_index] + int_fast8_t(ServerRAM.RAM[0x2180 + sprite_index]) * 256));
-	uint_fast16_t sprite_y_position = uint_fast16_t(int(offset_y + ServerRAM.RAM[0x2280 + sprite_index] + int_fast8_t(ServerRAM.RAM[0x2300 + sprite_index]) * 256));
+	uint_fast16_t sprite_x_position = uint_fast16_t(int(offset_x + RAM[0x2100 + sprite_index] + int_fast8_t(RAM[0x2180 + sprite_index]) * 256));
+	uint_fast16_t sprite_y_position = uint_fast16_t(int(offset_y + RAM[0x2280 + sprite_index] + int_fast8_t(RAM[0x2300 + sprite_index]) * 256));
 
 
-	ServerRAM.RAM[0x202 + oam_index] = sprite_x_position;
-	ServerRAM.RAM[0x203 + oam_index] = sprite_x_position >> 8;
+	RAM[0x202 + oam_index] = sprite_x_position;
+	RAM[0x203 + oam_index] = sprite_x_position >> 8;
 
-	ServerRAM.RAM[0x204 + oam_index] = sprite_y_position;
-	ServerRAM.RAM[0x205 + oam_index] = sprite_y_position >> 8;
+	RAM[0x204 + oam_index] = sprite_y_position;
+	RAM[0x205 + oam_index] = sprite_y_position >> 8;
 
-	ServerRAM.RAM[0x206 + oam_index] = pal;
-	ServerRAM.RAM[0x207 + oam_index] = angle;
+	RAM[0x206 + oam_index] = pal;
+	RAM[0x207 + oam_index] = angle;
 
 	return 0;
 }
@@ -117,24 +117,24 @@ static int draw_to_oam_direct(lua_State* L)
 	uint_fast16_t oam_index = 0;
 	while (oam_index < 0x400)
 	{
-		if (ServerRAM.RAM[0x200 + oam_index] == 0 && ServerRAM.RAM[0x206 + oam_index] == 0) //Founmd a empty OAM slot
+		if (RAM[0x200 + oam_index] == 0 && RAM[0x206 + oam_index] == 0) //Founmd a empty OAM slot
 		{
 			break;
 		}
 		oam_index += 8;
 	}
 
-	ServerRAM.RAM[0x200 + oam_index] = tile;
-	ServerRAM.RAM[0x201 + oam_index] = size;
+	RAM[0x200 + oam_index] = tile;
+	RAM[0x201 + oam_index] = size;
 
-	ServerRAM.RAM[0x202 + oam_index] = sprite_x_position;
-	ServerRAM.RAM[0x203 + oam_index] = sprite_x_position >> 8;
+	RAM[0x202 + oam_index] = sprite_x_position;
+	RAM[0x203 + oam_index] = sprite_x_position >> 8;
 
-	ServerRAM.RAM[0x204 + oam_index] = sprite_y_position;
-	ServerRAM.RAM[0x205 + oam_index] = sprite_y_position >> 8;
+	RAM[0x204 + oam_index] = sprite_y_position;
+	RAM[0x205 + oam_index] = sprite_y_position >> 8;
 
-	ServerRAM.RAM[0x206 + oam_index] = pal;
-	ServerRAM.RAM[0x207 + oam_index] = angle;
+	RAM[0x206 + oam_index] = pal;
+	RAM[0x207 + oam_index] = angle;
 
 	return 0;
 }
@@ -168,8 +168,8 @@ static int drawtohud(lua_State* L)
 	uint_fast8_t x = (uint_fast8_t)lua_tonumber(L, 3) & 0x1F;
 	uint_fast8_t y = (uint_fast8_t)lua_tonumber(L, 4) & 0x1F;
 
-	ServerRAM.RAM[0x1B800 + ((x % 32) + (y * 32))*2] = tile;
-	ServerRAM.RAM[0x1B801 + ((x % 32) + (y * 32))*2] = prop;
+	RAM[0x1B800 + ((x % 32) + (y * 32))*2] = tile;
+	RAM[0x1B801 + ((x % 32) + (y * 32))*2] = prop;
 	return 0;
 }
 

@@ -241,20 +241,20 @@ public:
 						vector<string> v = split(line.c_str(), ',');
 
 
-						/*ServerRAM.RAM[0x2800 + spr_index] = v[0] == "lua" ? 1 : 0;
+						/*RAM[0x2800 + spr_index] = v[0] == "lua" ? 1 : 0;
 
-						ServerRAM.RAM[0x2000 + spr_index] = 1;
-						ServerRAM.RAM[0x2080 + spr_index] = stoi(v[1], nullptr, 16);
-						ServerRAM.RAM[0x2100 + spr_index] = stoi(v[2]) % 256;
-						ServerRAM.RAM[0x2180 + spr_index] = stoi(v[2]) / 256;
-						ServerRAM.RAM[0x2200 + spr_index] = 0;
+						RAM[0x2000 + spr_index] = 1;
+						RAM[0x2080 + spr_index] = stoi(v[1], nullptr, 16);
+						RAM[0x2100 + spr_index] = stoi(v[2]) % 256;
+						RAM[0x2180 + spr_index] = stoi(v[2]) / 256;
+						RAM[0x2200 + spr_index] = 0;
 
-						ServerRAM.RAM[0x2280 + spr_index] = stoi(v[3]) % 256;
-						ServerRAM.RAM[0x2300 + spr_index] = stoi(v[3]) / 256;
-						ServerRAM.RAM[0x2380 + spr_index] = 0;
+						RAM[0x2280 + spr_index] = stoi(v[3]) % 256;
+						RAM[0x2300 + spr_index] = stoi(v[3]) / 256;
+						RAM[0x2380 + spr_index] = 0;
 
-						ServerRAM.RAM[0x2680 + spr_index] = stoi(v[4]);
-						ServerRAM.RAM[0x2F80 + spr_index] = 0;*/
+						RAM[0x2680 + spr_index] = stoi(v[4]);
+						RAM[0x2F80 + spr_index] = 0;*/
 
 						LevelSprites.push_back(
 							LevelSprite{
@@ -339,8 +339,8 @@ public:
 			ASM.Write_To_Ram(0x3F0B, request_level_entry("start_x") * 16, 2);
 			ASM.Write_To_Ram(0x3F0D, request_level_entry("start_y") * 16, 2);
 
-			start_x = ServerRAM.RAM[0x3F0B] + ServerRAM.RAM[0x3F0C] * 256;
-			start_y = ServerRAM.RAM[0x3F0D] + ServerRAM.RAM[0x3F0E] * 256;
+			start_x = RAM[0x3F0B] + RAM[0x3F0C] * 256;
+			start_y = RAM[0x3F0D] + RAM[0x3F0E] * 256;
 		}
 		recent_big_change = true;
 		Set_Server_RAM();

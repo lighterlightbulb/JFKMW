@@ -21,14 +21,14 @@ void reset_map()
 {
 	for (int i = ram_level_low; i < ram_level_high; i++)
 	{
-		ServerRAM.RAM[i] = 0x25;
-		ServerRAM.RAM[i + 0x4000] = 0x00;
+		RAM[i] = 0x25;
+		RAM[i + 0x4000] = 0x00;
 
 	}
 
 	for (int i = 0; i < 0x1000; i++)
 	{
-		ServerRAM.RAM[0x2000 + i] = 0;
+		RAM[0x2000 + i] = 0;
 	}
 }
 void initialize_map16()
@@ -97,7 +97,7 @@ public:
 
 		if (tile >= 0x166 && tile <= 0x167)
 		{
-			bool solid = tile == 0x166 ? (!ServerRAM.RAM[0x14AF]) : (ServerRAM.RAM[0x14AF]);
+			bool solid = tile == 0x166 ? (!RAM[0x14AF]) : (RAM[0x14AF]);
 			logic[0] = solid; logic[1] = solid; logic[2] = solid; logic[3] = solid;
 		}
 	}
@@ -108,7 +108,7 @@ public:
 	void update_map_tile(uint_fast16_t x, uint_fast16_t y)
 	{
 		uint_fast32_t index = (x % mapWidth) + (max(uint_fast16_t(0), min(mapHeight, y)) * mapWidth);
-		tile = ServerRAM.RAM[ram_level_low + index] + (ServerRAM.RAM[ram_level_high + index] << 8);
+		tile = RAM[ram_level_low + index] + (RAM[ram_level_high + index] << 8);
 		get_map_16_details();
 	}
 
@@ -118,7 +118,7 @@ public:
 	void replace_map_tile(uint16_t tile, uint_fast16_t x, uint_fast16_t y)
 	{
 		uint_fast32_t index = (x % mapWidth) + (max(uint_fast16_t(0), min(mapHeight, y)) * mapWidth);
-		ServerRAM.RAM[ram_level_low + index] = tile & 0xFF; ServerRAM.RAM[ram_level_high + index] = tile >> 8;
+		RAM[ram_level_low + index] = tile & 0xFF; RAM[ram_level_high + index] = tile >> 8;
 	}
 
 	/*
@@ -170,28 +170,28 @@ public:
 			uint_fast32_t index = (x % mapWidth) + (y * mapWidth);
 
 
-			uint_fast16_t t = ServerRAM.RAM[ram_level_low + index] + (ServerRAM.RAM[ram_level_high + index] << 8);
+			uint_fast16_t t = RAM[ram_level_low + index] + (RAM[ram_level_high + index] << 8);
 			if (t == 0x0124 && side == bottom)
 			{
-				ServerRAM.RAM[ram_level_low + index] = 0x32;
+				RAM[ram_level_low + index] = 0x32;
 			}
 			if (t == 0x011F && side == bottom)
 			{
-				ServerRAM.RAM[ram_level_low + index] = 0x32;
+				RAM[ram_level_low + index] = 0x32;
 				x *= 16;
 				y *= 16;
 				uint_fast8_t spr = spawnSpriteJFKMarioWorld(0x74, 5, x, y + 8, 1, true);
-				ServerRAM.RAM[0x2480 + spr] = 0x20;
+				RAM[0x2480 + spr] = 0x20;
 			}
 			if (t == 0x0112 && side == bottom)
 			{
-				ServerRAM.RAM[0x14AF] = !ServerRAM.RAM[0x14AF];
-				ServerRAM.RAM[0x1DF9] = 0xB;
+				RAM[0x14AF] = !RAM[0x14AF];
+				RAM[0x1DF9] = 0xB;
 			}
 			if (t == 0x0038)
 			{
 				replace_map_tile(0x0025, x, y);
-				ServerRAM.RAM[0x1DF9] = 5;
+				RAM[0x1DF9] = 5;
 
 				ASM.Write_To_Ram(0x3F0B, x * 16, 2);
 				ASM.Write_To_Ram(0x3F0D, y * 16, 2);
@@ -200,8 +200,8 @@ public:
 			if (t == 0x002B)
 			{
 				replace_map_tile(0x0025, x, y);
-				ServerRAM.RAM[0x1DFC] = 1;
-				ServerRAM.RAM[0x0DBF] += 1;
+				RAM[0x1DFC] = 1;
+				RAM[0x0DBF] += 1;
 			}
 
 			if (t == 0x012E && pressing_y)
@@ -221,7 +221,7 @@ public:
 	uint_fast16_t get_tile(uint_fast16_t x, uint_fast16_t y)
 	{
 		uint_fast32_t index = (x % mapWidth) + (max(uint_fast16_t(0),min(mapHeight-1,y)) * mapWidth);
-		return ServerRAM.RAM[ram_level_low + index] + (ServerRAM.RAM[ram_level_high + index] << 8);
+		return RAM[ram_level_low + index] + (RAM[ram_level_high + index] << 8);
 	}
 
 

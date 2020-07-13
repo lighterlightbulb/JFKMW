@@ -1,17 +1,10 @@
 #pragma once
 //something something this fucking sucks
 
-struct ASM_RAM
-{
-	ASM_RAM() {}
-
-	uint_fast8_t RAM[RAM_Size];
-};
-
 bool asm_loaded = false;
 
-ASM_RAM ServerRAM;
-ASM_RAM ServerRAM_old;
+uint_fast8_t RAM[RAM_Size];
+uint_fast8_t RAM_old[RAM_Size];
 
 
 class JFKASM
@@ -333,7 +326,7 @@ public:
 			return;
 		}
 		for (uint_fast8_t i = 0; i < size; i++) {
-			ServerRAM.RAM[pointer + i] = uint_fast8_t(value >> (i * 8));
+			RAM[pointer + i] = uint_fast8_t(value >> (i * 8));
 		}
 	}
 
@@ -345,7 +338,7 @@ public:
 		}
 		uint_fast32_t temp = 0;
 		for (uint_fast8_t i = 0; i < size; i++) {
-			temp += ServerRAM.RAM[pointer + i] << (i * 8);
+			temp += RAM[pointer + i] << (i * 8);
 		}
 		return temp;
 	}
@@ -381,7 +374,7 @@ void Sync_Server_RAM(bool compressed = false)
 		ClearSpriteCache();
 		for (uint_fast32_t i = 0; i < RAM_Size; i++)
 		{
-			CurrentPacket >> ServerRAM.RAM[i];
+			CurrentPacket >> RAM[i];
 		}
 	}
 	else
@@ -394,44 +387,44 @@ void Sync_Server_RAM(bool compressed = false)
 			uint_fast8_t data;
 			CurrentPacket >> pointer;
 			CurrentPacket >> data;
-			ServerRAM.RAM[pointer] = data;
+			RAM[pointer] = data;
 		}
 
 		//Get screen stuff
-		CurrentPacket >> ServerRAM.RAM[0x1411];
-		CurrentPacket >> ServerRAM.RAM[0x1412];
+		CurrentPacket >> RAM[0x1411];
+		CurrentPacket >> RAM[0x1412];
 
 		//receive on/off status
-		CurrentPacket >> ServerRAM.RAM[0x14AF];
+		CurrentPacket >> RAM[0x14AF];
 
 		//receive clear status & brightness flag
-		CurrentPacket >> ServerRAM.RAM[0x1493];
+		CurrentPacket >> RAM[0x1493];
 
 		//receive shake timer
-		CurrentPacket >> ServerRAM.RAM[0x1887];
+		CurrentPacket >> RAM[0x1887];
 
 		//receive grav
-		CurrentPacket >> ServerRAM.RAM[0x7D];
+		CurrentPacket >> RAM[0x7D];
 
 		//recieve level start
-		CurrentPacket >> ServerRAM.RAM[0x3F0B];
-		CurrentPacket >> ServerRAM.RAM[0x3F0C];
-		CurrentPacket >> ServerRAM.RAM[0x3F0D];
-		CurrentPacket >> ServerRAM.RAM[0x3F0E];
+		CurrentPacket >> RAM[0x3F0B];
+		CurrentPacket >> RAM[0x3F0C];
+		CurrentPacket >> RAM[0x3F0D];
+		CurrentPacket >> RAM[0x3F0E];
 
 		//Could be a loop once again
-		CurrentPacket >> ServerRAM.RAM[0x1462];
-		CurrentPacket >> ServerRAM.RAM[0x1463];
-		CurrentPacket >> ServerRAM.RAM[0x1464];
-		CurrentPacket >> ServerRAM.RAM[0x1465];
-		CurrentPacket >> ServerRAM.RAM[0x1466];
-		CurrentPacket >> ServerRAM.RAM[0x1467];
-		CurrentPacket >> ServerRAM.RAM[0x1468];
-		CurrentPacket >> ServerRAM.RAM[0x1469];
+		CurrentPacket >> RAM[0x1462];
+		CurrentPacket >> RAM[0x1463];
+		CurrentPacket >> RAM[0x1464];
+		CurrentPacket >> RAM[0x1465];
+		CurrentPacket >> RAM[0x1466];
+		CurrentPacket >> RAM[0x1467];
+		CurrentPacket >> RAM[0x1468];
+		CurrentPacket >> RAM[0x1469];
 
 		//Decompress OAM
 		for (uint_fast16_t i = 0; i < 0x400; i++) {
-			ServerRAM.RAM[0x0200 + i] = 0;
+			RAM[0x0200 + i] = 0;
 		}
 
 		uint_fast8_t oam_entries = 0;
@@ -441,20 +434,20 @@ void Sync_Server_RAM(bool compressed = false)
 		{
 			//uint_fast16_t pointer;
 			//CurrentPacket >> pointer;
-			CurrentPacket >> ServerRAM.RAM[0x0200 + pointer];
-			CurrentPacket >> ServerRAM.RAM[0x0201 + pointer];
-			CurrentPacket >> ServerRAM.RAM[0x0202 + pointer];
-			CurrentPacket >> ServerRAM.RAM[0x0203 + pointer];
-			CurrentPacket >> ServerRAM.RAM[0x0204 + pointer];
-			CurrentPacket >> ServerRAM.RAM[0x0205 + pointer];
-			CurrentPacket >> ServerRAM.RAM[0x0206 + pointer];
-			CurrentPacket >> ServerRAM.RAM[0x0207 + pointer];
+			CurrentPacket >> RAM[0x0200 + pointer];
+			CurrentPacket >> RAM[0x0201 + pointer];
+			CurrentPacket >> RAM[0x0202 + pointer];
+			CurrentPacket >> RAM[0x0203 + pointer];
+			CurrentPacket >> RAM[0x0204 + pointer];
+			CurrentPacket >> RAM[0x0205 + pointer];
+			CurrentPacket >> RAM[0x0206 + pointer];
+			CurrentPacket >> RAM[0x0207 + pointer];
 			pointer += 8;
 		}
 
 
 		for (uint_fast8_t i = 0; i < 0x80; i++) {
-			ServerRAM.RAM[0x2000 + i] = 0;
+			RAM[0x2000 + i] = 0;
 		}
 
 		//Decompress sprite entries (Fuck do you mean )
@@ -465,16 +458,16 @@ void Sync_Server_RAM(bool compressed = false)
 			uint_fast8_t p;
 			CurrentPacket >> p;
 			for (uint_fast16_t n = 0; n < 0x20; n++) {
-				CurrentPacket >> ServerRAM.RAM[0x2000 + (n << 7) + p];
+				CurrentPacket >> RAM[0x2000 + (n << 7) + p];
 			}
 			//p++;
 		}
 
 		//Decompress T3
 		for (uint_fast16_t T3_loop = 0; T3_loop < 0x800; T3_loop += 2) {
-			if (ServerRAM.RAM[VRAM_Location + 0xB800 + T3_loop] < MAX_L3_TILES) { //This tile exists
-				ServerRAM.RAM[VRAM_Location + 0xB800 + T3_loop] = 0x7F;
-				ServerRAM.RAM[VRAM_Location + 0xB800 + T3_loop + 1] = 0x00;
+			if (RAM[VRAM_Location + 0xB800 + T3_loop] < MAX_L3_TILES) { //This tile exists
+				RAM[VRAM_Location + 0xB800 + T3_loop] = 0x7F;
+				RAM[VRAM_Location + 0xB800 + T3_loop + 1] = 0x00;
 			}
 		}
 
@@ -486,8 +479,8 @@ void Sync_Server_RAM(bool compressed = false)
 			CurrentPacket >> t1; CurrentPacket >> t2;
 			if (p < 0x800)
 			{
-				ServerRAM.RAM[VRAM_Location + 0xB800 + p] = t1;
-				ServerRAM.RAM[VRAM_Location + 0xB801 + p] = t2;
+				RAM[VRAM_Location + 0xB800 + p] = t1;
+				RAM[VRAM_Location + 0xB801 + p] = t2;
 			}
 		}
 
@@ -517,7 +510,7 @@ void Push_Server_RAM(bool compress = false)
 	{
 		for (uint_fast32_t i = 0; i < RAM_Size; i++)
 		{
-			CurrentPacket << ServerRAM.RAM[i];
+			CurrentPacket << RAM[i];
 		}
 	}
 	else
@@ -527,7 +520,7 @@ void Push_Server_RAM(bool compress = false)
 		{
 			if (checkRAMarea_net(i))
 			{
-				if (ServerRAM.RAM[i] != ServerRAM_old.RAM[i])
+				if (RAM[i] != RAM_old[i])
 				{
 					entries += 1; //you stupid //no i not //whats 9 + 10 //twenty one.
 				}
@@ -539,66 +532,66 @@ void Push_Server_RAM(bool compress = false)
 		{
 			if (checkRAMarea_net(i))
 			{
-				if (ServerRAM.RAM[i] != ServerRAM_old.RAM[i])
+				if (RAM[i] != RAM_old[i])
 				{
 					CurrentPacket << i;
-					CurrentPacket << ServerRAM.RAM[i];
+					CurrentPacket << RAM[i];
 				}
 			}
 		}
 
 		//Send screen stuff
-		CurrentPacket << ServerRAM.RAM[0x1411];
-		CurrentPacket << ServerRAM.RAM[0x1412];
+		CurrentPacket << RAM[0x1411];
+		CurrentPacket << RAM[0x1412];
 
 		//Send on/off status
-		CurrentPacket << ServerRAM.RAM[0x14AF];
+		CurrentPacket << RAM[0x14AF];
 
 		//Send level clear status
-		CurrentPacket << ServerRAM.RAM[0x1493];
+		CurrentPacket << RAM[0x1493];
 
 		//Send shake timer
-		CurrentPacket << ServerRAM.RAM[0x1887];
+		CurrentPacket << RAM[0x1887];
 
 		//Send grav
-		CurrentPacket << ServerRAM.RAM[0x7D];
+		CurrentPacket << RAM[0x7D];
 
 		//Send level start
-		CurrentPacket << ServerRAM.RAM[0x3F0B];
-		CurrentPacket << ServerRAM.RAM[0x3F0C];
-		CurrentPacket << ServerRAM.RAM[0x3F0D];
-		CurrentPacket << ServerRAM.RAM[0x3F0E];
+		CurrentPacket << RAM[0x3F0B];
+		CurrentPacket << RAM[0x3F0C];
+		CurrentPacket << RAM[0x3F0D];
+		CurrentPacket << RAM[0x3F0E];
 
 		//Could put these in a loop but I don't care right now
-		CurrentPacket << ServerRAM.RAM[0x1462];
-		CurrentPacket << ServerRAM.RAM[0x1463];
-		CurrentPacket << ServerRAM.RAM[0x1464];
-		CurrentPacket << ServerRAM.RAM[0x1465];
-		CurrentPacket << ServerRAM.RAM[0x1466];
-		CurrentPacket << ServerRAM.RAM[0x1467];
-		CurrentPacket << ServerRAM.RAM[0x1468];
-		CurrentPacket << ServerRAM.RAM[0x1469];
+		CurrentPacket << RAM[0x1462];
+		CurrentPacket << RAM[0x1463];
+		CurrentPacket << RAM[0x1464];
+		CurrentPacket << RAM[0x1465];
+		CurrentPacket << RAM[0x1466];
+		CurrentPacket << RAM[0x1467];
+		CurrentPacket << RAM[0x1468];
+		CurrentPacket << RAM[0x1469];
 
 		//Compress OAM (send it though)
 		uint_fast8_t oam_entries = 0;
 		for (uint_fast16_t i = 0; i < 0x400; i += 8) {
-			if (ServerRAM.RAM[0x200 + i] != 0 || ServerRAM.RAM[0x206 + i] != 0) {
+			if (RAM[0x200 + i] != 0 || RAM[0x206 + i] != 0) {
 				oam_entries += 1;
 			}
 		}
 		CurrentPacket << oam_entries;
 
 		for (uint_fast16_t i = 0; i < 0x400; i += 8) {
-			if (ServerRAM.RAM[0x200 + i] != 0 || ServerRAM.RAM[0x206 + i] != 0) {
+			if (RAM[0x200 + i] != 0 || RAM[0x206 + i] != 0) {
 				//CurrentPacket << i;
-				CurrentPacket << ServerRAM.RAM[0x0200 + i];
-				CurrentPacket << ServerRAM.RAM[0x0201 + i];
-				CurrentPacket << ServerRAM.RAM[0x0202 + i];
-				CurrentPacket << ServerRAM.RAM[0x0203 + i];
-				CurrentPacket << ServerRAM.RAM[0x0204 + i];
-				CurrentPacket << ServerRAM.RAM[0x0205 + i];
-				CurrentPacket << ServerRAM.RAM[0x0206 + i];
-				CurrentPacket << ServerRAM.RAM[0x0207 + i];
+				CurrentPacket << RAM[0x0200 + i];
+				CurrentPacket << RAM[0x0201 + i];
+				CurrentPacket << RAM[0x0202 + i];
+				CurrentPacket << RAM[0x0203 + i];
+				CurrentPacket << RAM[0x0204 + i];
+				CurrentPacket << RAM[0x0205 + i];
+				CurrentPacket << RAM[0x0206 + i];
+				CurrentPacket << RAM[0x0207 + i];
 			}
 		}
 
@@ -606,16 +599,16 @@ void Push_Server_RAM(bool compress = false)
 		//Compress sprite entries
 		uint_fast8_t spr_entries = 0;
 		for (uint_fast8_t i = 0; i < 0x80; i++) {
-			if (ServerRAM.RAM[0x2000 + i] != 0) { //Sprites exist
+			if (RAM[0x2000 + i] != 0) { //Sprites exist
 				spr_entries += 1;
 			}
 		}
 		CurrentPacket << spr_entries;
 		for (uint_fast8_t i = 0; i < 0x80; i++) {
-			if (ServerRAM.RAM[0x2000 + i] != 0) {
+			if (RAM[0x2000 + i] != 0) {
 				CurrentPacket << i;
 				for (uint_fast16_t n = 0; n < 0x20; n++) {
-					CurrentPacket << ServerRAM.RAM[0x2000 + (n << 7) + i];
+					CurrentPacket << RAM[0x2000 + (n << 7) + i];
 				}
 			}
 		}
@@ -624,17 +617,17 @@ void Push_Server_RAM(bool compress = false)
 		//Compress T3
 		uint_fast16_t T3_entries = 0;
 		for (uint_fast16_t T3_loop = 0; T3_loop < 0x800; T3_loop += 2) {
-			if (ServerRAM.RAM[VRAM_Location + 0xB800 + T3_loop] < MAX_L3_TILES) { //This tile exists
+			if (RAM[VRAM_Location + 0xB800 + T3_loop] < MAX_L3_TILES) { //This tile exists
 				T3_entries++;
 			}
 		}
 		CurrentPacket << T3_entries;
 
 		for(uint_fast16_t T3_loop = 0; T3_loop < 0x800; T3_loop+=2) {
-			if (ServerRAM.RAM[VRAM_Location + 0xB800 + T3_loop] < MAX_L3_TILES) { //This tile exists
+			if (RAM[VRAM_Location + 0xB800 + T3_loop] < MAX_L3_TILES) { //This tile exists
 				CurrentPacket << T3_loop;
-				CurrentPacket << ServerRAM.RAM[VRAM_Location + 0xB800 + T3_loop];
-				CurrentPacket << ServerRAM.RAM[VRAM_Location + 0xB801 + T3_loop];
+				CurrentPacket << RAM[VRAM_Location + 0xB800 + T3_loop];
+				CurrentPacket << RAM[VRAM_Location + 0xB801 + T3_loop];
 			}
 		}
 		
@@ -645,5 +638,5 @@ void Push_Server_RAM(bool compress = false)
 #endif
 
 void Set_Server_RAM() {
-	memcpy(&ServerRAM_old.RAM, &ServerRAM.RAM, RAM_Size * sizeof(uint_fast8_t));
+	memcpy(&RAM_old, &RAM, RAM_Size * sizeof(uint_fast8_t));
 }
