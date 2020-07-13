@@ -41,13 +41,14 @@ void ProcessHDMA()
 				{
 					for (uint_fast8_t l = 0; l < scanlines; l++)
 					{
-						uint_fast16_t value = ServerRAM.RAM[bank + 1 + i] + (size > 2 ? (ServerRAM.RAM[bank + 2 + i] << 8) : 0);
+						int value = ServerRAM.RAM[bank + 1 + i] + (size > 2 ? (ServerRAM.RAM[bank + 2 + i] << 8) : 0);
+						if (value >= 0x8000) { value = -(0x10000 - value); }
 
 						if (scanline < 224)
 						{
 							if (reg == 0x0F)
 							{
-								layer1_shift[scanline] = value;
+								layer1_shift[scanline] = int_fast16_t(value);
 							}
 						}
 						scanline++;
