@@ -227,7 +227,7 @@ public:
 						
 						if(v.size() == 3) //Format type 2
 						{
-							chunks;
+							chunks++;
 							int tile = stoi(v[0], nullptr, 16);
 							int x = stoi(v[1]);
 							int y = stoi(v[2]);
