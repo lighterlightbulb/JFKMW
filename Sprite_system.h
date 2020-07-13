@@ -24,7 +24,7 @@
 0x2700 - Sprite interacing with... (player number in hex)
 0x2780 - Sprite block flags
 0x2800 - Sprite is lua/asm type
-0x2880 - Sprite Flags 2 ----lksS
+0x2880 - Sprite Flags 2 ---olksS
 0x2A00 - Spinjump death timer for sprites, otherwise unused
 
 0x2E00 - Unused, used in the throwblock and grabbed sprites for a "how much frames til we can hurt mario" timer
@@ -38,6 +38,7 @@ S - Death By Spinjump
 s - Uses custom spinjump death
 k - Collision kills sprite
 l - Lower grav
+o - Process when offscreen
 
 Flags :
 H = Hurts

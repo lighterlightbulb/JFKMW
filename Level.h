@@ -42,6 +42,7 @@ public:
 	string current_level;
 	double start_x = 16;
 	double start_y = 16;
+	int chunks = 0;
 	unordered_map<string, uint_fast32_t> level_data;
 
 	uint_fast32_t request_level_entry(string name)
@@ -99,6 +100,7 @@ public:
 
 	void LoadLevelFromString(string DLevel, uint_fast16_t num)
 	{
+		chunks = 0;
 		lua_loaded = false;
 		reset_map();
 
@@ -205,40 +207,32 @@ public:
 						//cout << "Level loading Line = " + line << endl;
 						vector<string> v = split(line.c_str(), ',');
 
-						int x_start, x_end, y_start, y_end;
-						int tile = 0x0;
-
-
-						int dataType = 0;
-						string data;
-						for (auto i : v)
+						if (v.size() == 5) //Format type 1.
 						{
-							if (dataType <= 5)
-							{
-								//cout << "loaded " + i << endl;
-								//cout << dataType << endl;
-								if (dataType == 0)
-								{
-									tile = stoi(i, nullptr, 16);
-								}
-								if (dataType == 1) { x_start = stoi(i); }
-								if (dataType == 2) { y_start = stoi(i); }
-								if (dataType == 3) { x_end = stoi(i); }
-								if (dataType == 4) { y_end = stoi(i); }
+							chunks++;
+							int tile = stoi(v[0], nullptr, 16);
+							int x_start = stoi(v[1]);
+							int y_start = stoi(v[2]);
+							int x_end = stoi(v[3]);
+							int y_end = stoi(v[4]);
 
-								dataType += 1;
+							for (int x = x_start; x <= x_end; x++)
+							{
+								for (int y = y_start; y <= y_end; y++)
+								{
+									map16_handler.replace_map_tile(tile, x, y);
+								}
 							}
 						}
-
-
-						//cout << "Data as follows \nActs as : " + data[1] + "\nTile : " + data[2] + "\nStart and End (X) : " + data[3] + "-" + data[5] + "\nStart and End (Y) : " + data[4] + "-" + data[6] + "\n";
-
-						for (int x = x_start; x <= x_end; x++)
+						
+						if(v.size() == 3) //Format type 2
 						{
-							for (int y = y_start; y <= y_end; y++)
-							{
-								map16_handler.replace_map_tile(tile, x, y);
-							}
+							chunks;
+							int tile = stoi(v[0], nullptr, 16);
+							int x = stoi(v[1]);
+							int y = stoi(v[2]);
+
+							map16_handler.replace_map_tile(tile, x, y);
 						}
 					}
 
@@ -280,7 +274,7 @@ public:
 		}
 
 		cout << green
-			<< "[Level Manager] Finished loading level."
+			<< "[Level Manager] Finished loading level. " << chunks << " chunks loaded."
 			<< white << endl;
 	}
 
