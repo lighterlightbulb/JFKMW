@@ -363,6 +363,73 @@ JFKASM ASM;
 
 
 #if not defined(DISABLE_NETWORK)
+void compressHDMAnet()
+{
+	CurrentPacket << RAM[0x420C];
+	CurrentPacket << RAM[0x420B];
+
+	//Compress all data in actually enabled HDMA channels.
+	for (uint_fast8_t c = 0; c < 8; c++)
+	{
+		uint_fast8_t channel = c << 4;
+		bool enabled = (RAM[0x420C] >> c) & 1;
+
+		//We have to send the enabled status.
+		CurrentPacket << enabled;
+		if (enabled) //This HDMA channel is enabled
+		{
+			//Send mode and reg
+			CurrentPacket << RAM[0x4300 + channel];
+			CurrentPacket << RAM[0x4301 + channel];
+
+			//Send data size
+			CurrentPacket << hdma_size[c];
+
+			uint_fast32_t bank = RAM[0x4302 + channel] + (RAM[0x4303 + channel] << 8) + (RAM[0x4304 + channel] << 16);
+
+			//Send bank and then data
+			CurrentPacket << bank;
+			for (uint_fast16_t i = 0; i <= hdma_size[c]; i++)
+			{
+				CurrentPacket << RAM[bank + i];
+			}
+		}
+	}
+}
+
+void decompressHDMAnet()
+{
+	CurrentPacket >> RAM[0x420C];
+	CurrentPacket >> RAM[0x420B];
+
+	//Decompress all data in actually enabled HDMA channels.
+	for (uint_fast8_t c = 0; c < 8; c++)
+	{
+		uint_fast8_t channel = c << 4;
+		bool enabled; CurrentPacket >> enabled;
+		if (enabled) //This HDMA channel is enabled
+		{
+			//Receive mode and reg
+			CurrentPacket >> RAM[0x4300 + channel];
+			CurrentPacket >> RAM[0x4301 + channel];
+
+			//Receive data size
+			uint_fast32_t bank;
+			CurrentPacket >> hdma_size[c];
+			CurrentPacket >> bank;
+
+			RAM[0x4302 + channel] = bank;
+			RAM[0x4303 + channel] = bank >> 8;
+			RAM[0x4304 + channel] = bank >> 16;
+
+			for (uint_fast16_t i = 0; i <= hdma_size[c]; i++)
+			{
+				CurrentPacket >> RAM[bank + i];
+			}
+		}
+	}
+}
+
 void Sync_Server_RAM(bool compressed = false)
 {
 	while (doing_write || doing_read) {
@@ -389,6 +456,9 @@ void Sync_Server_RAM(bool compressed = false)
 			CurrentPacket >> data;
 			RAM[pointer] = data;
 		}
+
+		//HDMA
+		decompressHDMAnet();
 
 		//Get screen stuff
 		CurrentPacket >> RAM[0x1411];
@@ -539,6 +609,9 @@ void Push_Server_RAM(bool compress = false)
 				}
 			}
 		}
+
+		//HDMA
+		compressHDMAnet();
 
 		//Send screen stuff
 		CurrentPacket << RAM[0x1411];

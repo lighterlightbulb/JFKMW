@@ -19,6 +19,8 @@ void ProcessHDMA()
 
 	for (uint_fast8_t c = 0; c < 8; c++)
 	{
+		hdma_size[c] = 0;
+
 		uint_fast8_t channel = c << 4;
 		if ((RAM[0x420C] >> c) & 1) //This HDMA channel is enabled
 		{
@@ -30,11 +32,12 @@ void ProcessHDMA()
 			uint_fast16_t i = 0;
 			uint_fast16_t scanline = 0;
 
-			while (scanline < 224)
+			while (true)
 			{
 				uint_fast8_t scanlines = RAM[bank + i];
 				if (scanlines == 0)
 				{
+					hdma_size[c]++;
 					break;
 				}
 				else
@@ -54,6 +57,7 @@ void ProcessHDMA()
 						scanline++;
 					}
 					i += size;
+					hdma_size[c] += size;
 				}
 			}
 

@@ -49,6 +49,8 @@ uint_fast16_t mapHeight = 32;
 #define VRAM_Size 0x10000
 #define VRAM_Location 0x10000
 
+
+uint_fast16_t hdma_size[8];
 uint_fast32_t palette_array[256]; //These are cached lol
 uint_fast8_t VRAM[VRAM_Size];
 

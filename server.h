@@ -6,7 +6,8 @@ void server_code(string level = "")
 	initialize_map16();
 	cout << yellow << "[JFKMW] Starting up a server." << white << endl;
 	if (level == "") {
-		cout << "Enter a level : "; cin >> level;
+		level = "1";
+		//cout << "Enter a level : "; cin >> level;
 	}
 	LevelManager.LoadLevel(stoi(level, nullptr, 16));
 
