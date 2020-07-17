@@ -105,6 +105,13 @@ bool getKey(int what_want)
 			return false;
 		}
 	}
+	if (isClient || !networking)
+	{
+		if (!(SDL_GetWindowFlags(win) & SDL_WINDOW_INPUT_FOCUS))
+		{
+			return false;
+		}
+	}
 	if (KeyStates[what_want] != stat)
 	{
 		KeyStates[what_want] = stat;
