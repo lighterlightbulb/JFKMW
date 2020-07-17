@@ -379,8 +379,6 @@ void compressHDMAnet()
 		uint_fast8_t channel = c << 4;
 		bool enabled = (RAM[0x420C] >> c) & 1;
 
-		//We have to send the enabled status.
-		CurrentPacket << enabled;
 		if (enabled) //This HDMA channel is enabled
 		{
 			//Send mode and reg
@@ -411,7 +409,7 @@ void decompressHDMAnet()
 	for (uint_fast8_t c = 0; c < 8; c++)
 	{
 		uint_fast8_t channel = c << 4;
-		bool enabled; CurrentPacket >> enabled;
+		bool enabled = (RAM[0x420C] >> c) & 1;
 		if (enabled) //This HDMA channel is enabled
 		{
 			//Receive mode and reg
@@ -456,10 +454,8 @@ void Sync_Server_RAM(bool compressed = false)
 		for (uint_fast32_t i = 0; i < entries; i++)
 		{
 			uint_fast32_t pointer;
-			uint_fast8_t data;
 			CurrentPacket >> pointer;
-			CurrentPacket >> data;
-			RAM[pointer] = data;
+			CurrentPacket >> RAM[pointer];
 		}
 
 		//HDMA
@@ -572,14 +568,17 @@ bool checkRAMarea_net(uint_fast32_t i)
 		;
 }
 
-bool checkRamDecay(uint_fast32_t i)
+bool checkRamDecay(uint_fast32_t i, bool dec)
 {
 	if (i >= 0x8000 && i < 0x10000)
 	{
 		i -= 0x8000;
 		if (RAM_decay_time_level[i] > 0)
 		{
-			RAM_decay_time_level[i]--;
+			if (dec)
+			{
+				RAM_decay_time_level[i]--;
+			}
 			return true;
 		}
 	}
@@ -609,7 +608,7 @@ void Push_Server_RAM(bool compress = false)
 		{
 			if (checkRAMarea_net(i))
 			{
-				if (RAM[i] != RAM_old[i] || checkRamDecay(i))
+				if (RAM[i] != RAM_old[i] || checkRamDecay(i, false))
 				{
 					entries += 1; //you stupid //no i not //whats 9 + 10 //twenty one.
 				}
@@ -621,7 +620,7 @@ void Push_Server_RAM(bool compress = false)
 		{
 			if (checkRAMarea_net(i))
 			{
-				if (RAM[i] != RAM_old[i] || checkRamDecay(i))
+				if (RAM[i] != RAM_old[i] || checkRamDecay(i, true))
 				{
 					CurrentPacket << i;
 					CurrentPacket << RAM[i];
