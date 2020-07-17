@@ -6,6 +6,7 @@ bool asm_loaded = false;
 uint_fast8_t RAM[RAM_Size];
 uint_fast8_t RAM_old[RAM_Size];
 
+uint_fast8_t RAM_decay_time_level[0x8000]; //for multiplayer
 
 class JFKASM
 {
@@ -325,6 +326,10 @@ public:
 		{
 			return;
 		}
+		if (pointer >= 0x8000 && pointer < 0x10000)
+		{
+			RAM_decay_time_level[pointer - 0x8000] = level_ram_decay_time;
+		}
 		for (uint_fast8_t i = 0; i < size; i++) {
 			RAM[pointer + i] = uint_fast8_t(value >> (i * 8));
 		}
@@ -567,6 +572,20 @@ bool checkRAMarea_net(uint_fast32_t i)
 		;
 }
 
+bool checkRamDecay(uint_fast32_t i)
+{
+	if (i >= 0x8000 && i < 0x10000)
+	{
+		i -= 0x8000;
+		if (RAM_decay_time_level[i] > 0)
+		{
+			RAM_decay_time_level[i]--;
+			return true;
+		}
+	}
+	return false;
+}
+
 void Push_Server_RAM(bool compress = false)
 {
 	while (doing_write) {
@@ -602,7 +621,7 @@ void Push_Server_RAM(bool compress = false)
 		{
 			if (checkRAMarea_net(i))
 			{
-				if (RAM[i] != RAM_old[i])
+				if (RAM[i] != RAM_old[i] || checkRamDecay(i))
 				{
 					CurrentPacket << i;
 					CurrentPacket << RAM[i];
