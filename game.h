@@ -128,6 +128,10 @@ void game_loop()
 		uint_fast8_t x_s_r = uint_fast8_t(CurrPlayer.X_SPEED * 16.0);
 		uint_fast8_t y_s_r = uint_fast8_t(CurrPlayer.Y_SPEED * 16.0);
 
+		uint_fast16_t m_state_1 = (CurrPlayer.mouse_x & 0x7FFF) + (CurrPlayer.mouse_state[0] << 15);
+		uint_fast16_t m_state_2 = (CurrPlayer.mouse_y & 0x7FFF) + (CurrPlayer.mouse_state[1] << 15);
+
+
 		RAM[0x5000 + player - 1] = x_r;
 		RAM[0x5100 + player - 1] = x_r >> 8;
 		RAM[0x5200 + player - 1] = y_r;
@@ -138,6 +142,10 @@ void game_loop()
 		RAM[0x5700 + player - 1] = CurrPlayer.WO_counter;
 		RAM[0x5800 + player - 1] = CurrPlayer.STATE;
 		RAM[0x5900 + player - 1] = CurrPlayer.DEAD;
+		RAM[0x5A00 + player - 1] = m_state_1;
+		RAM[0x5B00 + player - 1] = m_state_1 >> 8;
+		RAM[0x5C00 + player - 1] = m_state_2;
+		RAM[0x5D00 + player - 1] = m_state_2 >> 8;
 
 		if (!isClient && !CurrPlayer.DEAD)
 		{
