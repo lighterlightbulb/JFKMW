@@ -103,8 +103,8 @@ void game_loop()
 			CurrPlayer.PlayerControlled = false;
 		}
 		if (CurrPlayer.PlayerControlled == true){
-			CurrPlayer.mouse_x = mouse_x + uint_fast16_t(CurrPlayer.CAMERA_X);
-			CurrPlayer.mouse_y = mouse_y + uint_fast16_t(CurrPlayer.CAMERA_Y);
+			CurrPlayer.mouse_x = mouse_x + CameraX;
+			CurrPlayer.mouse_y = (224 - mouse_y) + CameraY;
 			CurrPlayer.mouse_state[0] = mouse_down;
 			CurrPlayer.mouse_state[1] = mouse_down_r;
 
