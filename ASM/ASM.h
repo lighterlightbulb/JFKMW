@@ -326,7 +326,7 @@ public:
 		{
 			return;
 		}
-		if (pointer >= 0x8000 && pointer < 0x10000)
+		if ((networking && !isClient) && (pointer >= 0x8000 && pointer < 0x10000))
 		{
 			RAM_decay_time_level[pointer - 0x8000] = level_ram_decay_time;
 		}

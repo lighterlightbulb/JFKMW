@@ -42,7 +42,7 @@ uint_fast32_t pctosnes(uint_fast32_t pc) {
 
 #define MAX_L3_TILES 0x3E
 
-#define level_ram_decay_time 10
+#define level_ram_decay_time 25 //Server ticks before level data RAM becomes invalid to send
 
 uint_fast16_t mapWidth = 256;
 uint_fast16_t mapHeight = 32;
