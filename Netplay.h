@@ -330,8 +330,10 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool for_validating = false)
 			latest_server_response = int_fast32_t(ms.count()) - timestamp;
 			CurrentPacket >> pvp;
 			CurrentPacket >> SelfPlayerNumber; //Me
-			CurrentPacket >> PlayerAmount; //Update Plr Amount
+			CurrentPacket >> death_timer[SelfPlayerNumber - 1];
 
+
+			CurrentPacket >> PlayerAmount; //Update Plr Amount
 			CheckForPlayers(); //have to update the mario list. so it fits.
 
 
@@ -507,6 +509,9 @@ void Server_To_Clients()
 			CurrentPacket << int_fast32_t(ms.count());
 			CurrentPacket << pvp;
 			CurrentPacket << PlrNumber;
+			CurrentPacket << death_timer[PlrNumber - 1];
+
+
 			pack_mario_data(PlrNumber);
 
 			CurrentPacket << recent_big_change;

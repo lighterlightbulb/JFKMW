@@ -87,9 +87,11 @@ void game_loop()
 	{
 		for (uint_fast16_t i = 0; i < 256; i++)
 		{
-			if (death_timer[i] > 0)
-			{
+			if (death_timer[i] > 0) {
 				death_timer[i]--;
+				if (death_timer[i] == 0x80){
+					death_timer[i] = 0;
+				}
 			}
 		}
 	}
@@ -131,9 +133,14 @@ void game_loop()
 				}
 			}
 
-			if (death_timer[player - 1] > 0)
+			//Genius code
+			if (death_timer[player - 1] > 0x00 && death_timer[player - 1] <= 0x7F)
 			{
 				CurrPlayer.Die();
+			}
+			if (death_timer[player - 1] > 0x80 && death_timer[player - 1] <= 0xFF)
+			{
+				CurrPlayer.Hurt();
 			}
 		}
 		//cout << SelfPlayerNumber;

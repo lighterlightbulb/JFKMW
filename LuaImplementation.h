@@ -180,6 +180,13 @@ static int killPlayer(lua_State* L)
 	return 0;
 }
 
+static int damagePlayer(lua_State* L)
+{
+	int plr = (int)lua_tointeger(L, 1);
+	death_timer[plr - 1] = 0x80 + 16;
+	return 0;
+}
+
 /* functions end */
 
 void lua_connect_functions(lua_State* L)
@@ -193,6 +200,7 @@ void lua_connect_functions(lua_State* L)
 	lua_pushcfunction(L, lua_bitand); lua_setglobal(L, "bitand");
 	lua_pushcfunction(L, drawtohud); lua_setglobal(L, "draw_to_hud");
 	lua_pushcfunction(L, killPlayer); lua_setglobal(L, "kill_player");
+	lua_pushcfunction(L, damagePlayer); lua_setglobal(L, "damage_player");
 	lua_register(L, "asm_read", lua_get_ram);
 
 
