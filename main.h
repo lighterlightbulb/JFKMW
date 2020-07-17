@@ -38,7 +38,7 @@ void player_code()
 		string s_or_c;
 		while (true)
 		{
-			
+
 			quit = false;
 			if (done(true))
 			{
@@ -47,6 +47,18 @@ void player_code()
 			global_frame_counter += 1;
 
 			cls();
+
+			if (testing_level != "" && level != "")
+			{
+				return;
+			}
+			if (testing_level != "" && level == "") {
+				s_or_c = "t";
+				level = testing_level;
+				zsnes_ui.message = "Loading level " + level + "..";
+				midway_activated = false;
+			}
+
 
 			if (zsnes_ui.hint != "")
 			{

@@ -102,6 +102,8 @@ bool renderer_accelerated = true;
 bool v_sync = true;
 bool force_sleep = false;
 
+string testing_level = "";
+
 //Stuff hud toggles here and hud stuff
 bool drawHud = true;
 bool drawDiag = false;
