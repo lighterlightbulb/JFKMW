@@ -509,7 +509,7 @@ void Server_To_Clients()
 			CurrentPacket << int_fast32_t(ms.count());
 			CurrentPacket << pvp;
 			CurrentPacket << PlrNumber;
-			CurrentPacket << death_timer[PlrNumber - 1];
+			CurrentPacket << death_timer[i];
 
 
 			pack_mario_data(PlrNumber);
