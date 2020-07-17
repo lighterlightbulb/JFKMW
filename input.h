@@ -57,14 +57,11 @@ void check_input()
 		quit = true;
 	}
 	SDL_GetMouseState(&mouse_x, &mouse_y);
-	mouse_x -= sp_offset_x;
-	mouse_y -= sp_offset_y;
+	mouse_x -= sp_offset_x; mouse_y -= sp_offset_y;
+	mouse_x /= scale; mouse_y /= scale;
 
-	mouse_x /= scale;
-	mouse_y /= scale;
-
-	mouse_x = min(256, max(0, mouse_x));
-	mouse_y = min(224, max(0, mouse_y));
+	mouse_x = min(int(int_res_x), max(0, mouse_x));
+	mouse_y = min(int(int_res_y), max(0, mouse_y));
 
 	
 	uint_fast32_t m_state = SDL_GetMouseState(NULL, NULL);

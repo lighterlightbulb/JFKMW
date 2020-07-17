@@ -335,9 +335,6 @@ void render()
 		draw_number_hex(16, 2, uint_fast16_t(LocalPlayer.Y_SPEED * 256.0), 4);
 		draw_number_hex(11, 2, uint_fast16_t(LocalPlayer.X_SPEED * 256.0), 4);
 
-		draw_number_hex(4, 5, (LocalPlayer.mouse_x & 0x7FFF) + (LocalPlayer.mouse_state[0] << 15), 4);
-		draw_number_hex(9, 5, (LocalPlayer.mouse_y & 0x7FFF) + (LocalPlayer.mouse_state[1] << 15), 4);
-
 		//Networking symbols
 		VRAM[0xB800 + 20 + 192] = networking ? 0x17 : 0x15; VRAM[0xB801 + 20 + 192] = 6;
 		VRAM[0xB800 + 18 + 192] = 0x3A; VRAM[0xB801 + 18 + 192] = 6;
