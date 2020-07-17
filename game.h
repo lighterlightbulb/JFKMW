@@ -83,6 +83,16 @@ void game_loop()
 
 	process_ex_animation();
 
+	if (!isClient)
+	{
+		for (uint_fast16_t i = 0; i < 256; i++)
+		{
+			if (death_timer[i] > 0)
+			{
+				death_timer[i]--;
+			}
+		}
+	}
 	if (!isClient || !networking) //if we are the server or we are playing locally...
 	{
 		for (uint_fast16_t i = 0; i < 0x400; i++) //Clear OAM loop
@@ -119,6 +129,11 @@ void game_loop()
 				{
 					CurrPlayer.player_name_cut[i] = username.at(i);
 				}
+			}
+
+			if (death_timer[player - 1] > 0)
+			{
+				CurrPlayer.Die();
 			}
 		}
 		//cout << SelfPlayerNumber;

@@ -234,6 +234,8 @@ double smooth_camera_speed = 0;
 uint_fast8_t SelfPlayerNumber = 1;
 int PlayerAmount = 0;
 
+uint_fast8_t death_timer[256];
+
 //Network
 string ip = "127.0.0.1"; int PORT = 0;
 
