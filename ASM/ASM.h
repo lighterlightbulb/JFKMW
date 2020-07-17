@@ -609,7 +609,7 @@ void Push_Server_RAM(bool compress = false)
 		{
 			if (checkRAMarea_net(i))
 			{
-				if (RAM[i] != RAM_old[i])
+				if (RAM[i] != RAM_old[i] || checkRamDecay(i))
 				{
 					entries += 1; //you stupid //no i not //whats 9 + 10 //twenty one.
 				}
