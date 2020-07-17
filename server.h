@@ -115,7 +115,6 @@ void server_code(string level = "")
 			Curr_ChatString = pvp ? "pvp is now enabled" : "pvp is now off";
 
 		}
-		//int TimeToSleep = 16 - int(total_time_ticks.count() * 1000);
 		Sleep(16);
 	}
 }
