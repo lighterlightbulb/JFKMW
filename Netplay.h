@@ -70,10 +70,17 @@ void put_mario_data_in(MPlayer& CurrentMario)
 	CurrentPacket << CurrentMario.skin; CurrentPacket << CurrentMario.in_pipe;
 	CurrentPacket << CurrentMario.pipe_speed_x; CurrentPacket << CurrentMario.pipe_speed_y;
 
+	uint_fast16_t m_state_1 = (CurrentMario.mouse_x & 0x7FFF) + (CurrentMario.mouse_state[0] << 15);
+	uint_fast16_t m_state_2 = (CurrentMario.mouse_y & 0x7FFF) + (CurrentMario.mouse_state[1] << 15);
+	CurrentPacket << m_state_1; CurrentPacket << m_state_2;
+
+	uint_fast8_t input_d = 0;
 	for (int inputs = 0; inputs < total_inputs; inputs++)
 	{
-		CurrentPacket << CurrentMario.pad[inputs];
+		input_d |= (CurrentMario.pad[inputs] << inputs);
 	}
+	CurrentPacket << input_d;
+
 	for (int plr_name = 0; plr_name < player_name_size; plr_name++)
 	{
 		CurrentPacket << uint_fast8_t(CurrentMario.player_name_cut[plr_name]);
@@ -108,10 +115,21 @@ void take_mario_data(MPlayer& CurrentMario)
 	CurrentPacket >> CurrentMario.skin; CurrentPacket >> CurrentMario.in_pipe;
 	CurrentPacket >> CurrentMario.pipe_speed_x; CurrentPacket >> CurrentMario.pipe_speed_y;
 
+	uint_fast16_t m_state_1, m_state_2;
+	CurrentPacket >> m_state_1; CurrentPacket >> m_state_2;
+	CurrentMario.mouse_state[0] = (m_state_1 >> 15) & 1;
+	CurrentMario.mouse_state[1] = (m_state_2 >> 15) & 1;
+	CurrentMario.mouse_x = m_state_1 & 0x7FFF;
+	CurrentMario.mouse_y = m_state_2 & 0x7FFF;
+
+
+	uint_fast8_t input_d = 0;
+	CurrentPacket >> input_d;
 	for (int inputs = 0; inputs < total_inputs; inputs++)
 	{
-		CurrentPacket >> CurrentMario.pad[inputs];
+		CurrentMario.pad[inputs] = (input_d >> inputs) & 1;
 	}
+
 	for (int plr_name = 0; plr_name < player_name_size; plr_name++)
 	{
 		uint_fast8_t new_l = 0;

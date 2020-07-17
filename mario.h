@@ -30,7 +30,7 @@ public:
 	double CAMERA_X = 0.0;
 	double CAMERA_Y = 0.0;
 	double FRM = 0;
-	float to_scale = 1.f;
+	int_fast8_t to_scale = 1;
 
 	double height = 14.0;
 	double x = 16.0;
@@ -42,6 +42,10 @@ public:
 
 	uint_fast8_t WO_counter = 0;
 	uint_fast8_t KO_counter = 0;
+
+	uint_fast16_t mouse_x = 0;
+	uint_fast16_t mouse_y = 0;
+	bool mouse_state[2]; //Left and right click
 
 	uint_fast8_t flash_t = 0; //xxxxTTTT
 	int_fast16_t flash_x = 0;
@@ -228,7 +232,7 @@ public:
 			//cout << DEATH_TIMER % 5;
 			if (DEATH_TIMER % 5 == -1)
 			{
-				to_scale *= -1.f;
+				to_scale *= -1;
 			}
 			Y_SPEED -= Calculate_Speed(48.0);
 		}
@@ -692,19 +696,19 @@ public:
 			switch ((global_frame_counter / 2) % 4) {
 			case 0:
 				NewSprite = "PIPE";
-				to_scale = 1.f;
+				to_scale = 1;
 				break;
 			case 1:
 				NewSprite = "STAND";
-				to_scale = 1.f;
+				to_scale = 1;
 				break;
 			case 2:
 				NewSprite = "BACK";
-				to_scale = 1.f;
+				to_scale = 1;
 				break;
 			case 3:
 				NewSprite = "STAND";
-				to_scale = -1.f;
+				to_scale = -1;
 				break;
 			}
 
@@ -766,11 +770,11 @@ public:
 		}
 		if (WALKING_DIR > 0)
 		{
-			to_scale = -1.f;
+			to_scale = -1;
 		}
 		if (WALKING_DIR < 0)
 		{
-			to_scale = 1.f;
+			to_scale = 1;
 		}
 		sprite = NewSprite + "_" + to_string(STATE);
 	}

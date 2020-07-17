@@ -37,7 +37,7 @@ uint_fast32_t pctosnes(uint_fast32_t pc) {
 #define SpriteAmount 64
 #define ogg_sample_rate 44100
 
-#define player_expected_packet_size 104 //Strings apparently add 4 so we have to make sure of this so it wont crash.
+#define player_expected_packet_size 99 //Strings apparently add 4 so we have to make sure of this so it wont crash.
 #define player_name_size 11
 
 #define MAX_L3_TILES 0x3E
