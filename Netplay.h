@@ -349,6 +349,8 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool for_validating = false)
 				{
 					MPlayer& CurrentMario = *item;
 					CurrentPacket >> CurrentMario.GRABBED_SPRITE;
+					mouse_w_up = false;
+					mouse_w_down = false;
 				}
 				num += 1;
 			}
