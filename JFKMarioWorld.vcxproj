@@ -256,6 +256,7 @@
     <ClInclude Include="chat.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="cout.h" />
+    <ClInclude Include="debugging.h" />
     <ClInclude Include="exanimation.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="HDMA.h" />

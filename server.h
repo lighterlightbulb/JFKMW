@@ -13,7 +13,7 @@ void server_code(string level = "")
 
 	isClient = false;
 	networking = true;
-	bool DisablePrints = true;
+	bool DisablePrints = false;
 	
 	cout << green << "[Network] Server starting. Commands :" << endl;
 	cout << "F1 = Load a new level" << endl;
@@ -21,7 +21,9 @@ void server_code(string level = "")
 	cout << "F3 = Status Prints Toggle" << endl;
 	cout << "F4 = Sync Music" << endl;
 	cout << "F5 = Change RAM Variable" << endl;
-	cout << "F6 = PVP Toggle" << white << endl;
+	cout << "F6 = PVP Toggle" << endl;
+	cout << "F7 = Dump RAM" << white << endl;
+
 	data_size_current = 0;
 	thread = new sf::Thread(&NetWorkLoop); thread->launch();
 	Sleep(100);
@@ -114,6 +116,10 @@ void server_code(string level = "")
 			Time_ChatString = 300;
 			Curr_ChatString = pvp ? "pvp is now enabled" : "pvp is now off";
 
+		}
+		if (getKey(0x76))
+		{
+			dump_ram();
 		}
 		Sleep(16);
 	}

@@ -83,6 +83,8 @@ void game_loop()
 
 	process_ex_animation();
 
+	debugging_functions();
+
 	if (!isClient)
 	{
 		for (uint_fast16_t i = 0; i < 256; i++)

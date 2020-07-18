@@ -119,6 +119,7 @@ bool pressed_diag = false;
 bool pressed_drawl1 = false;
 bool pressed_bg = false;
 bool pressed_drawsprites = false;
+bool pressed_dumpram = false;
 
 int fps_diag[128];
 int ping_diag[112];
@@ -131,7 +132,7 @@ int blocks_on_screen = 0;
 
 string username = "No username";
 
-SDL_Scancode input_settings[16] = {
+SDL_Scancode input_settings[17] = {
 	SDL_SCANCODE_S,
 	SDL_SCANCODE_Z,
 	SDL_SCANCODE_X,
@@ -147,7 +148,8 @@ SDL_Scancode input_settings[16] = {
 	SDL_SCANCODE_2,
 	SDL_SCANCODE_3,
 	SDL_SCANCODE_4,
-	SDL_SCANCODE_5
+	SDL_SCANCODE_5,
+	SDL_SCANCODE_6
 };
 bool BUTTONS_GAMEPAD[10];
 

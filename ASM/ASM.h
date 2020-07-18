@@ -8,6 +8,14 @@ uint_fast8_t RAM_old[RAM_Size];
 
 uint_fast8_t RAM_decay_time_level[0x8000]; //for multiplayer
 
+void dump_ram()
+{
+	ofstream fp;
+	fp.open(path + "ramdump.bin", ios::out | ios::binary);
+	fp.write((char*)RAM, sizeof(RAM));
+	cout << red << "[ASM] RAM has been dumped to ramdump.bin" << white << endl;
+}
+
 class JFKASM
 {
 public:

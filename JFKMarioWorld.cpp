@@ -132,6 +132,8 @@ istream& getline(istream& stream, string& str)
 
 #include "chat.h"
 
+#include "debugging.h"
+
 #include "game.h"
 
 
@@ -144,6 +146,8 @@ istream& getline(istream& stream, string& str)
 #include "renderer.h"
 
 #include "3DRendering.h"
+
+
 
 #if not defined(DISABLE_NETWORK)
 #include "server.h"
