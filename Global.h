@@ -1,6 +1,6 @@
 #pragma once
 
-string GAME_VERSION = "0.8.3a";
+string GAME_VERSION = "0.8.4a";
 
 #define rom_asm_size 0x008000 //32kb, 1 bank ($00:8000 to $00:FFFF)
 #define location_rom_levelasm 0x008000 //this will put LevelASM on the start of the ROM, this is a SNES PC btw
@@ -85,6 +85,8 @@ unsigned int packet_wait_time = 16;
 int mouse_x, mouse_y;
 bool mouse_down;
 bool mouse_down_r;
+bool mouse_w_up;
+bool mouse_w_down;
 bool forced_scale = false;
 bool experimental_features = false;
 int data_size_current = 0;

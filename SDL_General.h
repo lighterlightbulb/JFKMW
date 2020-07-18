@@ -240,9 +240,16 @@ void redraw87()
 bool done(bool delay)
 {
 	if (delay) SDL_Delay(5); //So it consumes less processing power
+	mouse_w_up = false;
+	mouse_w_down = false;
 	while (SDL_PollEvent(&event))
 	{
 		if (event.type == SDL_QUIT) return true;
+		if (event.type == SDL_MOUSEWHEEL)
+		{
+			mouse_w_up = event.wheel.y > 0;
+			mouse_w_down = event.wheel.y < 0;
+		}
 	}
 	return quit;
 }

@@ -192,7 +192,9 @@ extern "C" int lua_checkbit(lua_State* L)
 	uint_fast32_t p = (uint_fast16_t)lua_tointeger(L, 1);
 	uint_fast8_t s = (uint_fast8_t)lua_tointeger(L, 2);
 
-	bool bit = (p >> s) & 1;
+	bool bit = ((RAM[p] >> s) & 1);
+
+	//cout << "Bit " << int(s) << " of 0x" << hex << int(p) << " = " << int(bit) << endl;
 
 	lua_pushboolean(L, bit);
 	return 1;

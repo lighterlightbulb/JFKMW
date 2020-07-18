@@ -119,6 +119,8 @@ void game_loop()
 			CurrPlayer.mouse_y = (int_res_y - mouse_y) + CameraY;
 			CurrPlayer.mouse_state[0] = mouse_down;
 			CurrPlayer.mouse_state[1] = mouse_down_r;
+			CurrPlayer.mouse_state[2] = mouse_w_up;
+			CurrPlayer.mouse_state[3] = mouse_w_down;
 
 			CurrPlayer.skin = my_skin;
 			for (int i = 0; i < player_name_size; i++)
