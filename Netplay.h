@@ -163,6 +163,8 @@ void pack_mario_data(uint_fast8_t skip = 1) {
 			{
 				MPlayer& CurrentMario = *item;
 				CurrentPacket << CurrentMario.GRABBED_SPRITE;
+				bool received_mouse_status = CurrentMario.mouse_state[2] || CurrentMario.mouse_state[3];
+				CurrentPacket << received_mouse_status;
 			}
 			plrNum += 1;
 		}
@@ -297,7 +299,7 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool for_validating = false)
 			{
 				cout << blue << "[Network] Something's weird, " << whoSentThis.getRemoteAddress() << " sent a invalid player packet. Disconnecting!" << white << endl;
 				HandleDisconnection(&whoSentThis);
-				return; //once again fuck off
+				return;
 			}
 			
 			PlayerAmount = int(clients.size()); CheckForPlayers();
@@ -349,8 +351,16 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool for_validating = false)
 				{
 					MPlayer& CurrentMario = *item;
 					CurrentPacket >> CurrentMario.GRABBED_SPRITE;
-					mouse_w_up = false;
-					mouse_w_down = false;
+
+
+					bool received_mouse_status = false;
+					CurrentPacket >> received_mouse_status;
+					if (received_mouse_status)
+					{
+						//cout << "Server received mouse status. Resetting" << endl;
+						mouse_w_up = false;
+						mouse_w_down = false;
+					}
 				}
 				num += 1;
 			}
