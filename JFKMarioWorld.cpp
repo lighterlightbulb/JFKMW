@@ -6,9 +6,6 @@
 
 */
 
-//Enable experimental features or not.
-//#define EXPERIMENTAL
-
 #if defined(_WIN32)
 #include <Windows.h>
 #include "psapi.h"
@@ -146,11 +143,7 @@ istream& getline(istream& stream, string& str)
 #include "zsnes_ui.h"
 #include "renderer.h"
 
-//EXPERIMENTAL -- REMOVE
-#if defined(EXPERIMENTAL)
 #include "3DRendering.h"
-#endif
-//EXPERIMENTAL -- REMOVE
 
 #if not defined(DISABLE_NETWORK)
 #include "server.h"

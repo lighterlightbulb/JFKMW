@@ -115,7 +115,7 @@ void player_code()
 				{
 					RenderBackground(
 						(-int(double(CameraX) * (double(RAM[0x3F06]) / 16.0)) % 512) + x * 512,
-						-272 + (int_res_y - 224) +(int(double(CameraY) * (double(RAM[0x3F07]) / 16.0)) % 512) + y * -512);
+						-272 + (int_res_y - 224) + (int(double(CameraY) * (double(RAM[0x3F07]) / 16.0)) % 512) + y * -512);
 				}
 			}
 			//Copied from renderer.h
@@ -170,7 +170,7 @@ void player_code()
 			zsnes_ui.message = "Not supported";
 #endif
 		}
-		
+
 		if (s_or_c == "t")
 		{
 			isClient = false;
@@ -203,10 +203,11 @@ void player_code()
 		while (Mario.size() == 0) {
 			Sleep(16);
 		}
-		
-#if defined(EXPERIMENTAL)
-		Launch3D();
-#endif
+
+		if (experimental_features)
+		{
+			Launch3D();
+		}
 		while (!done(true))
 		{
 			while (doing_read) {
@@ -221,9 +222,10 @@ void player_code()
 
 			render();
 			chrono::high_resolution_clock::time_point t2 = chrono::high_resolution_clock::now();
-#if defined(EXPERIMENTAL)
-			DrawExperimental3D();
-#endif
+			if (experimental_features)
+			{
+				DrawExperimental3D();
+			}
 			redraw(); cls();
 			
 			total_time_ticks = chrono::duration_cast<chrono::duration<double>>(t2 - t1);

@@ -86,6 +86,7 @@ int mouse_x, mouse_y;
 bool mouse_down;
 bool mouse_down_r;
 bool forced_scale = false;
+bool experimental_features = false;
 int data_size_current = 0;
 int data_size_now = 0;
 

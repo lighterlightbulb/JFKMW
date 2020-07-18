@@ -22,6 +22,7 @@ void load_configuration()
 			if (name == "internal_res_y") { int_res_y = stoi(value) * 16; }
 			if (name == "fullscreen") { fullscreen = value == "true"; }
 			if (name == "opengl") { opengl = value == "true"; }
+			if (name == "experimental_features") { experimental_features = value == "true"; }
 			if (name == "network_update_rate") { network_update_rate = stoi(value); }
 			if (name == "packet_wait_time") { packet_wait_time = stoi(value); }
 			if (name == "rendering_device") { rendering_device = stoi(value); }
