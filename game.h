@@ -155,8 +155,8 @@ void game_loop()
 		uint_fast8_t x_s_r = uint_fast8_t(CurrPlayer.X_SPEED * 16.0);
 		uint_fast8_t y_s_r = uint_fast8_t(CurrPlayer.Y_SPEED * 16.0);
 
-		uint_fast16_t m_state_1 = (CurrPlayer.mouse_x & 0x7FFF) + (CurrPlayer.mouse_state[0] << 15);
-		uint_fast16_t m_state_2 = (CurrPlayer.mouse_y & 0x7FFF) + (CurrPlayer.mouse_state[1] << 15);
+		uint_fast16_t m_state_1 = (CurrPlayer.mouse_x & 0x3FFF) + (CurrPlayer.mouse_state[0] << 15) + (CurrPlayer.mouse_state[2] << 14);
+		uint_fast16_t m_state_2 = (CurrPlayer.mouse_y & 0x3FFF) + (CurrPlayer.mouse_state[1] << 15) + (CurrPlayer.mouse_state[3] << 14);
 
 
 		RAM[0x5000 + player - 1] = x_r;

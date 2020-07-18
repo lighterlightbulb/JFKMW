@@ -187,6 +187,18 @@ static int damagePlayer(lua_State* L)
 	return 0;
 }
 
+extern "C" int lua_checkbit(lua_State* L)
+{
+	uint_fast32_t p = (uint_fast16_t)lua_tointeger(L, 1);
+	uint_fast8_t s = (uint_fast8_t)lua_tointeger(L, 2);
+
+	bool bit = (p >> s) & 1;
+
+	lua_pushboolean(L, bit);
+	return 1;
+}
+
+
 /* functions end */
 
 void lua_connect_functions(lua_State* L)
@@ -202,7 +214,7 @@ void lua_connect_functions(lua_State* L)
 	lua_pushcfunction(L, killPlayer); lua_setglobal(L, "kill_player");
 	lua_pushcfunction(L, damagePlayer); lua_setglobal(L, "damage_player");
 	lua_register(L, "asm_read", lua_get_ram);
-
+	lua_register(L, "asm_checkbit", lua_checkbit);
 
 }
 

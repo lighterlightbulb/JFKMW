@@ -45,7 +45,7 @@ public:
 
 	uint_fast16_t mouse_x = 0;
 	uint_fast16_t mouse_y = 0;
-	bool mouse_state[2]; //Left and right click
+	bool mouse_state[4]; //left, right, mousewup, mousewdown
 
 	uint_fast8_t flash_t = 0; //xxxxTTTT
 	int_fast16_t flash_x = 0;
