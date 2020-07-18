@@ -13,7 +13,8 @@ public:
 	uint_fast8_t INVINCIBILITY_FRAMES = 0;
 
 	bool invisible = false;
-	bool ON_FL = false; //ON FLOOR
+	bool ON_FL = false; //on floor
+	bool IN_WT = false; //on water
 	uint_fast8_t SLOPE_TYPE = 0;
 	/*
 		0 : None
@@ -724,19 +725,26 @@ public:
 		{
 			if (!ON_FL)
 			{
-				if (CAN_SPRINT)
+				if (IN_WT)
 				{
-					NewSprite = "JUMPB";
+					NewSprite = "SWIM";
 				}
 				else
 				{
-					if (Y_SPEED > 0.0)
+					if (CAN_SPRINT)
 					{
-						NewSprite = "JUMP";
+						NewSprite = "JUMPB";
 					}
 					else
 					{
-						NewSprite = "FALL";
+						if (Y_SPEED > 0.0)
+						{
+							NewSprite = "JUMP";
+						}
+						else
+						{
+							NewSprite = "FALL";
+						}
 					}
 				}
 			}
@@ -873,49 +881,64 @@ public:
 		if (INVINCIBILITY_FRAMES > 0) {
 			INVINCIBILITY_FRAMES -= 1;
 		}
+		invisible = INVINCIBILITY_FRAMES > 0 ? !invisible : false;
 
 		double GRAV = -double(RAM[0x7C]);
 		bool RUN = false;
 		bool MOV = false;
 		bool SLIGHT_HIGH_SPEED = false;
-		if (ON_FL)
-		{
-			CAN_SPRINT = false;
-		}
-		invisible = INVINCIBILITY_FRAMES > 0 ? !invisible : false;
 
+		IN_WT = RAM[0x85] != 0;
+
+
+		
 		if (in_pipe) {
 			in_pipe_process();
 		}
-		else {
-			ON_FL = false;
-			if (!Move(0.0, -1.0, true)) { //Detected a floor below
-				
-				if (Y_SPEED <= 0)
+		else
+		{
+			if (!IN_WT)
+			{
+				if (ON_FL)
 				{
-					ON_FL = true;
-					jump_is_spin = false;
+					CAN_SPRINT = false;
 				}
-				else
-				{
+
+				ON_FL = false;
+				if (!Move(0.0, -1.0, true)) { //Detected a floor below
+
+					if (Y_SPEED <= 0)
+					{
+						ON_FL = true;
+						jump_is_spin = false;
+					}
+					else
+					{
+						y += 1;
+					}
+				}
+				else {
 					y += 1;
 				}
-			}
-			else {
-				y += 1;
-			}
 
-			SKIDDING = 0;
-			if (abs(X_SPEED) >= Calculate_Speed(576.0)) {
+				SKIDDING = 0;
+				if (abs(X_SPEED) >= Calculate_Speed(576.0)) {
 
-				SLIGHT_HIGH_SPEED = true;
-				if (pad[button_y] && (pad[button_left] || pad[button_right]))
-				{
+					SLIGHT_HIGH_SPEED = true;
+					if (pad[button_y] && (pad[button_left] || pad[button_right]))
+					{
 
-					if (CAN_SPRINT || (ON_FL && !CROUCH)) {
-						P_METER += 2;
-						if (P_METER > P_METER_REQUIRED) {
-							P_METER = P_METER_REQUIRED;
+						if (CAN_SPRINT || (ON_FL && !CROUCH)) {
+							P_METER += 2;
+							if (P_METER > P_METER_REQUIRED) {
+								P_METER = P_METER_REQUIRED;
+							}
+						}
+						else
+						{
+							if (P_METER > 0) {
+								P_METER -= 1;
+							}
 						}
 					}
 					else
@@ -925,179 +948,262 @@ public:
 						}
 					}
 				}
-				else
-				{
+				else {
 					if (P_METER > 0) {
 						P_METER -= 1;
 					}
 				}
-			}
-			else {
-				if (P_METER > 0) {
-					P_METER -= 1;
-				}
-			}
 
-			if (P_METER >= (P_METER_REQUIRED-1) && pad[button_y]) {
-				CAN_SPRINT = true;
-			}
-			if (pad[button_left]) {
-				WALKING_DIR = -1;
-				MOV = true;
-			}
-			if (pad[button_right]) {
-				WALKING_DIR = 1;
-				MOV = true;
-			}
-			if (pad[button_down]) {
-				if (ON_FL) {
-					WALKING_DIR = 0;
+				if (P_METER >= (P_METER_REQUIRED - 1) && pad[button_y]) {
+					CAN_SPRINT = true;
+				}
+				if (pad[button_left]) {
+					WALKING_DIR = -1;
 					MOV = true;
-					CROUCH = true;
 				}
-			}
-			else {
-				if (ON_FL) {
-					CROUCH = false;
+				if (pad[button_right]) {
+					WALKING_DIR = 1;
+					MOV = true;
 				}
-			}
-			if (pad[button_y]) {
-				RUN = true;
-			}
-
-			
-			if ((pad[button_a] || pad[button_b]) != was_jumpin) {
-				was_jumpin = pad[button_a] || pad[button_b];
-				if (was_jumpin && ON_FL) {
-					if (pad[button_a] && GRABBED_SPRITE == 0xFF)
-					{
-						//Spinjump
-						Y_SPEED = Calculate_Speed(1136.0 + (abs(X_SPEED) * 64.0)); //(148.0 * SLIGHT_HIGH_SPEED) + (32.0 * (X_SPEED > Calculate_Speed(320+256+176)))
-						ASM.Write_To_Ram(0x1DFC, 0x04, 1);
-
-						jump_is_spin = true;
-					}
-					else
-					{
-						//Normal jump
-						Y_SPEED = Calculate_Speed(1232.0 + (abs(X_SPEED) * 64.0)); //(148.0 * SLIGHT_HIGH_SPEED) + (32.0 * (X_SPEED > Calculate_Speed(320+256+176)))
-						ASM.Write_To_Ram(0x1DFC, 0x35, 1);
-
-						//jump_is_spin = false;
+				if (pad[button_down]) {
+					if (ON_FL) {
+						WALKING_DIR = 0;
+						MOV = true;
+						CROUCH = true;
 					}
 				}
-			}
-			if (pad[button_a] || pad[button_b]) {
-				GRAV = GRAV * 0.5;
-			}
+				else {
+					if (ON_FL) {
+						CROUCH = false;
+					}
+				}
+				if (pad[button_y]) {
+					RUN = true;
+				}
 
-			double SLOPE_ADD = 0;
-			if (!CROUCH)
-			{
-				if (SLOPE_TYPE == 1)
+
+				if ((pad[button_a] || pad[button_b]) != was_jumpin) {
+					was_jumpin = pad[button_a] || pad[button_b];
+					if (was_jumpin && ON_FL) {
+						if (pad[button_a] && GRABBED_SPRITE == 0xFF)
+						{
+							//Spinjump
+							Y_SPEED = Calculate_Speed(1136.0 + (abs(X_SPEED) * 64.0)); //(148.0 * SLIGHT_HIGH_SPEED) + (32.0 * (X_SPEED > Calculate_Speed(320+256+176)))
+							ASM.Write_To_Ram(0x1DFC, 0x04, 1);
+
+							jump_is_spin = true;
+						}
+						else
+						{
+							//Normal jump
+							Y_SPEED = Calculate_Speed(1232.0 + (abs(X_SPEED) * 64.0)); //(148.0 * SLIGHT_HIGH_SPEED) + (32.0 * (X_SPEED > Calculate_Speed(320+256+176)))
+							ASM.Write_To_Ram(0x1DFC, 0x35, 1);
+
+							//jump_is_spin = false;
+						}
+					}
+				}
+				if (pad[button_a] || pad[button_b]) {
+					GRAV = GRAV * 0.5;
+				}
+
+				double SLOPE_ADD = 0;
+				if (!CROUCH)
 				{
-					if (!MOV || (WALKING_DIR == -1 && MOV)) { SLOPE_ADD = Calculate_Speed(-256); }
-					if (MOV) { SLOPE_ADD = Calculate_Speed(-80); }
-				}
-				if (SLOPE_TYPE == 2)
-				{
-					if (!MOV || (WALKING_DIR == 1 && MOV)) { SLOPE_ADD = Calculate_Speed(256); }
-					if (MOV) { SLOPE_ADD = Calculate_Speed(80); }
-				}
-			}
-			double SPEED_X_TO_SET = SLOPE_ADD + (Calculate_Speed(320.0 + (RUN * 256.0) + (CAN_SPRINT * 192.0)) * WALKING_DIR) * MOV;
-			double SPEED_ACCEL_X = Calculate_Speed(24.0);
-			double STOPPING_DECEL = Calculate_Speed(16.0);
-			double SKID_ACCEL = Calculate_Speed(16.0 + (24.0 * RUN) + (CAN_SPRINT * 40.0));
-
-			if (MOV) {
-				if (X_SPEED > 0.0 && SPEED_X_TO_SET < 0.0 && WALKING_DIR == -1) {
-					SKIDDING = -1;
-					X_SPEED -= SKID_ACCEL;
-				}
-				if (X_SPEED < 0.0 && SPEED_X_TO_SET > 0.0 && WALKING_DIR == 1) {
-					SKIDDING = 1;
-					X_SPEED += SKID_ACCEL;
-				}
-				if (!ON_FL) {
-					SKIDDING = 0;
-				}
-				if (X_SPEED > SPEED_X_TO_SET) {
-					X_SPEED -= SPEED_ACCEL_X;
-					if (X_SPEED < SPEED_X_TO_SET) {
-						X_SPEED = SPEED_X_TO_SET;
+					if (SLOPE_TYPE == 1)
+					{
+						if (!MOV || (WALKING_DIR == -1 && MOV)) { SLOPE_ADD = Calculate_Speed(-256); }
+						if (MOV) { SLOPE_ADD = Calculate_Speed(-80); }
+					}
+					if (SLOPE_TYPE == 2)
+					{
+						if (!MOV || (WALKING_DIR == 1 && MOV)) { SLOPE_ADD = Calculate_Speed(256); }
+						if (MOV) { SLOPE_ADD = Calculate_Speed(80); }
 					}
 				}
+				double SPEED_X_TO_SET = SLOPE_ADD + (Calculate_Speed(320.0 + (RUN * 256.0) + (CAN_SPRINT * 192.0)) * WALKING_DIR) * MOV;
+				double SPEED_ACCEL_X = Calculate_Speed(24.0);
+				double STOPPING_DECEL = Calculate_Speed(16.0);
+				double SKID_ACCEL = Calculate_Speed(16.0 + (24.0 * RUN) + (CAN_SPRINT * 40.0));
 
-				if (X_SPEED < SPEED_X_TO_SET) {
-					X_SPEED += SPEED_ACCEL_X;
+				/*
+				Accel start
+				*/
+				if (MOV) {
+					if (X_SPEED > 0.0 && SPEED_X_TO_SET < 0.0 && WALKING_DIR == -1) {
+						SKIDDING = -1;
+						X_SPEED -= SKID_ACCEL;
+					}
+					if (X_SPEED < 0.0 && SPEED_X_TO_SET > 0.0 && WALKING_DIR == 1) {
+						SKIDDING = 1;
+						X_SPEED += SKID_ACCEL;
+					}
+					if (!ON_FL) {
+						SKIDDING = 0;
+					}
 					if (X_SPEED > SPEED_X_TO_SET) {
-						X_SPEED = SPEED_X_TO_SET;
+						X_SPEED = max(SPEED_X_TO_SET, X_SPEED - SPEED_ACCEL_X);
+					}
+
+					if (X_SPEED < SPEED_X_TO_SET) {
+						X_SPEED = min(SPEED_X_TO_SET, X_SPEED + SPEED_ACCEL_X);
 					}
 				}
-			}
-			else {
-				if (ON_FL == 1.0) {
-					if (!SLOPE_TYPE)
-					{
-						if (X_SPEED > 0.0) {
-							X_SPEED -= STOPPING_DECEL;
-							if (X_SPEED < 0.0) {
-								X_SPEED = 0.0;
-							}
-						}
-						if (X_SPEED < 0.0) {
-							X_SPEED += STOPPING_DECEL;
+				else {
+					if (ON_FL == 1.0) {
+						if (!SLOPE_TYPE)
+						{
 							if (X_SPEED > 0.0) {
-								X_SPEED = 0.0;
+								X_SPEED = max(0, X_SPEED - STOPPING_DECEL);
+							}
+							if (X_SPEED < 0.0) {
+								X_SPEED = min(0, X_SPEED + STOPPING_DECEL);
 							}
 						}
+						else
+						{
+
+							if (X_SPEED > SPEED_X_TO_SET) {
+								X_SPEED = max(SPEED_X_TO_SET, X_SPEED - SPEED_ACCEL_X);
+							}
+
+							if (X_SPEED < SPEED_X_TO_SET) {
+								X_SPEED = min(SPEED_X_TO_SET, X_SPEED + SPEED_ACCEL_X);
+							}
+						}
+					}
+				}
+				/*
+					Accel end
+				*/
+
+
+				if (!ON_FL || SLOPE_TYPE) {
+					Y_SPEED += Calculate_Speed(GRAV);
+				}
+				else {
+					LAST_X_SPEED_ON_FL = X_SPEED;
+				}
+				if (Y_SPEED < Calculate_Speed(-1312.0)) {
+					Y_SPEED = Calculate_Speed(-1312.0);
+				}
+
+				if (!Move(X_SPEED + Calculate_Speed(double(int_fast8_t(RAM[0x7B])) * 16.0), 0.0)) {
+					X_SPEED = 0.0;
+				}
+				if (!Move(0.0, Y_SPEED + Calculate_Speed(double(int_fast8_t(RAM[0x7D])) * 16.0))) {
+					if (SLOPE_TYPE)
+					{
+						if (Y_SPEED > 0) { Y_SPEED = 0; }
+						if (Y_SPEED < Calculate_Speed(-768)) { Y_SPEED = Calculate_Speed(-768); }
 					}
 					else
 					{
-						if (X_SPEED > SPEED_X_TO_SET) {
-							X_SPEED -= SPEED_ACCEL_X;
-							if (X_SPEED < SPEED_X_TO_SET) {
-								X_SPEED = SPEED_X_TO_SET;
-							}
-						}
-
-						if (X_SPEED < SPEED_X_TO_SET) {
-							X_SPEED += SPEED_ACCEL_X;
-							if (X_SPEED > SPEED_X_TO_SET) {
-								X_SPEED = SPEED_X_TO_SET;
-							}
-						}
+						Y_SPEED = 0;
 					}
 				}
 			}
+			else
+			{
+				/*
+				SWIMCODE
+				*/
 
+				ON_FL = false;
+				if (!Move(0.0, -1.0, true)) { //Detected a floor below
 
-			if (!ON_FL || SLOPE_TYPE) {
-				Y_SPEED += Calculate_Speed(GRAV);
-			}
-			else {
-				LAST_X_SPEED_ON_FL = X_SPEED;
-			}
-			if (Y_SPEED < Calculate_Speed(-1312.0)) {
-				Y_SPEED = Calculate_Speed(-1312.0);
-			}
-
-			if (!Move(X_SPEED + Calculate_Speed(double(int_fast8_t(RAM[0x7B])) * 16.0), 0.0)) {
-				X_SPEED = 0.0;
-			}
-			if (!Move(0.0, Y_SPEED + Calculate_Speed(double(int_fast8_t(RAM[0x7D])) * 16.0))) {
-				if (SLOPE_TYPE)
-				{
-					if (Y_SPEED > 0) { Y_SPEED = 0; }
-					if (Y_SPEED < Calculate_Speed(-768)) { Y_SPEED = Calculate_Speed(-768); }
+					if (Y_SPEED <= 0)
+					{
+						ON_FL = true;
+						jump_is_spin = false;
+					}
+					else
+					{
+						y += 1;
+					}
 				}
-				else
-				{
+				else {
+					y += 1;
+				}
+
+				SLIGHT_HIGH_SPEED = false;
+				CAN_SPRINT = false;
+				MOV = false;
+				CROUCH = false;
+
+				if (pad[button_left]) {
+					WALKING_DIR = -1;
+					MOV = true;
+				}
+				if (pad[button_right]) {
+					WALKING_DIR = 1;
+					MOV = true;
+				}
+				if (pad[button_down]) {
+					if (ON_FL && GRABBED_SPRITE == 0xFF) {
+						WALKING_DIR = 0;
+						MOV = true;
+						CROUCH = true;
+					}
+				}
+
+				if ((pad[button_a] || pad[button_b]) != was_jumpin) {
+					was_jumpin = pad[button_a] || pad[button_b];
+					if (was_jumpin) {
+						RAM[0x1DF9] = 0x0E;
+						Y_SPEED = 10.0;
+					}
+				}
+
+				Y_SPEED = Y_SPEED + Calculate_Speed(-8);
+
+				Y_SPEED = min(Y_SPEED, Calculate_Speed(384.0 - (pad[button_down] * 256) + (pad[button_up] * 384)));
+
+				double SPEED_X_TO_SET = Calculate_Speed(256.0 / (1.0 + double(ON_FL))) * WALKING_DIR;
+				double SPEED_ACCEL_X = Calculate_Speed(24.0);
+				double STOPPING_DECEL = Calculate_Speed(24.0);
+				double SKID_ACCEL = Calculate_Speed(40.0);
+
+				/*
+				Accel start
+				*/
+				if (MOV) {
+					if (X_SPEED > SPEED_X_TO_SET) {
+						X_SPEED = max(SPEED_X_TO_SET, X_SPEED - SPEED_ACCEL_X);
+					}
+					if (X_SPEED < SPEED_X_TO_SET) {
+						X_SPEED = min(SPEED_X_TO_SET, X_SPEED + SPEED_ACCEL_X);
+					}
+					if (X_SPEED > 0.0 && SPEED_X_TO_SET < 0.0 && WALKING_DIR == -1) {
+						X_SPEED -= SKID_ACCEL;
+					}
+					if (X_SPEED < 0.0 && SPEED_X_TO_SET > 0.0 && WALKING_DIR == 1) {
+						X_SPEED += SKID_ACCEL;
+					}
+				}
+				else {
+					if (X_SPEED > 0.0) {
+						X_SPEED = max(0, X_SPEED - STOPPING_DECEL);
+					}
+					if (X_SPEED < 0.0) {
+						X_SPEED = min(0, X_SPEED + STOPPING_DECEL);
+					}
+				}
+				/*
+				Accel end
+				*/
+
+
+				if (!Move(X_SPEED + Calculate_Speed(double(int_fast8_t(RAM[0x7B])) * 16.0), 0.0)) {
+					X_SPEED = 0.0;
+				}
+				if (!Move(0.0, Y_SPEED + Calculate_Speed(double(int_fast8_t(RAM[0x7D])) * 16.0))) {
 					Y_SPEED = 0;
 				}
 			}
-
+			/*
+				No more swimming
+			*/
 		}
 		pressed_y = false;
 		Get_Sprite();

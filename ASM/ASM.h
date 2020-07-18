@@ -476,6 +476,9 @@ void Sync_Server_RAM(bool compressed = false)
 		//receive on/off status
 		CurrentPacket >> RAM[0x14AF];
 
+		//receive water status
+		CurrentPacket >> RAM[0x85];
+
 		//receive clear status & brightness flag
 		CurrentPacket >> RAM[0x1493];
 
@@ -645,6 +648,9 @@ void Push_Server_RAM(bool compress = false)
 
 		//Send on/off status
 		CurrentPacket << RAM[0x14AF];
+
+		//send water status
+		CurrentPacket << RAM[0x85];
 
 		//Send level clear status
 		CurrentPacket << RAM[0x1493];
