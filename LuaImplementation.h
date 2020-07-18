@@ -252,3 +252,12 @@ void lua_run_main()
 	lua_getglobal(LUA_STATE, "Main");
 	lua_pcall(LUA_STATE, 0, 0, 0); // run script
 }
+
+void lua_on_chatted(string message)
+{
+	if (lua_getglobal(LUA_STATE, "OnChatted"))
+	{
+		lua_pushstring(LUA_STATE, message.c_str());
+		lua_pcall(LUA_STATE, 1, 0, 0);
+	}
+}

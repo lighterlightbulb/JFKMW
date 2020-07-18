@@ -16,6 +16,8 @@ void Chat_ServerSide()
 			Time_ChatString = 420;
 			cout << lua_color << "[Chat S] " << Curr_ChatString << white << endl;
 
+			lua_on_chatted(Curr_ChatString);
+
 			if (!isClient && networking)
 			{
 				string New_ChatString = Curr_ChatString;
