@@ -106,7 +106,7 @@ istream& getline(istream& stream, string& str)
 #include "cout.h"
 
 #include "Global.h"
-#include "ASM/ASM.h"
+#include "ASM.h"
 #include "HDMA.h"
 #include "config.h"
 
