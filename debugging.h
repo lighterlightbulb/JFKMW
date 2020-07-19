@@ -5,12 +5,37 @@ void dump_ram()
 	ofstream fp;
 	fp.open(path + "ramdump.bin", ios::out | ios::binary);
 	fp.write((char*)RAM, sizeof(RAM));
+	fp.close();
+
 	cout << red << "[ASM] RAM has been dumped to ramdump.bin" << white << endl;
 }
 
+
+bool pressed_hide = false;
+bool pressed_diag = false;
+bool pressed_drawl1 = false;
+bool pressed_bg = false;
+bool pressed_drawsprites = false;
+bool pressed_dumpram = false;
+bool pressed_dumplevel = false;
+
 void dump_level_data()
 {
+	ofstream out(path + "level_data_dump.txt");
+	out << "[level_data]" << endl;
+	for (uint_fast16_t x = 0; x < mapWidth; x++)
+	{
+		for (uint_fast16_t y = 0; y < mapHeight; y++)
+		{
+			if (map16_handler.get_tile(x, y) != 0x25)
+			{
+				out << int_to_hex(map16_handler.get_tile(x, y)) << "," << x << "," << y << endl;
+			}
+		}
+	}
+	out.close();
 
+	cout << green << "[Level Manager] Level dumped to level_data_dump.txt" << white << endl;
 }
 
 void debugging_functions()
@@ -66,6 +91,14 @@ void debugging_functions()
 			pressed_dumpram = stat;
 			if (stat) {
 				dump_ram();
+			}
+		}
+
+		stat = state[input_settings[17]];
+		if (stat != pressed_dumplevel) {
+			pressed_dumplevel = stat;
+			if (stat) {
+				dump_level_data();
 			}
 		}
 	}

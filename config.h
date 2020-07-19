@@ -64,6 +64,7 @@ void load_configuration()
 			if (name == "button_togglebg") { input_settings[14] = SDL_GetScancodeFromName(v); }
 			if (name == "button_togglesprites") { input_settings[15] = SDL_GetScancodeFromName(v); }
 			if (name == "button_dumpram") { input_settings[16] = SDL_GetScancodeFromName(v); }
+			if (name == "button_dumplevel") { input_settings[17] = SDL_GetScancodeFromName(v); }
 
 			if (name == "joystick_num") { controller = stoi(value); }
 			if (name == "haptic_num") { haptic = stoi(value); }
