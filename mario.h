@@ -809,6 +809,8 @@ public:
 			in_pipe = false;
 			pipe_speed_x = 0;
 			pipe_speed_y = 0;
+
+
 			ASM.Write_To_Ram(0x1DF9, 0x4, 1);
 		}
 		invisible = true;

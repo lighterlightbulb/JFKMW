@@ -229,10 +229,10 @@ void player_code()
 			redraw(); cls();
 			
 			total_time_ticks = chrono::duration_cast<chrono::duration<double>>(t2 - t1);
-			int fps = int(1.0 / (total_time_ticks.count() / 1.0));
+			int fps = int(1.0 / total_time_ticks.count());
 			if (force_sleep)
 			{
-				while (fps > 75)
+				while (fps > 66)
 				{
 					Sleep(1);
 					t2 = chrono::high_resolution_clock::now();
