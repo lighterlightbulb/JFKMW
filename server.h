@@ -22,7 +22,8 @@ void server_code(string level = "")
 	cout << "F4 = Sync Music" << endl;
 	cout << "F5 = Change RAM Variable" << endl;
 	cout << "F6 = PVP Toggle" << endl;
-	cout << "F7 = Dump RAM" << white << endl;
+	cout << "F7 = Dump RAM" << endl;
+	cout << "F8 = Dump Level data" << white << endl;
 
 	data_size_current = 0;
 	thread = new sf::Thread(&NetWorkLoop); thread->launch();
@@ -120,6 +121,10 @@ void server_code(string level = "")
 		if (getKey(0x76))
 		{
 			dump_ram();
+		}
+		if (getKey(0x77))
+		{
+			dump_level_data();
 		}
 		Sleep(16);
 	}
