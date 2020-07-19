@@ -202,13 +202,13 @@ void SoundLoop()
 				spc_or_ogg = true;
 			}
 
-			std::ifstream input(file_picked, std::ios::in | std::ios::binary | std::ios::ate);
+			ifstream input(file_picked, ios::in | ios::binary | ios::ate);
 			if (input.is_open())
 			{
 				delete[] music_data;
 				music_data_size = int(input.tellg());
 				music_data = new char[music_data_size];
-				input.seekg(0, std::ios::beg);
+				input.seekg(0, ios::beg);
 				input.read(music_data, music_data_size);
 				input.close();
 				cout << purple << "[Audio] Loaded " << file_picked << white << endl;

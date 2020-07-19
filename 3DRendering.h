@@ -105,7 +105,7 @@ public:
 	}
 };
 
-std::vector<Cube> mapD;
+vector<Cube> mapD;
 
 void inicializar_map()
 {
@@ -246,7 +246,7 @@ void ThirdLoop()
 		
 		clean_surf();
 
-		std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
+		chrono::high_resolution_clock::time_point t1 = chrono::high_resolution_clock::now();
 		PlayerObjLocal.process();
 
 		

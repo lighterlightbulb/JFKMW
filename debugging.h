@@ -1,5 +1,18 @@
 #pragma once
 
+void dump_ram()
+{
+	ofstream fp;
+	fp.open(path + "ramdump.bin", ios::out | ios::binary);
+	fp.write((char*)RAM, sizeof(RAM));
+	cout << red << "[ASM] RAM has been dumped to ramdump.bin" << white << endl;
+}
+
+void dump_level_data()
+{
+
+}
+
 void debugging_functions()
 {
 	/*

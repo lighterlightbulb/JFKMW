@@ -328,8 +328,8 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool for_validating = false)
 		{
 			int_fast32_t timestamp = 0;
 			CurrentPacket >> timestamp;
-			std::chrono::milliseconds ms = std::chrono::duration_cast<std::chrono::milliseconds>(
-				std::chrono::system_clock::now().time_since_epoch()
+			chrono::milliseconds ms = chrono::duration_cast<chrono::milliseconds>(
+				chrono::system_clock::now().time_since_epoch()
 				);
 			latest_server_response = int_fast32_t(ms.count()) - timestamp;
 			CurrentPacket >> pvp;
@@ -516,8 +516,8 @@ void Server_To_Clients()
 
 
 			PreparePacket(Header_GlobalUpdate);
-			std::chrono::milliseconds ms = std::chrono::duration_cast<std::chrono::milliseconds>(
-				std::chrono::system_clock::now().time_since_epoch()
+			chrono::milliseconds ms = chrono::duration_cast<chrono::milliseconds>(
+				chrono::system_clock::now().time_since_epoch()
 				);
 
 			CurrentPacket << int_fast32_t(ms.count());

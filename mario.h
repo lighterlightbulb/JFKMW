@@ -148,6 +148,8 @@ public:
 		DEATH_TIMER = 0;
 		DEAD = false;
 		STATE = 0;
+		X_SPEED = 0;
+		Y_SPEED = 0;
 		jump_is_spin = false;
 	}
 
@@ -1157,7 +1159,7 @@ public:
 
 				Y_SPEED = Y_SPEED + Calculate_Speed(-8);
 
-				Y_SPEED = min(Y_SPEED, Calculate_Speed(384.0 - (pad[button_down] * 256) + (pad[button_up] * 384)));
+				Y_SPEED = max(Calculate_Speed(-1024), min(Y_SPEED, Calculate_Speed(384.0 - (pad[button_down] * 256.0) + (pad[button_up] * 384.0))));
 
 				double SPEED_X_TO_SET = Calculate_Speed(256.0 / (1.0 + double(ON_FL))) * WALKING_DIR;
 				double SPEED_ACCEL_X = Calculate_Speed(24.0);

@@ -137,7 +137,7 @@ public:
 		snow_s = 0.f;
 #if defined(USE_FILESYSTEM)
 
-		std::string patht = path + "Levels";
+		string patht = path + "Levels";
 		for (const auto& entry : fs::directory_iterator(patht))
 		{
 			string st = entry.path().string();

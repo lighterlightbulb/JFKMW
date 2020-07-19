@@ -54,7 +54,7 @@ void Sleep(int time) {
 
 using namespace std;
 #if defined(USE_FILESYSTEM)
-namespace fs = std::experimental::filesystem;
+namespace fs = experimental::filesystem;
 #endif
 
 #include <SDL.h>
@@ -159,7 +159,7 @@ int main(int argc, char* argv[])
 	load_configuration();
 #if defined(_WIN32)
 	string t = "JFKMW Console - " + GAME_VERSION;
-	std::wstring stemp = std::wstring(t.begin(), t.end());
+	wstring stemp = wstring(t.begin(), t.end());
 	LPCWSTR sw = stemp.c_str();
 	SetConsoleTitle(sw);
 #endif
