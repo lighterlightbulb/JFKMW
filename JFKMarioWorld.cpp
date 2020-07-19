@@ -194,8 +194,12 @@ int main(int argc, char* argv[])
 #else
 	player_code();
 #endif
-	cout << yellow << "[JFKMW] Quitting JFK mario world. Thanks for testing!" << white << endl;
+	if (testing_level == "")
+	{
+		cout << yellow << "[JFKMW] Quitting JFK mario world. Thanks for testing!" << white << endl;
+		Sleep(1000);
+	}
 	end_game();
-	Sleep(1000);
+
 	return 0;
 }
