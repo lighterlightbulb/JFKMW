@@ -2,8 +2,15 @@
 
 void player_code()
 {
-	if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
-		cout << "SDL initialization failed. SDL Error: " << SDL_GetError(); return;
+	if (SDL_Init(SDL_INIT_EVERYTHING & ~SDL_INIT_HAPTIC) != 0) {
+		cout << red << "[SDL] SDL initialization failed. SDL Error: " << SDL_GetError() << white << endl; return;
+	}
+
+	if (haptic > -1)
+	{
+		if (SDL_Init(SDL_INIT_HAPTIC) != 0) {
+			cout << red << "[SDL] Haptic initialization failed. SDL Error: " << SDL_GetError() << white << endl; return;
+		}
 	}
 
 
