@@ -251,7 +251,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="3DRendering.h" />
     <ClInclude Include="ASM.h" />
     <ClInclude Include="chat.h" />
     <ClInclude Include="config.h" />

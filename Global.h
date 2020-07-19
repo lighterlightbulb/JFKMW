@@ -88,7 +88,7 @@ bool mouse_down_r;
 bool mouse_w_up;
 bool mouse_w_down;
 bool forced_scale = false;
-bool experimental_features = false;
+
 int data_size_current = 0;
 int data_size_now = 0;
 
