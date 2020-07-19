@@ -70,7 +70,7 @@ void player_code()
 				}
 				if (zsnes_ui.button_pressed == "MULTIPLAYER" || state[SDL_SCANCODE_W]) {
 #if not defined(DISABLE_NETWORK)
-					ip = zsnes_ui.hint; PORT = 25500;
+					ip = zsnes_ui.hint;
 					zsnes_ui.message = "Connecting to " + ip + ":" + to_string(PORT);
 					s_or_c = "c";
 					midway_activated = false;
