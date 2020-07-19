@@ -145,9 +145,6 @@ istream& getline(istream& stream, string& str)
 #include "zsnes_ui.h"
 #include "renderer.h"
 
-#include "3DRendering.h"
-
-
 
 #if not defined(DISABLE_NETWORK)
 #include "server.h"
