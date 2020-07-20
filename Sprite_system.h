@@ -63,11 +63,12 @@ public:
 
 		if (RAM[0x2600 + entry] & 0b100000) //if gravity bit is on
 		{
-			if (int_fast8_t(RAM[0x2480 + entry]) > -82)
+			int_fast8_t sprgravity = RAM[0x85] ? -16 : -82;
+			if (int_fast8_t(RAM[0x2480 + entry]) > sprgravity)
 			{
 				int grav = RAM[0x2880 + entry] & 0b1000 ? 2 : 3;
 
-				RAM[0x2480 + entry] = max(-82, RAM[0x2480 + entry] - grav);
+				RAM[0x2480 + entry] = max(sprgravity, RAM[0x2480 + entry] - grav);
 			}
 		}
 

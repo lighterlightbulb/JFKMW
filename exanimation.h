@@ -34,6 +34,15 @@ void process_ex_animation()
 			}
 		}
 
+		//Water
+		for (int i = 0; i < 4; i++)
+		{
+			for (int b = 0; b < 32; b++)
+			{
+				RAM[VRAM_Location + (32 * 0x70) + (i * 32) + b] = RAM[VRAM_Location + 0x8000 + (0x100 * 32) + b + (i * 32) + (((global_frame_counter / 8) % 4) * 0x10 * 32)];
+			}
+		}
+
 		//L.A Coin
 		for (int i = 0; i < 4; i++)
 		{

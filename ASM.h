@@ -464,6 +464,7 @@ void Sync_Server_RAM(bool compressed = false)
 		//Get screen stuff
 		CurrentPacket >> RAM[0x1411];
 		CurrentPacket >> RAM[0x1412];
+		CurrentPacket >> RAM[0x40];
 
 		//receive on/off status
 		CurrentPacket >> RAM[0x14AF];
@@ -637,6 +638,7 @@ void Push_Server_RAM(bool compress = false)
 		//Send screen stuff
 		CurrentPacket << RAM[0x1411];
 		CurrentPacket << RAM[0x1412];
+		CurrentPacket << RAM[0x40];
 
 		//Send on/off status
 		CurrentPacket << RAM[0x14AF];

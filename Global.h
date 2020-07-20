@@ -328,7 +328,7 @@ void discord_message(string msg)
 	{
 		sf::Thread t1(do_d_msg, msg);
 		t1.launch();
-		cout << lua_color << "[Logging] Thread started with \"" << msg << "\"" << white << endl;
+		//cout << lua_color << "[Logging] Thread started with \"" << msg << "\"" << white << endl;
 	}
 }
 #else

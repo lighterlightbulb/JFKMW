@@ -551,6 +551,25 @@ public:
 				bool checkBottom = map16_handler.logic[1];
 				bool checkTop = map16_handler.logic[0];
 
+				bool playHitSound = true;
+
+				if (IN_WT && yMove > 0.0)
+				{
+					if (map16_handler.get_tile(xB, yB) == 0x25)
+					{
+						if (pad[button_up] && (pad[button_b] || pad[button_a]))
+						{
+							Y_SPEED = Calculate_Speed(0x500);
+							jump_is_spin = pad[button_a];
+						}
+						else
+						{
+							checkBottom = true;
+							playHitSound = false;
+						}
+					}
+				}
+
 				if (NewPositionX < RightBlock && NewPositionX > LeftBlock && NewPositionY < AboveBlock && NewPositionY > BelowBlock)
 				{
 					if (map16_handler.logic[4])
@@ -578,6 +597,7 @@ public:
 									in_pipe = true;
 									pipe_speed_x = -2;
 									pipe_speed_y = 0;
+									
 									ASM.Write_To_Ram(0x1DF9, 0x4, 1);
 								}
 							}
@@ -653,8 +673,10 @@ public:
 							willreturn = false;
 
 
-							ASM.Write_To_Ram(0x1DF9, 0x1, 1);
-
+							if (playHitSound)
+							{
+								ASM.Write_To_Ram(0x1DF9, 0x1, 1);
+							}
 							map16_handler.process_block(xB, yB, bottom);
 							if (pad[button_up])
 							{
@@ -666,6 +688,7 @@ public:
 									in_pipe = true;
 									pipe_speed_x = 0;
 									pipe_speed_y = 2;
+									
 									ASM.Write_To_Ram(0x1DF9, 0x4, 1);
 								}
 							}
@@ -892,7 +915,12 @@ public:
 		bool MOV = false;
 		bool SLIGHT_HIGH_SPEED = false;
 
-		IN_WT = RAM[0x85] != 0;
+
+		
+		uint_fast16_t check_x_1 = uint_fast16_t((x + 8) / 16.0);
+		uint_fast16_t check_y_1 = uint_fast16_t((y + height) / 16.0);
+
+		IN_WT = RAM[0x85] != 0 || map16_handler.get_tile(check_x_1, check_y_1) < 4;
 
 
 		
@@ -1113,6 +1141,7 @@ public:
 				SWIMCODE
 				*/
 
+				jump_is_spin = false;
 				ON_FL = false;
 				if (!Move(0.0, -1.0, true)) { //Detected a floor below
 
