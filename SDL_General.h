@@ -237,9 +237,12 @@ void redraw87()
 	SDL_RenderPresent(ren);
 }
 
-bool done(bool delay)
+bool done()
 {
-	if (delay) SDL_Delay(5); //So it consumes less processing power
+	//if (delay) SDL_Delay(16); //So it consumes less processing power
+	if (!v_sync) {
+		SDL_Delay(16);
+	}
 
 	if (!networking)
 	{

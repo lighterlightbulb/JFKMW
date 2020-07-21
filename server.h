@@ -2,6 +2,8 @@
 
 void server_code(string level = "")
 {
+	SDL_Init(SDL_INIT_TIMER | SDL_INIT_EVENTS);
+
 	game_init();
 	initialize_map16();
 	cout << yellow << "[JFKMW] Starting up a server." << white << endl;
@@ -27,13 +29,16 @@ void server_code(string level = "")
 
 	data_size_current = 0;
 	thread = new sf::Thread(&NetWorkLoop); thread->launch();
-	Sleep(100);
+
+	int FPS = 60;
 	while (true)
 	{
+
 		while (doing_read) {
 			Sleep(1);
 		}
 
+		Uint32 start_time = SDL_GetTicks();
 
 		doing_write = true;
 		chrono::high_resolution_clock::time_point t1 = chrono::high_resolution_clock::now();
@@ -126,6 +131,10 @@ void server_code(string level = "")
 		{
 			dump_level_data();
 		}
-		Sleep(16);
+
+		if (Uint32(1000 / FPS) > (SDL_GetTicks() - start_time))
+		{
+			SDL_Delay((1000 / FPS) - (SDL_GetTicks() - start_time));
+		}
 	}
 }

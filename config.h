@@ -27,7 +27,6 @@ void load_configuration()
 			if (name == "rendering_device") { rendering_device = stoi(value); }
 			if (name == "renderer_accelerated") { renderer_accelerated = value == "true"; }
 			if (name == "v_sync") { v_sync = value == "true"; }
-			if (name == "force_sleep") { force_sleep = value == "true"; }
 			if (name == "smooth_camera") { smooth_camera = value == "true"; }
 			if (name == "smooth_camera_speed") { smooth_camera_speed = double(stoi(value)); }
 			if (name == "scale") { forced_scale = stoi(value) > 0; scale = stoi(value); }
