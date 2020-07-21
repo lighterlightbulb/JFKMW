@@ -479,7 +479,7 @@ void Sync_Server_RAM(bool compressed = false)
 		CurrentPacket >> RAM[0x1887];
 
 		//receive grav
-		CurrentPacket >> RAM[0x7D];
+		CurrentPacket >> RAM[0x7C];
 
 		//recieve level start
 		CurrentPacket >> RAM[0x3F0B];
@@ -653,7 +653,7 @@ void Push_Server_RAM(bool compress = false)
 		CurrentPacket << RAM[0x1887];
 
 		//Send grav
-		CurrentPacket << RAM[0x7D];
+		CurrentPacket << RAM[0x7C];
 
 		//Send level start
 		CurrentPacket << RAM[0x3F0B];
@@ -682,7 +682,6 @@ void Push_Server_RAM(bool compress = false)
 
 		for (uint_fast16_t i = 0; i < 0x400; i += 8) {
 			if (RAM[0x200 + i] != 0 || RAM[0x206 + i] != 0) {
-				//CurrentPacket << i;
 				CurrentPacket << RAM[0x0200 + i];
 				CurrentPacket << RAM[0x0201 + i];
 				CurrentPacket << RAM[0x0202 + i];
@@ -722,7 +721,7 @@ void Push_Server_RAM(bool compress = false)
 		}
 		CurrentPacket << T3_entries;
 
-		for(uint_fast16_t T3_loop = 0; T3_loop < 0x800; T3_loop+=2) {
+		for(uint_fast16_t T3_loop = 0; T3_loop < 0x800; T3_loop += 2) {
 			if (RAM[VRAM_Location + 0xB800 + T3_loop] < MAX_L3_TILES) { //This tile exists
 				CurrentPacket << T3_loop;
 				CurrentPacket << RAM[VRAM_Location + 0xB800 + T3_loop];
