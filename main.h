@@ -224,12 +224,12 @@ void player_code()
 			check_input(); game_loop(); SoundLoop();
 			render();
 			chrono::high_resolution_clock::time_point t2 = chrono::high_resolution_clock::now();
-
+			total_time_ticks = chrono::duration_cast<chrono::duration<double>>(t2 - t1);
 			doing_write = false;
 
 			redraw(); cls();
 			
-			total_time_ticks = chrono::duration_cast<chrono::duration<double>>(t2 - t1);
+			
 
 			if (disconnected) {
 				quit = true; cout << red << "[Network] Disconnected." << white << endl; zsnes_ui.message = "Disconnected from server"; break;
