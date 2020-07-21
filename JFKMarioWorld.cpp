@@ -154,12 +154,7 @@ istream& getline(istream& stream, string& str)
 int main(int argc, char* argv[])
 {
 	load_configuration();
-#if defined(_WIN32)
-	string t = "JFKMW Console - " + GAME_VERSION;
-	wstring stemp = wstring(t.begin(), t.end());
-	LPCWSTR sw = stemp.c_str();
-	SetConsoleTitle(sw);
-#endif
+
 #if not defined(DISABLE_NETWORK)
 	bool hosting = false;
 	if (argc > 1)
@@ -174,6 +169,13 @@ int main(int argc, char* argv[])
 			testing_level = argv[2];
 		}
 	}
+
+#if defined(_WIN32)
+	string t = "JFKMW Console - " + string(hosting ? "Server" : "Client") + " " + GAME_VERSION;
+	wstring stemp = wstring(t.begin(), t.end());
+	LPCWSTR sw = stemp.c_str();
+	SetConsoleTitle(sw);
+#endif
 
 	if (hosting) {
 		cout << yellow << "[JFKMW] Welcome to JFK mario world " + GAME_VERSION + "! Hosting a server." << endl;
