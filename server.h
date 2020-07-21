@@ -30,15 +30,12 @@ void server_code(string level = "")
 	data_size_current = 0;
 	thread = new sf::Thread(&NetWorkLoop); thread->launch();
 
-	int FPS = 60;
 	while (true)
 	{
 
 		while (doing_read) {
 			Sleep(1);
 		}
-
-		Uint32 start_time = SDL_GetTicks();
 
 		doing_write = true;
 		chrono::high_resolution_clock::time_point t1 = chrono::high_resolution_clock::now();
@@ -132,9 +129,6 @@ void server_code(string level = "")
 			dump_level_data();
 		}
 
-		if (Uint32(1000 / FPS) > (SDL_GetTicks() - start_time))
-		{
-			SDL_Delay((1000 / FPS) - (SDL_GetTicks() - start_time));
-		}
+		Sleep(16);
 	}
 }
