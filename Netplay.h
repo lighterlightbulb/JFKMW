@@ -184,16 +184,29 @@ Disconnection handler
 
 
 void HandleDisconnection(sf::TcpSocket* ToSend = nullptr) {
-	discord_message("**Someone just disconnected.**");
+	if (ToSend != nullptr)
+	{
+		discord_message("**Someone just disconnected.**");
 
-	cout << blue << "[Server] " << ToSend->getRemoteAddress() << " has disconnected." << white << endl;
+		cout << blue << "[Server] " << ToSend->getRemoteAddress() << " has disconnected." << white << endl;
+		if (find(clients.begin(), clients.end(), ToSend) != clients.end()) {
+			clients.erase(remove(clients.begin(), clients.end(), ToSend));
 
-	clients.erase(remove(clients.begin(), clients.end(), ToSend));
-	selector.remove(*ToSend);
+			selector.remove(*ToSend);
 
-	ToSend->disconnect();
-	last_network_status = sf::Socket::Error;
-	delete ToSend;
+			ToSend->disconnect();
+			last_network_status = sf::Socket::Error;
+
+			delete ToSend;
+		}
+		else
+		{
+			ToSend->disconnect();
+			last_network_status = sf::Socket::Error;
+		}
+
+
+	}
 }
 
 
@@ -481,9 +494,10 @@ void PendingConnection()
 			SendPacket(client);
 
 			latest_error = "Unknown";
+			client->disconnect();
 
-			client->disconnect(); 
 			delete client;
+
 		}
 
 	}

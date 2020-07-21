@@ -553,7 +553,7 @@ public:
 
 				bool playHitSound = true;
 
-				if (IN_WT && yMove > 0.0)
+				if (IN_WT && yMove > 0.0 && !RAM[0x85])
 				{
 					if (map16_handler.get_tile(xB, yB) == 0x25)
 					{
