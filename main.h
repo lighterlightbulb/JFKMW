@@ -208,27 +208,26 @@ void player_code()
 
 		cout << yellow << "[JFKMW] Waiting for player..." << white << endl;
 		while (Mario.size() == 0) {
-			Sleep(16);
+			sf::sleep(sf::milliseconds(1));
 		}
 
 		while (!done())
 		{
 			while (doing_read) {
-				Sleep(1);
+				sf::sleep(sf::milliseconds(1));
 			}
 
-			zsnes_ui.message = "Idle";
 
 			doing_write = true;
+			cls();
+			zsnes_ui.message = "Idle";
 			chrono::high_resolution_clock::time_point t1 = chrono::high_resolution_clock::now();
 			check_input(); game_loop(); SoundLoop();
 			render();
 			chrono::high_resolution_clock::time_point t2 = chrono::high_resolution_clock::now();
 			total_time_ticks = chrono::duration_cast<chrono::duration<double>>(t2 - t1);
 			doing_write = false;
-
-			redraw(); cls();
-			
+			redraw();
 			
 
 			if (disconnected) {

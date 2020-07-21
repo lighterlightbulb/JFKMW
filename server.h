@@ -35,7 +35,7 @@ void server_code(string level = "")
 	{
 
 		while (doing_read) {
-			Sleep(1);
+			sf::sleep(sf::milliseconds(1));
 		}
 
 		Uint32 start_time = SDL_GetTicks();
