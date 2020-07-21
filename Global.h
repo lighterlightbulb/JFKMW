@@ -103,7 +103,6 @@ bool opengl = false;
 bool networking = false;
 bool renderer_accelerated = true;
 bool v_sync = true;
-bool force_sleep = false;
 
 string testing_level = "";
 

@@ -156,7 +156,7 @@ int main(int argc, char* argv[])
 	load_configuration();
 
 #if not defined(DISABLE_NETWORK)
-	bool hosting = false;
+	bool hosting = true;
 	if (argc > 1)
 	{
 		if (strcmp(argv[1], "-h") == 0) {
