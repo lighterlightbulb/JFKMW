@@ -243,10 +243,6 @@ bool done()
 	if (!v_sync) {
 		SDL_Delay(16);
 	}
-	else
-	{
-		SDL_Delay(5);
-	}
 
 	if (!networking)
 	{
