@@ -35,7 +35,7 @@ void server_code(string level = "")
 	{
 
 		while (doing_read) {
-			sf::sleep(sf::milliseconds(1));
+			SDL_Delay(1);
 		}
 
 		doing_write = true;
