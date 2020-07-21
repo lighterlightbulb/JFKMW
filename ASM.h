@@ -507,8 +507,6 @@ void Sync_Server_RAM(bool compressed = false)
 		CurrentPacket >> oam_entries;
 		for (uint_fast8_t i = 0; i < oam_entries; i++)
 		{
-			//uint_fast16_t pointer;
-			//CurrentPacket >> pointer;
 			CurrentPacket >> RAM[0x0200 + pointer];
 			CurrentPacket >> RAM[0x0201 + pointer];
 			CurrentPacket >> RAM[0x0202 + pointer];
@@ -527,7 +525,6 @@ void Sync_Server_RAM(bool compressed = false)
 
 		//Decompress sprite entries (Fuck do you mean )
 		uint_fast8_t spr_entries;
-		//uint_fast8_t p = 0;
 		CurrentPacket >> spr_entries;
 		for (uint_fast8_t i = 0; i < spr_entries; i++) {
 			uint_fast8_t p;
@@ -540,10 +537,8 @@ void Sync_Server_RAM(bool compressed = false)
 
 		//Decompress T3
 		for (uint_fast16_t T3_loop = 0; T3_loop < 0x800; T3_loop += 2) {
-			if (RAM[VRAM_Location + 0xB800 + T3_loop] < MAX_L3_TILES) { //This tile exists
-				RAM[VRAM_Location + 0xB800 + T3_loop] = 0x7F;
-				RAM[VRAM_Location + 0xB800 + T3_loop + 1] = 0x00;
-			}
+			RAM[VRAM_Location + 0xB800 + T3_loop] = 0x7F;
+			RAM[VRAM_Location + 0xB800 + T3_loop + 1] = 0x00;
 		}
 
 		uint_fast16_t T3_entries;
@@ -721,7 +716,7 @@ void Push_Server_RAM(bool compress = false)
 		}
 		CurrentPacket << T3_entries;
 
-		for(uint_fast16_t T3_loop = 0; T3_loop < 0x800; T3_loop += 2) {
+		for (uint_fast16_t T3_loop = 0; T3_loop < 0x800; T3_loop += 2) {
 			if (RAM[VRAM_Location + 0xB800 + T3_loop] < MAX_L3_TILES) { //This tile exists
 				CurrentPacket << T3_loop;
 				CurrentPacket << RAM[VRAM_Location + 0xB800 + T3_loop];

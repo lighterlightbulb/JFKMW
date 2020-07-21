@@ -38,15 +38,15 @@ void server_code(string level = "")
 			sf::sleep(sf::milliseconds(1));
 		}
 
+		doing_write = true;
 		Uint32 start_time = SDL_GetTicks();
 
-		doing_write = true;
+		
 		chrono::high_resolution_clock::time_point t1 = chrono::high_resolution_clock::now();
 		game_loop();
 		SoundLoop();
 		chrono::high_resolution_clock::time_point t2 = chrono::high_resolution_clock::now();
 		total_time_ticks = chrono::duration_cast<chrono::duration<double>>(t2 - t1);
-		doing_write = false;
 		
 
 		if (!(global_frame_counter % 60) && clients.size() > 0)
@@ -131,6 +131,7 @@ void server_code(string level = "")
 		{
 			dump_level_data();
 		}
+		doing_write = false;
 
 		if (Uint32(1000 / FPS) > (SDL_GetTicks() - start_time))
 		{

@@ -213,10 +213,10 @@ void player_code()
 
 		while (!done())
 		{
-			while (doing_read) {
-				sf::sleep(sf::milliseconds(1));
-			}
 
+			while (doing_read) {
+				SDL_Delay(1);
+			}
 
 			doing_write = true;
 			cls();
@@ -227,12 +227,14 @@ void player_code()
 			chrono::high_resolution_clock::time_point t2 = chrono::high_resolution_clock::now();
 			total_time_ticks = chrono::duration_cast<chrono::duration<double>>(t2 - t1);
 			doing_write = false;
+
 			redraw();
 			
 
 			if (disconnected) {
-				quit = true; cout << red << "[Network] Disconnected." << white << endl; zsnes_ui.message = "Disconnected from server"; break;
+				quit = true; cout << red << "[Network] Disconnected." << white << endl; zsnes_ui.message = "Disconnected from server"; doing_write = false; doing_read = false; break;
 			}
+
 		}
 
 		//We quit the game go back to the ZSNES ui
