@@ -929,6 +929,7 @@ public:
 			if (IN_WT)
 			{
 				Y_SPEED = 0;
+				X_SPEED = 0;
 			}
 		}
 
