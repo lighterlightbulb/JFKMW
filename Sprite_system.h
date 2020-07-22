@@ -263,7 +263,8 @@ public:
 		}
 
 		SPR_STATE[index] = luaL_newstate();
-		luaL_openlibs(SPR_STATE[index]); // load default Lua libs
+
+		load_lua_libs(SPR_STATE[index]);
 
 
 		int ret = luaL_dofile(SPR_STATE[index], (path + file).c_str());

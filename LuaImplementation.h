@@ -19,6 +19,11 @@ void lua_print(string text)
 	cout << lua_color << "[Lua] " << text << white << endl;
 }
 
+void load_lua_libs(lua_State* L)
+{
+	luaL_openlibs(L);
+}
+
 //lua functions to bind to jfk mario world.
 static int lua_write(lua_State* L) {
 	string str = (string)lua_tostring(L, 1); // get function argument
@@ -234,6 +239,7 @@ extern "C" int lua_checkbit(lua_State* L)
 void lua_connect_functions(lua_State* L)
 {
 	//lua_print("Connected functions to 0x" + int_to_;
+
 	lua_pushcfunction(L, lua_write); lua_setglobal(L, "marioPrint");
 	lua_pushcfunction(L, lua_write_ram); lua_setglobal(L, "asmWrite");
 	lua_pushcfunction(L, lua_spawn_sprite); lua_setglobal(L, "spawnSprite");
@@ -266,7 +272,8 @@ void lua_loadfile(string file)
 	}
 
 	LUA_STATE = luaL_newstate();
-	luaL_openlibs(LUA_STATE); // load default Lua libs
+
+	load_lua_libs(LUA_STATE);
 
 
 	int ret = luaL_dofile(LUA_STATE, (path + file).c_str());
