@@ -161,6 +161,17 @@ static int lua_bitand(lua_State* L) {
 	return 1;
 }
 
+
+
+static int lua_bitand_new(lua_State* L) {
+	uint_fast8_t a = (uint_fast8_t)lua_tointeger(L, 1);
+	uint_fast8_t b = (uint_fast8_t)lua_tointeger(L, 2);
+
+	uint_fast8_t result = a & b;
+	lua_pushnumber(L, result);
+	return 1;
+}
+
 static int drawtohud(lua_State* L)
 {
 	uint_fast8_t tile = (uint_fast8_t)lua_tonumber(L, 1) & 0x7F;
@@ -187,6 +198,23 @@ static int damagePlayer(lua_State* L)
 	return 0;
 }
 
+extern "C" int getPlayerX(lua_State* L)
+{
+	int plr = (int)lua_tointeger(L, 1); plr--;
+	int result = RAM[0x5000 + plr] + RAM[0x5100 + plr] * 256;
+	lua_pushnumber(L, result);
+	return 1;
+}
+
+extern "C" int getPlayerY(lua_State* L)
+{
+	int plr = (int)lua_tointeger(L, 1); plr--;
+	int result = RAM[0x5200 + plr] + RAM[0x5300 + plr] * 256;
+	lua_pushnumber(L, result);
+	return 1;
+}
+
+
 extern "C" int lua_checkbit(lua_State* L)
 {
 	uint_fast32_t p = (uint_fast16_t)lua_tointeger(L, 1);
@@ -206,17 +234,20 @@ extern "C" int lua_checkbit(lua_State* L)
 void lua_connect_functions(lua_State* L)
 {
 	//lua_print("Connected functions to 0x" + int_to_;
-	lua_pushcfunction(L, lua_write); lua_setglobal(L, "mario_print");
-	lua_pushcfunction(L, lua_write_ram); lua_setglobal(L, "asm_write");
-	lua_pushcfunction(L, lua_spawn_sprite); lua_setglobal(L, "spawn_sprite");
-	lua_pushcfunction(L, draw_to_oam); lua_setglobal(L, "draw_to_oam");
-	lua_pushcfunction(L, draw_to_oam_direct); lua_setglobal(L, "draw_to_oam_direct");
-	lua_pushcfunction(L, lua_bitand); lua_setglobal(L, "bitand");
-	lua_pushcfunction(L, drawtohud); lua_setglobal(L, "draw_to_hud");
-	lua_pushcfunction(L, killPlayer); lua_setglobal(L, "kill_player");
-	lua_pushcfunction(L, damagePlayer); lua_setglobal(L, "damage_player");
-	lua_register(L, "asm_read", lua_get_ram);
-	lua_register(L, "asm_checkbit", lua_checkbit);
+	lua_pushcfunction(L, lua_write); lua_setglobal(L, "marioPrint");
+	lua_pushcfunction(L, lua_write_ram); lua_setglobal(L, "asmWrite");
+	lua_pushcfunction(L, lua_spawn_sprite); lua_setglobal(L, "spawnSprite");
+	lua_pushcfunction(L, draw_to_oam); lua_setglobal(L, "drawOam");
+	lua_pushcfunction(L, draw_to_oam_direct); lua_setglobal(L, "drawOamDirect");
+	lua_pushcfunction(L, lua_bitand); lua_setglobal(L, "oldBitand");
+	lua_pushcfunction(L, lua_bitand_new); lua_setglobal(L, "bitand");
+	lua_pushcfunction(L, drawtohud); lua_setglobal(L, "drawToHud");
+	lua_pushcfunction(L, killPlayer); lua_setglobal(L, "killPlayer");
+	lua_pushcfunction(L, damagePlayer); lua_setglobal(L, "damagePlayer");
+	lua_register(L, "asmRead", lua_get_ram);
+	lua_register(L, "getPlayerX", getPlayerX);
+	lua_register(L, "getPlayerY", getPlayerY);
+	lua_register(L, "asmCheckBit", lua_checkbit);
 
 }
 

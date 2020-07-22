@@ -15,6 +15,7 @@ public:
 	bool invisible = false;
 	bool ON_FL = false; //on floor
 	bool IN_WT = false; //on water
+	bool OLD_WT = false; //old on water status
 	uint_fast8_t SLOPE_TYPE = 0;
 	/*
 		0 : None
@@ -559,7 +560,7 @@ public:
 					{
 						if (pad[button_up] && (pad[button_b] || pad[button_a]))
 						{
-							Y_SPEED = Calculate_Speed(0x500);
+							Y_SPEED = Calculate_Speed(0x500 + (STATE > 0) * 0x80);
 							jump_is_spin = pad[button_a];
 						}
 						else
@@ -921,6 +922,15 @@ public:
 		uint_fast16_t check_y_1 = uint_fast16_t((y + height) / 16.0);
 
 		IN_WT = RAM[0x85] != 0 || map16_handler.get_tile(check_x_1, check_y_1) < 4;
+
+		if (IN_WT != OLD_WT)
+		{
+			OLD_WT = IN_WT;
+			if (IN_WT)
+			{
+				Y_SPEED = 0;
+			}
+		}
 
 
 		
