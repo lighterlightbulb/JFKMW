@@ -55,7 +55,7 @@ void ActivateMenu()
 	
 	AppendMenu(hMenuBar, MF_POPUP, (UINT_PTR)hFile, L"File");
 	AppendMenu(hFile, MF_STRING, 1, L"theres nothing here yet lol");
-	AppendMenu(hFile, MF_STRING, 2, L"maybe in a next update");
+	AppendMenu(hFile, MF_STRING, 2, L"maybe in a next update There will be nothing ehre sorry");
 
 	AppendMenu(hMenuBar, MF_POPUP, (UINT_PTR)hInput, L"Input");
 

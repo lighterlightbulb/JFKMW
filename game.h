@@ -224,6 +224,11 @@ void game_loop_code()
 
 void game_loop()
 {
+	if (monitor_hz == 60.0 || monitor_hz <= 0)
+	{
+		game_loop_code();
+		return;
+	}
 	tick += 60.0 / monitor_hz;
 	while (tick >= 1)
 	{
