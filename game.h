@@ -1,5 +1,6 @@
 #pragma once
 
+double tick = 0;
 
 void game_init()
 {
@@ -13,7 +14,7 @@ void game_init()
 	}
 }
 
-void game_loop()
+void game_loop_code()
 {
 	global_frame_counter += 1;
 #if not defined(DISABLE_NETWORK)
@@ -219,4 +220,14 @@ void game_loop()
 
 	ProcessHDMA();
 
+}
+
+void game_loop()
+{
+	tick += 60.0 / monitor_hz;
+	while (tick >= 1)
+	{
+		tick -= 1;
+		game_loop_code();
+	}
 }

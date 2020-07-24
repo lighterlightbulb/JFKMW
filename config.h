@@ -30,6 +30,8 @@ void load_configuration()
 			if (name == "smooth_camera") { smooth_camera = value == "true"; }
 			if (name == "smooth_camera_speed") { smooth_camera_speed = double(stoi(value)); }
 			if (name == "scale") { forced_scale = stoi(value) > 0; scale = stoi(value); }
+			if (name == "monitor_hz") { monitor_hz = stoi(value); }
+
 
 			if (name == "username") {
 				username = value;

@@ -18,7 +18,7 @@
 #include "psapi.h"
 
 #define USE_SDLMIXER_X
-#define USE_FILESYSTEM
+//#define USE_FILESYSTEM
 
 #elif defined(__linux__)
 

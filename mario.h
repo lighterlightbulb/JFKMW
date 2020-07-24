@@ -844,6 +844,7 @@ public:
 	void FlashProcess()
 	{
 		uint_fast8_t flash_timer = flash_t & 0xF;
+		uint_fast8_t flash_type = flash_t >> 4;
 
 		if (flash_timer > 0)
 		{
@@ -857,21 +858,44 @@ public:
 			}
 
 
-			RAM[0x200 + oam_index] = 0x44;
-			RAM[0x201 + oam_index] = 0x11;
+			if (flash_type == 1)
+			{
+				RAM[0x200 + oam_index] = 0x44;
+				RAM[0x201 + oam_index] = 0x11;
 
-			RAM[0x202 + oam_index] = flash_x;
-			RAM[0x203 + oam_index] = flash_x >> 8;
+				RAM[0x202 + oam_index] = flash_x;
+				RAM[0x203 + oam_index] = flash_x >> 8;
 
-			RAM[0x204 + oam_index] = flash_y;
-			RAM[0x205 + oam_index] = flash_y >> 8;
+				RAM[0x204 + oam_index] = flash_y;
+				RAM[0x205 + oam_index] = flash_y >> 8;
 
-			RAM[0x206 + oam_index] = 0x08 | (((flash_timer / 2) % 2) * 0x20);
-			RAM[0x207 + oam_index] = 0;
+				RAM[0x206 + oam_index] = 0x08 | (((flash_timer / 2) % 2) * 0x20);
+				RAM[0x207 + oam_index] = 0;
+				flash_timer -= 1;
+			}
+			else
+			{
+				RAM[0x200 + oam_index] = 0x60 + ((15 - flash_timer)/4)*2;
+				RAM[0x201 + oam_index] = 0x11;
 
-			flash_timer -= 1;
+				RAM[0x202 + oam_index] = flash_x;
+				RAM[0x203 + oam_index] = flash_x >> 8;
+
+				RAM[0x204 + oam_index] = flash_y;
+				RAM[0x205 + oam_index] = flash_y >> 8;
+
+				RAM[0x206 + oam_index] = 0x08;
+				RAM[0x207 + oam_index] = 0;
+
+				if (!(global_frame_counter % 2))
+				{
+					flash_timer -= 1;
+				}
+			}
+
+			
 		}
-		flash_t = flash_timer;
+		flash_t = flash_timer + (flash_type << 4);
 	}
 
 	int Process()
@@ -930,6 +954,10 @@ public:
 			{
 				Y_SPEED = 0;
 				X_SPEED = 0;
+
+				flash_t = 0x2F; //15 time, type 1
+				flash_x = int_fast16_t(x);
+				flash_y = int_fast16_t(y - 16.0);
 			}
 		}
 

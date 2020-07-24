@@ -1,6 +1,6 @@
 #pragma once
 
-string GAME_VERSION = "0.9.5a";
+string GAME_VERSION = "1.0.0b";
 
 #define rom_asm_size 0x008000 //32kb, 1 bank ($00:8000 to $00:FFFF)
 #define location_rom_levelasm 0x008000 //this will put LevelASM on the start of the ROM, this is a SNES PC btw
@@ -105,6 +105,7 @@ bool renderer_accelerated = true;
 bool v_sync = true;
 
 string testing_level = "";
+double monitor_hz = 60.0;
 
 //Stuff hud toggles here and hud stuff
 bool drawHud = true;
