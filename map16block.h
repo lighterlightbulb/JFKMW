@@ -49,7 +49,7 @@ void initialize_map16()
 		if (current_byte >= 16) {
 			uint16_t replace_p = temp[1] + temp[0] * 256; //this is actually a thing.
 
-			cout << blue << "[MAP16] Initialized tile " << hex << replace_p << " of properties ";
+			//cout << blue << "[MAP16] Initialized tile " << hex << replace_p << " of properties ";
 			for (int i = 0; i < tile_table_size; i++)
 			{
 				map16_entries[(replace_p * tile_table_size) + i] = temp[i + 2];

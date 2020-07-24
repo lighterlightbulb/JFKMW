@@ -4,7 +4,8 @@
 Mix_Music *music = NULL;
 
 //The sound effects that will be used
-Mix_Chunk *sfxPorts[2];
+Mix_Chunk *sfxPorts[3];
+uint_fast16_t sound_table[3] = { 0x1DF9, 0x1DFC, 0x1DFA };
 uint8_t old_1dfb = 0xFF;
 
 bool init_audio()
@@ -76,9 +77,9 @@ void SoundLoop()
 {
 	if (!networking || isClient)
 	{
-		for (uint_fast8_t i = 0; i < 2; i++)
+		for (uint_fast8_t i = 0; i < 3; i++)
 		{
-			uint_fast16_t RAM_P = i == 0 ? 0x1DF9 : 0x1DFC; //1DF9 and 1DFC
+			uint_fast16_t RAM_P = sound_table[i];
 
 			if (ASM.Get_Ram(RAM_P, 1) != 0)
 			{

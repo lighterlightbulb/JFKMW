@@ -1068,7 +1068,7 @@ public:
 						{
 							//Normal jump
 							Y_SPEED = Calculate_Speed(1232.0 + (abs(X_SPEED) * 64.0)); //(148.0 * SLIGHT_HIGH_SPEED) + (32.0 * (X_SPEED > Calculate_Speed(320+256+176)))
-							ASM.Write_To_Ram(0x1DFC, 0x35, 1);
+							ASM.Write_To_Ram(0x1DFA, 0x01, 1);
 
 							//jump_is_spin = false;
 						}
