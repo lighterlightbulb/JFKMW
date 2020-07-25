@@ -105,10 +105,15 @@ void game_loop_code()
 			RAM[0x200 + i] = 0;
 		}
 		Sprites.process_all_sprites(); //we're processing sprites. we're either the server or a player in local mode.
+		for (uint_fast8_t i = 0; i < 128; i++)
+		{
+			RAM[0x2A80 + i] &= 1;
+		}
 	}
 
 	uint_fast8_t player = 1;
 	int camera_total_x = 0; int camera_total_y = 0;
+
 	for (list<MPlayer>::iterator item = Mario.begin(); item != Mario.end(); ++item)
 	{
 		MPlayer& CurrPlayer = *item;
@@ -179,7 +184,7 @@ void game_loop_code()
 		RAM[0x5C00 + player - 1] = m_state_2;
 		RAM[0x5D00 + player - 1] = m_state_2 >> 8;
 
-		if (!isClient && !CurrPlayer.DEAD)
+		if (!isClient && RAM[0x1493] == 0)
 		{
 			CheckSpritesInCam(int(max(128.0, CurrPlayer.CAMERA_X)));
 		}

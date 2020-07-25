@@ -24,14 +24,21 @@
 0x2700 - Sprite interacing with... (player number in hex)
 0x2780 - Sprite block flags
 0x2800 - Sprite is lua/asm type
-0x2880 - Sprite Flags 2 ---olksS
+0x2880 - Sprite Flags 2 ----lksS
+0x2900 - Unknown
 0x2A00 - Spinjump death timer for sprites, otherwise unused
+0x2A80 - Offscreen status and flags ------oO
+
+
 
 0x2E00 - Unused, used in the throwblock and grabbed sprites for a "how much frames til we can hurt mario" timer
 0x2E80 - Unused, extra property for grabbed sprites, which props/palettes it uses
 0x2F00 - Unused, extra property for grabbed sprites, which tile it uses
 0x2F80 - Sprite Initialized
 
+off flags:
+O - Process when off screen (0 is true, 1 is false)
+o - Sprite is off sceren
 
 flags 2:
 S - Death By Spinjump
@@ -285,8 +292,9 @@ public:
 
 	void process_all_sprites()
 	{
-		for (uint_fast32_t i = 0; i < 128; i++)
+		for (uint_fast8_t i = 0; i < 128; i++)
 		{
+			
 			if (RAM[0x2000 + i] != 0) //If sprite exists..
 			{
 				if (RAM[0x2F80 + i] == 0)

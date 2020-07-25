@@ -79,6 +79,11 @@ static int draw_to_oam(lua_State* L)
 	int offset_y = (int)lua_tonumber(L, 6);
 
 	uint_fast8_t pal = (uint_fast8_t)lua_tonumber(L, 7);
+
+	if (!(RAM[0x2A80 + sprite_index] & 2))
+	{
+		return 0;
+	}
 	uint_fast16_t oam_index = 0;
 	while (oam_index < 0x400)
 	{

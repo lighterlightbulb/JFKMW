@@ -379,11 +379,10 @@ void draw8x8_tile(int_fast16_t x, int_fast16_t y, uint_fast16_t tile, uint_fast8
 			if (color1 != 0)
 			{
 				Uint32* p_screen = (Uint32*)(&screen_s_l1)->pixels + ((y_p * int_res_x) + x_p);
-				*p_screen = palette_array[color1 + palette]; //SDL_MapRGBA(screen_s->format, r, g, b, 255);
+				*p_screen = palette_array[color1 + palette];
 			}
 		}
 	}
-
 }
 
 

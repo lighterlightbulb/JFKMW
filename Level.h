@@ -30,6 +30,18 @@ void CheckSpritesInCam(int x_pos)
 			i--;
 		}
 	}
+
+	for (uint_fast8_t i = 0; i < 128; i++)
+	{
+		int x = RAM[0x2100 + i] + RAM[0x2180 + i] * 256;
+		if (x > (x_pos - spawn_bound_x) && x < (x_pos + spawn_bound_x))
+		{
+			if (!(RAM[0x2A80 + i] & 0b00000010))
+			{
+				RAM[0x2A80 + i] |= 0b00000010;
+			}
+		}
+	}
 }
 
 class Level
