@@ -63,7 +63,14 @@ uint_fast8_t VRAM[VRAM_Size];
 #define inside 0
 
 //DMA/DHMA
-int_fast16_t layer1_shift[224];
+bool layer1mode_x = false;
+int_fast16_t layer1_shiftX[224];
+bool layer1mode_y = false;
+int_fast16_t layer1_shiftY[224];
+bool layer2mode_x = false;
+int_fast16_t layer2_shiftX[224];
+bool layer2mode_y = false;
+int_fast16_t layer2_shiftY[224];
 
 //threads
 

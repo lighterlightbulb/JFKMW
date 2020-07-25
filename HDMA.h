@@ -12,10 +12,14 @@ void ProcessHDMA()
 	/*
 		Reset Horizontal Tables
 	*/
-	for (uint_fast8_t i = 0; i < 224; i++)
-	{
-		layer1_shift[i] = 0;
-	}
+	layer1mode_x = false;
+	layer1mode_y = false;
+	layer2mode_x = false;
+	layer2mode_y = false;
+	memset(layer1_shiftX, 0, sizeof(layer1_shiftX));
+	memset(layer1_shiftY, 0, sizeof(layer1_shiftX));
+	memset(layer2_shiftX, 0, sizeof(layer1_shiftX));
+	memset(layer2_shiftY, 0, sizeof(layer1_shiftX));
 
 	for (uint_fast8_t c = 0; c < 8; c++)
 	{
@@ -31,6 +35,12 @@ void ProcessHDMA()
 			uint_fast32_t bank = RAM[0x4302 + channel] + (RAM[0x4303 + channel] << 8) + (RAM[0x4304 + channel] << 16);
 			uint_fast16_t i = 0;
 			uint_fast16_t scanline = 0;
+
+			if (reg == 0x0D) { layer1mode_x = true; }
+			if (reg == 0x0E) { layer1mode_y = true; }
+			if (reg == 0x0F) { layer2mode_x = true; }
+			if (reg == 0x10) { layer2mode_y = true; }
+
 
 			while (true)
 			{
@@ -49,10 +59,10 @@ void ProcessHDMA()
 
 						if (scanline < 224)
 						{
-							if (reg == 0x0F)
-							{
-								layer1_shift[scanline] = int_fast16_t(value);
-							}
+							if (reg == 0x0D) { layer1_shiftX[scanline] = int_fast16_t(value); }
+							if (reg == 0x0E) { layer1_shiftY[scanline] = int_fast16_t(value); }
+							if (reg == 0x0F) { layer2_shiftX[scanline] = int_fast16_t(value); }
+							if (reg == 0x10) { layer2_shiftY[scanline] = int_fast16_t(value); }
 						}
 						scanline++;
 					}

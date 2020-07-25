@@ -250,11 +250,10 @@ void SNES_SPC::clear_echo()
 {
 	if ( !(dsp.read( SPC_DSP::r_flg ) & 0x20) )
 	{
-		int addr = 0x100 * dsp.read( SPC_DSP::r_esa );
-		int end  = addr + 0x800 * (dsp.read( SPC_DSP::r_edl ) & 0x0F);
-		if ( end > 0x10000 )
-			end = 0x10000;
-		memset( &RAM [addr], 0xFF, end - addr );
+		for (int i = 0x10000; i < 0x1FFFF; i++)
+		{
+			RAM[i] = rand() % 0xFF;
+		}
 	}
 }
 

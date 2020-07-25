@@ -57,24 +57,49 @@ void render_oam(uint_fast16_t offset_o = 0, int CameraX = 0, int CameraY = 0)
 
 void drawBackground()
 {
-	double bg_scale_x = 32.0 / double(RAM[0x38]);
-	double bg_scale_y = 32.0 / double(RAM[0x39]);
-	int off_x = int(512.0 * bg_scale_x);
-	int off_y = int(512.0 * bg_scale_y);
 
-	int am_x = max(1, int(2.0 / bg_scale_x));
-	int am_y = max(1, int(2.0 / bg_scale_y));
+	int formula_x = (-int(double(CameraX) * (double(RAM[0x3F06]) / 16.0) + ASM.Get_Ram(0x1466, 2)) % 512);
+	int formula_y = (int(double(CameraY) * (double(RAM[0x3F07]) / 16.0) + ASM.Get_Ram(0x1468, 2)) % 512);
+	if (layer2mode_x || layer2mode_y)
+	{
+		SDL_Rect DestR;
+		SDL_Rect SrcR;
 
-	int formula_x = (-int(double(CameraX) * (double(RAM[0x3F06]) / 16.0) + ASM.Get_Ram(0x1466, 2)) % off_x);
-	int formula_y = (int(double(CameraY) * (double(RAM[0x3F07]) / 16.0) + ASM.Get_Ram(0x1468, 2)) % off_y);
+		for (int x = -1; x < 2; x++)
+		{
+			for (uint_fast8_t i = 0; i < 224; i++)
+			{
+				SrcR.x = 0;
+				SrcR.y = (-formula_y + 256 + i + layer2_shiftY[i]) % 512;
+				SrcR.w = 512;
+				SrcR.h = 1;
 
+				DestR.x = sp_offset_x + ((layer2_shiftX[i] % 512) + formula_x + x * 512) * scale;
+				DestR.y = sp_offset_y + (((int_res_y - 224)/2) + i) * scale;
+				DestR.w = 512 * scale;
+				DestR.h = 1 * scale;
 
-	for (int x = 0; x < am_x; x++) {
-		for (int y = 0; y < am_y; y++) {
-			RenderBackground(
-				formula_x + x * off_x,
-				-272 + (int_res_y - 224) + formula_y + (y * -off_y) + (512 - off_y)
-			);
+				SDL_RenderCopy(ren, bg_texture, &SrcR, &DestR);
+			}
+		}
+	}
+	else
+	{
+
+		double bg_scale_x = 32.0 / double(RAM[0x38]);
+		double bg_scale_y = 32.0 / double(RAM[0x39]);
+		int off_x = int(512.0 * bg_scale_x);
+		int off_y = int(512.0 * bg_scale_y);
+
+		int am_x = max(1, int(2.0 / bg_scale_x));
+		int am_y = max(1, int(2.0 / bg_scale_y));
+		for (int x = 0; x < am_x; x++) {
+			for (int y = 0; y < am_y; y++) {
+				RenderBackground(
+					formula_x + x * off_x,
+					-272 + (int_res_y - 224) + formula_y + (y * -off_y) + (512 - off_y)
+				);
+			}
 		}
 	}
 }
@@ -105,6 +130,7 @@ void render()
 
 	//Initialize destR variable were gonna use later for rendering
 	SDL_Rect DestR;
+	SDL_Rect SrcR;
 
 	/*
 		Sorry for shitcode
@@ -218,11 +244,6 @@ void render()
 		SDL_UnlockSurface(&screen_s_l1);
 		//We can now draw the screen finished product.
 
-		DestR.x = sp_offset_x;
-		DestR.y = sp_offset_y;
-		DestR.w = int_res_x * scale;
-		DestR.h = int_res_y * scale;
-
 		SDL_DestroyTexture(screen_t_l1);
 		screen_t_l1 = SDL_CreateTextureFromSurface(ren, &screen_s_l1);
 
@@ -230,7 +251,32 @@ void render()
 		{
 			SDL_SetTextureBlendMode(screen_t_l1, SDL_BlendMode(RAM[0x40]));
 		}
-		SDL_RenderCopy(ren, screen_t_l1, nullptr, &DestR);
+
+		if (!layer1mode_y)
+		{
+			DestR.x = sp_offset_x;
+			DestR.y = sp_offset_y;
+			DestR.w = int_res_x * scale;
+			DestR.h = int_res_y * scale;
+			SDL_RenderCopy(ren, screen_t_l1, nullptr, &DestR);
+		}
+		else
+		{
+			for (uint_fast8_t i = 0; i < 224; i++)
+			{
+				SrcR.x = 0;
+				SrcR.y = (i + layer1_shiftY[i]) % 224;
+				SrcR.w = int_res_x;
+				SrcR.h = 1;
+
+				DestR.x = sp_offset_x;
+				DestR.y = sp_offset_y + i * scale;
+				DestR.w = int_res_x * scale;
+				DestR.h = 1 * scale;
+
+				SDL_RenderCopy(ren, screen_t_l1, &SrcR, &DestR);
+			}
+		}
 	}
 
 	//Draw screen darkening
