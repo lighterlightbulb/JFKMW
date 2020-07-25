@@ -20,7 +20,7 @@ SPC_Filter* filter;
 
 sf::Thread* music_thread = 0;
 
-#define BUF_SIZE 1536
+#define BUF_SIZE 320
 short buf[BUF_SIZE];
 
 bool spc_or_ogg = false; //false = SPC, true = OGG
@@ -45,7 +45,7 @@ void EmulateSPC_Loop()
 			spc_filter_run(filter, buf, BUF_SIZE);
 			SDL_QueueAudio(audio_device, &buf, sizeof(buf));
 		}
-		SDL_Delay(16);
+		SDL_Delay(4);
 	}
 }
 
