@@ -1,6 +1,6 @@
 #pragma once
 
-string GAME_VERSION = "1.0.0b";
+string GAME_VERSION = "1.1.0b";
 
 #define rom_asm_size 0x008000 //32kb, 1 bank ($00:8000 to $00:FFFF)
 #define location_rom_levelasm 0x008000 //this will put LevelASM on the start of the ROM, this is a SNES PC btw
@@ -158,6 +158,39 @@ vector<string> split(const string &s, char delim) {
 	}
 
 	return result;
+}
+
+void error(const char* str)
+{
+	if (str)
+	{
+		fprintf(stderr, "Error: %s\n", str);
+		exit(EXIT_FAILURE);
+	}
+}
+
+unsigned char* load_file(const char* path, long* size_out)
+{
+	size_t size;
+	unsigned char* data;
+
+
+	FILE* in;
+	fopen_s(&in, path, "rb");
+
+	fseek(in, 0, SEEK_END);
+	size = ftell(in);
+	if (size_out)
+		*size_out = long(size);
+	rewind(in);
+
+	data = (unsigned char*)malloc(size);
+	if (!data) error("Out of memory");
+
+	if (fread(data, 1, size, in) < size) error("Couldn't read file");
+	fclose(in);
+
+	return data;
 }
 
 void replaceAll(string& str, const string& from, const string& to) {

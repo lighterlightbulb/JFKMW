@@ -53,18 +53,14 @@ void initialize_map16()
 			for (int i = 0; i < tile_table_size; i++)
 			{
 				map16_entries[(replace_p * tile_table_size) + i] = temp[i + 2];
-				cout << hex << int(temp[i + 2]);
+				//cout << hex << int(temp[i + 2]);
 			}
 
-			cout << " - ";
+			//cout << " - ";
 			int integer = map16_entries[collision + replace_p * tile_table_size];
-			for (int i = 0; i < 8; i++)
-			{
-				cout << ((integer >> (7-i)) & 1);
-			}
 
 			current_byte = 0;
-			cout << white << endl;
+			//8cout << white << endl;
 			
 		}
 	}

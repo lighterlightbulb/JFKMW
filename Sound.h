@@ -8,6 +8,47 @@ Mix_Chunk *sfxPorts[3];
 uint_fast16_t sound_table[3] = { 0x1DF9, 0x1DFC, 0x1DFA };
 uint8_t old_1dfb = 0xFF;
 
+//Audio Device
+SDL_AudioDeviceID audio_device;
+
+//Audio Spec (For SPC Playbkck)
+SDL_AudioSpec audio_spec;
+
+//SPC
+SNES_SPC* snes_spc;
+SPC_Filter* filter;
+
+sf::Thread* music_thread = 0;
+
+#define BUF_SIZE 1536
+short buf[BUF_SIZE];
+
+bool spc_or_ogg = false; //false = SPC, true = OGG
+char* music_data;
+int music_data_size;
+
+void Terminate_Music()
+{
+	if (music_thread) { music_thread->terminate(); }
+	old_1dfb = 0xFF;
+	SDL_ClearQueuedAudio(audio_device);
+	Mix_HaltMusic();
+}
+
+void EmulateSPC_Loop()
+{
+	while (true)
+	{
+		if (!spc_or_ogg)
+		{
+			spc_play(snes_spc, BUF_SIZE, buf);
+			spc_filter_run(filter, buf, BUF_SIZE);
+			SDL_QueueAudio(audio_device, &buf, sizeof(buf));
+		}
+		SDL_Delay(16);
+	}
+}
+
 bool init_audio()
 {
 	//Initialize SDL_mixer
@@ -18,12 +59,37 @@ bool init_audio()
 	}
 
 	cout << purple << "[Audio] Initialized audio port (" << dec << ogg_sample_rate << "hz)." << white << endl;
+
+
+	/*
+		Initialize Audio Spec (For SPC)
+	*/
+	SDL_zero(audio_spec);
+	audio_spec.freq = 32000;
+	audio_spec.format = AUDIO_S16;
+	audio_spec.channels = 2; audio_spec.samples = 1024;
+	audio_spec.callback = NULL;
+
+	/*
+		Open Audio Device
+	*/
+	audio_device = SDL_OpenAudioDevice(
+		NULL, 0, &audio_spec, NULL, 0);
+
+	snes_spc = spc_new();
+	filter = spc_filter_new();
+	
+	/* Clear filter before playing */
+	spc_filter_clear(filter);
+	spc_filter_set_gain(filter, 300);
+
+	SDL_PauseAudioDevice(audio_device, 0);
+
+	
+
 	return true;
 }
 
-bool spc_or_ogg = false; //false = SPC, true = OGG
-char *music_data;
-int music_data_size;
 #if not defined(DISABLE_NETWORK)
 void SendMusic()
 {
@@ -109,85 +175,89 @@ void SoundLoop()
 		{
 			if (ASM.Get_Ram(0x1DFB, 1) != old_1dfb)
 			{
+				Terminate_Music();
 				old_1dfb = ASM.Get_Ram(0x1DFB, 1);
 
-				string file2 = path + "Sounds/music/" + int_to_hex(old_1dfb, true) + ".ogg";
-#if defined(USE_SDLMIXER_X)
+
 				string file1 = path + "Sounds/music/" + int_to_hex(old_1dfb, true) + ".spc";
+				string file2 = path + "Sounds/music/" + int_to_hex(old_1dfb, true) + ".ogg";
 				if (is_file_exist(file1.c_str())) {
-					music = Mix_LoadMUS(file1.c_str());
+
+					//SPC File loading
+					long spc_size;
+					void* spc = load_file(file1.c_str(), &spc_size);
+					spc_load_spc(snes_spc, spc, spc_size);
+					free(spc); /* emulator makes copy of data */
+
 					spc_or_ogg = false;
 				}
 				else {
 					music = Mix_LoadMUS(file2.c_str());
 					spc_or_ogg = true;
 				}
-#else
-				music = Mix_LoadMUS(file2.c_str());
-				spc_or_ogg = true;
-#endif
 
-				if (music == NULL)
+				if (spc_or_ogg)
 				{
-					Mix_HaltMusic();
-					cout << purple << "[Audio] Failed to change music : " << Mix_GetError() << white << endl;
+					if (music == NULL)
+					{
+						cout << purple << "[Audio] Failed to change music : " << Mix_GetError() << white << endl;
+					}
+					else
+					{
+						Mix_PlayMusic(music, -1);
+					}
 				}
 				else
 				{
-					if (Mix_PlayingMusic() == 1)
-					{
-						Mix_HaltMusic();
-					}
-					Mix_PlayMusic(music, -1);
-					cout << purple << "[Audio] Playing song 0x" << hex << int_to_hex(old_1dfb, true) << dec << white << endl;
+					music_thread = new sf::Thread(&EmulateSPC_Loop); music_thread->launch();
 				}
+				cout << purple << "[Audio] Playing song 0x" << hex << int_to_hex(old_1dfb, true) << dec << white << endl;
+				
+
 			}
 		}
 		else
 		{
 			if (kill_music)
 			{
-				if (Mix_PlayingMusic() == 1)
-				{
-					Mix_HaltMusic();
-				}
+				Terminate_Music();
+
 				kill_music = false;
 			}
 			if (need_sync_music)
 			{
 				need_sync_music = false;
-				SDL_RWops* rw = SDL_RWFromMem(music_data, music_data_size);
-#if defined(USE_SDLMIXER_X)
-				Mix_Music* music = Mix_LoadMUSType_RW(rw, spc_or_ogg ? MUS_OGG : MUS_GME, 0);
-#else
-				//Linux users wont get sdl mixer x.
-				Mix_Music* music;
+
+
 				if (spc_or_ogg)
 				{
-					music = Mix_LoadMUSType_RW(rw, MUS_OGG, 0);
-				}
-				
-#endif
-				if (music == NULL)
-				{
-					Mix_HaltMusic();
-					cout << purple << "[Audio] Failed to change music : " << Mix_GetError() << white << endl;
+					SDL_RWops* rw = SDL_RWFromMem(music_data, music_data_size);
+					Mix_Music* music = Mix_LoadMUSType_RW(rw, MUS_OGG, 0);
+					if (music == NULL)
+					{
+						Mix_HaltMusic();
+						cout << purple << "[Audio] Failed to change music : " << Mix_GetError() << white << endl;
+					}
+					else
+					{
+						if (Mix_PlayingMusic() == 1)
+						{
+							Mix_HaltMusic();
+						}
+						Mix_PlayMusic(music, -1);
+						cout << purple << "[Audio] Playing music" << white << endl;
+					}
 				}
 				else
 				{
-					if (Mix_PlayingMusic() == 1)
-					{
-						Mix_HaltMusic();
-					}
-					Mix_PlayMusic(music, -1);
-					cout << purple << "[Audio] Playing music" << white << endl;
+					music_thread = new sf::Thread(&EmulateSPC_Loop); music_thread->launch();
 				}
 			}
 		}
 	}
 	else
 	{
-		//Music additions
+		//Music additions for serverside
 		if (ASM.Get_Ram(0x1DFB, 1) != old_1dfb)
 		{
 			old_1dfb = ASM.Get_Ram(0x1DFB, 1);

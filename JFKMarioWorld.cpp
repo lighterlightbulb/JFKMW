@@ -17,7 +17,6 @@
 #include <Windows.h>
 #include "psapi.h"
 
-#define USE_SDLMIXER_X
 //#define USE_FILESYSTEM
 
 #elif defined(__linux__)
@@ -58,6 +57,7 @@ void Sleep(int time) {
 #if defined(USE_FILESYSTEM)
 #include <filesystem>
 #endif
+#include "snes_spc/spc.h"
 
 using namespace std;
 #if defined(USE_FILESYSTEM)
@@ -69,11 +69,7 @@ namespace fs = experimental::filesystem;
 #include <SDL_syswm.h>
 #endif
 #include <SDL_image.h>
-#if defined(USE_SDLMIXER_X)
-#include <SDL2/SDL_mixer_ext.h>
-#else
 #include <SDL_mixer.h>
-#endif
 
 #if not defined(DISABLE_NETWORK)
 #include <SFML/Network.hpp>

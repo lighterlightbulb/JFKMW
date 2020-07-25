@@ -146,14 +146,14 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>E:\code\SDL2-2.0.9\include;E:\code\SDL2_image-2.0.4\include;E:\code\SDL-Mixer-X\include;E:\code\SFML-2.5.1\include;E:\code\LUA\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\code\SDL2-2.0.9\include;E:\code\SDL2_image-2.0.4\include;E:\code\SDL2_mixer-2.0.4\include;E:\code\SFML-2.5.1\include;E:\code\LUA\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>E:\code\SDL2-2.0.9\lib\x64;E:\code\SDL2_image-2.0.4\lib\x64;E:\code\SDL-Mixer-X\lib;E:\code\SFML-2.5.1\lib;E:\code\LUA;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_mixer_ext.lib;SDL2_image.lib;sfml-network-d.lib;sfml-system-d.lib;opengl32.lib;lua53.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>E:\code\SDL2-2.0.9\lib\x64;E:\code\SDL2_image-2.0.4\lib\x64;E:\code\SDL2_mixer-2.0.4\lib\x64;E:\code\SFML-2.5.1\lib;E:\code\LUA;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_mixer.lib;SDL2_image.lib;sfml-network-d.lib;sfml-system-d.lib;opengl32.lib;lua53.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
@@ -211,7 +211,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>E:\code\SDL2-2.0.9\include;E:\code\SDL2_image-2.0.4\include;E:\code\SDL-Mixer-X\include;E:\code\SFML-2.5.1\include;E:\code\LUA\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\code\SDL2-2.0.9\include;E:\code\SDL2_image-2.0.4\include;E:\code\SDL2_mixer-2.0.4\include;E:\code\SFML-2.5.1\include;E:\code\LUA\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -222,7 +222,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_mixer_ext.lib;SDL2_image.lib;sfml-network.lib;sfml-system.lib;opengl32.lib;lua53.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>E:\code\SDL2-2.0.9\lib\x64;E:\code\SDL2_image-2.0.4\lib\x64;E:\code\SDL-Mixer-X\lib;E:\code\SFML-2.5.1\lib;E:\code\LUA;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>E:\code\SDL2-2.0.9\lib\x64;E:\code\SDL2_image-2.0.4\lib\x64;E:\code\SDL2_mixer-2.0.4\lib\x64;E:\code\SFML-2.5.1\lib;E:\code\LUA;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
@@ -270,6 +270,16 @@
     <ClInclude Include="SDL_General.h" />
     <ClInclude Include="Global.h" />
     <ClInclude Include="server.h" />
+    <ClInclude Include="snes_spc\blargg_common.h" />
+    <ClInclude Include="snes_spc\blargg_config.h" />
+    <ClInclude Include="snes_spc\blargg_endian.h" />
+    <ClInclude Include="snes_spc\blargg_source.h" />
+    <ClInclude Include="snes_spc\dsp.h" />
+    <ClInclude Include="snes_spc\SNES_SPC.h" />
+    <ClInclude Include="snes_spc\spc.h" />
+    <ClInclude Include="snes_spc\SPC_CPU.h" />
+    <ClInclude Include="snes_spc\SPC_DSP.h" />
+    <ClInclude Include="snes_spc\SPC_Filter.h" />
     <ClInclude Include="Sound.h" />
     <ClInclude Include="sprite.h" />
     <ClInclude Include="Sprite_shared.h" />
@@ -278,6 +288,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="JFKMarioWorld.cpp" />
+    <ClCompile Include="snes_spc\dsp.cpp" />
+    <ClCompile Include="snes_spc\SNES_SPC.cpp" />
+    <ClCompile Include="snes_spc\SNES_SPC_misc.cpp" />
+    <ClCompile Include="snes_spc\SNES_SPC_state.cpp" />
+    <ClCompile Include="snes_spc\spc.cpp" />
+    <ClCompile Include="snes_spc\SPC_DSP.cpp" />
+    <ClCompile Include="snes_spc\SPC_Filter.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

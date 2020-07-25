@@ -151,6 +151,7 @@ public:
 		STATE = 0;
 		X_SPEED = 0;
 		Y_SPEED = 0;
+		in_pipe = false;
 		jump_is_spin = false;
 	}
 

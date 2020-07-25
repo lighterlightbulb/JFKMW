@@ -242,6 +242,7 @@ void player_code()
 #if not defined(DISABLE_NETWORK)
 		if (networking) { socketG.disconnect();  thread->terminate(); }
 #endif
+		Terminate_Music();
 		cout << yellow << "[JFKMW] Returning to main screen.." << white << endl;
 		quit = true;
 	}
