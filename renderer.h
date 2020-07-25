@@ -139,11 +139,24 @@ void render()
 
 
 	if (drawBg) {
-		for (int x = 0; x < 2; x++) {
-			for (int y = 0; y < 2; y++) {
+		double bg_scale_x = 32.0 / double(RAM[0x38]);
+		double bg_scale_y = 32.0 / double(RAM[0x39]);
+		int off_x = int(512.0 * bg_scale_x);
+		int off_y = int(512.0 * bg_scale_y);
+
+		int am_x = max(1,int(2.0 / bg_scale_x));
+		int am_y = max(1,int(2.0 / bg_scale_y));
+
+		int formula_x = (-int(double(CameraX) * (double(RAM[0x3F06]) / 16.0) + ASM.Get_Ram(0x1466, 2)) % off_x);
+		int formula_y = (int(double(CameraY) * (double(RAM[0x3F07]) / 16.0) + ASM.Get_Ram(0x1468, 2)) % off_y);
+
+
+		for (int x = 0; x < am_x; x++) {
+			for (int y = 0; y < am_y; y++) {
 				RenderBackground(
-					(-int(double(CameraX) * (double(RAM[0x3F06]) / 16.0) + ASM.Get_Ram(0x1466, 2)) % 512) + x * 512,
-					-272 + (int_res_y - 224) + (int(double(CameraY) * (double(RAM[0x3F07]) / 16.0) + ASM.Get_Ram(0x1468, 2)) % 512) + y * -512);
+					formula_x + x * off_x,
+					-272 + (int_res_y - 224) + formula_y + (y * -off_y) + (512 - off_y)
+				);
 			}
 		}
 	}

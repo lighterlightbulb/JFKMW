@@ -61,12 +61,14 @@ public:
 
 void RenderBackground(int x, int y)
 {
-	SDL_Rect SourceR;
+	double bg_scale_x = 32.0 / double(RAM[0x38]);
+	double bg_scale_y = 32.0 / double(RAM[0x39]);
 
+	SDL_Rect SourceR;
 	SourceR.x = sp_offset_x + x * scale;
 	SourceR.y = sp_offset_y + y * scale;
-	SourceR.w = 512*scale;
-	SourceR.h = 512*scale;
+	SourceR.w = int(512.0 * bg_scale_x) * scale;
+	SourceR.h = int(512.0 * bg_scale_y) * scale;
 
 	SDL_RenderCopyEx(ren, bg_texture, NULL, &SourceR, (double(ASM.Get_Ram(0x36,1))*360.0)/256.0, NULL, SDL_FLIP_NONE);
 }

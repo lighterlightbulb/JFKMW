@@ -461,6 +461,11 @@ void Sync_Server_RAM(bool compressed = false)
 		//HDMA
 		decompressHDMAnet();
 
+		//receive Mode 7 stuff
+		CurrentPacket << RAM[0x36];
+		CurrentPacket << RAM[0x38];
+		CurrentPacket << RAM[0x39];
+
 		//Get screen stuff
 		CurrentPacket >> RAM[0x1411];
 		CurrentPacket >> RAM[0x1412];
@@ -629,6 +634,11 @@ void Push_Server_RAM(bool compress = false)
 
 		//HDMA
 		compressHDMAnet();
+
+		//Send Mode 7 stuff
+		CurrentPacket << RAM[0x36];
+		CurrentPacket << RAM[0x38];
+		CurrentPacket << RAM[0x39];
 
 		//Send screen stuff
 		CurrentPacket << RAM[0x1411];
