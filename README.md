@@ -24,6 +24,7 @@ If you know how to code, submit fixes. If you like to test stuff, make levels an
 * SDL_image
 * SFML
 * Lua 5.3
+* SNES_SPC (Included with this, you need to build a .lib using the CMakeLists in there)
 
 ## Social
 Get releases of the game and contact developers at https://discord.gg/6zwZxH6
