@@ -183,9 +183,7 @@ void render()
 	{
 		curr_bg = RAM[0x3F05];
 		SDL_DestroyTexture(bg_texture);
-		SDL_FreeSurface(bg_surface);
-		bg_surface = loadSurface(path + "Sprites/backgrounds/Background" + to_string(int(curr_bg)) + ".png");
-		bg_texture = SDL_CreateTextureFromSurface(ren, bg_surface);
+		bg_texture = TexManager.loadTexture(path + "Sprites/backgrounds/Background" + to_string(int(curr_bg)) + ".png");
 
 	}
 

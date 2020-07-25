@@ -221,7 +221,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_mixer_ext.lib;SDL2_image.lib;sfml-network.lib;sfml-system.lib;opengl32.lib;lua53.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_mixer.lib;SDL2_image.lib;sfml-network.lib;sfml-system.lib;opengl32.lib;lua53.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>E:\code\SDL2-2.0.9\lib\x64;E:\code\SDL2_image-2.0.4\lib\x64;E:\code\SDL2_mixer-2.0.4\lib\x64;E:\code\SFML-2.5.1\lib;E:\code\LUA;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>

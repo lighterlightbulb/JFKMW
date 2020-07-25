@@ -33,7 +33,6 @@ public:
 TextureManager TexManager;
 
 SDL_Texture *bg_texture;
-SDL_Surface *bg_surface;
 
 class Sprite
 {
