@@ -22,7 +22,7 @@ public:
 		1 : Right 45*
 		2 : Left 45*
 	*/
-	uint_fast16_t P_METER = 0;
+	uint_fast8_t P_METER = 0;
 
 	double X_SPEED = 0.0;
 	double Y_SPEED = 0.0;
