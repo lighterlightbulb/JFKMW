@@ -356,9 +356,6 @@ void draw8x8_tile(int_fast16_t x, int_fast16_t y, uint_fast16_t tile, uint_fast8
 	uint_fast8_t index = 0;
 
 	uint_fast8_t graphics_array[32];
-	/*copy(VRAM + tile,
-		VRAM + tile + 32,
-		graphics_array);*/
 	memcpy(graphics_array, &VRAM[tile], 32 * sizeof(uint_fast8_t));
 
 	for (index = 0; index < 8; index++)
@@ -381,9 +378,6 @@ void draw8x8_tile(int_fast16_t x, int_fast16_t y, uint_fast16_t tile, uint_fast8
 
 			if (color1 != 0)
 			{
-				//drawPixelScreen(7 - i + x, y + index, color1 + palette);
-
-				//uint_fast16_t c = palette_array[color1 + palette];
 				Uint32* p_screen = (Uint32*)(&screen_s_l1)->pixels + ((y_p * int_res_x) + x_p);
 				*p_screen = palette_array[color1 + palette]; //SDL_MapRGBA(screen_s->format, r, g, b, 255);
 			}
