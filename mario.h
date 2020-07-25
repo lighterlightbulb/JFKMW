@@ -1302,6 +1302,17 @@ public:
 		pressed_y = false;
 		Get_Sprite();
 
+
+		if (x < 8.0) { x = 8.0; }
+		if (x > double(-24 + mapWidth * 16)) { x = double(-24 + mapWidth * 16); }
+
+		ProcessGrabbed();
+		FlashProcess();
+		return 1;
+	}
+
+	void ProcessCamera() {
+
 		if (RAM[0x1411] == 0)
 		{
 			int min_x = RAM[0x1462] + RAM[0x1463] * 256;
@@ -1385,13 +1396,6 @@ public:
 				}
 			}
 		}
-
-		if (x < 8.0) { x = 8.0; }
-		if (x > double(-24 + mapWidth * 16)) { x = double(-24 + mapWidth * 16); }
-
-		ProcessGrabbed();
-		FlashProcess();
-		return 1;
 	}
 };
 

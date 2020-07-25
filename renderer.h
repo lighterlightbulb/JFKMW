@@ -152,6 +152,8 @@ void render()
 
 
 	MPlayer& LocalPlayer = get_mario(SelfPlayerNumber);
+	LocalPlayer.ProcessCamera();
+
 	CameraX = int_fast16_t(LocalPlayer.CAMERA_X - ((int_res_x/2) - 8));
 	CameraY = int_fast16_t(max(0.0, LocalPlayer.CAMERA_Y - (int_res_y/2)));
 	if (RAM[0x1887] > 0)
