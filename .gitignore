@@ -31,3 +31,7 @@ snes_spc/CMakeCache.txt
 *.bin
 *.exe
 snes_spc/CMakeFiles/3.18.0/CompilerIdC/CMakeCCompilerId.c
+snes_spc/.vs/snes_spc/v16/.suo
+*.db
+*.user
+snes_spc/Release/snes_spc.lib

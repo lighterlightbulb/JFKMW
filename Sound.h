@@ -191,7 +191,6 @@ void SoundLoop()
 					long spc_size;
 					void* spc = load_file(file1.c_str(), &spc_size);
 					spc_load_spc(snes_spc, spc, spc_size);
-					spc_clear_echo(snes_spc);
 					free(spc); /* emulator makes copy of data */
 
 					spc_or_ogg = false;
