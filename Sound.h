@@ -245,13 +245,14 @@ void SoundLoop()
 							Mix_HaltMusic();
 						}
 						Mix_PlayMusic(music, -1);
-						cout << purple << "[Audio] Playing music" << white << endl;
 					}
 				}
 				else
 				{
+					spc_load_spc(snes_spc, music_data, music_data_size);
 					music_thread = new sf::Thread(&EmulateSPC_Loop); music_thread->launch();
 				}
+				cout << purple << "[Audio] Playing music" << white << endl;
 			}
 		}
 	}
