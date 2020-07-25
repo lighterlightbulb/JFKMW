@@ -34,9 +34,6 @@ uint_fast32_t pctosnes(uint_fast32_t pc) {
 
 #define total_inputs 7
 
-#define SpriteAmount 64
-#define ogg_sample_rate 44100
-
 #define player_expected_packet_size 99 //Strings apparently add 4 so we have to make sure of this so it wont crash.
 #define player_name_size 11
 
@@ -46,6 +43,9 @@ uint_fast32_t pctosnes(uint_fast32_t pc) {
 
 uint_fast16_t mapWidth = 256;
 uint_fast16_t mapHeight = 32;
+
+uint_fast16_t audio_format = AUDIO_S16;
+int ogg_sample_rate = 44100;
 
 #define RAM_Size 0x20000
 #define VRAM_Size 0x10000

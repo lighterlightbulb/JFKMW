@@ -55,6 +55,30 @@ void render_oam(uint_fast16_t offset_o = 0, int CameraX = 0, int CameraY = 0)
 	}
 }
 
+void drawBackground()
+{
+	double bg_scale_x = 32.0 / double(RAM[0x38]);
+	double bg_scale_y = 32.0 / double(RAM[0x39]);
+	int off_x = int(512.0 * bg_scale_x);
+	int off_y = int(512.0 * bg_scale_y);
+
+	int am_x = max(1, int(2.0 / bg_scale_x));
+	int am_y = max(1, int(2.0 / bg_scale_y));
+
+	int formula_x = (-int(double(CameraX) * (double(RAM[0x3F06]) / 16.0) + ASM.Get_Ram(0x1466, 2)) % off_x);
+	int formula_y = (int(double(CameraY) * (double(RAM[0x3F07]) / 16.0) + ASM.Get_Ram(0x1468, 2)) % off_y);
+
+
+	for (int x = 0; x < am_x; x++) {
+		for (int y = 0; y < am_y; y++) {
+			RenderBackground(
+				formula_x + x * off_x,
+				-272 + (int_res_y - 224) + formula_y + (y * -off_y) + (512 - off_y)
+			);
+		}
+	}
+}
+
 void render()
 {
 	PrepareRendering();
@@ -139,26 +163,7 @@ void render()
 
 
 	if (drawBg) {
-		double bg_scale_x = 32.0 / double(RAM[0x38]);
-		double bg_scale_y = 32.0 / double(RAM[0x39]);
-		int off_x = int(512.0 * bg_scale_x);
-		int off_y = int(512.0 * bg_scale_y);
-
-		int am_x = max(1,int(2.0 / bg_scale_x));
-		int am_y = max(1,int(2.0 / bg_scale_y));
-
-		int formula_x = (-int(double(CameraX) * (double(RAM[0x3F06]) / 16.0) + ASM.Get_Ram(0x1466, 2)) % off_x);
-		int formula_y = (int(double(CameraY) * (double(RAM[0x3F07]) / 16.0) + ASM.Get_Ram(0x1468, 2)) % off_y);
-
-
-		for (int x = 0; x < am_x; x++) {
-			for (int y = 0; y < am_y; y++) {
-				RenderBackground(
-					formula_x + x * off_x,
-					-272 + (int_res_y - 224) + formula_y + (y * -off_y) + (512 - off_y)
-				);
-			}
-		}
+		drawBackground();
 	}
 
 	if (drawL1)

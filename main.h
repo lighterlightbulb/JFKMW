@@ -116,15 +116,8 @@ void player_code()
 			DestR.h = int_res_y * scale;
 
 			//Copied from renderer.h
-			for (int x = 0; x < 2; x++)
-			{
-				for (int y = 0; y < 2; y++)
-				{
-					RenderBackground(
-						(-int(double(CameraX) * (double(RAM[0x3F06]) / 16.0)) % 512) + x * 512,
-						-272 + (int_res_y - 224) + (int(double(CameraY) * (double(RAM[0x3F07]) / 16.0)) % 512) + y * -512);
-				}
-			}
+			drawBackground();
+
 			//Copied from renderer.h
 			SDL_RenderCopy(ren, screen_t_l1, nullptr, &DestR);
 

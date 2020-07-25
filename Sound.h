@@ -66,7 +66,7 @@ bool init_audio()
 	*/
 	SDL_zero(audio_spec);
 	audio_spec.freq = 32000;
-	audio_spec.format = AUDIO_S16;
+	audio_spec.format = audio_format;
 	audio_spec.channels = 2; audio_spec.samples = 1024;
 	audio_spec.callback = NULL;
 
