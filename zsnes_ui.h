@@ -220,8 +220,9 @@ public:
 
 		for (int i = 0; i < snow_size; i++)
 		{
-			snow_x[i] += (snow_s/2) + snow_x_s[i] + (float(rand() % 10) - 5.f) / 10.f;
-			snow_y[i] += (snow_s) + (float(rand() % 2)/2.f);
+			
+			snow_x[i] += ((snow_s/2) + snow_x_s[i] + (float(rand() % 10) - 5.f) / 10.f) * float(60.0 / monitor_hz);
+			snow_y[i] += ((snow_s) + (float(rand() % 2)/2.f)) * float(60.0 / monitor_hz);
 
 			draw_pixel_to_surface(uint_fast8_t(snow_x[i]), uint_fast8_t(snow_y[i]), 176, 180, 200, surface);
 		}
