@@ -23,11 +23,24 @@ public:
 		SDL_Surface *s = loadSurface(file);
 		SDL_Texture *t = SDL_CreateTextureFromSurface(ren, s);
 		SDL_FreeSurface(s);
-		cout << purple_int << "[TexManager] couldn't find " + file + ", loading it" << white << endl;
+		//cout << purple_int << "[TexManager] couldn't find " + file + ", loading it" << white << endl;
 		Textures.insert(make_pair(file, t));
 
 		return t;
 
+	}
+
+	void ClearManager()
+	{
+		if (Textures.size() > 0)
+		{
+			cout << purple_int << "[TexManager] Clearing TexManager" << white << endl;
+			for (unordered_map<string, SDL_Texture*>::iterator it = Textures.begin(); it != Textures.end(); ++it)
+			{
+				SDL_DestroyTexture(it->second);
+			}
+			Textures.clear();
+		}
 	}
 };
 TextureManager TexManager;

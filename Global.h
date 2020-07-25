@@ -362,6 +362,7 @@ void do_d_msg(string msg)
 	return;
 }
 
+
 void discord_message(string msg)
 {
 	if (discord_webhook != "")

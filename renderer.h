@@ -573,10 +573,7 @@ void render()
 		{
 			memcpy(ram_diag, &ram_diag[1], 15 * sizeof(int));
 		}
-		if (!(global_frame_counter % 2))
-		{
-			memcpy(fps_diag, &fps_diag[1], 127 * sizeof(int));
-		}
+		memcpy(fps_diag, &fps_diag[1], 127 * sizeof(int));
 		memcpy(kbs_diag, &kbs_diag[1], 111 * sizeof(int));
 		memcpy(ping_diag, &ping_diag[1], 111 * sizeof(int));
 		memcpy(block_diag, &block_diag[1], 111 * sizeof(int));
