@@ -3,7 +3,6 @@
 
 SDL_Surface* loadSurface(string path)
 {
-
 	//Load image at specified path
 	SDL_Surface* loadedSurface = IMG_Load(path.c_str());
 	return loadedSurface;
