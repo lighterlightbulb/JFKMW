@@ -203,7 +203,8 @@ static int damagePlayer(lua_State* L)
 	return 0;
 }
 
-extern "C" int getPlayerX(lua_State* L)
+extern "C" {
+int getPlayerX(lua_State* L)
 {
 	int plr = (int)lua_tointeger(L, 1); plr--;
 	int result = RAM[0x5000 + plr] + RAM[0x5100 + plr] * 256;
@@ -211,7 +212,7 @@ extern "C" int getPlayerX(lua_State* L)
 	return 1;
 }
 
-extern "C" int getPlayerY(lua_State* L)
+int getPlayerY(lua_State* L)
 {
 	int plr = (int)lua_tointeger(L, 1); plr--;
 	int result = RAM[0x5200 + plr] + RAM[0x5300 + plr] * 256;
@@ -220,7 +221,7 @@ extern "C" int getPlayerY(lua_State* L)
 }
 
 
-extern "C" int lua_checkbit(lua_State* L)
+int lua_checkbit(lua_State* L)
 {
 	uint_fast32_t p = (uint_fast16_t)lua_tointeger(L, 1);
 	uint_fast8_t s = (uint_fast8_t)lua_tointeger(L, 2);
@@ -232,7 +233,7 @@ extern "C" int lua_checkbit(lua_State* L)
 	lua_pushboolean(L, bit);
 	return 1;
 }
-
+}
 
 /* functions end */
 
