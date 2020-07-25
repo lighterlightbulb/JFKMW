@@ -20,7 +20,7 @@ If you know how to code, submit fixes. If you like to test stuff, make levels an
 
 ## Requirements / Dependencies
 * SDL2
-* SDL mixer X (or just SDL Mixer for linux users, linux users don't get SPC playback)
+* SDL_mixer
 * SDL_image
 * SFML
 * Lua 5.3
