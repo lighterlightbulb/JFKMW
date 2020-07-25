@@ -182,7 +182,7 @@ void render()
 	if (RAM[0x3F05] != curr_bg)
 	{
 		curr_bg = RAM[0x3F05];
-		SDL_DestroyTexture(bg_texture);
+
 		bg_texture = TexManager.loadTexture(path + "Sprites/backgrounds/Background" + to_string(int(curr_bg)) + ".png");
 
 	}
