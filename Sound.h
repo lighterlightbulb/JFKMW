@@ -147,6 +147,8 @@ void SoundLoop()
 		{
 			uint_fast16_t RAM_P = sound_table[i];
 
+			
+
 			if (ASM.Get_Ram(RAM_P, 1) != 0)
 			{
 				Mix_FreeChunk(sfxPorts[i]);
@@ -158,6 +160,7 @@ void SoundLoop()
 
 
 				sfxPorts[i] = Mix_LoadWAV(cstr);
+
 
 				if (sfxPorts[i] == NULL) {
 					cout << purple << "[Audio] Port " << dec << (i + 1) << " Error : " << Mix_GetError() << white << endl;
