@@ -563,6 +563,7 @@ public:
 						{
 							Y_SPEED = Calculate_Speed(0x500 + (STATE > 0) * 0x80);
 							jump_is_spin = pad[button_a];
+
 						}
 						else
 						{
@@ -955,10 +956,11 @@ public:
 			{
 				Y_SPEED = 0;
 				X_SPEED = 0;
+				P_METER = 0;
 
 				flash_t = 0x2F; //15 time, type 1
 				flash_x = int_fast16_t(x);
-				flash_y = int_fast16_t(y - 16.0);
+				flash_y = int_fast16_t(y - (STATE == 0) * 16.0);
 			}
 		}
 
@@ -1228,14 +1230,33 @@ public:
 					}
 				}
 
-				Y_SPEED = Y_SPEED + Calculate_Speed(-8);
-
-				Y_SPEED = max(Calculate_Speed(-1024), min(Y_SPEED, Calculate_Speed(384.0 - (pad[button_down] * 256.0) + (pad[button_up] * 384.0))));
-
 				double SPEED_X_TO_SET = Calculate_Speed(256.0 / (1.0 + double(ON_FL))) * WALKING_DIR;
 				double SPEED_ACCEL_X = Calculate_Speed(24.0);
 				double STOPPING_DECEL = Calculate_Speed(24.0);
 				double SKID_ACCEL = Calculate_Speed(40.0);
+				if (GRABBED_SPRITE == 0xFF)
+				{
+					Y_SPEED = Y_SPEED + Calculate_Speed(-8);
+					Y_SPEED = max(Calculate_Speed(-1024), min(Y_SPEED, Calculate_Speed(384.0 - (pad[button_down] * 256.0) + (pad[button_up] * 384.0))));
+				}
+				else
+				{
+					Y_SPEED = min(1, Y_SPEED + Calculate_Speed(8));
+					MOV = true;
+					double sp = 256 + (pad[button_right] || pad[button_left]) * 256;
+					SPEED_ACCEL_X = Calculate_Speed(16.0);
+					SPEED_X_TO_SET = Calculate_Speed(sp / (1.0 + double(ON_FL)))* WALKING_DIR;
+
+					if (pad[button_down])
+					{
+						Y_SPEED = -1;
+						if (!(global_frame_counter % 8))
+						{
+							RAM[0x1DF9] = 0x0E;
+						}
+					}
+				}
+
 
 				/*
 				Accel start

@@ -76,6 +76,7 @@ namespace fs = experimental::filesystem;
 #endif
 
 
+
 #if defined(__linux__)
 #if not defined(DISABLE_NETWORK)
 #define uint_fast8_t sf::Uint8

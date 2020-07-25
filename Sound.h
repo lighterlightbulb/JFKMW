@@ -41,6 +41,7 @@ void EmulateSPC_Loop()
 	{
 		if (!spc_or_ogg)
 		{
+			
 			spc_play(snes_spc, BUF_SIZE, buf);
 			spc_filter_run(filter, buf, BUF_SIZE);
 			SDL_QueueAudio(audio_device, &buf, sizeof(buf));
