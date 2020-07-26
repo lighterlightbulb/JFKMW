@@ -284,6 +284,7 @@ void read_from_palette(string file)
 
 		curr = (curr + 1) % 2;	
 	}
+	input.close();
 
 }
 
@@ -306,8 +307,10 @@ void decode_graphics_file(string file, int offset = 0)
 		RAM[VRAM_Location + (offset)+current_byte] = uint_fast8_t(v);
 		current_byte++;
 	}
+	input.close();
 
 	cout << yellow << "[GFX] Loading File " << file << " at 0x" << int_to_hex(0x10000 + offset) << " " << current_byte << " bytes loaded" << white << endl;
+
 
 
 }
