@@ -328,7 +328,7 @@ public:
 		}
 		if ((networking && !isClient) && (pointer >= 0x8000 && pointer < 0x10000))
 		{
-			RAM_decay_time_level[pointer - 0x8000] = level_ram_decay_time;
+			RAM_decay_time_level[pointer - 0x8000] = level_ram_decay_time * PlayerAmount;
 		}
 		for (uint_fast8_t i = 0; i < size; i++) {
 			RAM[pointer + i] = uint_fast8_t(value >> (i * 8));
@@ -572,7 +572,8 @@ bool checkRAMarea_net(uint_fast32_t i)
 {
 	return 
 		((i < 0x200 || i > 0x5FF) && (i < 0x2000 || i >= 0x3000)) && //OAM and SPR
-		((i < 0x5000 || i > 0x5FFF) && (i < 0x1B800 || i >= 0x1C000)) //PLR ram
+		((i < 0x5000 || i > 0x5FFF) && (i < 0x1B800 || i >= 0x1C000)) && //PLR ram
+		(i < 0x7000 || i > 0x7FFF) //Free ram
 		;
 }
 

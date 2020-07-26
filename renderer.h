@@ -374,11 +374,6 @@ void render()
 		//VRAM[0xB800 + 26 + 192] = 0x24;	VRAM[0xB801 + 26 + 192] = 6;
 		VRAM[0xB800 + 30 + 192] = 0x14;	VRAM[0xB801 + 30 + 192] = 6;
 		VRAM[0xB800 + 32 + 192] = 0x0B;	VRAM[0xB801 + 32 + 192] = 6;
-		if (!(global_frame_counter % 60))
-		{
-			data_size_now = data_size_current;
-			data_size_current = 0;
-		}
 		draw_number_dec(14, 3, data_size_now / 1024);
 	}
 

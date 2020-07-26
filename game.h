@@ -17,9 +17,16 @@ void game_init()
 void game_loop_code()
 {
 	global_frame_counter += 1;
+
+
 #if not defined(DISABLE_NETWORK)
 	if (networking)
 	{
+		if (isClient && !(global_frame_counter % 60))
+		{
+			data_size_now = data_size_current;
+			data_size_current = 0;
+		}
 
 		if ((clients.size() == 0 && !isClient))
 		{
