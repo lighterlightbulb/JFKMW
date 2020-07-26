@@ -237,6 +237,8 @@ void player_code()
 #endif
 		TexManager.ClearManager();
 		Terminate_Music();
+		curr_bg = 0xFF;
+
 		cout << yellow << "[JFKMW] Returning to main screen.." << white << endl;
 		quit = true;
 	}

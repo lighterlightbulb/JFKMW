@@ -449,11 +449,11 @@ void Sync_Server_RAM(bool compressed = false)
 	}
 	else
 	{
-		uint_fast32_t entries = 0;
+		uint_fast16_t entries = 0;
 		CurrentPacket >> entries;
 		for (uint_fast32_t i = 0; i < entries; i++)
 		{
-			uint_fast32_t pointer;
+			uint_fast16_t pointer;
 			CurrentPacket >> pointer;
 			CurrentPacket >> RAM[pointer];
 		}
@@ -462,9 +462,9 @@ void Sync_Server_RAM(bool compressed = false)
 		decompressHDMAnet();
 
 		//receive Mode 7 stuff
-		CurrentPacket << RAM[0x36];
-		CurrentPacket << RAM[0x38];
-		CurrentPacket << RAM[0x39];
+		CurrentPacket >> RAM[0x36];
+		CurrentPacket >> RAM[0x38];
+		CurrentPacket >> RAM[0x39];
 
 		//Get screen stuff
 		CurrentPacket >> RAM[0x1411];
@@ -557,6 +557,10 @@ void Sync_Server_RAM(bool compressed = false)
 				RAM[VRAM_Location + 0xB800 + p] = t1;
 				RAM[VRAM_Location + 0xB801 + p] = t2;
 			}
+			else
+			{
+				break;
+			}
 		}
 
 	}
@@ -607,20 +611,20 @@ void Push_Server_RAM(bool compress = false)
 	}
 	else
 	{
-		uint_fast32_t entries = 0;
-		for (uint_fast32_t i = 0; i < RAM_Size; i++)
+		uint_fast16_t entries = 0;
+		for (uint_fast16_t i = 0; i <= 0xFFFF; i++)
 		{
 			if (checkRAMarea_net(i))
 			{
 				if (RAM[i] != RAM_old[i] || checkRamDecay(i, false))
 				{
-					entries += 1; //you stupid //no i not //whats 9 + 10 //twenty one.
+					entries++; //you stupid //no i not //whats 9 + 10 //twenty one.
 				}
 			}
 		}
 		CurrentPacket << entries;
 
-		for (uint_fast32_t i = 0; i < RAM_Size; i++)
+		for (uint_fast16_t i = 0; i <= 0xFFFF; i++)
 		{
 			if (checkRAMarea_net(i))
 			{

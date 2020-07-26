@@ -57,6 +57,11 @@ void render_oam(uint_fast16_t offset_o = 0, int CameraX = 0, int CameraY = 0)
 
 void drawBackground()
 {
+	if (RAM[0x3F05] != curr_bg)
+	{
+		curr_bg = RAM[0x3F05];
+		bg_texture = TexManager.loadTexture(path + "Sprites/backgrounds/Background" + to_string(int(curr_bg)) + ".png");
+	}
 
 	int formula_x = (-int(double(CameraX) * (double(RAM[0x3F06]) / 16.0) + ASM.Get_Ram(0x1466, 2)) % 512);
 	int formula_y = (int(double(CameraY) * (double(RAM[0x3F07]) / 16.0) + ASM.Get_Ram(0x1468, 2)) % 512);
@@ -178,16 +183,6 @@ void render()
 	uint_fast8_t offsetYPixel = uint_fast8_t(CameraY) % 16;
 
 	//Draw BG
-
-	if (RAM[0x3F05] != curr_bg)
-	{
-		curr_bg = RAM[0x3F05];
-
-		bg_texture = TexManager.loadTexture(path + "Sprites/backgrounds/Background" + to_string(int(curr_bg)) + ".png");
-
-	}
-
-
 	if (drawBg) {
 		drawBackground();
 	}
