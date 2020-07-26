@@ -46,6 +46,8 @@ uint_fast16_t mapHeight = 32;
 
 uint_fast16_t audio_format = AUDIO_S16;
 int ogg_sample_rate = 44100;
+int spc_delay = 4;
+int spc_buffer_size = 320;
 
 #define RAM_Size 0x20000
 #define VRAM_Size 0x10000

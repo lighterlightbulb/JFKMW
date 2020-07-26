@@ -32,6 +32,8 @@ void load_configuration()
 			if (name == "scale") { forced_scale = stoi(value) > 0; scale = stoi(value); }
 			if (name == "monitor_hz") { monitor_hz = stoi(value); }
 
+			if (name == "spc_delay") { spc_delay = stoi(value); }
+			if (name == "spc_buffer_size") { spc_buffer_size = stoi(value); }
 			if (name == "sample_rate") { ogg_sample_rate = stoi(value); }
 			if (name == "audio_format") { audio_format = value == "AUDIO_S16" ? AUDIO_S16 : AUDIO_U16; }
 

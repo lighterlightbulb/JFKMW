@@ -20,8 +20,6 @@ SPC_Filter* filter;
 
 sf::Thread* music_thread = 0;
 
-#define BUF_SIZE 320
-short buf[BUF_SIZE];
 
 bool spc_or_ogg = false; //false = SPC, true = OGG
 char* music_data;
@@ -37,16 +35,17 @@ void Terminate_Music()
 
 void EmulateSPC_Loop()
 {
+	short* buf = new short[spc_buffer_size];
 	while (true)
 	{
 		if (!spc_or_ogg)
 		{
-			spc_play(snes_spc, BUF_SIZE, buf);
-			spc_filter_run(filter, buf, BUF_SIZE);
-			SDL_QueueAudio(audio_device, &buf, sizeof(buf));
+			spc_play(snes_spc, spc_buffer_size, buf);
+			spc_filter_run(filter, buf, spc_buffer_size);
+			SDL_QueueAudio(audio_device, buf, spc_buffer_size * 2);
 		}
 		
-		SDL_Delay(4);
+		SDL_Delay(spc_delay);
 	}
 }
 
