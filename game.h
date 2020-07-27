@@ -114,7 +114,7 @@ void game_loop_code()
 		Sprites.process_all_sprites(); //we're processing sprites. we're either the server or a player in local mode.
 		for (uint_fast8_t i = 0; i < 128; i++)
 		{
-			RAM[0x2A80 + i] &= 1;
+			RAM[0x2A80 + i] &= 5;
 		}
 	}
 

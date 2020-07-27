@@ -27,7 +27,7 @@
 0x2880 - Sprite Flags 2 ----lksS
 0x2900 - Unknown
 0x2A00 - Spinjump death timer for sprites, otherwise unused
-0x2A80 - Offscreen status and flags ------oO
+0x2A80 - Offscreen status and flags -----DoO
 
 
 
@@ -39,6 +39,7 @@
 off flags:
 O - Process when off screen (0 is true, 1 is false)
 o - Sprite is off sceren
+D - Destroy if off screen
 
 flags 2:
 S - Death By Spinjump
@@ -297,6 +298,11 @@ public:
 			
 			if (RAM[0x2000 + i] != 0) //If sprite exists..
 			{
+				if (RAM[0x2A80 + i] & 4 && !(RAM[0x2A80 + i] & 2))
+				{
+					RAM[0x2000 + i] = 0;
+					continue;
+				}
 				if (RAM[0x2F80 + i] == 0)
 				{
 					if (RAM[0x2800 + i])
