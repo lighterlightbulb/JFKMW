@@ -199,6 +199,7 @@ void render()
 		uint_fast8_t int_b_x = uint_fast8_t(int_res_x / 16) + 1;
 		uint_fast8_t int_b_y = uint_fast8_t(int_res_y / 16) + 1;
 
+
 		for (uint_fast8_t x = 0; x < int_b_x; x++)
 		{
 			for (uint_fast8_t y = 0; y < int_b_y; y++)
@@ -207,7 +208,6 @@ void render()
 
 				if (tile != 0x25)
 				{
-
 					uint_fast16_t entry = tile * tile_table_size;
 
 					//Block 8x8 tiles
