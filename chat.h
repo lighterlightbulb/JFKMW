@@ -6,6 +6,7 @@ int Time_ChatString = 0; //How long it will take for this string to disappear, s
 
 void Chat_ServerSide()
 {
+	int p = 1;
 	for (list<MPlayer>::iterator item = Mario.begin(); item != Mario.end(); ++item)
 	{
 		MPlayer& CurrPlayer = *item;
@@ -16,7 +17,7 @@ void Chat_ServerSide()
 			Time_ChatString = 420;
 			cout << lua_color << "[Chat S] " << Curr_ChatString << white << endl;
 
-			lua_on_chatted(Curr_ChatString);
+			lua_on_chatted(Curr_ChatString, p);
 
 			if (!isClient && networking)
 			{
@@ -28,6 +29,7 @@ void Chat_ServerSide()
 				discord_message(New_ChatString);
 			}
 		}
+		p++;
 	}
 
 	if (Time_ChatString > 0)

@@ -135,8 +135,10 @@ void server_code(string level = "")
 		}
 		if (getKey(0x78))
 		{
+			cout << blue << "[Network] Reloading lua" << white << endl;
 			doing_write = true;
 			lua_loadfile(last_lua_file);
+			lua_run_init();
 			doing_write = false;
 		}
 		doing_write = false;
