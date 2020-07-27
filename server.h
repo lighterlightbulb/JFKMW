@@ -66,12 +66,10 @@ void server_code(string level = "")
 		{
 			
 			string level = ""; cout << "Enter a level : "; cin >> level; 
+
 			doing_write = true;
-
-
 			ASM.Write_To_Ram(0x3f08, stoi(level, nullptr, 16), 2);
 			ASM.Write_To_Ram(0x1493, 0x06, 1);
-
 			doing_write = false;
 
 			discord_message("Switched to level " + level);
@@ -80,8 +78,7 @@ void server_code(string level = "")
 		{
 			cout << green << "[Network] Syncing RAM to other players.." << endl;
 			Set_Server_RAM();
-			recent_big_change = true;
-			
+			recent_big_change = true;			
 		}
 		if (getKey(0x72))
 		{
@@ -101,6 +98,8 @@ void server_code(string level = "")
 			cout << green << "[Network] Syncing music to other players.." << endl;
 			need_sync_music = true;
 		}
+
+
 		if (getKey(0x74))
 		{
 
@@ -122,6 +121,8 @@ void server_code(string level = "")
 
 			Time_ChatString = 300;
 			Curr_ChatString = pvp ? "pvp is now enabled" : "pvp is now off";
+
+			discord_message(Curr_ChatString);
 
 		}
 		if (getKey(0x76))
