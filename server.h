@@ -25,7 +25,8 @@ void server_code(string level = "")
 	cout << "F5 = Change RAM Variable" << endl;
 	cout << "F6 = PVP Toggle" << endl;
 	cout << "F7 = Dump RAM" << endl;
-	cout << "F8 = Dump Level data" << white << endl;
+	cout << "F8 = Dump Level data" << endl;
+	cout << "F9 = Reload Lua" << white << endl;
 
 	data_size_current = 0;
 	thread = new sf::Thread(&NetWorkLoop); thread->launch();
@@ -130,6 +131,12 @@ void server_code(string level = "")
 		if (getKey(0x77))
 		{
 			dump_level_data();
+		}
+		if (getKey(0x78))
+		{
+			doing_write = true;
+			lua_loadfile(last_lua_file);
+			doing_write = false;
 		}
 		doing_write = false;
 

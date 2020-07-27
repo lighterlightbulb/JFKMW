@@ -269,7 +269,7 @@ void lua_connect_functions(lua_State* L)
 	LUA General
 */
 
-
+string last_lua_file;
 void lua_loadfile(string file)
 {
 	if (LUA_STATE)
@@ -277,6 +277,7 @@ void lua_loadfile(string file)
 		lua_close(LUA_STATE);
 	}
 
+	last_lua_file = file;
 	LUA_STATE = luaL_newstate();
 
 	load_lua_libs(LUA_STATE);
