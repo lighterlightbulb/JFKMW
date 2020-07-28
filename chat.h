@@ -9,18 +9,13 @@ int Time_ChatString[6] = {0,0,0,0}; //How long it will take for this string to d
 
 void Add_Chat(string c)
 {
-	Curr_ChatString[5] = Curr_ChatString[4];
-	Curr_ChatString[4] = Curr_ChatString[3];
-	Curr_ChatString[3] = Curr_ChatString[2];
-	Curr_ChatString[2] = Curr_ChatString[1];
-	Curr_ChatString[1] = Curr_ChatString[0];
-	Curr_ChatString[0] = c;
+	for (int i = 5; i > 1; i--)
+	{
+		Curr_ChatString[i] = Curr_ChatString[i - 1];
+		Time_ChatString[i] = Time_ChatString[i - 1];
+	}
 
-	Time_ChatString[5] = Time_ChatString[4];
-	Time_ChatString[4] = Time_ChatString[3];
-	Time_ChatString[3] = Time_ChatString[2];
-	Time_ChatString[2] = Time_ChatString[1];
-	Time_ChatString[1] = Time_ChatString[0];
+	Curr_ChatString[0] = c;
 	Time_ChatString[0] = chat_onscreen_timer;
 }
 void Chat_ServerSide()
