@@ -293,9 +293,22 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool for_validating = false)
 		HandleDisconnection(&whoSentThis);
 		return;
 	}
-	//cout << "Size : " << CurrentPacket.getDataSize() << endl;
+
+	if (!isClient && CurrentPacket.getDataSize() > (player_expected_packet_size + 70)) //lol They're trying to crash the server
+	{
+		cout << blue << "[Network] " << whoSentThis.getRemoteAddress() << " Get the fuck out of my porch bitch. Disconnecting." << white << endl;
+
+		PreparePacket(Header_FailedToConnect);
+		CurrentPacket << "Kicked.";
+		SendPacket(&whoSentThis);
+
+		HandleDisconnection(&whoSentThis);
+
+		return;
+	}
+
 	/*
-	SERVER BEHAVIOUR
+		SERVER BEHAVIOUR
 	*/
 	if (!isClient)
 	{
@@ -629,6 +642,7 @@ void NetWorkLoop()
 
 			PreparePacket(Header_UpdatePlayerData); pack_mario_data(); SendPacket();
 		}
+		receive_all_packets(socketG);
 	}
 }
 

@@ -26,7 +26,8 @@ void server_code(string level = "")
 	cout << "F6 = PVP Toggle" << endl;
 	cout << "F7 = Dump RAM" << endl;
 	cout << "F8 = Dump Level data" << endl;
-	cout << "F9 = Reload Lua" << white << endl;
+	cout << "F9 = Reload Lua" << endl;
+	cout << "F10 = Player List" << white << endl;
 
 	data_size_current = 0;
 	thread = new sf::Thread(&NetWorkLoop); thread->launch();
@@ -138,6 +139,16 @@ void server_code(string level = "")
 			lua_loadfile(last_lua_file);
 			lua_run_init();
 			doing_write = false;
+		}
+		if (getKey(0x79))
+		{
+			cout << cyan << "List of players (" << clients.size() << "): " << endl;
+			for (int i = 0; i < clients.size(); i++)
+			{
+				MPlayer& PLR = get_mario(i);
+				cout << "1. " << PLR.player_name_cut << " (" << clients[i]->getRemoteAddress() << ")" << endl;
+			}
+			cout << white;
 		}
 		doing_write = false;
 
