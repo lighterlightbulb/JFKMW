@@ -237,7 +237,6 @@ void redraw87()
 
 bool done()
 {
-	//if (delay) SDL_Delay(16); //So it consumes less processing power
 	if (!v_sync) {
 		SDL_Delay(16);
 	}
@@ -280,7 +279,7 @@ void read_from_palette(string file)
 			curr_p++;
 		}
 
-		curr = (curr + 1) % 2;	
+		curr = (curr + 1) & 1;	
 	}
 	input.close();
 

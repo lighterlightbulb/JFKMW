@@ -375,7 +375,7 @@ void render()
 	}
 
 	//Render chat
-	if (Time_ChatString > 0 || Chatting)
+	if (Chatting || Time_ChatString[0] > 0)
 	{
 		for (int i = 0; i < 32; i++)
 		{
@@ -385,7 +385,7 @@ void render()
 				VRAM[0xB801 + (i << 1) + (e << 6)] = 6;
 			}
 		}
-		int y;
+		int y = 27;
 		string Curr_Typing = (Typing_In_Chat + ((global_frame_counter % 20) > 10 ? "\x94" : ""));
 		int Typing_Len = int(Curr_Typing.length());
 		if (Chatting)
@@ -409,24 +409,24 @@ void render()
 			}
 
 		}
-		//Congrats this will do it
-		string C_String = Curr_ChatString;
-		int C_len = int(Curr_ChatString.length());
-
-		y = (C_len > 31) ? 25 : 26;
-		y -= (Chatting * ((Typing_Len > 31) ? 2 : 1));
-		for (int i = 0; i < C_String.length(); i++)
+		for (int cc = 0; cc < 6; cc++)
 		{
-			
-			uint_fast8_t new_l = uint_fast8_t(C_String.at(i));
-			if (new_l == 0x20) { new_l = 0x57 + 0x7F; }
-			if (C_String.at(i) == '<') { new_l = 0x2C + 0x57; }
-			if (C_String.at(i) == '>') { new_l = 0x2D + 0x57; }
-			if (new_l < 0x3A) { new_l = new_l - 0x30 + 0x57; }
+			string C_String = Curr_ChatString[cc];
+			int C_len = int(Curr_ChatString[cc].length());
+			y -= ((C_len > 31) ? 2 : 1);
+			for (int i = 0; i < C_String.length(); i++)
+			{
 
-			VRAM[0xB802 + (i * 2) + (y << 6)] = new_l - 0x57;
-			VRAM[0xB803 + (i * 2) + (y << 6)] = 6;
+				uint_fast8_t new_l = uint_fast8_t(C_String.at(i));
+				if (new_l == 0x20) { new_l = 0x57 + 0x7F; }
+				if (C_String.at(i) == '<') { new_l = 0x2C + 0x57; }
+				if (C_String.at(i) == '>') { new_l = 0x2D + 0x57; }
+				if (new_l < 0x3A) { new_l = new_l - 0x30 + 0x57; }
 
+				VRAM[0xB802 + (i * 2) + (y << 6)] = new_l - 0x57;
+				VRAM[0xB803 + (i * 2) + (y << 6)] = 6;
+
+			}
 		}
 
 	}

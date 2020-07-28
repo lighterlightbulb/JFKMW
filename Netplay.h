@@ -381,7 +381,7 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool for_validating = false)
 			CurrentPacket >> recent_big_change;
 			Sync_Server_RAM(!recent_big_change);
 
-			CurrentPacket >> Curr_ChatString;
+			CurrentPacket >> Curr_PChatString;
 
 		}
 
@@ -544,7 +544,7 @@ void Server_To_Clients()
 
 			CurrentPacket << recent_big_change;
 			Push_Server_RAM(!recent_big_change);
-			CurrentPacket << Curr_ChatString;
+			CurrentPacket << Curr_PChatString;
 			SendPacket(&client);
 
 

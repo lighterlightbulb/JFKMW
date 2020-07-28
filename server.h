@@ -119,10 +119,8 @@ void server_code(string level = "")
 				cout << green << "[Network] Enabled PVP." << endl;
 			}
 
-			Time_ChatString = 300;
-			Curr_ChatString = pvp ? "pvp is now enabled" : "pvp is now off";
-
-			discord_message(Curr_ChatString);
+			Add_Chat(pvp ? "pvp is now enabled" : "pvp is now off");
+			discord_message(pvp ? "pvp is now enabled" : "pvp is now off");
 
 		}
 		if (getKey(0x76))
