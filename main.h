@@ -39,6 +39,7 @@ void player_code()
 		zsnes_ui.hint = "";
 		if (latest_error == "Kicked.")
 		{
+			zsnes_ui.message = "Kicked from server";
 			string file = path + "Sounds/kicked.ogg"; music = Mix_LoadMUS(file.c_str()); Mix_PlayMusic(music, 1);
 			latest_error = "";
 		}
