@@ -4,7 +4,7 @@
 Mix_Music *music = NULL;
 
 //The sound effects that will be used
-Mix_Chunk *sfxPorts[3];
+Mix_Chunk *sfxPorts[0x300];
 uint_fast16_t sound_table[3] = { 0x1DF9, 0x1DFC, 0x1DFA };
 uint8_t old_1dfb = 0xFF;
 
@@ -146,31 +146,33 @@ void SoundLoop()
 		for (uint_fast8_t i = 0; i < 3; i++)
 		{
 			uint_fast16_t RAM_P = sound_table[i];
-
-			
-
-			if (ASM.Get_Ram(RAM_P, 1) != 0)
+			if (RAM[RAM_P] != 0)
 			{
-				Mix_FreeChunk(sfxPorts[i]);
 
-				string sfx_to_play = path + "Sounds/" + int_to_hex(RAM_P) + "/" + int_to_hex(ASM.Get_Ram(RAM_P, 1), true) + ".ogg";
-				const char* cstr = sfx_to_play.c_str();
-
-				//cout << purple << "[Audio] Port" << dec << (i+1) << " : " << cstr << white << endl;
+				uint_fast16_t MixChunk = RAM[RAM_P] + (i << 8);
+				
 
 
-				sfxPorts[i] = Mix_LoadWAV(cstr);
 
 
-				if (sfxPorts[i] == NULL) {
-					cout << purple << "[Audio] Port " << dec << (i + 1) << " Error : " << Mix_GetError() << white << endl;
-				}
-				else {
-					if (Mix_PlayChannel(-1, sfxPorts[i], 0) == -1) {
+				if (sfxPorts[MixChunk] == NULL) {
+
+					string sfx_to_play = path + "Sounds/" + int_to_hex(RAM_P) + "/" + int_to_hex(ASM.Get_Ram(RAM_P, 1), true) + ".ogg";
+					const char* cstr = sfx_to_play.c_str();
+					sfxPorts[MixChunk] = Mix_LoadWAV(cstr);
+					if (sfxPorts[MixChunk] == NULL)
+					{
 						cout << purple << "[Audio] Port " << dec << (i + 1) << " Error : " << Mix_GetError() << white << endl;
 					}
 				}
-				ASM.Write_To_Ram(RAM_P, 0, 1);
+
+				if (sfxPorts[MixChunk] != NULL) {
+					if (Mix_PlayChannel(1 + i, sfxPorts[MixChunk], 0) == -1) {
+						cout << purple << "[Audio] Port " << dec << (i + 1) << " Error : " << Mix_GetError() << white << endl;
+					}
+				}
+
+				RAM[RAM_P] = 0;
 			}
 
 		}
