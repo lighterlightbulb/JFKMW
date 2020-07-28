@@ -6,12 +6,7 @@ void game_init()
 {
 	decode_graphics_file("Graphics/exanimations.bin", 8);
 	decode_graphics_file("Graphics/hud.bin", 11);
-	for (uint_fast16_t l = 0; l < 0x800; l += 2)
-	{
-		RAM[VRAM_Location + 0xB800 + l] = 0x7F;
-		RAM[VRAM_Location + 0xB800 + l + 1] = 0x00;
-
-	}
+	memset(&RAM[0x1B800], 0xFF, 0x800);
 }
 
 void game_loop_code()
@@ -64,7 +59,7 @@ void game_loop_code()
 	int total_time_ticks_d = min(65535, int(total_time_ticks.count() * 3584.0));
 	uint_fast16_t count = uint_fast16_t(total_time_ticks_d);
 	RAM[0x4207] = count & 0xFF;
-	RAM[0x4209] = count / 224;
+	RAM[0x4209] = count / 256;
 
 
 
@@ -232,7 +227,7 @@ void game_loop_code()
 			lua_run_main();
 		}
 
-		RAM[0x14] = global_frame_counter % 256;
+		RAM[0x14] = global_frame_counter & 0xFF;
 	}
 
 	ProcessHDMA();
