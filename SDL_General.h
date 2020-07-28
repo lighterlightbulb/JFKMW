@@ -8,7 +8,6 @@ SDL_Texture *screen_t_l1;
 SDL_Texture *screen_t_l2;
 
 
-
 int w; //width of the screen
 int h; //height of the screen
 SDL_Window*   win; //The window
@@ -194,7 +193,6 @@ void drawRect(int_fast16_t x1, int_fast16_t y1, uint_fast8_t color, SDL_Surface 
 {
 	if (x1 > -1 && x1 < screen_s->w && y1 > -1 && y1 < screen_s->h)
 	{
-		//uint_fast16_t c = palette_array[color];
 		Uint32* p_screen = (Uint32*)screen_s->pixels;
 		p_screen += y1 * screen_s->w + x1;
 		*p_screen = palette_array[color]; //SDL_MapRGBA(screen_s->format, r, g, b, 255);

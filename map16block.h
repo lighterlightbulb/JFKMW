@@ -14,23 +14,22 @@
 #define ram_level_low 0x8000
 #define ram_level_high 0xC000
 
-uint_fast8_t map16_entries[0x10000];
+uint_fast8_t map16_entries[0x1C00];
+
 uint_fast8_t spawned_grabbable = 0xFF;
 
 void reset_map()
 {
-	for (int i = ram_level_low; i < ram_level_high; i++)
-	{
+	for (int i = ram_level_low; i < ram_level_high; i++) {
 		RAM[i] = 0x25;
 		RAM[i + 0x4000] = 0x00;
-
 	}
 
-	for (int i = 0; i < 0x1000; i++)
-	{
+	for (int i = 0; i < 0x1000; i++) {
 		RAM[0x2000 + i] = 0;
 	}
 }
+
 void initialize_map16()
 {
 	string file = path + "Map16/Global.Cmap16";
@@ -48,31 +47,17 @@ void initialize_map16()
 		current_byte += 1;
 		if (current_byte >= 16) {
 			uint16_t replace_p = temp[1] + temp[0] * 256; //this is actually a thing.
-
-			//cout << blue << "[MAP16] Initialized tile " << hex << replace_p << " of properties ";
 			for (int i = 0; i < tile_table_size; i++)
 			{
 				map16_entries[(replace_p * tile_table_size) + i] = temp[i + 2];
-				//cout << hex << int(temp[i + 2]);
 			}
-
-			//cout << " - ";
 			int integer = map16_entries[collision + replace_p * tile_table_size];
-
 			current_byte = 0;
-			//8cout << white << endl;
 			
 		}
 	}
 	input.close();
-	//reset_map();
-
-
 }
-
-
-//$6000-$8000 High Byte Map16
-//$4000-$6000 Low Byte Map16
 
 class map16blockhandler //Map16 loaded block
 {
@@ -116,6 +101,8 @@ public:
 	{
 		uint_fast32_t index = (x % mapWidth) + (max(uint_fast16_t(0), min(mapHeight, y)) * mapWidth);
 		RAM[ram_level_low + index] = tile & 0xFF; RAM[ram_level_high + index] = tile >> 8;
+
+		RAM_decay_time_level[index] = level_ram_decay_time * PlayerAmount;
 	}
 
 	/*
@@ -170,11 +157,11 @@ public:
 			uint_fast16_t t = RAM[ram_level_low + index] + (RAM[ram_level_high + index] << 8);
 			if (t == 0x0124 && side == bottom)
 			{
-				RAM[ram_level_low + index] = 0x32;
+				replace_map_tile(0x0132, x, y);
 			}
 			if (t == 0x011F && side == bottom)
 			{
-				RAM[ram_level_low + index] = 0x32;
+				replace_map_tile(0x0132, x, y);
 				x *= 16;
 				y *= 16;
 				uint_fast8_t spr = spawnSpriteJFKMarioWorld(0x74, 5, x, y + 8, 1, true);

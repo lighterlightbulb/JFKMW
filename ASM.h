@@ -5,8 +5,8 @@ bool asm_loaded = false;
 
 uint_fast8_t RAM[RAM_Size];
 uint_fast8_t RAM_old[0x8000];
-
-uint_fast8_t RAM_decay_time_level[0x8000]; //for multiplayer
+uint_fast16_t leveldata_old[0x4000];
+uint_fast8_t RAM_decay_time_level[0x4000]; //for multiplayer
 
 class JFKASM
 {
@@ -328,7 +328,8 @@ public:
 		}
 		if ((networking && !isClient) && (pointer >= 0x8000 && pointer < 0x10000))
 		{
-			RAM_decay_time_level[pointer - 0x8000] = level_ram_decay_time * PlayerAmount;
+			RAM_decay_time_level[(pointer - 0x8000) & 0x3FFF] = level_ram_decay_time * PlayerAmount;
+
 		}
 		for (uint_fast8_t i = 0; i < size; i++) {
 			RAM[pointer + i] = uint_fast8_t(value >> (i * 8));
@@ -458,6 +459,17 @@ void Sync_Server_RAM(bool compressed = false)
 			CurrentPacket >> RAM[pointer];
 		}
 
+		uint_fast16_t map16_entries_n;
+		CurrentPacket >> map16_entries_n;
+		for (uint_fast16_t i = 0; i < map16_entries_n; i++)
+		{
+			uint_fast16_t p;
+			CurrentPacket >> p;
+			CurrentPacket >> RAM[0x8000 + p];
+			CurrentPacket >> RAM[0xC000 + p];
+		}
+
+
 		//HDMA
 		decompressHDMAnet();
 
@@ -577,19 +589,15 @@ bool checkRAMarea_net(uint_fast32_t i)
 		;
 }
 
-bool checkRamDecay(uint_fast32_t i, bool dec)
+bool checkRamDecay(uint_fast16_t i, bool dec)
 {
-	if (i >= 0x8000 && i < 0x10000)
+	if (RAM_decay_time_level[i] > 0)
 	{
-		i -= 0x8000;
-		if (RAM_decay_time_level[i] > 0)
+		if (dec)
 		{
-			if (dec)
-			{
-				RAM_decay_time_level[i]--;
-			}
-			return true;
+			RAM_decay_time_level[i]--;
 		}
+		return true;
 	}
 	return false;
 }
@@ -613,11 +621,11 @@ void Push_Server_RAM(bool compress = false)
 	else
 	{
 		uint_fast16_t entries = 0;
-		for (uint_fast16_t i = 0; i <= 0xFFFF; i++)
+		for (uint_fast16_t i = 0; i < 0x8000; i++)
 		{
 			if (checkRAMarea_net(i))
 			{
-				if (RAM[i] != RAM_old[i] || checkRamDecay(i, false))
+				if (RAM[i] != RAM_old[i])
 				{
 					entries++; //you stupid //no i not //whats 9 + 10 //twenty one.
 				}
@@ -625,15 +633,35 @@ void Push_Server_RAM(bool compress = false)
 		}
 		CurrentPacket << entries;
 
-		for (uint_fast16_t i = 0; i <= 0xFFFF; i++)
+		for (uint_fast16_t i = 0; i < 0x8000; i++)
 		{
 			if (checkRAMarea_net(i))
 			{
-				if (RAM[i] != RAM_old[i] || checkRamDecay(i, true))
+				if (RAM[i] != RAM_old[i])
 				{
 					CurrentPacket << i;
 					CurrentPacket << RAM[i];
 				}
+			}
+		}
+
+		uint_fast16_t map16_entries_n = 0;
+		for (uint_fast16_t i = 0; i < 0x4000; i++)
+		{
+			if (checkRamDecay(i, false))
+			{
+				map16_entries_n++;
+			}
+		}
+		CurrentPacket << map16_entries_n;
+
+		for (uint_fast16_t i = 0; i < 0x4000; i++)
+		{
+			if (checkRamDecay(i, true))
+			{
+				CurrentPacket << i;
+				CurrentPacket << RAM[0x8000 + i];
+				CurrentPacket << RAM[0xC000 + i];
 			}
 		}
 
