@@ -121,6 +121,7 @@ public:
 			{
 				//RAM[0x2480 + entry] = 0;
 				RAM[0x2780 + entry] |= 0b00000010;
+
 			}
 		}
 		else
