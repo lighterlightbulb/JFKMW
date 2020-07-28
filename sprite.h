@@ -23,7 +23,6 @@ public:
 		SDL_Surface *s = loadSurface(file);
 		SDL_Texture *t = SDL_CreateTextureFromSurface(ren, s);
 		SDL_FreeSurface(s);
-		//cout << purple_int << "[TexManager] couldn't find " + file + ", loading it" << white << endl;
 		Textures.insert(make_pair(file, t));
 
 		return t;
