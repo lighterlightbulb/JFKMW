@@ -115,10 +115,7 @@ void game_loop_code()
 	}
 	if (!isClient || !networking) //if we are the server or we are playing locally...
 	{
-		for (uint_fast16_t i = 0; i < 0x400; i++) //Clear OAM loop
-		{
-			RAM[0x200 + i] = 0;
-		}
+		memset(&RAM[0x200], 0, 0x400);
 		Sprites.process_all_sprites(); //we're processing sprites. we're either the server or a player in local mode.
 		for (uint_fast8_t i = 0; i < 128; i++)
 		{

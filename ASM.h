@@ -514,9 +514,7 @@ void Sync_Server_RAM(bool compressed = false)
 		CurrentPacket >> RAM[0x1469];
 
 		//Decompress OAM
-		for (uint_fast16_t i = 0; i < 0x400; i++) {
-			RAM[0x0200 + i] = 0;
-		}
+		memset(&RAM[0x200], 0, 0x400);
 
 		uint_fast8_t oam_entries = 0;
 		uint_fast16_t pointer = 0;
@@ -535,9 +533,7 @@ void Sync_Server_RAM(bool compressed = false)
 		}
 
 
-		for (uint_fast8_t i = 0; i < 0x80; i++) {
-			RAM[0x2000 + i] = 0;
-		}
+		memset(&RAM[0x2000], 0, 0x80);
 
 		//Decompress sprite entries (Fuck do you mean )
 		uint_fast8_t spr_entries;
@@ -552,10 +548,7 @@ void Sync_Server_RAM(bool compressed = false)
 		}
 
 		//Decompress T3
-		for (uint_fast16_t T3_loop = 0; T3_loop < 0x800; T3_loop += 2) {
-			RAM[VRAM_Location + 0xB800 + T3_loop] = 0x7F;
-			RAM[VRAM_Location + 0xB800 + T3_loop + 1] = 0x00;
-		}
+		memset(&RAM[0x1B800], 0xFF, 0x800);	
 
 		uint_fast16_t T3_entries;
 		CurrentPacket >> T3_entries;
