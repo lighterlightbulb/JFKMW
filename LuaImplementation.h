@@ -102,7 +102,6 @@ static int draw_to_oam(lua_State* L)
 	uint_fast16_t sprite_x_position = uint_fast16_t(int(offset_x + RAM[0x2100 + sprite_index] + int_fast8_t(RAM[0x2180 + sprite_index]) * 256));
 	uint_fast16_t sprite_y_position = uint_fast16_t(int(offset_y + RAM[0x2280 + sprite_index] + int_fast8_t(RAM[0x2300 + sprite_index]) * 256));
 
-
 	RAM[0x202 + oam_index] = sprite_x_position;
 	RAM[0x203 + oam_index] = sprite_x_position >> 8;
 

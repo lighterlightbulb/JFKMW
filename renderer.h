@@ -111,6 +111,8 @@ void drawBackground()
 
 void render()
 {
+
+
 	PrepareRendering();
 
 	blocks_on_screen = 0;

@@ -61,6 +61,14 @@ void game_loop_code()
 			}
 		}
 	}
+	int total_time_ticks_d = min(65535, int(total_time_ticks.count() * 3584.0));
+	uint_fast16_t count = uint_fast16_t(total_time_ticks_d);
+	RAM[0x4207] = count & 0xFF;
+	RAM[0x4209] = count / 224;
+
+
+
+
 
 	if (!isClient && RAM[0x1887] > 0)
 	{
