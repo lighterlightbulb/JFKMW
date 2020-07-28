@@ -617,6 +617,7 @@ void Push_Server_RAM(bool compress = false)
 		{
 			CurrentPacket << RAM[i];
 		}
+		memset(&RAM_decay_time_level, 0, 0x4000);
 	}
 	else
 	{
