@@ -1,5 +1,8 @@
 #pragma once
 
+/*
+	TO-DO: Make chat more secure and unspammable (For now you can't send similar messages, which is good.)
+*/
 #define chat_onscreen_timer 420
 string Curr_ChatString[6] = {"","","","","",""};
 string Curr_PChatString = "";
@@ -39,6 +42,7 @@ void Chat_ServerSide()
 		{
 			//Update curr pchatstring to send later
 			Curr_PChatString = CurrPlayer.curr_chat_string;
+			Curr_PChatString = Curr_PChatString.substr(0, min(55, int(Curr_PChatString.length())));
 			Time_ChatString[0] = chat_onscreen_timer;
 
 			//Update strings and output to console
