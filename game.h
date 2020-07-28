@@ -46,7 +46,7 @@ void game_loop_code()
 #if not defined(DISABLE_NETWORK)
 				Set_Server_RAM();
 #endif
-				recent_big_change = true;
+				Do_RAM_Change();
 
 				ASM.Write_To_Ram(0x3f08, 0, 2);
 			}

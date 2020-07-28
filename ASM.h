@@ -441,6 +441,7 @@ void Sync_Server_RAM(bool compressed = false)
 	doing_read = true;
 	if (!compressed)
 	{
+		CurrentPacket >> latest_sync;
 		ClearSpriteCache();
 		for (uint_fast32_t i = 0; i < RAM_Size; i++)
 		{
@@ -594,6 +595,12 @@ bool checkRamDecay(uint_fast16_t i, bool dec)
 	return false;
 }
 
+void Do_RAM_Change()
+{
+	recent_big_change = true;
+	latest_sync++;
+}
+
 void Push_Server_RAM(bool compress = false)
 {
 	while (doing_write) {
@@ -605,6 +612,7 @@ void Push_Server_RAM(bool compress = false)
 
 	if (!compress)
 	{
+		CurrentPacket << latest_sync;
 		for (uint_fast32_t i = 0; i < RAM_Size; i++)
 		{
 			CurrentPacket << RAM[i];

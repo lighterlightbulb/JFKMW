@@ -80,7 +80,7 @@ void server_code(string level = "")
 		{
 			cout << green << "[Network] Syncing RAM to other players.." << endl;
 			Set_Server_RAM();
-			recent_big_change = true;			
+			Do_RAM_Change();
 		}
 		if (getKey(0x72))
 		{

@@ -358,7 +358,7 @@ public:
 			start_x = RAM[0x3F0B] + RAM[0x3F0C] * 256;
 			start_y = RAM[0x3F0D] + RAM[0x3F0E] * 256;
 		}
-		recent_big_change = true;
+		Do_RAM_Change();
 		Set_Server_RAM();
 	}
 };

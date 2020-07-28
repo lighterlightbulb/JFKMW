@@ -170,7 +170,8 @@ void pack_mario_data(uint_fast8_t skip = 1) {
 		}
 	}
 	else {
-		CurrentPacket << SelfPlayerNumber; 
+		CurrentPacket << SelfPlayerNumber;
+		CurrentPacket << latest_sync;
 		put_mario_data_in(get_mario(SelfPlayerNumber));
 	}
 }
@@ -321,6 +322,7 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool for_validating = false)
 		if (CurrentPacket_header == Header_UpdatePlayerData)
 		{
 			uint_fast8_t PlrNum = 1; CurrentPacket >> PlrNum;
+			CurrentPacket >> latest_plr_syncs[PlrNum - 1];
 			if (PlrNum > (clients.size()+1) || PlrNum == 0)
 			{
 				cout << blue << "[Network] Something's weird, " << whoSentThis.getRemoteAddress() << " sent a invalid player packet. Disconnecting!" << white << endl;
@@ -525,11 +527,6 @@ void PendingConnection()
 
 void Server_To_Clients()
 {
-	//data_size_current = 0;
-	if (latest_plr_syncs.size() != clients.size())
-	{
-		latest_plr_syncs.resize(clients.size());
-	}
 	GetAmountOfPlayers();
 
 	if (clients.size() > 0)
@@ -560,8 +557,9 @@ void Server_To_Clients()
 
 			pack_mario_data(PlrNumber);
 
-			CurrentPacket << recent_big_change;
-			Push_Server_RAM(!recent_big_change);
+			bool d_change = latest_plr_syncs[PlrNumber - 1] != latest_sync || recent_big_change;
+			CurrentPacket << d_change;
+			Push_Server_RAM(!d_change);
 			CurrentPacket << Curr_PChatString;
 			SendPacket(&client);
 
@@ -574,7 +572,7 @@ void Server_To_Clients()
 				break;
 			}
 
-			PlrNumber += 1;
+			PlrNumber++;
 
 		}
 
@@ -619,6 +617,10 @@ void NetWorkLoop()
 		{
 			if (selector.wait(sf::milliseconds(network_update_rate)))
 			{
+				if (latest_plr_syncs.size() != clients.size())
+				{
+					latest_plr_syncs.resize(clients.size());
+				}
 				// Test the listener
 				if (selector.isReady(listener))
 				{
