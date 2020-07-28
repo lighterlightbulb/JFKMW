@@ -1,23 +1,34 @@
 #pragma once
 
 #define chat_onscreen_timer 420
-string Curr_ChatString[6] = {"","","",""};
-
+string Curr_ChatString[6] = {"","","","","",""};
 string Curr_PChatString = "";
 string Old_ChatString = "";
-int Time_ChatString[6] = {0,0,0,0}; //How long it will take for this string to disappear, set to 300 every time a message is sent. In frames
+int Time_ChatString[6] = {0,0,0,0,0,0}; //How long it will take for this string to disappear, set to 300 every time a message is sent. In frames
 
+//Add chat line
 void Add_Chat(string c)
 {
-	for (int i = 5; i > 1; i--)
-	{
-		Curr_ChatString[i] = Curr_ChatString[i - 1];
-		Time_ChatString[i] = Time_ChatString[i - 1];
-	}
+	/*
+		This is only used in the client to push the chat back. This is a very rough implementation and it doesn't use a for loop since I couldn't get it to work.
+	*/
+	Curr_ChatString[5] = Curr_ChatString[4];
+	Curr_ChatString[4] = Curr_ChatString[3];
+	Curr_ChatString[3] = Curr_ChatString[2];
+	Curr_ChatString[2] = Curr_ChatString[1];
+	Curr_ChatString[1] = Curr_ChatString[0];
+
+	Time_ChatString[5] = Time_ChatString[4];
+	Time_ChatString[4] = Time_ChatString[3];
+	Time_ChatString[3] = Time_ChatString[2];
+	Time_ChatString[2] = Time_ChatString[1];
+	Time_ChatString[1] = Time_ChatString[0];
 
 	Curr_ChatString[0] = c;
 	Time_ChatString[0] = chat_onscreen_timer;
 }
+
+//Serverside chat handler
 void Chat_ServerSide()
 {
 	int p = 1;
@@ -26,12 +37,16 @@ void Chat_ServerSide()
 		MPlayer& CurrPlayer = *item;
 		if (CurrPlayer.last_chat_string != CurrPlayer.curr_chat_string && CurrPlayer.curr_chat_string != "")
 		{
+			//Update curr pchatstring to send later
 			Curr_PChatString = CurrPlayer.curr_chat_string;
 			Time_ChatString[0] = chat_onscreen_timer;
 
+			//Update strings and output to console
 			CurrPlayer.last_chat_string = CurrPlayer.curr_chat_string;
 			cout << lua_color << "[Chat S] " << Curr_PChatString << white << endl;
 			lua_on_chatted(CurrPlayer.curr_chat_string, p);
+
+
 			//Forward message to discord.
 			if (!isClient && networking)
 			{
@@ -46,6 +61,7 @@ void Chat_ServerSide()
 		p++;
 	}
 	
+	//Reset the chatstring after a while lol
 	if (Time_ChatString[0] > 0 && networking)
 	{
 		Time_ChatString[0]--;
@@ -58,6 +74,7 @@ void Chat_ServerSide()
 
 void Chat_ClientSide()
 {
+	//Add a new line to chat. We have to check that it's different than hte previous one, and also, make sure it's not blank.
 	if (Old_ChatString != Curr_PChatString && Curr_PChatString != "")
 	{
 		Add_Chat(Curr_PChatString);
@@ -66,6 +83,7 @@ void Chat_ClientSide()
 		cout << lua_color << "[Chat C] " << Curr_PChatString << white << endl;
 	}
 
+	//Pinnacle of shitcode
 	for (int i = 0; i < 6; i++)
 	{
 		if (Time_ChatString[i] > 0)
@@ -78,8 +96,10 @@ void Chat_ClientSide()
 		}
 	}
 
+	//If we are chatting
 	if (Chatting)
 	{
+		//Letters
 		for (int i = 0x41; i <= 0x5A; i++)
 		{
 			if (getKey(i))
@@ -95,17 +115,20 @@ void Chat_ClientSide()
 				Typing_In_Chat += (i - 0x30) + '0';
 			}
 		}
-
+		//Spaces
 		if (getKey(0x20))
 		{
 			Typing_In_Chat += " ";
 		}
 
-		//Delete last
+		//Delete last chat
 		if (getKey(0x08) && Typing_In_Chat.size() > 0) { Typing_In_Chat.pop_back(); }
 
+		//Typing in chat limiter
 		Typing_In_Chat = Typing_In_Chat.substr(0, min(55, int(Typing_In_Chat.length())));
 	}
+
+	//Da status :flushed:
 	bool stat = Chatting ? (state[input_settings[9]]) : state[input_settings[10]];
 	if (stat != pressed_start)
 	{
