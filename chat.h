@@ -112,11 +112,14 @@ void Chat_ClientSide()
 			}
 		}
 		//Numbers
-		for (int i = 0x30; i <= 0x39; i++)
+		if (!state[SDL_SCANCODE_LSHIFT])
 		{
-			if (getKey(i))
+			for (int i = 0x30; i <= 0x39; i++)
 			{
-				Typing_In_Chat += (i - 0x30) + '0';
+				if (getKey(i))
+				{
+					Typing_In_Chat += (i - 0x30) + '0';
+				}
 			}
 		}
 		//Spaces
@@ -124,6 +127,12 @@ void Chat_ClientSide()
 		{
 			Typing_In_Chat += " ";
 		}
+
+		//Special chars 21 2E 2C 2D 3C 3E
+		if (getKey(VK_OEM_PERIOD)) { Typing_In_Chat += "."; }
+		if (getKey(VK_OEM_COMMA)) { Typing_In_Chat += ","; }
+		if (getKey(VK_OEM_MINUS)) { Typing_In_Chat += "-"; }
+		if (getKey(VK_OEM_PLUS)) { Typing_In_Chat += "+"; }
 
 		//Delete last chat
 		if (getKey(0x08) && Typing_In_Chat.size() > 0) { Typing_In_Chat.pop_back(); }

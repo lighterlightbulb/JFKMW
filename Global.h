@@ -242,6 +242,23 @@ string int_to_hex(int T, bool add_0 = false)
 	return stream.str();
 }
 
+uint_fast8_t char_to_smw(char t)
+{
+	uint_fast8_t new_l = uint_fast8_t(t);
+
+	if (new_l < 0x3A) { new_l = new_l - 0x30; }
+	if (new_l >= 0x61) { new_l = new_l - 0x61 + 0xA; }
+	if (t == '<') { new_l = 0x2C; }
+	if (t == '>') { new_l = 0x2D; }
+	if (t == '!') { new_l = 0x28; }
+	if (t == '.') { new_l = 0x24; }
+	if (t == ',') { new_l = 0x25; }
+	if (t == '-') { new_l = 0x27; }
+	if (t == '+') { new_l = 0x29; }
+	if (t == ' ') { new_l = 0x7F; }
+
+	return new_l;
+}
 
 #ifdef NDEBUG
 string path = "";
@@ -286,6 +303,8 @@ string ip = "127.0.0.1"; int PORT = 0;
 
 sf::TcpSocket socketG; sf::SocketSelector selector; //no idea how this works
 sf::TcpListener listener; vector<sf::TcpSocket*> clients;
+vector<uint_fast8_t> latest_plr_syncs;
+uint_fast8_t latest_sync;
 
 uint_fast8_t CurrentPacket_header;
 //TO-DO : add packet compression.

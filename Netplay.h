@@ -526,6 +526,10 @@ void PendingConnection()
 void Server_To_Clients()
 {
 	//data_size_current = 0;
+	if (latest_plr_syncs.size() != clients.size())
+	{
+		latest_plr_syncs.resize(clients.size());
+	}
 	GetAmountOfPlayers();
 
 	if (clients.size() > 0)

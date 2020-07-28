@@ -397,13 +397,9 @@ void render()
 			for (int i = 0; i < Curr_Typing.length(); i++)
 			{
 
-				uint_fast8_t new_l = uint_fast8_t(Curr_Typing.at(i));
-				if (new_l == 0x20) { new_l = 0x57 + 0x7F; }
-				if (Curr_Typing.at(i) == '<') { new_l = 0x2C + 0x57; }
-				if (Curr_Typing.at(i) == '>') { new_l = 0x2D + 0x57; }
-				if (new_l < 0x3A) { new_l = new_l - 0x30 + 0x57; }
+				uint_fast8_t new_l = char_to_smw(Curr_Typing.at(i));
 
-				VRAM[0xB802 + (i * 2) + (y << 6)] = new_l - 0x57;
+				VRAM[0xB802 + (i * 2) + (y << 6)] = new_l;
 				VRAM[0xB803 + (i * 2) + (y << 6)] = 6;
 
 			}
@@ -417,13 +413,9 @@ void render()
 			for (int i = 0; i < C_String.length(); i++)
 			{
 
-				uint_fast8_t new_l = uint_fast8_t(C_String.at(i));
-				if (new_l == 0x20) { new_l = 0x57 + 0x7F; }
-				if (C_String.at(i) == '<') { new_l = 0x2C + 0x57; }
-				if (C_String.at(i) == '>') { new_l = 0x2D + 0x57; }
-				if (new_l < 0x3A) { new_l = new_l - 0x30 + 0x57; }
+				uint_fast8_t new_l = char_to_smw(C_String.at(i));
 
-				VRAM[0xB802 + (i * 2) + (y << 6)] = new_l - 0x57;
+				VRAM[0xB802 + (i * 2) + (y << 6)] = new_l;
 				VRAM[0xB803 + (i * 2) + (y << 6)] = 6;
 
 			}

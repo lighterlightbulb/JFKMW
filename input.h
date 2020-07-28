@@ -97,7 +97,17 @@ bool KeyStates[0x100];
 bool getKey(int what_want)
 {
 #if defined(_WIN32)
-	bool stat = GetKeyState(what_want) & 0x8000;
+
+	bool stat;
+	
+	if (what_want == 0x08)
+	{
+		stat = GetAsyncKeyState(what_want) & 0x7FFF;
+	}
+	else
+	{
+		stat = GetKeyState(what_want) & 0x80;
+	}
 	if (!isClient && networking)
 	{
 		if (GetConsoleWindow() != GetForegroundWindow())
