@@ -319,11 +319,6 @@ void render()
 		}
 	}
 
-	//Start draw to layer 3
-	SDL_LockSurface(&screen_s_l2);
-	SDL_Surface* screen_plane_sequel = &screen_s_l2;
-	SDL_memset(screen_plane_sequel->pixels, 0, screen_plane_sequel->h* screen_plane_sequel->pitch);
-
 	if (drawHud)
 	{
 		//Status bar code here
@@ -500,6 +495,11 @@ void render()
 			plr_numb += 1;
 		}
 	}
+
+	//Start draw to layer 3
+	SDL_LockSurface(&screen_s_l2);
+	SDL_Surface* screen_plane_sequel = &screen_s_l2;
+	SDL_memset(screen_plane_sequel->pixels, 0, screen_plane_sequel->h* screen_plane_sequel->pitch);
 
 	//Draw L3 player names
 	for (list<MPlayer>::iterator item = Mario.begin(); item != Mario.end(); ++item)

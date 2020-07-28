@@ -78,12 +78,31 @@ bool init_audio()
 
 	snes_spc = spc_new();
 	filter = spc_filter_new();
+
+	cout << purple << "[Audio] Initialized audio spec and SPC playback (32000hz)." << white << endl;
 	
 	/* Clear filter before playing */
 	spc_filter_clear(filter);
 	spc_filter_set_gain(filter, 300);
 
 	SDL_PauseAudioDevice(audio_device, 0);
+
+	int snds = 0;
+	for (uint_fast8_t i = 0; i < 3; i++)
+	{
+		for (uint_fast16_t sounds = 0; sounds < 0x100; sounds++)
+		{
+			string sfx_to_play = path + "Sounds/" + int_to_hex(sound_table[i]) + "/" + int_to_hex(sounds, true) + ".ogg";
+			const char* cstr = sfx_to_play.c_str();
+			sfxPorts[sounds + (i << 8)] = Mix_LoadWAV(cstr);
+			if (sfxPorts[sounds + (i << 8)] != NULL)
+			{
+				snds++;
+			}
+		}
+	}
+
+	cout << purple << "[Audio] Pre-loaded " << dec << snds << " sounds." << white << endl;
 
 	
 
@@ -150,26 +169,15 @@ void SoundLoop()
 			{
 
 				uint_fast16_t MixChunk = RAM[RAM_P] + (i << 8);
-				
-
-
-
-
-				if (sfxPorts[MixChunk] == NULL) {
-
-					string sfx_to_play = path + "Sounds/" + int_to_hex(RAM_P) + "/" + int_to_hex(ASM.Get_Ram(RAM_P, 1), true) + ".ogg";
-					const char* cstr = sfx_to_play.c_str();
-					sfxPorts[MixChunk] = Mix_LoadWAV(cstr);
-					if (sfxPorts[MixChunk] == NULL)
-					{
-						cout << purple << "[Audio] Port " << dec << (i + 1) << " Error : " << Mix_GetError() << white << endl;
-					}
-				}
 
 				if (sfxPorts[MixChunk] != NULL) {
 					if (Mix_PlayChannel(1 + i, sfxPorts[MixChunk], 0) == -1) {
 						cout << purple << "[Audio] Port " << dec << (i + 1) << " Error : " << Mix_GetError() << white << endl;
 					}
+				}
+				else
+				{
+					cout << purple << "[Audio] Port " << dec << (i + 1) << " Error : Doesn't exist" << white << endl;
 				}
 
 				RAM[RAM_P] = 0;

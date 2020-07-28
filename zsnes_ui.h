@@ -46,6 +46,7 @@ void load_zsnes_font()
 
 		cout << cyan << "[ZUI] Loaded 0x" << hex << int(current_letter) << dec << " letters." << endl;
 	}
+	cFile.close();
 }
 uint_fast8_t char_to_zsnes_font_letter(char l) //use to convert strings
 {

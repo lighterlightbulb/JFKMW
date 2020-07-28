@@ -64,6 +64,7 @@ void initialize_map16()
 			
 		}
 	}
+	input.close();
 	//reset_map();
 
 

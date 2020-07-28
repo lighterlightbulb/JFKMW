@@ -4,7 +4,7 @@
 bool asm_loaded = false;
 
 uint_fast8_t RAM[RAM_Size];
-uint_fast8_t RAM_old[RAM_Size];
+uint_fast8_t RAM_old[0x8000];
 
 uint_fast8_t RAM_decay_time_level[0x8000]; //for multiplayer
 
@@ -316,8 +316,8 @@ public:
 		int current_byte = 0;
 		for (auto &v : buffer) {
 			rom[offset_pointer + current_byte] = uint8_t(v); current_byte += 1;
-			
 		}
+		input.close();
 	}
 
 	void Write_To_Ram(uint_fast32_t pointer, uint_fast32_t value, uint_fast8_t size = 1)
@@ -746,5 +746,5 @@ void Push_Server_RAM(bool compress = false)
 #endif
 
 void Set_Server_RAM() {
-	memcpy(&RAM_old, &RAM, RAM_Size * sizeof(uint_fast8_t));
+	memcpy(&RAM_old, &RAM, 0x8000 * sizeof(uint_fast8_t));
 }

@@ -95,7 +95,7 @@ public:
 			stringstream strStream;
 			strStream << file.rdbuf(); //read the file
 			string str = strStream.str(); //str holds the content of the file
-
+			file.close();
 			return str;
 		}
 		file.close();

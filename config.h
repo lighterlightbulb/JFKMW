@@ -80,4 +80,5 @@ void load_configuration()
 		}
 
 	}
+	cFile.close();
 }

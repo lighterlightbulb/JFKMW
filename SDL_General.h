@@ -176,7 +176,7 @@ void PrepareRendering()
 	}
 	if (!forced_scale)
 	{
-		scale = resolution_y / int_res_y;
+		scale = max(1, resolution_y / int_res_y);
 	}
 	sp_offset_x = (w / 2) - ((int_res_x/2) * scale);
 	sp_offset_y = (h / 2) - ((int_res_y/2) * scale) + (resolution_y % 2 == 1);
