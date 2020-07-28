@@ -27,7 +27,8 @@ void server_code(string level = "")
 	cout << "F7 = Dump RAM" << endl;
 	cout << "F8 = Dump Level data" << endl;
 	cout << "F9 = Reload Lua" << endl;
-	cout << "F10 = Player List" << white << endl;
+	cout << "F10 = Player List" << endl;
+	cout << "K = Kick" << white << endl;
 
 	data_size_current = 0;
 	thread = new sf::Thread(&NetWorkLoop); thread->launch();
@@ -147,6 +148,25 @@ void server_code(string level = "")
 			{
 				MPlayer& PLR = get_mario(i);
 				cout << "1. " << PLR.player_name_cut << " (" << clients[i]->getRemoteAddress() << ")" << endl;
+			}
+			cout << white;
+		}
+		if (getKey(0x4B))
+		{
+			int plr = 0;
+			cout << cyan << "Number of player to kick: " << endl;
+			cin >> plr;
+			if (plr > 0 && plr < (clients.size() + 1))
+			{
+				sf::TcpSocket* t = clients[plr - 1];
+				PreparePacket(Header_FailedToConnect);
+				CurrentPacket << "Kicked.";
+				SendPacket(t);
+				HandleDisconnection(t);
+			}
+			else
+			{
+				cout << red << "Not valid." << endl;
 			}
 			cout << white;
 		}

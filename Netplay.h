@@ -417,6 +417,7 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool for_validating = false)
 		{
 			string msg;
 			CurrentPacket >> msg;
+			latest_error = msg;
 			cout << red << "[Network] Received disconnection reason from server : " << msg << white << endl;
 			validated_connection = false;
 		}

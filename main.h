@@ -37,9 +37,10 @@ void player_code()
 	{
 		LevelSprites.clear();
 		zsnes_ui.hint = "";
-		if (disconnected)
+		if (latest_error == "Kicked.")
 		{
 			string file = path + "Sounds/kicked.ogg"; music = Mix_LoadMUS(file.c_str()); Mix_PlayMusic(music, 1);
+			latest_error = "";
 		}
 		disconnected = false;
 		PlayerAmount = 0; SelfPlayerNumber = 1; CheckForPlayers();
