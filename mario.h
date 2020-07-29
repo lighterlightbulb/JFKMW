@@ -124,10 +124,6 @@ public:
 
 			if (STATE != 0)
 			{
-				//preserve this line below it hasnt been changed since 2018 lol
-				//PlaySoundF("hurt.ogg", 2);
-
-
 				STATE = 0;
 				INVINCIBILITY_FRAMES = 90;
 				ASM.Write_To_Ram(0x1DF9, 4, 1);
