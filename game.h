@@ -11,6 +11,7 @@ void game_init()
 
 void game_loop_code()
 {
+	check_input();
 	global_frame_counter += 1;
 
 
@@ -31,6 +32,7 @@ void game_loop_code()
 #endif
 	if (!isClient && RAM[0x1493] > 0)
 	{
+		memset(&RAM[0x2000], 0, 0x80);
 		if ((global_frame_counter % 3) == 0)
 		{
 			RAM[0x1493] -= 1;

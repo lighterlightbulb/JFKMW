@@ -232,7 +232,7 @@ void player_code()
 			cls();
 			zsnes_ui.message = "Idle";
 			t1 = chrono::high_resolution_clock::now();
-			check_input(); game_loop(); SoundLoop();
+			game_loop(); SoundLoop();
 			render();
 			t2 = chrono::high_resolution_clock::now();
 			total_time_ticks = chrono::duration_cast<chrono::duration<double>>(t2 - t1);

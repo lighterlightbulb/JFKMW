@@ -14,6 +14,8 @@ void init_input()
 		}
 		else {
 			cout << cyan << "[SDL] Controller " << controller << " is plugged in." << white << endl;
+
+			SDL_ShowCursor(SDL_DISABLE);
 		}
 		//Load haptic
 		if (haptic >= 0)
@@ -52,10 +54,6 @@ void check_input()
 	{
 		quit = true;
 	}
-	if (!networking && SDL_GameControllerGetButton(gGameController, SDL_CONTROLLER_BUTTON_LEFTSHOULDER))
-	{
-		quit = true;
-	}
 	if (!gGameController)
 	{
 		/*
@@ -74,11 +72,14 @@ void check_input()
 	}
 	else
 	{
+
 		/*
 			If we're using a controller we obviously aren't gonna use the controller and mouse at the same time, so..
 		*/
-		controller_mouse_x += double(SDL_GameControllerGetAxis(gGameController, SDL_CONTROLLER_AXIS_RIGHTX)) / 6000.0;
-		controller_mouse_y += double(SDL_GameControllerGetAxis(gGameController, SDL_CONTROLLER_AXIS_RIGHTY)) / 6000.0;
+		int_fast16_t AxisX = SDL_GameControllerGetAxis(gGameController, SDL_CONTROLLER_AXIS_RIGHTX);
+		int_fast16_t AxisY = SDL_GameControllerGetAxis(gGameController, SDL_CONTROLLER_AXIS_RIGHTY);
+		controller_mouse_x += double(abs(AxisX) > 4096 ? AxisX : 0) / 6000.0;
+		controller_mouse_y += double(abs(AxisY) > 4096 ? AxisY : 0) / 6000.0;
 
 		controller_mouse_x = min(double(int_res_x), max(0.0, controller_mouse_x));
 		controller_mouse_y = min(double(int_res_y), max(0.0, controller_mouse_y));
@@ -86,7 +87,10 @@ void check_input()
 		mouse_down = SDL_GameControllerGetAxis(gGameController, SDL_CONTROLLER_AXIS_TRIGGERRIGHT) > 24576;
 		mouse_down_r = SDL_GameControllerGetAxis(gGameController, SDL_CONTROLLER_AXIS_TRIGGERLEFT) > 24576;
 
-		bool stat = SDL_GameControllerGetButton(gGameController, SDL_CONTROLLER_BUTTON_LEFTSTICK);
+		mouse_w_up = false;
+		mouse_w_down = false;
+
+		bool stat = SDL_GameControllerGetButton(gGameController, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER);
 		if (stat != left_st_pr) {
 			left_st_pr = stat;
 			if (stat) {
@@ -94,7 +98,7 @@ void check_input()
 			}
 		}
 
-		stat = SDL_GameControllerGetButton(gGameController, SDL_CONTROLLER_BUTTON_RIGHTSTICK);
+		stat = SDL_GameControllerGetButton(gGameController, SDL_CONTROLLER_BUTTON_LEFTSHOULDER);
 		if (stat != right_st_pr) {
 			right_st_pr = stat;
 			if (stat) {
@@ -104,10 +108,10 @@ void check_input()
 
 		mouse_x = int(controller_mouse_x);
 		mouse_y = int(controller_mouse_y);
-	}
-	
-	if (gGameController)
-	{
+
+		/*
+			Handle Gamepad button input
+		*/
 		BUTTONS_GAMEPAD[0] = SDL_GameControllerGetButton(gGameController, SDL_CONTROLLER_BUTTON_DPAD_UP) || (SDL_GameControllerGetAxis(gGameController, SDL_CONTROLLER_AXIS_LEFTY) < -24576);
 		BUTTONS_GAMEPAD[1] = SDL_GameControllerGetButton(gGameController, SDL_CONTROLLER_BUTTON_DPAD_RIGHT) || (SDL_GameControllerGetAxis(gGameController, SDL_CONTROLLER_AXIS_LEFTX) > 24576);
 		BUTTONS_GAMEPAD[2] = SDL_GameControllerGetButton(gGameController, SDL_CONTROLLER_BUTTON_DPAD_DOWN) || (SDL_GameControllerGetAxis(gGameController, SDL_CONTROLLER_AXIS_LEFTY) > 24576);
@@ -117,6 +121,13 @@ void check_input()
 		BUTTONS_GAMEPAD[5] = SDL_GameControllerGetButton(gGameController, SDL_CONTROLLER_BUTTON_B);
 		BUTTONS_GAMEPAD[6] = SDL_GameControllerGetButton(gGameController, SDL_CONTROLLER_BUTTON_X);
 		BUTTONS_GAMEPAD[7] = SDL_GameControllerGetButton(gGameController, SDL_CONTROLLER_BUTTON_Y);
+
+
+		if (SDL_GameControllerGetButton(gGameController, SDL_CONTROLLER_BUTTON_START) && SDL_GameControllerGetButton(gGameController, SDL_CONTROLLER_BUTTON_BACK))
+		{
+			quit = true;
+			return;
+		}
 
 		BUTTONS_GAMEPAD[8] = SDL_GameControllerGetButton(gGameController, SDL_CONTROLLER_BUTTON_START);
 		BUTTONS_GAMEPAD[9] = SDL_GameControllerGetButton(gGameController, SDL_CONTROLLER_BUTTON_BACK);

@@ -259,7 +259,7 @@ bool done()
 		SDL_Delay(16);
 	}
 
-	if (!networking)
+	if (!networking && !gGameController)
 	{
 		mouse_w_up = false;
 		mouse_w_down = false;
