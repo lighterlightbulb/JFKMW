@@ -15,6 +15,7 @@
 #define ram_level_high 0xC000
 
 uint_fast8_t map16_entries[0x1C00];
+bool cached_props[0x1200];
 
 uint_fast8_t spawned_grabbable = 0xFF;
 
@@ -59,6 +60,7 @@ void initialize_map16()
 	input.close();
 }
 
+
 class map16blockhandler //Map16 loaded block
 {
 public:
@@ -72,10 +74,16 @@ public:
 		act_as = map16_entries[entry + act_as_low] + (map16_entries[entry + act_as_high] << 8);
 
 		uint_fast8_t integer = map16_entries[entry + collision];
-		for (uint_fast8_t i = 0; i < 8; i++)
-		{
-			logic[i] = ((integer >> (7 - i)) & 1) != 0;
-		}
+		logic[0] = (integer >> 7) & 1;
+		logic[1] = (integer >> 6) & 1;
+		logic[2] = (integer >> 5) & 1;
+		logic[3] = (integer >> 4) & 1;
+		logic[4] = (integer >> 3) & 1;
+		logic[5] = (integer >> 2) & 1;
+		logic[6] = (integer >> 1) & 1;
+		logic[7] = (integer) & 1;
+
+
 
 		if (tile >= 0x166 && tile <= 0x167)
 		{
