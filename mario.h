@@ -102,15 +102,18 @@ public:
 
 	void Die()
 	{
-		if (!DEAD)
+		if (PlayerControlled || (networking && !isClient))
 		{
-			if (RAM[0x1493] == 0)
+			if (!DEAD)
 			{
-				WO_counter += 1;
-				ASM.Write_To_Ram(0x1DFC, 100, 1);
+				if (RAM[0x1493] == 0)
+				{
+					WO_counter += 1;
+					ASM.Write_To_Ram(0x1DFC, 100, 1);
+				}
+				DEAD = true;
+				DEATH_TIMER = 27;
 			}
-			DEAD = true;
-			DEATH_TIMER = 27;
 		}
 	}
 

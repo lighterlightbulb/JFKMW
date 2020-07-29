@@ -213,17 +213,28 @@ void player_code()
 		while (!done())
 		{
 
+			chrono::high_resolution_clock::time_point t1 = chrono::high_resolution_clock::now();
+			chrono::high_resolution_clock::time_point t2 = chrono::high_resolution_clock::now();
+
 			while (doing_read) {
 				SDL_Delay(1);
+				
+				
+				t2 = chrono::high_resolution_clock::now();
+				double t = chrono::duration_cast<chrono::duration<double>>(t2 - t1).count()*1000.0;
+				if (t > 1000.0)
+				{
+					cout << red << "[Network] Recovered from a freeze during doing_read (it took more than 1000ms, " << dec << t << " ms)" << white << endl;
+				}
 			}
 
 			doing_write = true;
 			cls();
 			zsnes_ui.message = "Idle";
-			chrono::high_resolution_clock::time_point t1 = chrono::high_resolution_clock::now();
+			t1 = chrono::high_resolution_clock::now();
 			check_input(); game_loop(); SoundLoop();
 			render();
-			chrono::high_resolution_clock::time_point t2 = chrono::high_resolution_clock::now();
+			t2 = chrono::high_resolution_clock::now();
 			total_time_ticks = chrono::duration_cast<chrono::duration<double>>(t2 - t1);
 			doing_write = false;
 

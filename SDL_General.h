@@ -208,6 +208,15 @@ void cls()
 	SDL_RenderClear(ren);
 }
 
+void DrawMouse()
+{
+	if (gGameController)
+	{
+		SDL_SetRenderDrawColor(ren, 255, 255, 255, 127);
+		SDL_Rect rect = { sp_offset_x + mouse_x * scale, sp_offset_y + mouse_y * scale, scale, scale }; SDL_RenderFillRect(ren, &rect);
+	}
+}
+
 void redraw()
 {
 	SDL_SetRenderDrawColor(ren, 0, 0, 0, 0);
@@ -219,11 +228,17 @@ void redraw()
 		rect = { 0,0,sp_offset_x, h }; SDL_RenderFillRect(ren, &rect);
 		rect = { w - sp_offset_x,0,sp_offset_x,h }; SDL_RenderFillRect(ren, &rect);
 	}
+
+	DrawMouse();
+
 	SDL_RenderPresent(ren);
 }
 
 void redraw87()
 {
+	sp_offset_x = (w / 2) - ((256 / 2) * scale);
+	sp_offset_y = (h / 2) - ((224 / 2) * scale);
+
 	SDL_SetRenderDrawColor(ren, 0, 0, 0, 0);
 	int f_x = (w / 2) - (128 * scale);
 	int f_y = (h / 2) - (112 * scale) + (resolution_y % 2 == 1);
@@ -232,6 +247,9 @@ void redraw87()
 	rect = { 0,h - f_y,w,f_y }; SDL_RenderFillRect(ren, &rect);
 	rect = { 0,0,f_x, h }; SDL_RenderFillRect(ren, &rect);
 	rect = { w - f_x,0,f_x,h }; SDL_RenderFillRect(ren, &rect);
+
+	DrawMouse();
+
 	SDL_RenderPresent(ren);
 }
 

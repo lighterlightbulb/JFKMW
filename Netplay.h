@@ -617,10 +617,17 @@ void NetWorkLoop()
 		{
 			if (selector.wait(sf::milliseconds(network_update_rate)))
 			{
+				//Adjust some things
 				if (latest_plr_syncs.size() != clients.size())
 				{
 					latest_plr_syncs.resize(clients.size());
 				}
+				if (clients.size() > 0)
+				{
+					network_update_rate = network_update_rate_c / (unsigned int)clients.size();
+					packet_wait_time = packet_wait_time_c / (unsigned int)clients.size();
+				}
+
 				// Test the listener
 				if (selector.isReady(listener))
 				{

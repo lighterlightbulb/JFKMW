@@ -1,9 +1,5 @@
 #pragma once
 
-const Uint8 *state = SDL_GetKeyboardState(NULL);
-SDL_GameController* gGameController;
-SDL_Haptic* haptic_device;
-
 void init_input()
 {
 	if (SDL_NumJoysticks() < 1) {
@@ -56,17 +52,56 @@ void check_input()
 	{
 		quit = true;
 	}
-	SDL_GetMouseState(&mouse_x, &mouse_y);
-	mouse_x -= sp_offset_x; mouse_y -= sp_offset_y;
-	mouse_x /= scale; mouse_y /= scale;
+	if (!gGameController)
+	{
+		/*
+			If we're using keyboard we're also gonna use mouse I guess
+		*/
+		SDL_GetMouseState(&mouse_x, &mouse_y);
+		mouse_x -= sp_offset_x; mouse_y -= sp_offset_y;
+		mouse_x /= scale; mouse_y /= scale;
 
-	mouse_x = min(int(int_res_x), max(0, mouse_x));
-	mouse_y = min(int(int_res_y), max(0, mouse_y));
+		mouse_x = min(int(int_res_x), max(0, mouse_x));
+		mouse_y = min(int(int_res_y), max(0, mouse_y));
 
+		uint_fast32_t m_state = SDL_GetMouseState(NULL, NULL);
+		mouse_down = m_state & SDL_BUTTON(SDL_BUTTON_LEFT);
+		mouse_down_r = m_state & SDL_BUTTON(SDL_BUTTON_RIGHT);
+	}
+	else
+	{
+		/*
+			If we're using a controller we obviously aren't gonna use the controller and mouse at the same time, so..
+		*/
+		controller_mouse_x += double(SDL_GameControllerGetAxis(gGameController, SDL_CONTROLLER_AXIS_RIGHTX)) / 6000.0;
+		controller_mouse_y += double(SDL_GameControllerGetAxis(gGameController, SDL_CONTROLLER_AXIS_RIGHTY)) / 6000.0;
+
+		controller_mouse_x = min(double(int_res_x), max(0.0, controller_mouse_x));
+		controller_mouse_y = min(double(int_res_y), max(0.0, controller_mouse_y));
+
+		mouse_down = SDL_GameControllerGetAxis(gGameController, SDL_CONTROLLER_AXIS_TRIGGERRIGHT) > 24576;
+		mouse_down_r = SDL_GameControllerGetAxis(gGameController, SDL_CONTROLLER_AXIS_TRIGGERLEFT) > 24576;
+
+		bool stat = SDL_GameControllerGetButton(gGameController, SDL_CONTROLLER_BUTTON_LEFTSTICK);
+		if (stat != left_st_pr) {
+			left_st_pr = stat;
+			if (stat) {
+				mouse_w_up = true;
+			}
+		}
+
+		stat = SDL_GameControllerGetButton(gGameController, SDL_CONTROLLER_BUTTON_RIGHTSTICK);
+		if (stat != right_st_pr) {
+			right_st_pr = stat;
+			if (stat) {
+				mouse_w_down = true;
+			}
+		}
+
+		mouse_x = int(controller_mouse_x);
+		mouse_y = int(controller_mouse_y);
+	}
 	
-	uint_fast32_t m_state = SDL_GetMouseState(NULL, NULL);
-	mouse_down = m_state & SDL_BUTTON(SDL_BUTTON_LEFT);
-	mouse_down_r = m_state & SDL_BUTTON(SDL_BUTTON_RIGHT);
 	if (gGameController)
 	{
 		BUTTONS_GAMEPAD[0] = SDL_GameControllerGetButton(gGameController, SDL_CONTROLLER_BUTTON_DPAD_UP) || (SDL_GameControllerGetAxis(gGameController, SDL_CONTROLLER_AXIS_LEFTY) < -24576);

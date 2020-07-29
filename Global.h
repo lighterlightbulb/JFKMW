@@ -1,6 +1,6 @@
 #pragma once
 
-string GAME_VERSION = "1.2.0b";
+string GAME_VERSION = "1.2.1b";
 
 #define rom_asm_size 0x008000 //32kb, 1 bank ($00:8000 to $00:FFFF)
 #define location_rom_levelasm 0x008000 //this will put LevelASM on the start of the ROM, this is a SNES PC btw
@@ -91,6 +91,8 @@ int latest_server_response;
 
 unsigned int network_update_rate = 16;
 unsigned int packet_wait_time = 16;
+unsigned int network_update_rate_c = 16;
+unsigned int packet_wait_time_c = 16;
 int mouse_x, mouse_y;
 bool mouse_down;
 bool mouse_down_r;
@@ -134,6 +136,10 @@ int blocks_on_screen = 0;
 
 string username = "No username";
 
+
+/*
+	Input related stuff
+*/
 SDL_Scancode input_settings[18] = {
 	SDL_SCANCODE_S,
 	SDL_SCANCODE_Z,
@@ -156,7 +162,17 @@ SDL_Scancode input_settings[18] = {
 };
 bool BUTTONS_GAMEPAD[10];
 
+const Uint8* state = SDL_GetKeyboardState(NULL);
+SDL_GameController* gGameController;
+SDL_Haptic* haptic_device;
 
+double controller_mouse_x = 0.0;
+double controller_mouse_y = 0.0;
+
+bool left_st_pr = false;
+bool right_st_pr = false;
+
+//Yes
 vector<string> split(const string &s, char delim) {
 	vector<string> result;
 	stringstream ss(s);
