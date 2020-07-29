@@ -172,17 +172,19 @@ public:
 
 		int_fast16_t PosXBlock = int_fast16_t(NewPositionX / 16); 
 		int_fast16_t PosYBlock = int_fast16_t(NewPositionY / 16);
-		int_fast16_t startX = PosXBlock - TotalBlocksCollisionCheckSprite - int(x_size / 16.0);
+
+		int_fast8_t TotalBlocksCollisionCheckSpriteX = int_fast8_t(x_size / 16.0) + 1;
+		int_fast8_t TotalBlocksCollisionCheckSpriteY = int_fast8_t(y_size / 16.0) + 1;
+
+		int_fast16_t startX = PosXBlock - TotalBlocksCollisionCheckSpriteX - int(x_size / 16.0);
 		if (startX < 0) { startX = 0; }
-		int_fast16_t startY = PosYBlock - TotalBlocksCollisionCheckSprite - int(y_size / 16.0);
+		int_fast16_t startY = PosYBlock - TotalBlocksCollisionCheckSpriteY - int(y_size / 16.0);
 		if (startY < 0) { startY = 0; }
-		for (int_fast16_t xB = startX; xB < PosXBlock + TotalBlocksCollisionCheckSprite + int(x_size/16.0); xB++)
+		for (int_fast16_t xB = startX; xB < PosXBlock + TotalBlocksCollisionCheckSpriteX; xB++)
 		{
-			for (int_fast16_t yB = startY; yB < PosYBlock + TotalBlocksCollisionCheckSprite + int(y_size / 16.0); yB++)
+			for (int_fast16_t yB = startY; yB < PosYBlock + TotalBlocksCollisionCheckSpriteY; yB++)
 			{
 				map16_handler.update_map_tile(xB, yB);
-
-
 				double f_h = map16_handler.ground_y(NewPositionX + (x_size / 2.0) - (xB * 16), xB, yB);
 				double BelowBlock = double(yB * 16) + (f_h - 16.0) - y_size;
 				double AboveBlock = double(yB * 16) + f_h;

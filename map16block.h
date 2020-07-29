@@ -1,6 +1,4 @@
 #pragma once
-#define tile_table_size 14
-
 #define tile_1 0
 #define tile_2 2
 #define tile_3 4
@@ -9,14 +7,10 @@
 #define tile_palette_2 9
 #define tile_flips 10
 #define collision 11
-#define act_as_high 12
-#define act_as_low 13
 #define ram_level_low 0x8000
 #define ram_level_high 0xC000
 
-uint_fast8_t map16_entries[0x1C00];
-bool cached_props[0x1200];
-
+uint_fast8_t map16_entries[0x2000];
 uint_fast8_t spawned_grabbable = 0xFF;
 
 void reset_map()
@@ -48,11 +42,11 @@ void initialize_map16()
 		current_byte += 1;
 		if (current_byte >= 16) {
 			uint16_t replace_p = temp[1] + temp[0] * 256; //this is actually a thing.
-			for (int i = 0; i < tile_table_size; i++)
+			for (int i = 0; i < 14; i++)
 			{
-				map16_entries[(replace_p * tile_table_size) + i] = temp[i + 2];
+				map16_entries[(replace_p << 4) + i] = temp[i + 2];
 			}
-			int integer = map16_entries[collision + replace_p * tile_table_size];
+			int integer = map16_entries[collision + (replace_p << 4)];
 			current_byte = 0;
 			
 		}
@@ -65,23 +59,19 @@ class map16blockhandler //Map16 loaded block
 {
 public:
 	uint_fast16_t tile;
-	uint_fast16_t act_as;
 	bool logic[8];
 
 	void get_map_16_details()
 	{
-		uint_fast16_t entry = (tile & 0x1FF) * tile_table_size;
-		act_as = map16_entries[entry + act_as_low] + (map16_entries[entry + act_as_high] << 8);
-
-		uint_fast8_t integer = map16_entries[entry + collision];
-		logic[0] = (integer >> 7) & 1;
-		logic[1] = (integer >> 6) & 1;
-		logic[2] = (integer >> 5) & 1;
-		logic[3] = (integer >> 4) & 1;
-		logic[4] = (integer >> 3) & 1;
-		logic[5] = (integer >> 2) & 1;
-		logic[6] = (integer >> 1) & 1;
-		logic[7] = (integer) & 1;
+		uint_fast8_t integer = map16_entries[(tile << 4) + collision];
+		logic[0] = integer & 0b10000000;
+		logic[1] = integer & 0b01000000;
+		logic[2] = integer & 0b00100000;
+		logic[3] = integer & 0b00010000;
+		logic[4] = integer & 0b00001000;
+		logic[5] = integer & 0b00000100;
+		logic[6] = integer & 0b00000010;
+		logic[7] = integer & 0b00000001;
 
 
 
@@ -97,7 +87,7 @@ public:
 	*/
 	void update_map_tile(uint_fast16_t x, uint_fast16_t y)
 	{
-		uint_fast32_t index = (x % mapWidth) + (max(uint_fast16_t(0), min(mapHeight, y)) * mapWidth);
+		uint_fast32_t index = (x % mapWidth) + (y % mapHeight) * mapWidth;
 		tile = RAM[ram_level_low + index] + (RAM[ram_level_high + index] << 8);
 		get_map_16_details();
 	}
@@ -107,8 +97,8 @@ public:
 	*/
 	void replace_map_tile(uint16_t tile, uint_fast16_t x, uint_fast16_t y)
 	{
-		uint_fast32_t index = (x % mapWidth) + (max(uint_fast16_t(0), min(mapHeight, y)) * mapWidth);
-		RAM[ram_level_low + index] = tile & 0xFF; RAM[ram_level_high + index] = tile >> 8;
+		uint_fast32_t index = (x % mapWidth) + (y % mapHeight) * mapWidth;
+		RAM[ram_level_low + index] = uint_fast8_t(tile); RAM[ram_level_high + index] = tile >> 8;
 
 		RAM_decay_time_level[index] = level_ram_decay_time * PlayerAmount;
 	}
@@ -212,7 +202,7 @@ public:
 	*/
 	uint_fast16_t get_tile(uint_fast16_t x, uint_fast16_t y)
 	{
-		uint_fast32_t index = (x % mapWidth) + (max(uint_fast16_t(0),min(mapHeight-1,y)) * mapWidth);
+		uint_fast32_t index = (x % mapWidth) + (y % mapHeight) * mapWidth;
 		return RAM[ram_level_low + index] + (RAM[ram_level_high + index] << 8);
 	}
 

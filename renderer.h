@@ -210,7 +210,7 @@ void render()
 
 				if (tile != 0x25)
 				{
-					uint_fast16_t entry = tile * tile_table_size;
+					uint_fast16_t entry = tile << 4;
 
 					//Block 8x8 tiles
 					for (uint_fast8_t i = 0; i < 4; i++)

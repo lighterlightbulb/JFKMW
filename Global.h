@@ -18,7 +18,6 @@ uint_fast32_t pctosnes(uint_fast32_t pc) {
 }
 
 #define TotalBlocksCollisionCheck 2
-#define TotalBlocksCollisionCheckSprite 4
 #define bounds_x 6.0 //for collision crap
 #define bounds_y 6.0
 #define button_b 0
