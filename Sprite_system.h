@@ -173,13 +173,12 @@ public:
 		int_fast16_t PosXBlock = int_fast16_t(NewPositionX / 16); 
 		int_fast16_t PosYBlock = int_fast16_t(NewPositionY / 16);
 
-		int_fast8_t TotalBlocksCollisionCheckSpriteX = int_fast8_t(x_size / 16.0) + 1;
-		int_fast8_t TotalBlocksCollisionCheckSpriteY = int_fast8_t(y_size / 16.0) + 1;
+		int_fast8_t TotalBlocksCollisionCheckSpriteX = int_fast8_t(x_size / 16.0) + 2;
+		int_fast8_t TotalBlocksCollisionCheckSpriteY = int_fast8_t(y_size / 16.0) + 2;
 
-		int_fast16_t startX = PosXBlock - TotalBlocksCollisionCheckSpriteX - int(x_size / 16.0);
-		if (startX < 0) { startX = 0; }
-		int_fast16_t startY = PosYBlock - TotalBlocksCollisionCheckSpriteY - int(y_size / 16.0);
-		if (startY < 0) { startY = 0; }
+		int_fast16_t startX = max(0, PosXBlock - 1);
+		int_fast16_t startY = max(0, PosYBlock - 1);
+
 		for (int_fast16_t xB = startX; xB < PosXBlock + TotalBlocksCollisionCheckSpriteX; xB++)
 		{
 			for (int_fast16_t yB = startY; yB < PosYBlock + TotalBlocksCollisionCheckSpriteY; yB++)

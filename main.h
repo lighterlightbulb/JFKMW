@@ -232,6 +232,10 @@ void player_code()
 			cls();
 			zsnes_ui.message = "Idle";
 			t1 = chrono::high_resolution_clock::now();
+			if (!gGameController)
+			{
+				check_input();
+			}
 			game_loop(); SoundLoop();
 			render();
 			t2 = chrono::high_resolution_clock::now();

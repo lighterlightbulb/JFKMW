@@ -11,7 +11,10 @@ void game_init()
 
 void game_loop_code()
 {
-	check_input();
+	if ((!networking || isClient) && gGameController)
+	{
+		check_input();
+	}
 	global_frame_counter += 1;
 
 
