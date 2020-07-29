@@ -64,28 +64,37 @@ uint_fast8_t char_to_zsnes_font_letter(char l) //use to convert strings
 //draws a string
 void draw_string(bool dark, string str, int_fast16_t x, int_fast16_t y, SDL_Surface* surface)
 {
+	int_fast16_t orig_x = x;
 	for (int i = 0; i < str.size(); i++) {
 		uint_fast8_t arr_l = char_to_zsnes_font_letter(str.at(i));
-		ZSNES_letter& curr_l = zsnes_font[arr_l];
+		if (str.at(i) == '\n')
+		{
+			y += 6;
+			x = orig_x;
+		}
+		else
+		{
+			ZSNES_letter& curr_l = zsnes_font[arr_l];
 
-		for (uint_fast8_t x_l = 0; x_l < 8; x_l++) {
-			for (uint_fast8_t y_l = 0; y_l < 5; y_l++) {
-				if (curr_l.bits[x_l][y_l])
-				{
-					if (dark)
+			for (uint_fast8_t x_l = 0; x_l < 8; x_l++) {
+				for (uint_fast8_t y_l = 0; y_l < 5; y_l++) {
+					if (curr_l.bits[x_l][y_l])
 					{
-						uint_fast8_t formula = 16 + y_l * 16;
-						draw_pixel_to_surface(x + x_l, y + y_l, formula, formula, formula, surface);
-					}
-					else
-					{
-						uint_fast8_t formula = 255 - y_l * 16;
-						draw_pixel_to_surface(x + x_l, y + y_l, formula, formula, formula, surface);
+						if (dark)
+						{
+							uint_fast8_t formula = 16 + y_l * 16;
+							draw_pixel_to_surface(x + x_l, y + y_l, formula, formula, formula, surface);
+						}
+						else
+						{
+							uint_fast8_t formula = 255 - y_l * 16;
+							draw_pixel_to_surface(x + x_l, y + y_l, formula, formula, formula, surface);
+						}
 					}
 				}
 			}
+			x += 6;
 		}
-		x += 6;
 	}
 }
 

@@ -216,8 +216,8 @@ void render()
 					for (uint_fast8_t i = 0; i < 4; i++)
 					{
 						uint_fast16_t block_index = map16_entries[entry + 1 + (i << 1)] + (map16_entries[entry + (i << 1)] << 8);
-						uint_fast8_t index = map16_entries[(i <= 1 ? entry + tile_palette_1 : entry + tile_palette_2)];
-						uint_fast8_t block_palette = (i & 1) ? (index & 0xF) : (index >> 4);
+						uint_fast8_t index = map16_entries[entry + tile_palette_2 - (i <= 1)];
+						uint_fast8_t block_palette = index >> ((i & 1) << 2) & 0xF; // (i & 1) ? (index & 0xF) : (index >> 4);
 
 						if (block_index != 0xF8)
 						{
