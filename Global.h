@@ -1,6 +1,6 @@
 #pragma once
 
-string GAME_VERSION = "1.2.7b";
+string GAME_VERSION = "1.2.8b";
 
 #define rom_asm_size 0x008000 //32kb, 1 bank ($00:8000 to $00:FFFF)
 #define location_rom_levelasm 0x008000 //this will put LevelASM on the start of the ROM, this is a SNES PC btw
@@ -262,7 +262,10 @@ uint_fast8_t char_to_smw(char t)
 	uint_fast8_t new_l = uint_fast8_t(t);
 
 	if (new_l < 0x3A) { new_l = new_l - 0x30; }
-	if (new_l >= 0x61) { new_l = new_l - 0x61 + 0xA; }
+
+	if (t >= 0x41 && t < 0x61) { new_l = new_l - 0x41 + 0xA; }
+	if (t >= 0x61 && t < 0x81) { new_l = new_l - 0x61 + 0xA; }
+
 	if (t == '<') { new_l = 0x2C; }
 	if (t == '>') { new_l = 0x2D; }
 	if (t == '!') { new_l = 0x28; }
@@ -272,6 +275,7 @@ uint_fast8_t char_to_smw(char t)
 	if (t == '+') { new_l = 0x29; }
 	if (t == ' ') { new_l = 0x7F; }
 	if (t == '_') { new_l = 0x3D; }
+	if (t == '?') { new_l = 0x38; }
 
 	return new_l;
 }
