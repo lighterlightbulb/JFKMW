@@ -503,6 +503,7 @@ void Sync_Server_RAM(bool compressed = false)
 		CurrentPacket >> RAM[0x3F0C];
 		CurrentPacket >> RAM[0x3F0D];
 		CurrentPacket >> RAM[0x3F0E];
+		CurrentPacket >> RAM[0x3F05];
 
 		//Could be a loop once again
 		CurrentPacket >> RAM[0x1462];
@@ -699,6 +700,7 @@ void Push_Server_RAM(bool compress = false)
 		CurrentPacket << RAM[0x3F0C];
 		CurrentPacket << RAM[0x3F0D];
 		CurrentPacket << RAM[0x3F0E];
+		CurrentPacket << RAM[0x3F05];
 
 		//Could put these in a loop but I don't care right now
 		CurrentPacket << RAM[0x1462];
