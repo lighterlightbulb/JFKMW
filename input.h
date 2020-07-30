@@ -14,8 +14,6 @@ void init_input()
 		}
 		else {
 			cout << cyan << "[SDL] Controller " << controller << " is plugged in." << white << endl;
-
-			SDL_ShowCursor(SDL_DISABLE);
 		}
 		//Load haptic
 		if (haptic >= 0)
