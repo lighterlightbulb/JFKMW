@@ -165,7 +165,6 @@ void game_loop_code()
 				CurrPlayer.Hurt();
 			}
 		}
-		//cout << SelfPlayerNumber;
 		CurrPlayer.player_index = player;
 		CurrPlayer.Process();
 

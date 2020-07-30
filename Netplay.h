@@ -48,19 +48,19 @@ Mario Data
 void put_mario_data_in(MPlayer& CurrentMario)
 {
 	//copypaste
-	CurrentPacket << CurrentMario.X_SPEED; CurrentPacket << CurrentMario.Y_SPEED;
-	CurrentPacket << CurrentMario.x; CurrentPacket << CurrentMario.y;
+	CurrentPacket << float(CurrentMario.X_SPEED); CurrentPacket << float(CurrentMario.Y_SPEED);
+	CurrentPacket << float(CurrentMario.x); CurrentPacket << float(CurrentMario.y);
 	CurrentPacket << CurrentMario.STATE; 
 	
 	/*
 		Deez are bools 
 	*/
-	uint_fast8_t bools_1;
-	bools_1 |= CurrentMario.ON_FL;
-	bools_1 |= CurrentMario.DEAD << 1;
-	bools_1 |= CurrentMario.jump_is_spin << 2;
-	bools_1 |= CurrentMario.in_pipe << 3;
-	bools_1 |= CurrentMario.SLIDING << 4;
+	uint_fast8_t bools_1 = 0;
+	bools_1 += CurrentMario.ON_FL;
+	bools_1 += CurrentMario.DEAD << 1;
+	bools_1 += CurrentMario.jump_is_spin << 2;
+	bools_1 += CurrentMario.in_pipe << 3;
+	bools_1 += CurrentMario.SLIDING << 4;
 	CurrentPacket << bools_1;
 	
 	CurrentPacket << CurrentMario.INVINCIBILITY_FRAMES; CurrentPacket << CurrentMario.DEATH_TIMER;
@@ -68,9 +68,7 @@ void put_mario_data_in(MPlayer& CurrentMario)
 	CurrentPacket << CurrentMario.to_scale; CurrentPacket << CurrentMario.SKIDDING; CurrentPacket << CurrentMario.P_METER;
 	CurrentPacket << CurrentMario.FRM; CurrentPacket << CurrentMario.WALKING_DIR;
 
-	CurrentPacket << CurrentMario.player_index;
-
-	CurrentPacket << CurrentMario.CAMERA_X; CurrentPacket << CurrentMario.CAMERA_Y;
+	CurrentPacket << float(CurrentMario.CAMERA_X); CurrentPacket << float(CurrentMario.CAMERA_Y);
 
 	CurrentPacket << CurrentMario.SLOPE_TYPE;
 
@@ -102,8 +100,8 @@ void put_mario_data_in(MPlayer& CurrentMario)
 void take_mario_data(MPlayer& CurrentMario)
 {
 	//copypaste
-	CurrentPacket >> CurrentMario.X_SPEED; CurrentPacket >> CurrentMario.Y_SPEED;
-	CurrentPacket >> CurrentMario.x; CurrentPacket >> CurrentMario.y;
+	float X_SPEED, Y_SPEED, x, y; CurrentPacket >> X_SPEED; CurrentPacket >> Y_SPEED; CurrentPacket >> x; CurrentPacket >> y;
+	CurrentMario.X_SPEED = X_SPEED; CurrentMario.Y_SPEED = Y_SPEED; CurrentMario.x = x; CurrentMario.y = y;
 	CurrentPacket >> CurrentMario.STATE;
 
 	/*
@@ -122,9 +120,8 @@ void take_mario_data(MPlayer& CurrentMario)
 	CurrentPacket >> CurrentMario.to_scale; CurrentPacket >> CurrentMario.SKIDDING; CurrentPacket >> CurrentMario.P_METER;
 	CurrentPacket >> CurrentMario.FRM; CurrentPacket >> CurrentMario.WALKING_DIR;
 
-	CurrentPacket >> CurrentMario.player_index;
-
-	CurrentPacket >> CurrentMario.CAMERA_X; CurrentPacket >> CurrentMario.CAMERA_Y;
+	float CAMERA_X, CAMERA_Y; CurrentPacket >> CAMERA_X; CurrentPacket >> CAMERA_Y;
+	CurrentMario.CAMERA_X = CAMERA_X; CurrentMario.CAMERA_Y = CAMERA_Y;
 
 	CurrentPacket >> CurrentMario.SLOPE_TYPE;
 
