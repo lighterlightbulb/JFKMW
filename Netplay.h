@@ -50,9 +50,20 @@ void put_mario_data_in(MPlayer& CurrentMario)
 	//copypaste
 	CurrentPacket << CurrentMario.X_SPEED; CurrentPacket << CurrentMario.Y_SPEED;
 	CurrentPacket << CurrentMario.x; CurrentPacket << CurrentMario.y;
-	CurrentPacket << CurrentMario.STATE; CurrentPacket << CurrentMario.ON_FL;
-
-	CurrentPacket << CurrentMario.DEAD; CurrentPacket << CurrentMario.INVINCIBILITY_FRAMES; CurrentPacket << CurrentMario.DEATH_TIMER;
+	CurrentPacket << CurrentMario.STATE; 
+	
+	/*
+		Deez are bools 
+	*/
+	uint_fast8_t bools_1;
+	bools_1 |= CurrentMario.ON_FL;
+	bools_1 |= CurrentMario.DEAD << 1;
+	bools_1 |= CurrentMario.jump_is_spin << 2;
+	bools_1 |= CurrentMario.in_pipe << 3;
+	bools_1 |= CurrentMario.SLIDING << 4;
+	CurrentPacket << bools_1;
+	
+	CurrentPacket << CurrentMario.INVINCIBILITY_FRAMES; CurrentPacket << CurrentMario.DEATH_TIMER;
 
 	CurrentPacket << CurrentMario.to_scale; CurrentPacket << CurrentMario.SKIDDING; CurrentPacket << CurrentMario.P_METER;
 	CurrentPacket << CurrentMario.FRM; CurrentPacket << CurrentMario.WALKING_DIR;
@@ -63,11 +74,9 @@ void put_mario_data_in(MPlayer& CurrentMario)
 
 	CurrentPacket << CurrentMario.SLOPE_TYPE;
 
-	CurrentPacket << CurrentMario.jump_is_spin;
-
 	CurrentPacket << CurrentMario.KO_counter; CurrentPacket << CurrentMario.WO_counter;
 
-	CurrentPacket << CurrentMario.skin; CurrentPacket << CurrentMario.in_pipe;
+	CurrentPacket << CurrentMario.skin;
 	CurrentPacket << CurrentMario.pipe_speed_x; CurrentPacket << CurrentMario.pipe_speed_y;
 
 	uint_fast16_t m_state_1 = (CurrentMario.mouse_x & 0x3FFF) + (CurrentMario.mouse_state[0] << 15) + (CurrentMario.mouse_state[2] << 14);
@@ -95,9 +104,20 @@ void take_mario_data(MPlayer& CurrentMario)
 	//copypaste
 	CurrentPacket >> CurrentMario.X_SPEED; CurrentPacket >> CurrentMario.Y_SPEED;
 	CurrentPacket >> CurrentMario.x; CurrentPacket >> CurrentMario.y;
-	CurrentPacket >> CurrentMario.STATE; CurrentPacket >> CurrentMario.ON_FL;
+	CurrentPacket >> CurrentMario.STATE;
 
-	CurrentPacket >> CurrentMario.DEAD; CurrentPacket >> CurrentMario.INVINCIBILITY_FRAMES; CurrentPacket >> CurrentMario.DEATH_TIMER;
+	/*
+		Deez are bools
+	*/
+	uint_fast8_t bools;
+	CurrentPacket >> bools;
+	CurrentMario.ON_FL = bools & 1;
+	CurrentMario.DEAD = bools & 2;
+	CurrentMario.jump_is_spin = bools & 4;
+	CurrentMario.in_pipe = bools & 8;
+	CurrentMario.SLIDING = bools & 16;
+
+	CurrentPacket >> CurrentMario.INVINCIBILITY_FRAMES; CurrentPacket >> CurrentMario.DEATH_TIMER;
 
 	CurrentPacket >> CurrentMario.to_scale; CurrentPacket >> CurrentMario.SKIDDING; CurrentPacket >> CurrentMario.P_METER;
 	CurrentPacket >> CurrentMario.FRM; CurrentPacket >> CurrentMario.WALKING_DIR;
@@ -108,11 +128,9 @@ void take_mario_data(MPlayer& CurrentMario)
 
 	CurrentPacket >> CurrentMario.SLOPE_TYPE;
 
-	CurrentPacket >> CurrentMario.jump_is_spin;
-
 	CurrentPacket >> CurrentMario.KO_counter; CurrentPacket >> CurrentMario.WO_counter;
 
-	CurrentPacket >> CurrentMario.skin; CurrentPacket >> CurrentMario.in_pipe;
+	CurrentPacket >> CurrentMario.skin;
 	CurrentPacket >> CurrentMario.pipe_speed_x; CurrentPacket >> CurrentMario.pipe_speed_y;
 
 	uint_fast16_t m_state_1, m_state_2;

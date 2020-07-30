@@ -16,6 +16,7 @@ public:
 	bool ON_FL = false; //on floor
 	bool IN_WT = false; //on water
 	bool OLD_WT = false; //old on water status
+	bool SLIDING = false;
 	uint_fast8_t SLOPE_TYPE = 0;
 	/*
 		0 : None
@@ -777,25 +778,32 @@ public:
 			}
 			else
 			{
-				if (SKIDDING == 0.0)
+				if (SLIDING)
 				{
-					if (X_SPEED != 0)
-					{
-						FRM += X_SPEED / 5;
-						int Frame = abs(int(FRM) % (2 + (STATE > 0)));
-						if (CAN_SPRINT)
-						{
-							NewSprite = "RUN" + to_string(Frame);
-						}
-						else
-						{
-							NewSprite = "WALK" + to_string(Frame);
-						}
-					}
+					NewSprite = "SLIDE";
 				}
 				else
 				{
-					NewSprite = "SKID";
+					if (SKIDDING == 0.0)
+					{
+						if (X_SPEED != 0)
+						{
+							FRM += X_SPEED / 5;
+							int Frame = abs(int(FRM) % (2 + (STATE > 0)));
+							if (CAN_SPRINT)
+							{
+								NewSprite = "RUN" + to_string(Frame);
+							}
+							else
+							{
+								NewSprite = "WALK" + to_string(Frame);
+							}
+						}
+					}
+					else
+					{
+						NewSprite = "SKID";
+					}
 				}
 			}
 		}
@@ -1038,11 +1046,48 @@ public:
 					WALKING_DIR = 1;
 					MOV = true;
 				}
-				if (pad[button_down]) {
-					if (ON_FL) {
-						WALKING_DIR = 0;
-						MOV = true;
-						CROUCH = true;
+
+				/*
+					Slide cancel
+				*/
+				if (SLIDING)
+				{
+					if ((MOV == true || (X_SPEED == 0 && !SLOPE_TYPE)) || !ON_FL)
+					{
+						SLIDING = false;
+					}
+				}
+				/*
+					Crouching
+				*/
+				if (pad[button_down] && !SLIDING) {
+					if (SLOPE_TYPE != 0)
+					{
+						if (GRABBED_SPRITE == 0xFF)
+						{
+							if (MOV == false && !(pad[button_left] || pad[button_right]))
+							{
+								SLIDING = true;
+							}
+							else
+							{
+								CROUCH = false;
+							}
+						}
+						else
+						{
+							WALKING_DIR = 0;
+							MOV = false;
+							CROUCH = true;
+						}
+					}
+					else
+					{
+						if (ON_FL) {
+							WALKING_DIR = 0;
+							MOV = true;
+							CROUCH = true;
+						}
 					}
 				}
 				else {
@@ -1050,6 +1095,8 @@ public:
 						CROUCH = false;
 					}
 				}
+
+
 				if (pad[button_y]) {
 					RUN = true;
 				}
@@ -1060,6 +1107,7 @@ public:
 					if (was_jumpin && ON_FL) {
 						if (pad[button_a] && GRABBED_SPRITE == 0xFF)
 						{
+							SLIDING = false;
 							//Spinjump
 							Y_SPEED = Calculate_Speed(1136.0 + (abs(X_SPEED) * 64.0)); //(148.0 * SLIGHT_HIGH_SPEED) + (32.0 * (X_SPEED > Calculate_Speed(320+256+176)))
 							ASM.Write_To_Ram(0x1DFC, 0x04, 1);
@@ -1068,6 +1116,7 @@ public:
 						}
 						else
 						{
+							SLIDING = false;
 							//Normal jump
 							Y_SPEED = Calculate_Speed(1232.0 + (abs(X_SPEED) * 64.0)); //(148.0 * SLIGHT_HIGH_SPEED) + (32.0 * (X_SPEED > Calculate_Speed(320+256+176)))
 							ASM.Write_To_Ram(0x1DFA, 0x01, 1);
@@ -1081,7 +1130,7 @@ public:
 				}
 
 				double SLOPE_ADD = 0;
-				if (!CROUCH)
+				if (!SLIDING)
 				{
 					if (SLOPE_TYPE == 1)
 					{
@@ -1098,6 +1147,27 @@ public:
 				double SPEED_ACCEL_X = Calculate_Speed(24.0);
 				double STOPPING_DECEL = Calculate_Speed(16.0);
 				double SKID_ACCEL = Calculate_Speed(16.0 + (24.0 * RUN) + (CAN_SPRINT * 40.0));
+
+				/*
+					Sliding down a slope :D
+				*/
+				if (SLIDING)
+				{
+					SPEED_X_TO_SET = 0;
+					SPEED_ACCEL_X = 0;
+					STOPPING_DECEL = Calculate_Speed(0x10);
+					SKID_ACCEL = 0;
+					if (SLOPE_TYPE == 1)
+					{
+						SPEED_X_TO_SET = Calculate_Speed(-0x300);
+						SPEED_ACCEL_X = Calculate_Speed(0x18);
+					}
+					if (SLOPE_TYPE == 2)
+					{
+						SPEED_X_TO_SET = Calculate_Speed(0x300);
+						SPEED_ACCEL_X = Calculate_Speed(0x18);
+					}
+				}
 
 				/*
 				Accel start
@@ -1182,6 +1252,7 @@ public:
 				SWIMCODE
 				*/
 
+				SLIDING = FALSE;
 				jump_is_spin = false;
 				ON_FL = false;
 				if (!Move(0.0, -1.0, true)) { //Detected a floor below
@@ -1227,6 +1298,7 @@ public:
 						RAM[0x1DF9] = 0x0E;
 						Y_SPEED = 10.0;
 					}
+					jump_is_spin = false;
 				}
 
 				double SPEED_X_TO_SET = Calculate_Speed(256.0 / (1.0 + double(ON_FL))) * WALKING_DIR;
@@ -1302,7 +1374,7 @@ public:
 		Get_Sprite();
 
 
-		if (x < 8.0) { x = 8.0; }
+		if (x < 8.0) { x = 8.0; X_SPEED = 0; }
 		if (x > double(-24 + mapWidth * 16)) { x = double(-24 + mapWidth * 16); }
 
 		ProcessGrabbed();
