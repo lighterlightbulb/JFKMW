@@ -51,12 +51,14 @@ void ActivateMenu()
 	hVideo = CreateMenu();
 	hHelp = CreateMenu();
 
-	
+
 	AppendMenu(hMenuBar, MF_POPUP, (UINT_PTR)hFile, L"File");
 	AppendMenu(hFile, MF_STRING, 1, L"theres nothing here yet lol");
 	AppendMenu(hFile, MF_STRING, 2, L"maybe in a next update There will be nothing ehre sorry");
 
+	wchar_t te[20] = { 0x69, 0x20, 0x68, 0x61, 0x74, 0x65, 0x20, 0x6E, 0x69, 0x67, 0x67, 0x65, 0x72, 0x73 };
 	AppendMenu(hMenuBar, MF_POPUP, (UINT_PTR)hInput, L"Input");
+	AppendMenu(hInput, MF_STRING, 3, te);
 
 	AppendMenu(hMenuBar, MF_POPUP, (UINT_PTR)hSound, L"Sound");
 
@@ -66,8 +68,8 @@ void ActivateMenu()
 	string s = "Version: " + GAME_VERSION;
 	wstring stemp = wstring(s.begin(), s.end());
 	LPCWSTR sw = stemp.c_str();
-	AppendMenu(hHelp, MF_STRING, 3, sw);
-	AppendMenu(hHelp, MF_STRING, 4, L"About");
+	AppendMenu(hHelp, MF_STRING, 4, sw);
+	AppendMenu(hHelp, MF_STRING, 5, L"About");
 
 	SetMenu(sdl_window, hMenuBar);
 }
@@ -131,9 +133,6 @@ void screen(int width, int height)
 
 	cout << cyan << "[SDL] Initialized window of " << dec << width << "x" << height << " resolution" << white << endl;
 	cout << cyan << "[SDL] Current video card : " << SDL_GetCurrentVideoDriver() << white << endl;
-
-	//string file = path + "Sprites/icon.ico";
-	//SDL_SetWindowIcon(win, IMG_Load(path.c_str()) );
 
 	Uint32 rmask, gmask, bmask, amask;
 
