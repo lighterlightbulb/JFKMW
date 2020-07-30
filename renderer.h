@@ -21,7 +21,7 @@ void draw_number_dec(uint_fast8_t pos_x, uint_fast8_t pos_y, int number)
 
 }
 
-void render_oam(uint_fast16_t offset_o = 0, int CameraX = 0, int CameraY = 0)
+void render_oam(uint_fast16_t offset_o = 0)
 {
 	for (uint_fast16_t i = 0; i < 0x400; i += 8) //Tile, Size, XY (4 bytes), PAL, ANG, in total 8 bytes per entry. 0 to 7.
 	{
@@ -63,14 +63,14 @@ void drawBackground()
 		bg_texture = TexManager.loadTexture(path + "Sprites/backgrounds/Background" + to_string(int(curr_bg)) + ".png");
 	}
 
-	int formula_x = (-int(double(CameraX) * (double(RAM[0x3F06]) / 16.0) + ASM.Get_Ram(0x1466, 2)) % 512);
-	int formula_y = (int(double(CameraY) * (double(RAM[0x3F07]) / 16.0) + ASM.Get_Ram(0x1468, 2)) % 512);
+	int formula_x = (-int(double(CameraX) * (double(RAM[0x3F06]) / 16.0) + ASM.Get_Ram(0x1466, 2))) % 512;
+	int formula_y = (int(double(CameraY) * (double(RAM[0x3F07]) / 16.0) + ASM.Get_Ram(0x1468, 2))) % 512;
 	if (layer2mode_x || layer2mode_y)
 	{
 		SDL_Rect DestR;
 		SDL_Rect SrcR;
 
-		for (int x = -1; x < 2; x++)
+		for (int x = -1; x < 3; x++)
 		{
 			for (uint_fast8_t i = 0; i < 224; i++)
 			{
@@ -79,7 +79,7 @@ void drawBackground()
 				SrcR.w = 512;
 				SrcR.h = 1;
 
-				DestR.x = sp_offset_x + ((layer2_shiftX[i] % 512) + formula_x + x * 512) * scale;
+				DestR.x = sp_offset_x + ((layer2_shiftX[i] & 0x1FF) + formula_x + (x * 512)) * scale;
 				DestR.y = sp_offset_y + (((int_res_y - 224)/2) + i) * scale;
 				DestR.w = 512 * scale;
 				DestR.h = 1 * scale;
@@ -286,7 +286,7 @@ void render()
 	//Draw OAM (priority)
 	if (drawSprites)
 	{
-		render_oam(0x200, int(CameraX), int(CameraY));
+		render_oam(0x200);
 	}
 
 	//Draw Mario

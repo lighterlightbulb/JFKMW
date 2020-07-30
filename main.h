@@ -124,6 +124,8 @@ void player_code()
 			//Copied from renderer.h
 			drawBackground();
 
+			render_oam(0x200);
+
 			//Copied from renderer.h
 			SDL_RenderCopy(ren, screen_t_l1, nullptr, &DestR);
 
