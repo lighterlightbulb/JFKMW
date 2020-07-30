@@ -271,6 +271,7 @@ uint_fast8_t char_to_smw(char t)
 	if (t == '-') { new_l = 0x27; }
 	if (t == '+') { new_l = 0x29; }
 	if (t == ' ') { new_l = 0x7F; }
+	if (t == '_') { new_l = 0x3D; }
 
 	return new_l;
 }

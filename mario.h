@@ -96,7 +96,7 @@ public:
 	void Chat(string new_c)
 	{
 		curr_chat_string = "<";
-		curr_chat_string += username.substr(0, 5);
+		curr_chat_string += username;
 		curr_chat_string += "> " + new_c;
 	}
 

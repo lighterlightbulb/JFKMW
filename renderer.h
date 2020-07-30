@@ -326,12 +326,7 @@ void render()
 		//Status bar code here
 		for (int i = 0; i < 5; i++)
 		{
-
-			uint_fast8_t new_l = uint_fast8_t(LocalPlayer.player_name_cut[i]);
-			if (new_l == 0x20) { new_l = 0x57 + 0x7F; }
-			if (new_l < 0x3A) { new_l = new_l - 0x30 + 0x57; }
-
-			VRAM[0xB804 + (i * 2) + 128] = new_l - 0x57;
+			VRAM[0xB804 + (i * 2) + 128] = char_to_smw(LocalPlayer.player_name_cut[i]);
 			VRAM[0xB805 + (i * 2) + 128] = 2;
 		}
 
@@ -460,11 +455,7 @@ void render()
 			VRAM[0xB805 + (y << 6)] = 6;
 			for (int i = 0; i < player_name_size; i++)
 			{
-				uint_fast8_t new_l = uint_fast8_t(CurrentMario.player_name_cut[i]);
-				if (new_l == 0x20) { new_l = 0x57 + 0x7F; }
-				if (new_l < 0x3A) { new_l = new_l - 0x30 + 0x57; }
-
-				VRAM[0xB808 + (i * 2) + (y << 6)] = new_l - 0x57;
+				VRAM[0xB808 + (i * 2) + (y << 6)] = char_to_smw(CurrentMario.player_name_cut[i]);;
 				VRAM[0xB809 + (i * 2) + (y << 6)] = 6;
 			}
 

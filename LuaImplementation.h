@@ -237,6 +237,13 @@ int lua_checkbit(lua_State* L)
 	lua_pushboolean(L, bit);
 	return 1;
 }
+
+int lua_chartosmw(lua_State* L)
+{
+	uint_fast8_t p = (uint_fast8_t)lua_tointeger(L, 1); // First argument
+	lua_pushinteger(L, char_to_smw(p));
+	return 1; // Count of returned values
+}
 }
 
 /* functions end */
@@ -256,6 +263,7 @@ void lua_connect_functions(lua_State* L)
 	lua_pushcfunction(L, killPlayer); lua_setglobal(L, "killPlayer");
 	lua_pushcfunction(L, damagePlayer); lua_setglobal(L, "damagePlayer");
 	lua_register(L, "asmRead", lua_get_ram);
+	lua_register(L, "charToSmw", lua_chartosmw);
 	lua_register(L, "getPlayerX", getPlayerX);
 	lua_register(L, "getPlayerY", getPlayerY);
 	lua_register(L, "asmCheckBit", lua_checkbit);

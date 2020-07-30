@@ -42,7 +42,7 @@ void Chat_ServerSide()
 		{
 			//Update curr pchatstring to send later
 			Curr_PChatString = CurrPlayer.curr_chat_string;
-			Curr_PChatString = Curr_PChatString.substr(0, min(55, int(Curr_PChatString.length())));
+			Curr_PChatString = Curr_PChatString.substr(0, min(64, int(Curr_PChatString.length())));
 			Time_ChatString[0] = chat_onscreen_timer;
 
 			//Update strings and output to console
@@ -138,7 +138,7 @@ void Chat_ClientSide()
 		if (getKey(0x08) && Typing_In_Chat.size() > 0) { Typing_In_Chat.pop_back(); }
 
 		//Typing in chat limiter
-		Typing_In_Chat = Typing_In_Chat.substr(0, min(55, int(Typing_In_Chat.length())));
+		Typing_In_Chat = Typing_In_Chat.substr(0, min(50, int(Typing_In_Chat.length())));
 	}
 
 	//Da status :flushed:

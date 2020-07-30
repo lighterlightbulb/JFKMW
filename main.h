@@ -227,6 +227,7 @@ void player_code()
 				if (t > 1000.0)
 				{
 					cout << red << "[Network] Recovered from a freeze during doing_read (it took more than 1000ms, " << dec << t << " ms)" << white << endl;
+					break;
 				}
 			}
 
