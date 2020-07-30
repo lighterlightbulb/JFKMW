@@ -147,7 +147,7 @@ void server_code(string level = "")
 			for (int i = 0; i < clients.size(); i++)
 			{
 				MPlayer& PLR = get_mario(i);
-				cout << "1. " << PLR.player_name_cut << " (" << clients[i]->getRemoteAddress() << ")" << endl;
+				cout << to_string(i + 1) << ". " << PLR.player_name_cut << " (" << clients[i]->getRemoteAddress() << ")" << endl;
 			}
 			cout << white;
 		}
