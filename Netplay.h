@@ -66,12 +66,12 @@ void put_mario_data_in(MPlayer& CurrentMario)
 	CurrentPacket << CurrentMario.INVINCIBILITY_FRAMES; CurrentPacket << CurrentMario.DEATH_TIMER;
 
 	CurrentPacket << CurrentMario.to_scale; CurrentPacket << CurrentMario.SKIDDING; CurrentPacket << CurrentMario.P_METER;
-	CurrentPacket << CurrentMario.FRM; CurrentPacket << CurrentMario.WALKING_DIR;
+	CurrentPacket << CurrentMario.WALKING_DIR;
 
+	CurrentPacket << uint_fast8_t(CurrentMario.FRM);
 	CurrentPacket << float(CurrentMario.CAMERA_X); CurrentPacket << float(CurrentMario.CAMERA_Y);
 
 	CurrentPacket << CurrentMario.SLOPE_TYPE;
-
 	CurrentPacket << CurrentMario.KO_counter; CurrentPacket << CurrentMario.WO_counter;
 
 	CurrentPacket << CurrentMario.skin;
@@ -118,13 +118,16 @@ void take_mario_data(MPlayer& CurrentMario)
 	CurrentPacket >> CurrentMario.INVINCIBILITY_FRAMES; CurrentPacket >> CurrentMario.DEATH_TIMER;
 
 	CurrentPacket >> CurrentMario.to_scale; CurrentPacket >> CurrentMario.SKIDDING; CurrentPacket >> CurrentMario.P_METER;
-	CurrentPacket >> CurrentMario.FRM; CurrentPacket >> CurrentMario.WALKING_DIR;
+	CurrentPacket >> CurrentMario.WALKING_DIR;
+
+
+	uint_fast8_t FRM; CurrentPacket >> FRM;
+	CurrentMario.FRM = FRM;
 
 	float CAMERA_X, CAMERA_Y; CurrentPacket >> CAMERA_X; CurrentPacket >> CAMERA_Y;
 	CurrentMario.CAMERA_X = CAMERA_X; CurrentMario.CAMERA_Y = CAMERA_Y;
 
 	CurrentPacket >> CurrentMario.SLOPE_TYPE;
-
 	CurrentPacket >> CurrentMario.KO_counter; CurrentPacket >> CurrentMario.WO_counter;
 
 	CurrentPacket >> CurrentMario.skin;
