@@ -122,18 +122,6 @@ void render()
 		return;
 	}
 
-	if (RAM[0x1493] > 0)
-	{
-		if (screen_darken < 255)
-		{
-			screen_darken += 1;
-		}
-	}
-	else
-	{
-		screen_darken = 0;
-	}
-
 
 	//Initialize destR variable were gonna use later for rendering
 	SDL_Rect DestR;
@@ -381,7 +369,7 @@ void render()
 			}
 		}
 		int y = 27;
-		string Curr_Typing = (Typing_In_Chat + ((global_frame_counter % 20) > 10 ? "\x94" : ""));
+		string Curr_Typing = (Typing_In_Chat + ((global_frame_counter % 20) > 10 ? "_" : ""));
 		int Typing_Len = int(Curr_Typing.length());
 		if (Chatting)
 		{

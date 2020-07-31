@@ -17,6 +17,17 @@ void game_loop_code()
 	}
 	global_frame_counter += 1;
 
+	if (RAM[0x1493] > 0)
+	{
+		if (screen_darken < 255)
+		{
+			screen_darken += 1;
+		}
+	}
+	else
+	{
+		screen_darken = 0;
+	}
 
 #if not defined(DISABLE_NETWORK)
 	if (networking)
