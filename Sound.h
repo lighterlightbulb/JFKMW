@@ -20,8 +20,11 @@ SPC_Filter* filter;
 
 sf::Thread* music_thread = 0;
 
+#define MUSIC_SPC 0
+#define MUSIC_OGG 1
+#define MUSIC_MID 2
+uint_fast8_t music_type = MUSIC_SPC;
 
-bool spc_or_ogg = false; //false = SPC, true = OGG
 char* music_data;
 int music_data_size;
 
@@ -38,7 +41,7 @@ void EmulateSPC_Loop()
 	short* buf = new short[spc_buffer_size];
 	while (true)
 	{
-		if (!spc_or_ogg)
+		if (music_type == MUSIC_SPC)
 		{
 			spc_play(snes_spc, spc_buffer_size, buf);
 			spc_filter_run(filter, buf, spc_buffer_size);
@@ -117,7 +120,7 @@ void SendMusic()
 	}
 	doing_read = true;
 	cout << green << "[Network] Packing music data.." << endl;
-	CurrentPacket << spc_or_ogg;
+	CurrentPacket << music_type;
 	CurrentPacket << music_data_size;
 	for (int i = 0; i < music_data_size; i++)
 	{
@@ -141,7 +144,7 @@ void ReceiveMusic(bool dont_care = false)
 	doing_read = true;
 	cout << green << "[Network] Downloading music from server.." << endl;
 
-	CurrentPacket >> spc_or_ogg;
+	CurrentPacket >> music_type;
 	CurrentPacket >> music_data_size;
 	delete[] music_data;
 	music_data = new char[music_data_size];
@@ -194,6 +197,7 @@ void SoundLoop()
 
 				string file1 = path + "Sounds/music/" + int_to_hex(old_1dfb, true) + ".spc";
 				string file2 = path + "Sounds/music/" + int_to_hex(old_1dfb, true) + ".ogg";
+				string file3 = path + "Sounds/music/" + int_to_hex(old_1dfb, true) + ".mid";
 				if (is_file_exist(file1.c_str())) {
 
 					//SPC File loading
@@ -202,14 +206,18 @@ void SoundLoop()
 					spc_load_spc(snes_spc, spc, spc_size);
 					free(spc); /* emulator makes copy of data */
 
-					spc_or_ogg = false;
+					music_type = MUSIC_SPC;
 				}
-				else {
+				if (is_file_exist(file2.c_str())) {
 					music = Mix_LoadMUS(file2.c_str());
-					spc_or_ogg = true;
+					music_type = MUSIC_OGG;
+				}
+				if (is_file_exist(file3.c_str())) {
+					music = Mix_LoadMUS(file3.c_str());
+					music_type = MUSIC_MID;
 				}
 
-				if (spc_or_ogg)
+				if (music_type == MUSIC_MID || music_type == MUSIC_OGG)
 				{
 					if (music == NULL)
 					{
@@ -241,11 +249,16 @@ void SoundLoop()
 			{
 				need_sync_music = false;
 
+				if (music_type == MUSIC_SPC)
+				{
+					spc_load_spc(snes_spc, music_data, music_data_size);
+					music_thread = new sf::Thread(&EmulateSPC_Loop); music_thread->launch();
+				}
 
-				if (spc_or_ogg)
+				if (music_type == MUSIC_OGG || music_type == MUSIC_MID)
 				{
 					SDL_RWops* rw = SDL_RWFromMem(music_data, music_data_size);
-					Mix_Music* music = Mix_LoadMUSType_RW(rw, MUS_OGG, 0);
+					Mix_Music* music = Mix_LoadMUSType_RW(rw, music_type == MUSIC_OGG ? MUS_OGG : MUS_MID, 0);
 					if (music == NULL)
 					{
 						Mix_HaltMusic();
@@ -260,11 +273,6 @@ void SoundLoop()
 						Mix_PlayMusic(music, -1);
 					}
 				}
-				else
-				{
-					spc_load_spc(snes_spc, music_data, music_data_size);
-					music_thread = new sf::Thread(&EmulateSPC_Loop); music_thread->launch();
-				}
 				cout << purple << "[Audio] Playing music" << white << endl;
 			}
 		}
@@ -277,14 +285,20 @@ void SoundLoop()
 			old_1dfb = ASM.Get_Ram(0x1DFB, 1);
 			string file1 = path + "Sounds/music/" + int_to_hex(old_1dfb, true) + ".spc";
 			string file2 = path + "Sounds/music/" + int_to_hex(old_1dfb, true) + ".ogg";
+			string file3 = path + "Sounds/music/" + int_to_hex(old_1dfb, true) + ".mid";
+
 			string file_picked;
 			if (is_file_exist(file1.c_str())) {
 				file_picked = file1;
-				spc_or_ogg = false;
+				music_type = MUSIC_SPC;
 			}
-			else {
+			if (is_file_exist(file2.c_str())) {
 				file_picked = file2;
-				spc_or_ogg = true;
+				music_type = MUSIC_OGG;
+			}
+			if (is_file_exist(file3.c_str())) {
+				file_picked = file3;
+				music_type = MUSIC_MID;
 			}
 
 			ifstream input(file_picked, ios::in | ios::binary | ios::ate);
