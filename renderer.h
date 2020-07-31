@@ -280,6 +280,8 @@ void render()
 	//Draw Mario
 	for (list<MPlayer>::iterator item = Mario.begin(); item != Mario.end(); ++item)
 	{
+
+
 		MPlayer& CurrentMario = *item;
 
 		if (CurrentMario.x > (CameraX - camBoundX) && CurrentMario.y > (CameraY - camBoundY) && CurrentMario.x < (CameraX + int_res_x + camBoundX) && CurrentMario.y < (CameraY + int_res_y + camBoundY))
@@ -298,8 +300,8 @@ void render()
 				uint_fast8_t tile = uint_fast8_t(ASM.Get_Ram(0x2F00 + CurrentMario.GRABBED_SPRITE, 1));
 				uint_fast8_t size = uint_fast8_t(((ASM.Get_Ram(0x2E80 + CurrentMario.GRABBED_SPRITE, 1) & 0x7F) >> 4) + (((ASM.Get_Ram(0x2E80 + CurrentMario.GRABBED_SPRITE, 1) & 0x7F) >> 4) << 4));
 
-				int_fast16_t x_position = int_fast16_t(double(CurrentMario.x + CurrentMario.to_scale * -12.0));
-				int_fast16_t y_position = int_fast16_t(double(CurrentMario.y - (CurrentMario.STATE > 0 ? 13.0 : 16.0)));
+				int_fast16_t x_position = int_fast16_t(double(CurrentMario.x + CurrentMario.to_scale * -13.0));
+				int_fast16_t y_position = int_fast16_t(double(CurrentMario.y - (CurrentMario.STATE > 0 ? 13.0 : 16.0) - (CurrentMario.CROUCH ? 2 : 0) * CurrentMario.STATE));
 
 				uint_fast8_t pal = uint_fast8_t(ASM.Get_Ram(0x2E80 + CurrentMario.GRABBED_SPRITE, 1) & 0xF);
 

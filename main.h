@@ -124,7 +124,6 @@ void player_code()
 			//Copied from renderer.h
 			drawBackground();
 
-			render_oam(0x200);
 
 			//Copied from renderer.h
 			SDL_RenderCopy(ren, screen_t_l1, nullptr, &DestR);
@@ -134,6 +133,7 @@ void player_code()
 			DestR.w = 256 * scale;
 			DestR.h = 224 * scale;
 
+			render_oam(0x200);
 			SDL_RenderCopy(ren, screen_t_l2, nullptr, &DestR);
 			SDL_RenderCopy(ren, zsnes_ui.texture, NULL, &DestR);
 

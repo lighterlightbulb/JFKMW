@@ -33,7 +33,7 @@ uint_fast32_t pctosnes(uint_fast32_t pc) {
 
 #define total_inputs 7
 
-#define player_expected_packet_size 60 //Strings apparently add 4 so we have to make sure of this so it wont crash.
+#define player_expected_packet_size 59 //Strings apparently add 4 so we have to make sure of this so it wont crash.
 #define player_name_size 11
 
 #define MAX_L3_TILES 0x3E

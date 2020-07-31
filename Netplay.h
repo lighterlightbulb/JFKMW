@@ -45,12 +45,11 @@ void PreparePacket(uint8_t header) {
 Mario Data
 
 */
-void put_mario_data_in(MPlayer& CurrentMario)
+void put_mario_data_in(MPlayer& CurrentMario, bool d = true)
 {
 	//copypaste
 	CurrentPacket << float(CurrentMario.x); CurrentPacket << float(CurrentMario.y);
 	CurrentPacket << int_fast8_t(CurrentMario.X_SPEED * 16.0); CurrentPacket << int_fast8_t(CurrentMario.Y_SPEED * 16.0);
-	CurrentPacket << CurrentMario.STATE; 
 	
 	/*
 		Deez are bools 
@@ -61,8 +60,13 @@ void put_mario_data_in(MPlayer& CurrentMario)
 	bools_1 += CurrentMario.jump_is_spin << 2;
 	bools_1 += CurrentMario.in_pipe << 3;
 	bools_1 += CurrentMario.SLIDING << 4;
+	bools_1 += CurrentMario.STATE << 5;
 	CurrentPacket << bools_1;
 	
+	if (d)
+	{
+		CurrentPacket << CurrentMario.GRABBED_SPRITE;
+	}
 	CurrentPacket << CurrentMario.INVINCIBILITY_FRAMES; CurrentPacket << CurrentMario.DEATH_TIMER;
 
 	CurrentPacket << CurrentMario.to_scale; CurrentPacket << CurrentMario.SKIDDING; CurrentPacket << CurrentMario.P_METER;
@@ -97,13 +101,12 @@ void put_mario_data_in(MPlayer& CurrentMario)
 	//copypaste
 }
 
-void take_mario_data(MPlayer& CurrentMario)
+void take_mario_data(MPlayer& CurrentMario, bool d = true)
 {
 	//copypaste
 	float x, y; CurrentPacket >> x; CurrentPacket >> y;
 	int_fast8_t X_SPEED, Y_SPEED; CurrentPacket >> X_SPEED; CurrentPacket >> Y_SPEED; 
 	CurrentMario.X_SPEED = double(X_SPEED) / 16.0; CurrentMario.Y_SPEED = double(Y_SPEED) / 16.0; CurrentMario.x = x; CurrentMario.y = y;
-	CurrentPacket >> CurrentMario.STATE;
 
 	/*
 		Deez are bools
@@ -115,7 +118,12 @@ void take_mario_data(MPlayer& CurrentMario)
 	CurrentMario.jump_is_spin = bools & 4;
 	CurrentMario.in_pipe = bools & 8;
 	CurrentMario.SLIDING = bools & 16;
+	CurrentMario.STATE = bools >> 5;
 
+	if (d)
+	{
+		CurrentPacket >> CurrentMario.GRABBED_SPRITE;
+	}
 	CurrentPacket >> CurrentMario.INVINCIBILITY_FRAMES; CurrentPacket >> CurrentMario.DEATH_TIMER;
 
 	CurrentPacket >> CurrentMario.to_scale; CurrentPacket >> CurrentMario.SKIDDING; CurrentPacket >> CurrentMario.P_METER;
@@ -191,7 +199,7 @@ void pack_mario_data(uint_fast8_t skip = 1) {
 	else {
 		CurrentPacket << SelfPlayerNumber;
 		CurrentPacket << latest_sync;
-		put_mario_data_in(get_mario(SelfPlayerNumber));
+		put_mario_data_in(get_mario(SelfPlayerNumber), false);
 	}
 }
 
@@ -350,7 +358,7 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool for_validating = false)
 			}
 			
 			PlayerAmount = int(clients.size()); CheckForPlayers();
-			take_mario_data(get_mario(PlrNum));
+			take_mario_data(get_mario(PlrNum), false);
 			//cout << "attempting to update player " << PlrNum << endl;
 		}
 	}

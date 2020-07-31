@@ -254,13 +254,9 @@ public:
 
 	void ProcessGrabbed()
 	{
-		if (GRABBED_SPRITE != 0xFF)
-		{
-			
-			//cout << "Player 1 is holding sprite " << int(GRABBED_SPRITE) << endl;
-			if (!in_pipe && ((!pad[button_y] || DEAD) || RAM[0x2000 + GRABBED_SPRITE] != 3))
-			{
-				
+		if (GRABBED_SPRITE != 0xFF && !isClient) {
+			RAM[0x2000 + GRABBED_SPRITE] = 0x03;
+			if (!in_pipe && (!pad[button_y] || DEAD)) {
 				uint_fast16_t x_position = uint_fast16_t(double(x + to_scale * -15.0));
 				uint_fast16_t y_position = uint_fast16_t(double(y - (STATE > 0 ? 13.0 : 16.0)) + 17.0);
 				RAM[0x2100 + GRABBED_SPRITE] = uint_fast8_t(x_position & 0xFF);
@@ -275,20 +271,16 @@ public:
 
 				RAM[0x2000 + GRABBED_SPRITE] = 0x02;
 
-
-
 				RAM[0x2480 + GRABBED_SPRITE] = 0;
 				RAM[0x2400 + GRABBED_SPRITE] = uint_fast8_t(int_fast8_t(to_scale * -4)) + uint_fast8_t(int_fast8_t(X_SPEED * 16.0));
 
-				if (pad[button_up])
-				{
+				if (pad[button_up]) {
 					RAM[0x2480 + GRABBED_SPRITE] = 0x70;
 					RAM[0x2400 + GRABBED_SPRITE] = uint_fast8_t(int_fast8_t(X_SPEED * 8.0));
 					ASM.Write_To_Ram(0x1DF9, 0x3, 1);
 				}
-				if (!pad[button_up])
-				{
-					if ((RAM[0x2E80 + GRABBED_SPRITE] > 0x80 && (!pad[button_down])) || (pad[button_right] || pad[button_left]))
+				if (!pad[button_up] && !pad[button_down]) {
+					if (RAM[0x2E80 + GRABBED_SPRITE] > 0x80 && (pad[button_right] || pad[button_left]))
 					{
 						RAM[0x2680 + GRABBED_SPRITE] = int_fast8_t(to_scale);
 						RAM[0x2000 + GRABBED_SPRITE] = 0x04;
@@ -493,7 +485,7 @@ public:
 					}
 
 					//Grabbing
-					if (GRABBED_SPRITE == 0xFF)
+					if (GRABBED_SPRITE == 0xFF && !isClient)
 					{
 						if (RAM[0x2000 + sprite] == 2 && RAM[0x2E00 + sprite] == 0)
 						{
@@ -698,7 +690,7 @@ public:
 						}
 					}
 
-					if (spawned_grabbable != 0xFF)
+					if (spawned_grabbable != 0xFF && !isClient)
 					{
 						GRABBED_SPRITE = spawned_grabbable;
 						RAM[0x2000 + GRABBED_SPRITE] = 0x03;
@@ -714,14 +706,21 @@ public:
 	}
 	void Get_Sprite()
 	{
-		if (DEAD)
-		{
+		if (DEAD) {
 			sprite = "DEAD";
 			return;
 		}
 		string NewSprite = "STAND";
-		if (jump_is_spin && !ON_FL)
-		{
+		if (pad[button_up]) {
+			NewSprite = "UP";
+		}
+		if (GRABBED_SPRITE != 0xFF) {
+			if (NewSprite == "STAND") {
+				NewSprite = "RUN0";
+			}
+			NewSprite = "GRAB_" + NewSprite;
+		}
+		if (jump_is_spin && !ON_FL) {
 			switch ((global_frame_counter / 2) % 4) {
 			case 0:
 				NewSprite = "PIPE";
@@ -744,72 +743,73 @@ public:
 			sprite = NewSprite + "_" + to_string(STATE);
 			return;
 		}
-		if (in_pipe)
-		{
+		if (in_pipe) {
 			sprite = "PIPE_" + to_string(STATE);
 			return;
 		}
-		if (!CROUCH)
-		{
-			if (!ON_FL)
-			{
-				if (IN_WT)
-				{
+		if (!CROUCH) {
+			if (!ON_FL) {
+				if (IN_WT) {
 					NewSprite = "SWIM";
 				}
-				else
-				{
-					if (CAN_SPRINT)
+				else {
+					if (GRABBED_SPRITE != 0xFF)
 					{
-						NewSprite = "JUMPB";
+						NewSprite = "GRAB_RUN" + to_string(1 + STATE);
 					}
 					else
 					{
-						if (Y_SPEED > 0.0)
-						{
-							NewSprite = "JUMP";
+						if (CAN_SPRINT) {
+							NewSprite = "JUMPB";
 						}
-						else
-						{
-							NewSprite = "FALL";
+						else {
+							if (Y_SPEED > 0.0) {
+								NewSprite = "JUMP";
+							}
+							else {
+								NewSprite = "FALL";
+							}
 						}
 					}
 				}
 			}
-			else
-			{
-				if (SLIDING)
-				{
+			else {
+				if (SLIDING) {
 					NewSprite = "SLIDE";
 				}
-				else
-				{
-					if (SKIDDING == 0.0)
-					{
-						if (X_SPEED != 0)
-						{
+				else {
+					if (SKIDDING == 0) {
+						if (X_SPEED != 0) {
 							FRM += X_SPEED / 5;
 							int Frame = abs(int(FRM) % (2 + (STATE > 0)));
-							if (CAN_SPRINT)
+							if (GRABBED_SPRITE != 0xFF)
 							{
-								NewSprite = "RUN" + to_string(Frame);
+								NewSprite = "GRAB_RUN" + to_string(Frame);
 							}
 							else
 							{
-								NewSprite = "WALK" + to_string(Frame);
+								if (CAN_SPRINT) {
+									NewSprite = "RUN" + to_string(Frame);
+								}
+								else {
+									NewSprite = "WALK" + to_string(Frame);
+								}
 							}
 						}
 					}
-					else
-					{
+					else {
 						NewSprite = "SKID";
 					}
 				}
 			}
 		}
-		else
-		{
-			NewSprite = "CROUCH";
+		else {
+			if (GRABBED_SPRITE == 0xFF) {
+				NewSprite = "CROUCH";
+			}
+			else {
+				NewSprite = "GRAB_CROUCH";
+			}
 		}
 		if (WALKING_DIR > 0)
 		{
