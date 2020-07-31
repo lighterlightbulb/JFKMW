@@ -1,6 +1,6 @@
 #pragma once
 
-string GAME_VERSION = "1.2.8b";
+string GAME_VERSION = "1.2.9b pre";
 
 #define rom_asm_size 0x008000 //32kb, 1 bank ($00:8000 to $00:FFFF)
 #define location_rom_levelasm 0x008000 //this will put LevelASM on the start of the ROM, this is a SNES PC btw
@@ -33,7 +33,7 @@ uint_fast32_t pctosnes(uint_fast32_t pc) {
 
 #define total_inputs 7
 
-#define player_expected_packet_size 66 //Strings apparently add 4 so we have to make sure of this so it wont crash.
+#define player_expected_packet_size 60 //Strings apparently add 4 so we have to make sure of this so it wont crash.
 #define player_name_size 11
 
 #define MAX_L3_TILES 0x3E

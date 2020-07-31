@@ -48,8 +48,8 @@ Mario Data
 void put_mario_data_in(MPlayer& CurrentMario)
 {
 	//copypaste
-	CurrentPacket << float(CurrentMario.X_SPEED); CurrentPacket << float(CurrentMario.Y_SPEED);
 	CurrentPacket << float(CurrentMario.x); CurrentPacket << float(CurrentMario.y);
+	CurrentPacket << int_fast8_t(CurrentMario.X_SPEED * 16.0); CurrentPacket << int_fast8_t(CurrentMario.Y_SPEED * 16.0);
 	CurrentPacket << CurrentMario.STATE; 
 	
 	/*
@@ -100,8 +100,9 @@ void put_mario_data_in(MPlayer& CurrentMario)
 void take_mario_data(MPlayer& CurrentMario)
 {
 	//copypaste
-	float X_SPEED, Y_SPEED, x, y; CurrentPacket >> X_SPEED; CurrentPacket >> Y_SPEED; CurrentPacket >> x; CurrentPacket >> y;
-	CurrentMario.X_SPEED = X_SPEED; CurrentMario.Y_SPEED = Y_SPEED; CurrentMario.x = x; CurrentMario.y = y;
+	float x, y; CurrentPacket >> x; CurrentPacket >> y;
+	int_fast8_t X_SPEED, Y_SPEED; CurrentPacket >> X_SPEED; CurrentPacket >> Y_SPEED; 
+	CurrentMario.X_SPEED = double(X_SPEED) / 16.0; CurrentMario.Y_SPEED = double(Y_SPEED) / 16.0; CurrentMario.x = x; CurrentMario.y = y;
 	CurrentPacket >> CurrentMario.STATE;
 
 	/*
