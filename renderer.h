@@ -453,14 +453,14 @@ void render()
 			draw_number_dec(17, y, CurrentMario.KO_counter);
 			VRAM[0xB826 + (y << 6)] = 0x14; VRAM[0xB827 + (y << 6)] = 6;
 			VRAM[0xB828 + (y << 6)] = 0x18; VRAM[0xB829 + (y << 6)] = 6;
-			VRAM[0xB82A + (y << 6)] = 0x38; VRAM[0xB82B + (y << 6)] = 6;
+			VRAM[0xB82A + (y << 6)] = 0x39; VRAM[0xB82B + (y << 6)] = 6;
 			VRAM[0xB82C + (y << 6)] = 0x1C; VRAM[0xB82D + (y << 6)] = 6;
 
 			//WO's
 			draw_number_dec(25, y, CurrentMario.WO_counter);
 			VRAM[0xB836 + (y << 6)] = 0x20; VRAM[0xB837 + (y << 6)] = 6;
 			VRAM[0xB838 + (y << 6)] = 0x18; VRAM[0xB839 + (y << 6)] = 6;
-			VRAM[0xB83A + (y << 6)] = 0x38; VRAM[0xB83B + (y << 6)] = 6;
+			VRAM[0xB83A + (y << 6)] = 0x39; VRAM[0xB83B + (y << 6)] = 6;
 			VRAM[0xB83C + (y << 6)] = 0x1C; VRAM[0xB83D + (y << 6)] = 6;
 
 
