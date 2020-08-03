@@ -280,13 +280,10 @@ public:
 					ASM.Write_To_Ram(0x1DF9, 0x3, 1);
 				}
 				if (!pad[button_up] && !pad[button_down]) {
-					if (RAM[0x2E80 + GRABBED_SPRITE] > 0x80 && (pad[button_right] || pad[button_left]))
-					{
-						RAM[0x2680 + GRABBED_SPRITE] = int_fast8_t(to_scale);
-						RAM[0x2000 + GRABBED_SPRITE] = 0x04;
-						RAM[0x2480 + GRABBED_SPRITE] = 0x00;
-						ASM.Write_To_Ram(0x1DF9, 0x3, 1);
-					}
+					RAM[0x2680 + GRABBED_SPRITE] = int_fast8_t(to_scale);
+					RAM[0x2000 + GRABBED_SPRITE] = 0x04;
+					RAM[0x2480 + GRABBED_SPRITE] = 0x00;
+					ASM.Write_To_Ram(0x1DF9, 0x3, 1);
 				}
 				GRABBED_SPRITE = 0xFF;
 			}

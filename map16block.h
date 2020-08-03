@@ -9,6 +9,7 @@
 #define collision 11
 #define ram_level_low 0x8000
 #define ram_level_high 0xC000
+#define BOUNCE_TIME 6
 
 uint_fast8_t map16_entries[0x2000];
 uint_fast8_t spawned_grabbable = 0xFF;
@@ -226,7 +227,7 @@ public:
 			uint_fast16_t t = RAM[ram_level_low + index] + (RAM[ram_level_high + index] << 8);
 			if (t == 0x11E && side == bottom)
 			{
-				blocks_processing.push_back(block_timer{ 0x48, x, y, 0x4, true, 0x40, 0x8, double(x * 16), double(y * 16) - 17.0, 0.0, 4.0 });
+				blocks_processing.push_back(block_timer{ 0x48, x, y, BOUNCE_TIME, true, 0x40, 0x8, double(x * 16), double(y * 16) - 17.0, 0.0, 4.0 });
 				blocks_processing.push_back(block_timer{ 0x11E, x, y, 0x100+4 });
 				replace_map_tile(0xFF, x, y);
 			}
@@ -258,14 +259,14 @@ public:
 			}
 			if ((t == 0x11F || t == 0x124) && side == bottom) //With bounce sprites
 			{
-				blocks_processing.push_back(block_timer{ 0x132, x, y, 0x4, true, 0x2A, 0x8, double(x * 16), double(y * 16)-17.0, 0.0, 4.0});
+				blocks_processing.push_back(block_timer{ 0x132, x, y, BOUNCE_TIME, true, 0x2A, 0x8, double(x * 16), double(y * 16)-17.0, 0.0, 4.0});
 			}
 			if (t == 0x0112 && side == bottom)
 			{
 				RAM[0x14AF] = !RAM[0x14AF];
 				RAM[0x1DF9] = 0xB;
 
-				blocks_processing.push_back(block_timer{ 0x112, x, y, 0x4, true, 0xCE, 0xB, double(x * 16), double(y * 16) - 17.0, 0.0, 4.0 });
+				blocks_processing.push_back(block_timer{ 0x112, x, y, BOUNCE_TIME, true, 0xCE, 0xB, double(x * 16), double(y * 16) - 17.0, 0.0, 4.0 });
 				replace_map_tile(0xFF, x, y);
 			}
 			if (t == 0x0038)
