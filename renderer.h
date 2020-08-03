@@ -21,36 +21,40 @@ void draw_number_dec(uint_fast8_t pos_x, uint_fast8_t pos_y, int number)
 
 }
 
-void render_oam(uint_fast16_t offset_o = 0)
+void render_oam(uint_fast16_t offset_o = 0, bool pr_only = false)
 {
 	for (uint_fast16_t i = 0; i < 0x400; i += 8) //Tile, Size, XY (4 bytes), PAL, ANG, in total 8 bytes per entry. 0 to 7.
 	{
 
-		uint_fast8_t size = RAM[offset_o + i + 1];
-		int_fast16_t size_x = (size & 0xF) << 4;
-		int_fast16_t size_y = ((size >> 4) & 0xF) << 4;
-		int x_position = RAM[offset_o + i + 2] + int_fast8_t(RAM[offset_o + i + 3]) * 256;
-		int y_position = RAM[offset_o + i + 4] + int_fast8_t(RAM[offset_o + i + 5]) * 256;
 		uint_fast8_t flags = RAM[offset_o + i + 6] >> 4;
-		uint_fast16_t tile = RAM[offset_o + i] + ((flags & 1) << 8);
 
-		if (tile != 0x0 &&
-			(x_position - CameraX) > (-size_x) && (x_position - CameraX) < (int(int_res_x) + size_x) &&
-			(y_position - CameraY) > (-16-size_y) && (y_position - CameraY) < (int(int_res_y) + size_y)			
-		)
+		if (bool(flags >> 3) == pr_only)
 		{
-			if (drawDiag)
-			{
-				blocks_on_screen += ((size_x >> 4) * (size_y >> 4)) * 4;
-			}
-			uint_fast8_t pal = RAM[offset_o + i + 6] & 0xF;
-			double angle = (double(RAM[offset_o + i + 7]) / 256.0) * 360.0;
-			draw_tile_custom(x_position - CameraX, int_res_y - 32 - y_position + CameraY, size, angle, tile, pal, 
-				SDL_RendererFlip(
-				((flags >> 1) & 1) +
-				(((flags >> 2) & 1) << 1)
+			uint_fast8_t size = RAM[offset_o + i + 1];
+			int_fast16_t size_x = (1 + (size & 0xF)) << 4;
+			int_fast16_t size_y = (1 + ((size >> 4) & 0xF)) << 4;
+			int x_position = RAM[offset_o + i + 2] + int_fast8_t(RAM[offset_o + i + 3]) * 256;
+			int y_position = RAM[offset_o + i + 4] + int_fast8_t(RAM[offset_o + i + 5]) * 256;
+			uint_fast16_t tile = RAM[offset_o + i] + ((flags & 1) << 8);
+
+			if (tile != 0x0 &&
+				(x_position - CameraX) > (-size_x) && (x_position - CameraX) < (int(int_res_x) + size_x) &&
+				(y_position - CameraY) > (-16 - size_y) && (y_position - CameraY) < (int(int_res_y) + size_y)
 				)
-			);
+			{
+				if (drawDiag)
+				{
+					blocks_on_screen += ((size_x >> 4) * (size_y >> 4)) * 4;
+				}
+				uint_fast8_t pal = RAM[offset_o + i + 6] & 0xF;
+				double angle = (double(RAM[offset_o + i + 7]) / 256.0) * 360.0;
+				draw_tile_custom(x_position - CameraX, int_res_y - 32 - y_position + CameraY, size, angle, tile, pal,
+					SDL_RendererFlip(
+						((flags >> 1) & 1) +
+						(((flags >> 2) & 1) << 1)
+					)
+				);
+			}
 		}
 	}
 }
@@ -271,10 +275,10 @@ void render()
 	SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_NONE);
 
 
-	//Draw OAM (priority)
+	//Draw OAM (under)
 	if (drawSprites)
 	{
-		render_oam(0x200);
+		render_oam(0x200, false);
 	}
 
 	//Draw Mario
@@ -309,6 +313,12 @@ void render()
 				Sprite Mario(path + "Sprites/mario/" + to_string(CurrentMario.skin) + "/" + CurrentMario.sprite + ".png", -8 + int(CurrentMario.x) - int(CameraX), int_res_y - 32 - int(CurrentMario.y) + int(CameraY), int(CurrentMario.to_scale * is_skidding) * 32, 32);
 			}
 		}
+	}
+
+	//Draw OAM (priority)
+	if (drawSprites)
+	{
+		render_oam(0x200, true);
 	}
 
 	if (drawHud)

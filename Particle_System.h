@@ -15,13 +15,48 @@ public:
 
 	void draw()
 	{
+		switch (special_animation_type)
+		{
+			/*
+				Turn Block Tile animation
+			*/
+		case 1:
+			switch ((global_frame_counter >> 2) % 6)
+			{
+			case 0:
+				spr_tile = 0x3D;
+				pal_props = 0x88;
+				break;
+			case 1:
+				spr_tile = 0x3C;
+				pal_props = 0x88;
+				break;
+			case 2:
+				spr_tile = 0x3C;
+				pal_props = 0xA8;
+				break;
+			case 3:
+				spr_tile = 0x3C;
+				pal_props = 0xE8;
+				break;
+			case 4:
+				spr_tile = 0x3C;
+				pal_props = 0xC8;
+				break;
+			case 5:
+				spr_tile = 0x3D;
+				pal_props = 0xC8;
+				break;
+			}
+			break;
+		}
 		spr_sy -= spr_grav;
 		spr_x += spr_sx;
 		spr_y += spr_sy;
 
 		uint_fast16_t oam_index = 0;
-		uint_fast16_t s_x = uint_fast16_t(spr_x);
-		uint_fast16_t s_y = uint_fast16_t(spr_y);
+		int_fast16_t s_x = int_fast16_t(spr_x);
+		int_fast16_t s_y = int_fast16_t(spr_y);
 		while (oam_index < 0x400)
 		{
 			if (RAM[0x200 + oam_index] == 0 && RAM[0x206 + oam_index] == 0) { //Empty OAM slot found
@@ -53,7 +88,7 @@ void processParticles()
 		Particle& b = particles[i];
 		b.draw();
 
-		if (b.spr_y < -64)
+		if (b.spr_y < -32.0)
 		{
 			particles.erase(particles.begin() + i);
 			i--;
