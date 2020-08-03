@@ -198,7 +198,7 @@ void render()
 		{
 			for (uint_fast8_t y = 0; y < int_b_y; y++)
 			{
-				uint_fast16_t tile = map16_handler.get_tile(x + offsetX, y + offsetY);
+				uint_fast16_t tile = map16_handler.get_tile(x + offsetX, y + offsetY) & 0x1FF;
 
 				if (tile != 0x25)
 				{

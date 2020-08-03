@@ -283,6 +283,11 @@ public:
 				replace_map_tile(0x0025, x, y);
 				RAM[0x1DFC] = 1;
 				RAM[0x0DBF] += 1;
+
+				createParticle(0x7D, 0x00, 0x8, 2, x * 16, -20 + y * 16, 0, 0, 0, 0);
+				createParticle(0x7D, 0x00, 0x8, 2, 4 + x * 16, -28 + y * 16, 0, 0, 0, -4);
+				createParticle(0x7D, 0x00, 0x8, 2, 8 + x * 16, -20 + y * 16, 0, 0, 0, -8);
+				createParticle(0x7D, 0x00, 0x8, 2, 4 + x * 16, -12 + y * 16, 0, 0, 0, -12);
 			}
 
 			if (t == 0x002D)

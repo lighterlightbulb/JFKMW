@@ -12,14 +12,16 @@ public:
 	double spr_sx = 0;
 	double spr_sy = 0;
 	double spr_grav = 0;
+	int t = 0;
+	bool to_del = false;
 
 	void draw()
 	{
 		switch (special_animation_type)
 		{
-			/*
-				Turn Block Tile animation
-			*/
+		/*
+			Turn Block Tile animation
+		*/
 		case 1:
 			switch ((global_frame_counter >> 2) % 6)
 			{
@@ -49,11 +51,45 @@ public:
 				break;
 			}
 			break;
+		/*
+			Coin spark
+		*/
+		case 2:
+			pal_props = 0x08;
+			if (t < 0)
+			{
+				spr_tile = 0;
+			}
+			else
+			{
+				if ((t >> 3) == 0)
+				{
+					spr_tile = 0x7D;
+				}
+				if ((t >> 3) == 1)
+				{
+					spr_tile = 0x7C;
+				}
+				if ((t >> 3) == 2)
+				{
+					spr_tile = 0x76;
+				}
+				if (t > 15)
+				{
+					to_del = true;
+				}
+			}
+			break;
 		}
 		spr_sy -= spr_grav;
 		spr_x += spr_sx;
 		spr_y += spr_sy;
+		t++;
 
+		if (!spr_tile)
+		{
+			return;
+		}
 		uint_fast16_t oam_index = 0;
 		int_fast16_t s_x = int_fast16_t(spr_x);
 		int_fast16_t s_y = int_fast16_t(spr_y);
@@ -76,9 +112,9 @@ public:
 };
 vector<Particle> particles;
 
-void createParticle(uint_fast8_t t, uint_fast8_t size, uint_fast8_t prop, uint_fast8_t anim_type, double x, double y, double sx, double sy, double grav)
+void createParticle(uint_fast8_t t, uint_fast8_t size, uint_fast8_t prop, uint_fast8_t anim_type, double x, double y, double sx, double sy, double grav, int tt = 0)
 {
-	particles.push_back(Particle{ t, size, prop, anim_type, x, y, sx, sy, grav });
+	particles.push_back(Particle{ t, size, prop, anim_type, x, y, sx, sy, grav, tt});
 }
 
 void processParticles()
@@ -88,7 +124,7 @@ void processParticles()
 		Particle& b = particles[i];
 		b.draw();
 
-		if (b.spr_y < -32.0)
+		if (b.spr_y < -32.0 || b.to_del)
 		{
 			particles.erase(particles.begin() + i);
 			i--;
