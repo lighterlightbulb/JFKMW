@@ -73,7 +73,7 @@ void put_mario_data_in(MPlayer& CurrentMario, bool d = true)
 	CurrentPacket << CurrentMario.WALKING_DIR;
 
 	CurrentPacket << uint_fast8_t(CurrentMario.FRM);
-	CurrentPacket << float(CurrentMario.CAMERA_X); CurrentPacket << float(CurrentMario.CAMERA_Y);
+	CurrentPacket << int_fast16_t(CurrentMario.CAMERA_X); CurrentPacket << int_fast16_t(CurrentMario.CAMERA_Y);
 
 	CurrentPacket << CurrentMario.SLOPE_TYPE;
 	CurrentPacket << CurrentMario.KO_counter; CurrentPacket << CurrentMario.WO_counter;
@@ -133,7 +133,7 @@ void take_mario_data(MPlayer& CurrentMario, bool d = true)
 	uint_fast8_t FRM; CurrentPacket >> FRM;
 	CurrentMario.FRM = FRM;
 
-	float CAMERA_X, CAMERA_Y; CurrentPacket >> CAMERA_X; CurrentPacket >> CAMERA_Y;
+	int_fast16_t CAMERA_X, CAMERA_Y; CurrentPacket >> CAMERA_X; CurrentPacket >> CAMERA_Y;
 	CurrentMario.CAMERA_X = CAMERA_X; CurrentMario.CAMERA_Y = CAMERA_Y;
 
 	CurrentPacket >> CurrentMario.SLOPE_TYPE;
