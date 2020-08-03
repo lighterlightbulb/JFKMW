@@ -13,17 +13,6 @@
 uint_fast8_t map16_entries[0x2000];
 uint_fast8_t spawned_grabbable = 0xFF;
 
-void reset_map()
-{
-	for (int i = ram_level_low; i < ram_level_high; i++) {
-		RAM[i] = 0x25;
-		RAM[i + 0x4000] = 0x00;
-	}
-
-	for (int i = 0; i < 0x1000; i++) {
-		RAM[0x2000 + i] = 0;
-	}
-}
 
 void initialize_map16()
 {
@@ -306,3 +295,17 @@ public:
 
 };
 map16blockhandler map16_handler;
+
+void reset_map()
+{
+	for (int i = ram_level_low; i < ram_level_high; i++) {
+		RAM[i] = 0x25;
+		RAM[i + 0x4000] = 0x00;
+	}
+
+	for (int i = 0; i < 0x1000; i++) {
+		RAM[0x2000 + i] = 0;
+	}
+
+	blocks_processing.clear();
+}
