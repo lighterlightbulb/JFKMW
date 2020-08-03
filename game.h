@@ -190,6 +190,11 @@ void game_loop_code()
 		uint_fast16_t m_state_1 = (CurrPlayer.mouse_x & 0x3FFF) + (CurrPlayer.mouse_state[0] << 15) + (CurrPlayer.mouse_state[2] << 14);
 		uint_fast16_t m_state_2 = (CurrPlayer.mouse_y & 0x3FFF) + (CurrPlayer.mouse_state[1] << 15) + (CurrPlayer.mouse_state[3] << 14);
 
+		uint_fast8_t result = 0;
+		for (uint_fast8_t i = 0; i < 7; i++)
+		{
+			result += CurrPlayer.pad[i] << i;
+		}
 
 		RAM[0x5000 + player - 1] = x_r;
 		RAM[0x5100 + player - 1] = x_r >> 8;
@@ -205,11 +210,13 @@ void game_loop_code()
 		RAM[0x5B00 + player - 1] = m_state_1 >> 8;
 		RAM[0x5C00 + player - 1] = m_state_2;
 		RAM[0x5D00 + player - 1] = m_state_2 >> 8;
+		RAM[0x5E00 + player - 1] = result;
 
 		if (!isClient && RAM[0x1493] == 0)
 		{
 			CheckSpritesInCam(int(max(128.0, CurrPlayer.CAMERA_X)));
 		}
+
 
 		player++;
 
@@ -241,6 +248,7 @@ void game_loop_code()
 		if (lua_loaded) {
 			lua_run_main();
 		}
+		map16_handler.process_global();
 
 		RAM[0x14] = global_frame_counter & 0xFF;
 	}

@@ -8,68 +8,32 @@ void process_ex_animation()
 	if (!networking || (networking && isClient))
 	{
 		//Question block (Corrected)
-		for (int i = 0; i < 4; i++)
-		{
-			for (int b = 0; b < 32; b++)
-			{
-				RAM[VRAM_Location + (32 * 0x60) + (i * 32) + b] = RAM[VRAM_Location + 0x8000 + (0xC0 * 32) + b + (i * 32) + (((global_frame_counter / 8) % 4) * 0x10 * 32)];
-			}
-		}
+		memcpy(&RAM[VRAM_Location + (32 * 0x60)], &RAM[VRAM_Location + 0x8000 + (0xC0 * 32) + (((global_frame_counter >> 3) & 3) << 9)], 128);
 
 		//Brown block
-		for (int i = 0; i < 4; i++)
-		{
-			for (int b = 0; b < 32; b++)
-			{
-				RAM[VRAM_Location + (32 * 0x58) + (i * 32) + b] = RAM[VRAM_Location + 0x8000 + (0xB4 * 32) + b + (i * 32)];
-			}
-		}
+		memcpy(&RAM[VRAM_Location + (32 * 0x58)], &RAM[VRAM_Location + 0x8000 + (0xB4 * 32)], 128);
+
+		//Turnblock def
+		memcpy(&RAM[VRAM_Location + (32 * 0x6)], &RAM[VRAM_Location + 0x8000 + (0xC8 * 32)], 64);
+		memcpy(&RAM[VRAM_Location + (32 * 0x16)], &RAM[VRAM_Location + 0x8000 + (0xCA * 32)], 64);
+
+		//Flippin turnblock
+		memcpy(&RAM[VRAM_Location + (32 * 0xEA)], &RAM[VRAM_Location + 0x8000 + (0xC8 * 32) + (((global_frame_counter >> 3) & 3) << 9)], 128);
 
 		//Muncher
-		for (int i = 0; i < 4; i++)
-		{
-			for (int b = 0; b < 32; b++)
-			{
-				RAM[VRAM_Location + (32 * 0x5C) + (i * 32) + b] = RAM[VRAM_Location + 0x8000 + b + ((0xF8 + 0x40) * 32) + (i * 32) + ((global_frame_counter / 8) % 2) * 0x80];
-			}
-		}
+		memcpy(&RAM[VRAM_Location + (32 * 0x5C)], &RAM[VRAM_Location + 0x8000 + ((0xF8 + 0x40) * 32) + (((global_frame_counter >> 3) & 1) << 7)], 128);
 
 		//Water
-		for (int i = 0; i < 4; i++)
-		{
-			for (int b = 0; b < 32; b++)
-			{
-				RAM[VRAM_Location + (32 * 0x70) + (i * 32) + b] = RAM[VRAM_Location + 0x8000 + (0x100 * 32) + b + (i * 32) + (((global_frame_counter / 8) % 4) * 0x10 * 32)];
-			}
-		}
+		memcpy(&RAM[VRAM_Location + (32 * 0x70)], &RAM[VRAM_Location + 0x8000 + (0x100 * 32) + (((global_frame_counter >> 3) & 3) << 9)], 128);
 
 		//L.A Coin
-		for (int i = 0; i < 4; i++)
-		{
-			for (int b = 0; b < 32; b++)
-			{
-				RAM[VRAM_Location + (32 * 0x6C) + (i * 32) + b] = RAM[VRAM_Location + 0x8000 + (0xCC * 32) + b + (i * 32) + (((global_frame_counter / 8) % 4) * 0x10 * 32)];
-			}
-		}
+		memcpy(&RAM[VRAM_Location + (32 * 0x6C)], &RAM[VRAM_Location + 0x8000 + (0xCC * 32) + (((global_frame_counter >> 3) & 3) << 9)], 128);
 
 		//On/Off Switch
-		for (int i = 0; i < 4; i++)
-		{
-			for (int b = 0; b < 32; b++)
-			{
-				RAM[VRAM_Location + (32 * 0xDA) + (i * 32) + b] = RAM[VRAM_Location + 0x8000 + ((0xA0 + (RAM[0x14AF] << 4)) * 32) + b + (i * 32)];
-			}
-		}
-
+		memcpy(&RAM[VRAM_Location + (32 * 0xDA)], &RAM[VRAM_Location + 0x8000 + ((0xA0 + (RAM[0x14AF] << 4)) * 32)], 128);
 
 		//On/Off Switch Blocks
-		for (int i = 0; i < 4; i++)
-		{
-			for (int b = 0; b < 32; b++)
-			{
-				RAM[VRAM_Location + (32 * 0xAC) + (i * 32) + b] = RAM[VRAM_Location + 0x8000 + ((0xC8 + (RAM[0x14AF] << 5)) * 32) + b + (i * 32)];
-				RAM[VRAM_Location + (32 * 0xCC) + (i * 32) + b] = RAM[VRAM_Location + 0x8000 + ((0xE8 - (RAM[0x14AF] << 5)) * 32) + b + (i * 32)];
-			}
-		}
+		memcpy(&RAM[VRAM_Location + (32 * 0xAC)], &RAM[VRAM_Location + 0x8000 + ((0xC8 + (RAM[0x14AF] << 5)) * 32)], 128);
+		memcpy(&RAM[VRAM_Location + (32 * 0xCC)], &RAM[VRAM_Location + 0x8000 + ((0xE8 - (RAM[0x14AF] << 5)) * 32)], 128);
 	}
 }

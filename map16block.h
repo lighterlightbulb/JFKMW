@@ -54,12 +54,23 @@ void initialize_map16()
 	input.close();
 }
 
+class block_timer
+{
+public:
+	uint_fast16_t set_to = 0x025;
+	uint_fast16_t x = 0;
+	uint_fast16_t y = 0;
+	uint_fast8_t time = 0xFF;
+};
+vector<block_timer> blocks_processing;
+
 
 class map16blockhandler //Map16 loaded block
 {
 public:
 	uint_fast16_t tile;
 	bool logic[8];
+	vector<uint_fast32_t> blocks_d;
 
 	void get_map_16_details()
 	{
@@ -109,12 +120,12 @@ public:
 	double ground_y(double x_relative, uint_fast16_t x, uint_fast16_t y)
 	{
 		uint_fast16_t tile = get_tile(x, y);
-		if (tile == 0x1AA) //45* slope Right
+		if (tile == 0x1AA || tile == 0x1AB) //45* slope Right
 		{
 			if (x_relative < 0 || x_relative > 16) { return -9999; }
 			return x_relative;
 		}
-		if (tile == 0x1AF) //45* slope Left
+		if (tile == 0x1AF || tile == 0x1B0) //45* slope Left
 		{
 			if (x_relative < 0 || x_relative > 16) { return -9999; }
 			return 16.0 - x_relative;
@@ -125,7 +136,7 @@ public:
 	double ground_s(uint_fast16_t x, uint_fast16_t y)
 	{
 		uint_fast16_t tile = get_tile(x, y);
-		if (tile == 0x1AA || tile == 0x1AF) //45* slope Right/Left
+		if ((tile == 0x1AA || tile == 0x1AB) || (tile == 0x1AF || tile == 0x1B0)) //45* slope Right/Left
 		{
 			return 16.0;
 		}
@@ -136,8 +147,8 @@ public:
 	*/
 	uint_fast8_t get_slope(uint_fast16_t x, uint_fast16_t y)
 	{
-		if (tile == 0x1AA) { return 1; }
-		if (tile == 0x1AF) { return 2; }
+		if (tile == 0x1AA || tile == 0x1AB) { return 1; }
+		if (tile == 0x1AF || tile == 0x1B0) { return 2; }
 
 		return 0;
 	}
@@ -156,6 +167,11 @@ public:
 			if (t == 0x0124 && side == bottom)
 			{
 				replace_map_tile(0x0132, x, y);
+			}
+			if (t == 0x11E && side == bottom)
+			{
+				blocks_processing.push_back(block_timer{ 0x11E, x, y, 0xFF });
+				replace_map_tile(0x48, x, y);
 			}
 			if (t == 0x011F && side == bottom)
 			{
@@ -206,7 +222,25 @@ public:
 		return RAM[ram_level_low + index] + (RAM[ram_level_high + index] << 8);
 	}
 
+	/*
+		process all global
+	*/
+
+	void process_global()
+	{
+		for (int i = 0; i < blocks_processing.size(); i++)
+		{
+			block_timer& b = blocks_processing[i];
+			b.time--;
+			if (b.time == 0)
+			{
+				replace_map_tile(b.set_to, b.x, b.y);
+				blocks_processing.erase(blocks_processing.begin() + i);
+				i--;
+			}
+		}
+	}
+
 
 };
-
 map16blockhandler map16_handler;

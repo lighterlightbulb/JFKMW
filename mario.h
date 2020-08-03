@@ -747,6 +747,10 @@ public:
 			sprite = "PIPE_" + to_string(STATE);
 			return;
 		}
+		if (SLIDING) {
+			sprite = "SLIDE_" + to_string(STATE);
+			return;
+		}
 		if (!CROUCH) {
 			if (!ON_FL) {
 				if (IN_WT) {
@@ -774,32 +778,27 @@ public:
 				}
 			}
 			else {
-				if (SLIDING) {
-					NewSprite = "SLIDE";
-				}
-				else {
-					if (SKIDDING == 0) {
-						if (X_SPEED != 0) {
-							FRM += X_SPEED / 5;
-							int Frame = abs(int(FRM) % (2 + (STATE > 0)));
-							if (GRABBED_SPRITE != 0xFF)
-							{
-								NewSprite = "GRAB_RUN" + to_string(Frame);
+				if (SKIDDING == 0) {
+					if (X_SPEED != 0) {
+						FRM += X_SPEED / 5;
+						int Frame = abs(int(FRM) % (2 + (STATE > 0)));
+						if (GRABBED_SPRITE != 0xFF)
+						{
+							NewSprite = "GRAB_RUN" + to_string(Frame);
+						}
+						else
+						{
+							if (CAN_SPRINT) {
+								NewSprite = "RUN" + to_string(Frame);
 							}
-							else
-							{
-								if (CAN_SPRINT) {
-									NewSprite = "RUN" + to_string(Frame);
-								}
-								else {
-									NewSprite = "WALK" + to_string(Frame);
-								}
+							else {
+								NewSprite = "WALK" + to_string(Frame);
 							}
 						}
 					}
-					else {
-						NewSprite = "SKID";
-					}
+				}
+				else {
+					NewSprite = "SKID";
 				}
 			}
 		}
@@ -1052,7 +1051,7 @@ public:
 				*/
 				if (SLIDING)
 				{
-					if ((MOV == true || (X_SPEED == 0 && !SLOPE_TYPE)) || !ON_FL)
+					if ((MOV == true || (X_SPEED == 0 && !SLOPE_TYPE)) && ON_FL)
 					{
 						SLIDING = false;
 					}

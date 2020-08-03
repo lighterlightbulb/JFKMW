@@ -75,7 +75,7 @@ void drawBackground()
 			for (uint_fast8_t i = 0; i < 224; i++)
 			{
 				SrcR.x = 0;
-				SrcR.y = (-formula_y + 256 + int(i) + int(layer2_shiftY[i])) & 0x1FF;
+				SrcR.y = (-formula_y + 256 + int(i) + int(layer2_shiftY[i] & 0x1FF)) & 0x1FF;
 				SrcR.w = 512;
 				SrcR.h = 1;
 
