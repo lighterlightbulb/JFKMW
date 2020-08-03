@@ -225,6 +225,9 @@ public:
 			{
 				RAM[0x14AF] = !RAM[0x14AF];
 				RAM[0x1DF9] = 0xB;
+
+				blocks_processing.push_back(block_timer{ 0x112, x, y, 0x4, true, 0xCE, 0xB, double(x * 16), double(y * 16) - 17.0, 0.0, 4.0 });
+				replace_map_tile(0xFF, x, y);
 			}
 			if (t == 0x0038)
 			{
