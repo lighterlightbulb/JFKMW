@@ -1177,6 +1177,17 @@ public:
 						SPEED_X_TO_SET = Calculate_Speed(0x300);
 						SPEED_ACCEL_X = Calculate_Speed(0x18);
 					}
+
+					if (SLOPE_TYPE == 3 || SLOPE_TYPE == 4)
+					{
+						SPEED_X_TO_SET = Calculate_Speed(-0x2C0);
+						SPEED_ACCEL_X = Calculate_Speed(0x10);
+					}
+					if (SLOPE_TYPE == 5 || SLOPE_TYPE == 6)
+					{
+						SPEED_X_TO_SET = Calculate_Speed(0x2C0);
+						SPEED_ACCEL_X = Calculate_Speed(0x10);
+					}
 				}
 
 				/*

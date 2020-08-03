@@ -154,6 +154,26 @@ public:
 			if (x_relative < 0 || x_relative > 16) { return -9999; }
 			return 16.0 - x_relative;
 		}
+		if (tile == 0x196) //23* slope Right P1
+		{
+			if (x_relative < 0 || x_relative > 16) { return -9999; }
+			return x_relative / 2;
+		}
+		if (tile == 0x19B) //23* slope Right P2
+		{
+			if (x_relative < 0 || x_relative > 16) { return -9999; }
+			return 8.0 + x_relative / 2;
+		}
+		if (tile == 0x1A0) //23* slope Left P1
+		{
+			if (x_relative < 0 || x_relative > 16) { return -9999; }
+			return 16.0 - x_relative / 2;
+		}
+		if (tile == 0x1A5) //23* slope Left P2
+		{
+			if (x_relative < 0 || x_relative > 16) { return -9999; }
+			return 8.0 - x_relative / 2;
+		}
 		return 16.0;
 	}
 
@@ -164,6 +184,11 @@ public:
 		{
 			return 16.0;
 		}
+
+		if ((tile == 0x1A0 || tile == 0x1A5) || (tile == 0x196 || tile == 0x19B)) //23* slope Right/Left
+		{
+			return 16.0;
+		}
 		return 15.0;
 	}
 	/*
@@ -171,9 +196,20 @@ public:
 	*/
 	uint_fast8_t get_slope(uint_fast16_t x, uint_fast16_t y)
 	{
+		/*
+			45
+		*/
 		if (tile == 0x1AA || tile == 0x1AB) { return 1; }
 		if (tile == 0x1AF || tile == 0x1B0) { return 2; }
+		/*
+			23
+		*/
 
+		if (tile == 0x196) { return 3; }
+		if (tile == 0x19B) { return 4; }
+
+		if (tile == 0x1A0) { return 5; }
+		if (tile == 0x1A5) { return 6; }
 		return 0;
 	}
 
