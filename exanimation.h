@@ -7,6 +7,19 @@ void process_ex_animation()
 {
 	if (!networking || (networking && isClient))
 	{
+		/*
+			0x3D00-0x3DFF Palette, low b
+			0x3E00-0x3EFF Palette, high b
+		*/
+		uint_fast8_t b = global_frame_counter;
+		if ((global_frame_counter & 0x1F) > 0x0F)
+		{
+			b = 0x10 - (global_frame_counter - 0x10);
+		}
+		b = b << 4;
+		uint_fast16_t col = 0x3FF + ((b >> 3) << 10);
+		RAM[0x3D64] = col;
+		RAM[0x3E64] = col >> 8;
 		//Question block (Corrected)
 		memcpy(&RAM[VRAM_Location + (32 * 0x60)], &RAM[VRAM_Location + 0x8000 + (0xC0 * 32) + (((global_frame_counter >> 3) & 3) << 9)], 128);
 
@@ -35,5 +48,8 @@ void process_ex_animation()
 		//On/Off Switch Blocks
 		memcpy(&RAM[VRAM_Location + (32 * 0xAC)], &RAM[VRAM_Location + 0x8000 + ((0xC8 + (RAM[0x14AF] << 5)) * 32)], 128);
 		memcpy(&RAM[VRAM_Location + (32 * 0xCC)], &RAM[VRAM_Location + 0x8000 + ((0xE8 - (RAM[0x14AF] << 5)) * 32)], 128);
+
+		//Midpoint
+		memcpy(&RAM[VRAM_Location + (32 * 0x74)], &RAM[VRAM_Location + 0x8000 + (0x104 * 32) + (((global_frame_counter >> 3) & 3) << 9)], 128);
 	}
 }

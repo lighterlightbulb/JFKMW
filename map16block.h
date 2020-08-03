@@ -245,6 +245,21 @@ public:
 				RAM[0x0DBF] += 1;
 			}
 
+			if (t == 0x002D)
+			{
+				replace_map_tile(0x0025, x, y);
+				replace_map_tile(0x0025, x, y - 1);
+				RAM[0x1DFC] = 1;
+				RAM[0x0DBF] += 1;
+			}
+			if (t == 0x002E)
+			{
+				replace_map_tile(0x0025, x, y);
+				replace_map_tile(0x0025, x, y + 1);
+				RAM[0x1DFC] = 1;
+				RAM[0x0DBF] += 1;
+			}
+
 			if (t == 0x012E && pressing_y)
 			{
 				replace_map_tile(0x0025, x, y);
