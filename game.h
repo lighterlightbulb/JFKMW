@@ -249,6 +249,7 @@ void game_loop_code()
 			lua_run_main();
 		}
 		map16_handler.process_global();
+		processParticles();
 
 		RAM[0x14] = global_frame_counter & 0xFF;
 	}

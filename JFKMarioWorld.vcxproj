@@ -268,6 +268,7 @@
     <ClInclude Include="map16block.h" />
     <ClInclude Include="mario.h" />
     <ClInclude Include="Netplay.h" />
+    <ClInclude Include="Particle_System.h" />
     <ClInclude Include="renderer.h" />
     <ClInclude Include="SDL_General.h" />
     <ClInclude Include="Global.h" />

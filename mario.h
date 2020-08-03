@@ -643,18 +643,16 @@ public:
 							{
 								NewPositionY = AboveBlock;
 							}
-
-							//Shatter turn blocks
-							map16_handler.process_block(xB, yB, top, pressed_y);
+							
 							if ((jump_is_spin && map16_handler.get_tile(xB, yB) == 0x11E) && STATE > 0)
 							{
-								if (!isClient)
-								{
-									map16_handler.replace_map_tile(0x25, xB, yB);
-									RAM[0x1DFC] = 7;
-								}
+								map16_handler.process_block(xB, yB, top, pressed_y, true);
 								Y_SPEED = Calculate_Speed(512);
 								willreturn = true;
+							}
+							else
+							{
+								map16_handler.process_block(xB, yB, top, pressed_y);
 							}
 							if (pad[button_down])
 							{

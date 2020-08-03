@@ -216,7 +216,7 @@ public:
 	/*
 		Process block hit.
 	*/
-	void process_block(uint_fast16_t x, uint_fast16_t y, uint8_t side, bool pressing_y = false)
+	void process_block(uint_fast16_t x, uint_fast16_t y, uint8_t side, bool pressing_y = false, bool shatter = false)
 	{
 		if (!isClient)
 		{
@@ -229,6 +229,20 @@ public:
 				blocks_processing.push_back(block_timer{ 0x48, x, y, 0x4, true, 0x40, 0x8, double(x * 16), double(y * 16) - 17.0, 0.0, 4.0 });
 				blocks_processing.push_back(block_timer{ 0x11E, x, y, 0x100+4 });
 				replace_map_tile(0xFF, x, y);
+			}
+
+			if (t == 0x11E && shatter)
+			{
+				replace_map_tile(0x25, x, y);
+				RAM[0x1DFC] = 7;
+
+				for (int x_p = 0; x_p < 2; x_p++)
+				{
+					for (int y_p = 0; y_p < 2; y_p++)
+					{
+						createParticle(0x3C, 0x00, 0x8, 1, (x * 16) + x_p * 8, -24 + (y * 16) + y_p * 8, ((x_p * 2) - 1), 2 + y_p * 2, Calculate_Speed(64));
+					}
+				}
 			}
 
 

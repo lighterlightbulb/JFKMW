@@ -124,7 +124,7 @@ istream& getline(istream& stream, string& str)
 #include "Global.h"
 #include "SDL_General.h"
 
-
+#include "Particle_System.h"
 #include "map16block.h"
 #include "exanimation.h"
 #include "Level.h"
