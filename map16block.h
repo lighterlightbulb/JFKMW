@@ -193,7 +193,7 @@ public:
 	*/
 	void process_block(uint_fast16_t x, uint_fast16_t y, uint8_t side, bool pressing_y = false)
 	{
-		if (!networking || !isClient)
+		if (!isClient)
 		{
 			uint_fast32_t index = (x % mapWidth) + (y * mapWidth);
 
@@ -206,6 +206,7 @@ public:
 				replace_map_tile(0xFF, x, y);
 			}
 
+
 			if (t == 0x0124 && side == bottom)
 			{
 				replace_map_tile(0xFF, x, y);
@@ -216,7 +217,7 @@ public:
 				uint_fast8_t spr = spawnSpriteJFKMarioWorld(0x74, 5, x * 16, 8 + y * 16, 1, true);
 				RAM[0x2480 + spr] = 0x20;
 			}
-			if (t == 0x11F || t == 0x124) //With bounce sprites
+			if ((t == 0x11F || t == 0x124) && side == bottom) //With bounce sprites
 			{
 				blocks_processing.push_back(block_timer{ 0x132, x, y, 0x4, true, 0x2A, 0x8, double(x * 16), double(y * 16)-17.0, 0.0, 4.0});
 			}
