@@ -39,6 +39,9 @@ void process_ex_animation()
 		//Water
 		memcpy(&RAM[VRAM_Location + (32 * 0x70)], &RAM[VRAM_Location + 0x8000 + (0x100 * 32) + (((global_frame_counter >> 3) & 3) << 9)], 128);
 
+		//Lava
+		memcpy(&RAM[VRAM_Location + (32 * 0x4C)], &RAM[VRAM_Location + 0x8000 + (0x8C * 32) + (((global_frame_counter >> 3) & 3) << 9)], 128);
+
 		//L.A Coin
 		memcpy(&RAM[VRAM_Location + (32 * 0x6C)], &RAM[VRAM_Location + 0x8000 + (0xCC * 32) + (((global_frame_counter >> 3) & 3) << 9)], 128);
 

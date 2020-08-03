@@ -568,6 +568,10 @@ public:
 					{
 						Hurt();
 					}
+					if (map16_handler.tile == 5)
+					{
+						Die();
+					}
 
 					map16_handler.process_block(xB, yB, inside);
 					if (xMove < 0.0 && checkRight)
