@@ -241,7 +241,7 @@ public:
 				{
 					for (int y_p = 0; y_p < 2; y_p++)
 					{
-						createParticle(0x3C, 0x00, 0x8, 1, (x * 16) + x_p * 8, -24 + (y * 16) + y_p * 8, ((x_p * 2) - 1), 2 + y_p * 2, Calculate_Speed(64));
+						createParticle(0x3C, 0x00, 0x8, 1, (x * 16) + x_p * 8, -24 + (y * 16) + y_p * 8, ((x_p * 2) - 1), 2 + y_p * 2, Calculate_Speed(64), int(rand() % 16));
 					}
 				}
 			}
@@ -269,6 +269,10 @@ public:
 				blocks_processing.push_back(block_timer{ 0x112, x, y, BOUNCE_TIME, true, 0xCE, 0xB, double(x * 16), double(y * 16) - 17.0, 0.0, 4.0 });
 				replace_map_tile(0xFF, x, y);
 			}
+
+			/*
+				Midway Point
+			*/
 			if (t == 0x0038)
 			{
 				replace_map_tile(0x0025, x, y);
@@ -278,6 +282,10 @@ public:
 				ASM.Write_To_Ram(0x3F0D, y * 16, 2);
 				midway_activated = true;
 			}
+
+			/*
+				Coins
+			*/
 			if (t == 0x002B)
 			{
 				replace_map_tile(0x0025, x, y);
@@ -290,12 +298,20 @@ public:
 				createParticle(0x7D, 0x00, 0x8, 2, 4 + x * 16, -12 + y * 16, 0, 0, 0, -12);
 			}
 
+			/*
+				Dragon Coins
+			*/
 			if (t == 0x002D)
 			{
 				replace_map_tile(0x0025, x, y);
 				replace_map_tile(0x0025, x, y - 1);
 				RAM[0x1DFC] = 1;
 				RAM[0x0DBF] += 1;
+
+				createParticle(0x7D, 0x00, 0x8, 2, x * 16, -28 + y * 16, 0, 0, 0, 0);
+				createParticle(0x7D, 0x00, 0x8, 2, 4 + x * 16, -35 + y * 16, 0, 0, 0, -4);
+				createParticle(0x7D, 0x00, 0x8, 2, 8 + x * 16, -28 + y * 16, 0, 0, 0, -8);
+				createParticle(0x7D, 0x00, 0x8, 2, 4 + x * 16, -20 + y * 16, 0, 0, 0, -12);
 			}
 			if (t == 0x002E)
 			{
@@ -303,8 +319,16 @@ public:
 				replace_map_tile(0x0025, x, y + 1);
 				RAM[0x1DFC] = 1;
 				RAM[0x0DBF] += 1;
+
+				createParticle(0x7D, 0x00, 0x8, 2, x * 16, -12 + y * 16, 0, 0, 0, 0);
+				createParticle(0x7D, 0x00, 0x8, 2, 4 + x * 16, -20 + y * 16, 0, 0, 0, -4);
+				createParticle(0x7D, 0x00, 0x8, 2, 8 + x * 16, -12 + y * 16, 0, 0, 0, -8);
+				createParticle(0x7D, 0x00, 0x8, 2, 4 + x * 16, -4 + y * 16, 0, 0, 0, -12);
 			}
 
+			/*
+				Get block
+			*/
 			if (t == 0x012E && pressing_y)
 			{
 				replace_map_tile(0x0025, x, y);

@@ -23,7 +23,7 @@ public:
 			Turn Block Tile animation
 		*/
 		case 1:
-			switch ((global_frame_counter >> 2) % 6)
+			switch ((t >> 2) % 6)
 			{
 			case 0:
 				spr_tile = 0x3D;
@@ -55,7 +55,7 @@ public:
 			Coin spark
 		*/
 		case 2:
-			pal_props = 0x08;
+			pal_props = 0x88;
 			if (t < 0)
 			{
 				spr_tile = 0;
@@ -79,6 +79,19 @@ public:
 					to_del = true;
 				}
 			}
+			break;
+		/*
+			Player skid
+		*/
+		case 3:
+			pal_props = 0x88;
+			spr_tile = 0x62 + ((t >> 2) << 1);
+
+			if (t > 14)
+			{
+				to_del = true;
+			}
+
 			break;
 		}
 		spr_sy -= spr_grav;
@@ -114,6 +127,7 @@ vector<Particle> particles;
 
 void createParticle(uint_fast8_t t, uint_fast8_t size, uint_fast8_t prop, uint_fast8_t anim_type, double x, double y, double sx, double sy, double grav, int tt = 0)
 {
+	if (isClient) { return; }
 	particles.push_back(Particle{ t, size, prop, anim_type, x, y, sx, sy, grav, tt});
 }
 

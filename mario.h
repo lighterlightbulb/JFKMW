@@ -1236,6 +1236,10 @@ public:
 					Accel end
 				*/
 
+				if ((SKIDDING || SLIDING) && !(global_frame_counter & 3))
+				{
+					createParticle(0x3C, 0x00, 0x8, 3, x + 5.0, y - 27.0, 0, 0, 0, 0);
+				}
 
 				if (!ON_FL || SLOPE_TYPE) {
 					Y_SPEED += Calculate_Speed(GRAV);

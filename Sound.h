@@ -55,15 +55,13 @@ void EmulateSPC_Loop()
 bool init_audio()
 {
 	//Initialize SDL_mixer
-	if (Mix_OpenAudio(ogg_sample_rate, MIX_DEFAULT_FORMAT, 2, 4096) == -1)
+	if (Mix_OpenAudio(ogg_sample_rate, MIX_DEFAULT_FORMAT, 2, 1024) == -1)
 	{
 		cout << purple << "[Audio] Error : " << Mix_GetError() << white << endl;
 		return false;
 	}
 
 	cout << purple << "[Audio] Initialized audio port (" << dec << ogg_sample_rate << "hz)." << white << endl;
-
-
 	/*
 		Initialize Audio Spec (For SPC)
 	*/
@@ -191,49 +189,60 @@ void SoundLoop()
 		{
 			if (ASM.Get_Ram(0x1DFB, 1) != old_1dfb)
 			{
-				Terminate_Music();
-				old_1dfb = ASM.Get_Ram(0x1DFB, 1);
-
-
-				string file1 = path + "Sounds/music/" + int_to_hex(old_1dfb, true) + ".spc";
-				string file2 = path + "Sounds/music/" + int_to_hex(old_1dfb, true) + ".ogg";
-				string file3 = path + "Sounds/music/" + int_to_hex(old_1dfb, true) + ".mid";
-				if (is_file_exist(file1.c_str())) {
-
-					//SPC File loading
-					long spc_size;
-					void* spc = load_file(file1.c_str(), &spc_size);
-					spc_load_spc(snes_spc, spc, spc_size);
-					free(spc); /* emulator makes copy of data */
-
-					music_type = MUSIC_SPC;
-				}
-				if (is_file_exist(file2.c_str())) {
-					music = Mix_LoadMUS(file2.c_str());
-					music_type = MUSIC_OGG;
-				}
-				if (is_file_exist(file3.c_str())) {
-					music = Mix_LoadMUS(file3.c_str());
-					music_type = MUSIC_MID;
-				}
-
-				if (music_type == MUSIC_MID || music_type == MUSIC_OGG)
+				if (ASM.Get_Ram(0x1DFB, 1) == 0xFF)
 				{
-					if (music == NULL)
-					{
-						cout << purple << "[Audio] Failed to change music : " << Mix_GetError() << white << endl;
-					}
-					else
-					{
-						Mix_PlayMusic(music, -1);
-					}
+					old_1dfb = ASM.Get_Ram(0x1DFB, 1);
+					Mix_FadeOutMusic(1000);
+					spc_write_port(snes_spc, 32, 3, 0);
+
+					cout << purple << "[Audio] Fading music" << dec << white << endl;
 				}
 				else
 				{
-					music_thread = new sf::Thread(&EmulateSPC_Loop); music_thread->launch();
+					Terminate_Music();
+					old_1dfb = ASM.Get_Ram(0x1DFB, 1);
+
+
+
+					string file1 = path + "Sounds/music/" + int_to_hex(old_1dfb, true) + ".spc";
+					string file2 = path + "Sounds/music/" + int_to_hex(old_1dfb, true) + ".ogg";
+					string file3 = path + "Sounds/music/" + int_to_hex(old_1dfb, true) + ".mid";
+					if (is_file_exist(file1.c_str())) {
+
+						//SPC File loading
+						long spc_size;
+						void* spc = load_file(file1.c_str(), &spc_size);
+						spc_load_spc(snes_spc, spc, spc_size);
+						free(spc); /* emulator makes copy of data */
+
+						music_type = MUSIC_SPC;
+					}
+					if (is_file_exist(file2.c_str())) {
+						music = Mix_LoadMUS(file2.c_str());
+						music_type = MUSIC_OGG;
+					}
+					if (is_file_exist(file3.c_str())) {
+						music = Mix_LoadMUS(file3.c_str());
+						music_type = MUSIC_MID;
+					}
+
+					if (music_type == MUSIC_MID || music_type == MUSIC_OGG)
+					{
+						if (music == NULL)
+						{
+							cout << purple << "[Audio] Failed to change music : " << Mix_GetError() << white << endl;
+						}
+						else
+						{
+							Mix_PlayMusic(music, -1);
+						}
+					}
+					else
+					{
+						music_thread = new sf::Thread(&EmulateSPC_Loop); music_thread->launch();
+					}
+					cout << purple << "[Audio] Playing song 0x" << hex << int_to_hex(old_1dfb, true) << dec << white << endl;
 				}
-				cout << purple << "[Audio] Playing song 0x" << hex << int_to_hex(old_1dfb, true) << dec << white << endl;
-				
 
 			}
 		}
