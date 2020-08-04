@@ -137,6 +137,7 @@ void init_button(int i, int x, int b, void* DownEvent, void* UpEvent)
 
 void playtest()
 {
+	save();
 	if (current_file == "")
 	{
 		cout << red << "[SE] No" << white << endl;
@@ -165,7 +166,6 @@ void playtest()
 	
 	if (jfkmw_executable != "")
 	{
-		save();
 
 		string command = "\"" + jfkmw_executable + "\" -l " + clevel;
 		cout << yellow << command << white << endl;

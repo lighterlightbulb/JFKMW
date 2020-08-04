@@ -257,7 +257,7 @@ public:
 		if (GRABBED_SPRITE != 0xFF && !isClient) {
 			RAM[0x2000 + GRABBED_SPRITE] = 0x03;
 			if (!in_pipe && (!pad[button_y] || DEAD)) {
-				uint_fast16_t x_position = uint_fast16_t(double(x + to_scale * -15.0));
+				uint_fast16_t x_position = uint_fast16_t(double(x + to_scale * -16.0));
 				uint_fast16_t y_position = uint_fast16_t(double(y - (STATE > 0 ? 13.0 : 16.0)) + 17.0);
 				RAM[0x2100 + GRABBED_SPRITE] = uint_fast8_t(x_position & 0xFF);
 				RAM[0x2180 + GRABBED_SPRITE] = uint_fast8_t(x_position >> 8);
@@ -648,7 +648,7 @@ public:
 							if ((jump_is_spin && map16_handler.get_tile(xB, yB) == 0x11E) && STATE > 0)
 							{
 								map16_handler.process_block(xB, yB, top, pressed_y, true);
-								Y_SPEED = Calculate_Speed(512);
+								Y_SPEED = Calculate_Speed(768);
 								willreturn = true;
 							}
 							else
