@@ -1,10 +1,7 @@
 #pragma once
 /*
-
+	Sprite system, RAM values documented in RAM map.lua
 */
-
-
-
 class sprite_system
 {
 public:

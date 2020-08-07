@@ -98,6 +98,20 @@ public:
 			}
 
 			break;
+		/*
+			Smoke
+		*/
+		case 4:
+			pal_props = 0x88;
+			spr_tile = 0x60 + ((t >> 2) << 1);
+			spr_size = 0x11;
+
+			if (t > 14)
+			{
+				to_del = true;
+			}
+
+			break;
 		}
 
 		if (time_limit)
