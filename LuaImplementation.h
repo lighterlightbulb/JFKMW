@@ -243,6 +243,26 @@ int getPlayerY(lua_State* L)
 	return 1;
 }
 
+int getSpriteX(lua_State* L)
+{
+	uint_fast8_t sprite_index = (uint_fast8_t)lua_tonumber(L, 1);
+
+	uint_fast16_t sprite_x_position = uint_fast16_t(int(RAM[0x2100 + sprite_index] + int_fast8_t(RAM[0x2180 + sprite_index]) * 256));
+
+	lua_pushinteger(L, sprite_x_position);
+	return 1;
+}
+
+int getSpriteY(lua_State* L)
+{
+	uint_fast8_t sprite_index = (uint_fast8_t)lua_tonumber(L, 1);
+	uint_fast16_t sprite_y_position = uint_fast16_t(int(RAM[0x2280 + sprite_index] + int_fast8_t(RAM[0x2300 + sprite_index]) * 256) - 16);
+
+	lua_pushinteger(L, sprite_y_position);
+	return 1;
+}
+
+
 
 int lua_checkbit(lua_State* L)
 {
@@ -286,6 +306,8 @@ void lua_connect_functions(lua_State* L)
 	lua_register(L, "charToSmw", lua_chartosmw);
 	lua_register(L, "getPlayerX", getPlayerX);
 	lua_register(L, "getPlayerY", getPlayerY);
+	lua_register(L, "getSpriteX", getSpriteX);
+	lua_register(L, "getSpriteY", getSpriteY);
 	lua_register(L, "asmCheckBit", lua_checkbit);
 
 }
