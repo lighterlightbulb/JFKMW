@@ -350,16 +350,7 @@ void render()
 		VRAM[0xB801 + (26 * 2) + 128] = 0x6;
 
 		//Score
-		VRAM[0xB800 + (26 * 2) + 192] = 0x14;
-		VRAM[0xB801 + (26 * 2) + 192] = 0x6;
-		VRAM[0xB800 + (27 * 2) + 192] = 0x18;
-		VRAM[0xB801 + (27 * 2) + 192] = 0x6;
-		VRAM[0xB800 + (28 * 2) + 192] = 0x39;
-		VRAM[0xB801 + (28 * 2) + 192] = 0x6;
-		VRAM[0xB800 + (29 * 2) + 192] = 0x1C;
-		VRAM[0xB801 + (29 * 2) + 192] = 0x6;
-
-		draw_number_dec(24, 3, LocalPlayer.KO_counter);
+		draw_number_dec(29, 3, int(LocalPlayer.KO_counter) * 200);
 
 
 		//Reserve
@@ -393,6 +384,18 @@ void render()
 		VRAM[0xB801 + (16 * 2) + 256] = 0x3;
 		VRAM[0xB800 + (17 * 2) + 256] = 0x37;
 		VRAM[0xB801 + (17 * 2) + 256] = 0x3;
+		
+		//KB & Ping
+		if (networking)
+		{
+			VRAM[0xB800 + (12 * 2) + 192] = 0x14;	VRAM[0xB801 + (12 * 2) + 192] = 6;
+			VRAM[0xB800 + (13 * 2) + 192] = 0x0B;	VRAM[0xB801 + (13 * 2) + 192] = 6;
+			draw_number_dec(11, 3, data_size_now / 1024);
+
+			VRAM[0xB800 + (12 * 2) + 128] = 0x16;	VRAM[0xB801 + (12 * 2) + 128] = 6;
+			VRAM[0xB800 + (13 * 2) + 128] = 0x1C;	VRAM[0xB801 + (13 * 2) + 128] = 6;
+			draw_number_dec(11, 2, ((abs(latest_server_response) % 3600) % 1000) / 3);
+		}
 	}
 	/*
 		Debug hud
