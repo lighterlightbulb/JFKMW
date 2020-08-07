@@ -14,15 +14,29 @@ public:
 		y = double(RAM[0x2280 + entry] + double(int_fast8_t(RAM[0x2300 + entry])) * 256.0) + double(RAM[0x2380 + entry]) / 256.0;
 		double x_size = double(RAM[0x2500 + entry]);
 		double y_size = double(RAM[0x2580 + entry]);
+		uint_fast16_t check_x_1 = uint_fast16_t((x + x_size / 2.0) / 16.0);
+		uint_fast16_t check_y_1 = uint_fast16_t((y + y_size / 2.0) / 16.0);
+
+		bool IN_WT = RAM[0x85] != 0 || map16_handler.get_tile(check_x_1, check_y_1) < 4;
+
 		if (RAM[0x2600 + entry] & 0b100000) //if gravity bit is on
 		{
-			uint_fast16_t check_x_1 = uint_fast16_t((x + x_size / 2.0) / 16.0);
-			uint_fast16_t check_y_1 = uint_fast16_t((y + y_size / 2.0) / 16.0);
-			bool IN_WT = RAM[0x85] != 0 || map16_handler.get_tile(check_x_1, check_y_1) < 4;
 			int_fast8_t sprgravity = IN_WT ? -16 : -82;
+
+			if (IN_WT)
+			{
+				if (int_fast8_t(RAM[0x2480 + entry]) > 32)
+				{
+					RAM[0x2480 + entry] = 32;
+				}
+			}
 			if (int_fast8_t(RAM[0x2480 + entry]) > sprgravity)
 			{
 				int grav = RAM[0x2880 + entry] & 0b1000 ? 2 : 3;
+				if (IN_WT)
+				{
+					grav = 1;
+				}
 
 				RAM[0x2480 + entry] = max(sprgravity, RAM[0x2480 + entry] - grav);
 			}
@@ -32,7 +46,7 @@ public:
 			}
 		}
 
-		double xMove = double(double(int_fast8_t(RAM[0x2400 + entry])) * 16) / 256.0;
+		double xMove = double(double(int_fast8_t(RAM[0x2400 + entry])) * 16) / ((IN_WT && (RAM[0x2600 + entry] & 0b100000)) ? 384 : 256);
 		double yMove = double(double(int_fast8_t(RAM[0x2480 + entry])) * 16) / 256.0;
 
 		for (uint_fast8_t spr = 0; spr < 0x80; spr++)
