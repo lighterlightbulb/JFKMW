@@ -255,7 +255,12 @@ public:
 	void ProcessGrabbed()
 	{
 		if (GRABBED_SPRITE != 0xFF && !isClient) {
-			RAM[0x2000 + GRABBED_SPRITE] = 0x03;
+			if (RAM[0x2000 + GRABBED_SPRITE] != 0) {
+				RAM[0x2000 + GRABBED_SPRITE] = 0x03;
+			}
+			if (RAM[0x2000 + GRABBED_SPRITE] == 0) {
+				GRABBED_SPRITE = 0xFF;
+			}
 			if (!in_pipe && (!pad[button_y] || DEAD)) {
 				uint_fast16_t x_position = uint_fast16_t(double(x + to_scale * -16.0));
 				uint_fast16_t y_position = uint_fast16_t(double(y - (STATE > 0 ? 13.0 : 16.0)) + 17.0);
@@ -1316,7 +1321,7 @@ public:
 					}
 				}
 
-				if ((pad[button_a] || pad[button_b]) != was_jumpin) {
+				if (((pad[button_a] || pad[button_b]) != was_jumpin) && GRABBED_SPRITE == 0xFF) {
 					was_jumpin = pad[button_a] || pad[button_b];
 					if (was_jumpin) {
 						RAM[0x1DF9] = 0x0E;
