@@ -36,6 +36,7 @@ void player_code()
 	while (true)
 	{
 		LevelSprites.clear();
+		particles.clear();
 		zsnes_ui.hint = "";
 		if (latest_error == "Kicked.")
 		{

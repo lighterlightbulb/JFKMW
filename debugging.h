@@ -50,7 +50,7 @@ void debugging_functions()
 		if (stat != pressed_hide) {
 			pressed_hide = stat;
 			if (stat) {
-				drawHud = !drawHud;
+				hudMode = (hudMode + 1) % 3;
 			}
 		}
 

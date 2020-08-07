@@ -118,7 +118,7 @@ string testing_level = "";
 double monitor_hz = 60.0;
 
 //Stuff hud toggles here and hud stuff
-bool drawHud = true;
+uint_fast8_t hudMode = 0;
 bool drawDiag = false;
 bool drawBg = true;
 bool drawSprites = true;

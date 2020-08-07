@@ -141,7 +141,7 @@ void render()
 	for (uint_fast16_t i = 0; i < 256; i++)
 	{
 		uint_fast16_t c = RAM[0x3D00 + i] + (RAM[0x3E00 + i] << 8);
-		palette_array[i] = 
+		palette_array[i] =
 			0xFF000000 + (((c & 0x1F) << 3)) +
 			((((c >> 5) & 0x1F) << 3) << 8) +
 			(((c >> 10) << 3) << 16);
@@ -153,8 +153,8 @@ void render()
 	MPlayer& LocalPlayer = get_mario(SelfPlayerNumber);
 	LocalPlayer.ProcessCamera();
 
-	CameraX = int_fast16_t(LocalPlayer.CAMERA_X - ((int_res_x/2) - 8));
-	CameraY = int_fast16_t(max(0.0, LocalPlayer.CAMERA_Y - (int_res_y/2)));
+	CameraX = int_fast16_t(LocalPlayer.CAMERA_X - ((int_res_x / 2) - 8));
+	CameraY = int_fast16_t(max(0.0, LocalPlayer.CAMERA_Y - (int_res_y / 2)));
 	if (RAM[0x1887] > 0)
 	{
 		CameraY += (global_frame_counter % 3);
@@ -324,7 +324,80 @@ void render()
 		render_oam(0x200, true);
 	}
 
-	if (drawHud)
+	/*
+		Normal hud
+	*/
+	if (hudMode == 0)
+	{
+		//Status bar code here
+		for (int i = 0; i < 5; i++)
+		{
+			VRAM[0xB804 + (i * 2) + 128] = char_to_smw(LocalPlayer.player_name_cut[i]);
+			VRAM[0xB805 + (i * 2) + 128] = 2;
+		}
+
+		//WO's
+		VRAM[0xB806 + 192] = 0x26;
+		VRAM[0xB807 + 192] = 0x6;
+		draw_number_dec(5, 3, LocalPlayer.WO_counter);
+
+		//Coins
+		draw_number_dec(29, 2, RAM[0x0DBF]);
+
+		VRAM[0xB800 + (25 * 2) + 128] = 0x2F;
+		VRAM[0xB801 + (25 * 2) + 128] = 0x7;
+		VRAM[0xB800 + (26 * 2) + 128] = 0x26;
+		VRAM[0xB801 + (26 * 2) + 128] = 0x6;
+
+		//Score
+		VRAM[0xB800 + (26 * 2) + 192] = 0x14;
+		VRAM[0xB801 + (26 * 2) + 192] = 0x6;
+		VRAM[0xB800 + (27 * 2) + 192] = 0x18;
+		VRAM[0xB801 + (27 * 2) + 192] = 0x6;
+		VRAM[0xB800 + (28 * 2) + 192] = 0x39;
+		VRAM[0xB801 + (28 * 2) + 192] = 0x6;
+		VRAM[0xB800 + (29 * 2) + 192] = 0x1C;
+		VRAM[0xB801 + (29 * 2) + 192] = 0x6;
+
+		draw_number_dec(24, 3, LocalPlayer.KO_counter);
+
+
+		//Reserve
+
+		/* Top */
+		VRAM[0xB800 + (14 * 2) + 64] = 0x30;
+		VRAM[0xB801 + (14 * 2) + 64] = 0x3;
+		VRAM[0xB800 + (15 * 2) + 64] = 0x31;
+		VRAM[0xB801 + (15 * 2) + 64] = 0x3;
+		VRAM[0xB800 + (16 * 2) + 64] = 0x31;
+		VRAM[0xB801 + (16 * 2) + 64] = 0x3;
+		VRAM[0xB800 + (17 * 2) + 64] = 0x32;
+		VRAM[0xB801 + (17 * 2) + 64] = 0x3;
+
+		/* Middle */
+		VRAM[0xB800 + (14 * 2) + 128] = 0x33;
+		VRAM[0xB801 + (14 * 2) + 128] = 0x3;
+		VRAM[0xB800 + (17 * 2) + 128] = 0x34;
+		VRAM[0xB801 + (17 * 2) + 128] = 0x3;
+		VRAM[0xB800 + (14 * 2) + 192] = 0x33;
+		VRAM[0xB801 + (14 * 2) + 192] = 0x3;
+		VRAM[0xB800 + (17 * 2) + 192] = 0x34;
+		VRAM[0xB801 + (17 * 2) + 192] = 0x3;
+
+		/* Bottom */
+		VRAM[0xB800 + (14 * 2) + 256] = 0x35;
+		VRAM[0xB801 + (14 * 2) + 256] = 0x3;
+		VRAM[0xB800 + (15 * 2) + 256] = 0x36;
+		VRAM[0xB801 + (15 * 2) + 256] = 0x3;
+		VRAM[0xB800 + (16 * 2) + 256] = 0x36;
+		VRAM[0xB801 + (16 * 2) + 256] = 0x3;
+		VRAM[0xB800 + (17 * 2) + 256] = 0x37;
+		VRAM[0xB801 + (17 * 2) + 256] = 0x3;
+	}
+	/*
+		Debug hud
+	*/
+	if (hudMode == 1)
 	{
 		//Status bar code here
 		for (int i = 0; i < 5; i++)
@@ -371,6 +444,7 @@ void render()
 		VRAM[0xB800 + 32 + 192] = 0x0B;	VRAM[0xB801 + 32 + 192] = 6;
 		draw_number_dec(14, 3, data_size_now / 1024);
 	}
+	//End hud
 
 	//Render chat
 	if (Chatting || Time_ChatString[0] > 0)
