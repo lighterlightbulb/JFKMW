@@ -207,6 +207,25 @@ static int damagePlayer(lua_State* L)
 	return 0;
 }
 
+static int createParticleHook(lua_State* L)
+{
+	uint_fast8_t tile = (uint_fast8_t)lua_tointeger(L, 1);
+	uint_fast8_t size = (uint_fast8_t)lua_tointeger(L, 2);
+	uint_fast8_t prop = (uint_fast8_t)lua_tointeger(L, 3);
+	uint_fast8_t anim_type = (uint_fast8_t)lua_tointeger(L, 4);
+	double x = (double)lua_tonumber(L, 5);
+	double y = (double)lua_tonumber(L, 6);
+	double sx = (double)lua_tonumber(L, 7);
+	double sy = (double)lua_tonumber(L, 8);
+	double grav = (double)lua_tonumber(L, 9);
+	int start_time = (int)lua_tointeger(L, 10);
+	int delete_time = (int)lua_tointeger(L, 11);
+
+	createParticle(tile, size, prop, anim_type, x, y, sx, sy, grav, start_time, delete_time);
+
+	return 0;
+}
+
 extern "C" {
 int getPlayerX(lua_State* L)
 {
@@ -262,6 +281,7 @@ void lua_connect_functions(lua_State* L)
 	lua_pushcfunction(L, drawtohud); lua_setglobal(L, "drawToHud");
 	lua_pushcfunction(L, killPlayer); lua_setglobal(L, "killPlayer");
 	lua_pushcfunction(L, damagePlayer); lua_setglobal(L, "damagePlayer");
+	lua_pushcfunction(L, createParticleHook); lua_setglobal(L, "createParticle");
 	lua_register(L, "asmRead", lua_get_ram);
 	lua_register(L, "charToSmw", lua_chartosmw);
 	lua_register(L, "getPlayerX", getPlayerX);

@@ -115,15 +115,13 @@ public:
 		{
 			RAM[0x2780 + entry] = 0;
 			bool g = RAM[0x2000 + entry] == 2 || RAM[0x2000 + entry] == 4;
-			if (!Move(xMove, 0.0, x_size, y_size, g))
+			if (!Move(xMove, 0.0, x_size, y_size, g, entry))
 			{
-				//RAM[0x2680 + entry] *= -1;
 				RAM[0x2780 + entry] |= 0b00000001;
 			}
 
-			if (!Move(0.0, yMove, x_size, y_size, g))
+			if (!Move(0.0, yMove, x_size, y_size, g, entry))
 			{
-				//RAM[0x2480 + entry] = 0;
 				RAM[0x2780 + entry] |= 0b00000010;
 
 			}
@@ -164,7 +162,7 @@ public:
 	/*
 		Shitty Movement Code
 	*/
-	bool Move(double xMove, double yMove, double x_size, double y_size, bool kickedgrabbed)
+	bool Move(double xMove, double yMove, double x_size, double y_size, bool kickedgrabbed, uint_fast8_t entry)
 	{
 		bool finna_return = true;
 		double NewPositionX = x + xMove;
@@ -205,6 +203,8 @@ public:
 							NewPositionX = RightBlock;
 							finna_return = false;
 
+							RAM[0x2780 + entry] |= 0b00000100;
+
 							if (kickedgrabbed)
 							{
 								map16_handler.process_block(xB, yB, bottom);
@@ -217,6 +217,8 @@ public:
 						{
 							NewPositionX = LeftBlock;
 							finna_return = false;
+
+							RAM[0x2780 + entry] |= 0b00001000;
 
 							if (kickedgrabbed)
 							{
@@ -232,6 +234,9 @@ public:
 						{
 							bound_y += 4;
 						}
+
+						RAM[0x2780 + entry] |= 0b00010000;
+
 						if (NewPositionY < AboveBlock && NewPositionY > AboveBlock - bound_y)
 						{
 							NewPositionY = AboveBlock;
@@ -245,6 +250,8 @@ public:
 						{
 							NewPositionY = BelowBlock;
 							finna_return = false;
+
+							RAM[0x2780 + entry] |= 0b00100000;
 
 							if (kickedgrabbed)
 							{

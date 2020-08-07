@@ -1,5 +1,9 @@
 #pragma once
 
+/*
+	Particle System Implementation for JFK Mario World, by default Multiplayer compatible :D
+*/
+
 class Particle
 {
 public:
@@ -14,6 +18,7 @@ public:
 	double spr_grav = 0;
 	int t = 0;
 	bool to_del = false;
+	int time_limit = 0;
 
 	void draw()
 	{
@@ -94,6 +99,14 @@ public:
 
 			break;
 		}
+
+		if (time_limit)
+		{
+			if (t >= time_limit)
+			{
+				to_del = true;
+			}
+		}
 		spr_sy -= spr_grav;
 		spr_x += spr_sx;
 		spr_y += spr_sy;
@@ -125,14 +138,15 @@ public:
 };
 vector<Particle> particles;
 
-void createParticle(uint_fast8_t t, uint_fast8_t size, uint_fast8_t prop, uint_fast8_t anim_type, double x, double y, double sx, double sy, double grav, int tt = 0)
+void createParticle(uint_fast8_t t, uint_fast8_t size, uint_fast8_t prop, uint_fast8_t anim_type, double x, double y, double sx, double sy, double grav, int tt = 0, int t_del = 0)
 {
-	if (isClient) { return; }
-	particles.push_back(Particle{ t, size, prop, anim_type, x, y, sx, sy, grav, tt});
+	if (isClient) { return; } //Only server and singleplayer can create particles.
+	particles.push_back(Particle{ t, size, prop, anim_type, x, y, sx, sy, grav, tt, false, t_del});
 }
 
 void processParticles()
 {
+	if (isClient) { return; }
 	for (int i = 0; i < particles.size(); i++)
 	{
 		Particle& b = particles[i];

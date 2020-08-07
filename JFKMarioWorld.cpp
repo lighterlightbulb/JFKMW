@@ -116,6 +116,8 @@ istream& getline(istream& stream, string& str)
 
 #include "Sprite_shared.h"
 
+#include "Particle_System.h"
+
 #include "LuaImplementation.h"
 
 #include "Sound.h"
@@ -124,7 +126,6 @@ istream& getline(istream& stream, string& str)
 #include "Global.h"
 #include "SDL_General.h"
 
-#include "Particle_System.h"
 #include "map16block.h"
 #include "exanimation.h"
 #include "Level.h"
