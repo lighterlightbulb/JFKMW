@@ -1,6 +1,6 @@
 #pragma once
 
-string GAME_VERSION = "1.4.1b";
+string GAME_VERSION = "1.4.5b";
 
 #define rom_asm_size 0x008000 //32kb, 1 bank ($00:8000 to $00:FFFF)
 #define location_rom_levelasm 0x008000 //this will put LevelASM on the start of the ROM, this is a SNES PC btw
