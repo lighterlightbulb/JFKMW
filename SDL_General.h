@@ -401,9 +401,9 @@ void draw8x8_tile_2bpp(int_fast16_t x, int_fast16_t y, uint_fast16_t tile, uint_
 	DestR.h = 8 * scale;
 
 	SrcR.x = (tile & 0xF) << 3;
-	SrcR.y = ((tile >> 4) << 3) + (palette_offs * 64);
+	SrcR.y = ((tile >> 4) << 3);
 	SrcR.w = 8; SrcR.h = 8;
-	SDL_RenderCopy(ren, cached_l3_tiles, &SrcR, &DestR);
+	SDL_RenderCopy(ren, cached_l3_tiles[palette_offs], &SrcR, &DestR);
 }
 
 

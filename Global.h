@@ -493,7 +493,7 @@ void ConvertPalette()
 /*
 	Layer 3 Caching
 */
-SDL_Texture* cached_l3_tiles;
+SDL_Texture* cached_l3_tiles[8];
 
 void PreloadL3()
 {
@@ -508,22 +508,23 @@ void PreloadL3()
 	rmask = 0x000000ff; gmask = 0x0000ff00; bmask = 0x00ff0000; amask = 0xff000000;
 #endif
 
-	//Create a surface and lock it
-	SDL_Surface* cached_l3_surf = SDL_CreateRGBSurface(0, 128, 512, 32,
-		rmask, gmask, bmask, amask);
-	SDL_LockSurface(cached_l3_surf);
-
-	//Draw all L3 tiles
-	uint_fast8_t color1;
-	uint_fast8_t graphics_array[16];
 	for (uint_fast16_t e = 0; e < 8; e++)
 	{
+		//Create a surface and lock it
+		SDL_Surface* cached_l3_surf = SDL_CreateRGBSurface(0, 128, 64, 32,
+			rmask, gmask, bmask, amask);
+		SDL_LockSurface(cached_l3_surf);
+
+		//Draw all L3 tiles
+		uint_fast8_t color1;
+		uint_fast8_t graphics_array[16];
+
 		uint_fast8_t palette_offs = e << 2;
 		for (uint_fast8_t t = 0; t < 0x80; t++)
 		{
 			uint_fast16_t tile = t;
 			uint_fast16_t x = (tile & 0xF) << 3;
-			uint_fast16_t y = ((tile >> 4) << 3) + (e * 64);
+			uint_fast16_t y = ((tile >> 4) << 3);
 			tile = tile << 4;
 			memcpy(graphics_array, &RAM[VRAM_Location + 0xB000 + tile], 16 * sizeof(uint_fast8_t));
 
@@ -540,11 +541,11 @@ void PreloadL3()
 				}
 			}
 		}
-	}
 
-	//Unlock surface then create texture and destroy the surface to free memory.
-	SDL_UnlockSurface(cached_l3_surf);
-	SDL_DestroyTexture(cached_l3_tiles);
-	cached_l3_tiles = SDL_CreateTextureFromSurface(ren, cached_l3_surf);
-	SDL_FreeSurface(cached_l3_surf);
+		//Unlock surface then create texture and destroy the surface to free memory.
+		SDL_UnlockSurface(cached_l3_surf);
+		SDL_DestroyTexture(cached_l3_tiles[e]);
+		cached_l3_tiles[e] = SDL_CreateTextureFromSurface(ren, cached_l3_surf);
+		SDL_FreeSurface(cached_l3_surf);
+	}
 }
