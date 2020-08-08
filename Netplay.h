@@ -350,7 +350,11 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool for_validating = false)
 		if (CurrentPacket_header == Header_UpdatePlayerData)
 		{
 			uint_fast8_t PlrNum = 1; CurrentPacket >> PlrNum;
-			CurrentPacket >> latest_plr_syncs[PlrNum - 1];
+			uint_fast8_t sync; CurrentPacket >> sync;
+			if ((PlrNum - 1) < latest_plr_syncs.size())
+			{
+				latest_plr_syncs[PlrNum - 1] = sync;
+			}
 			if (PlrNum > (clients.size()+1) || PlrNum == 0)
 			{
 				cout << blue << "[Network] Something's weird, " << whoSentThis.getRemoteAddress() << " sent a invalid player packet. Disconnecting!" << white << endl;
@@ -532,6 +536,8 @@ void PendingConnection()
 		}
 		else
 		{
+			latest_error = "Invalid information sent";
+
 			cout << blue << "[Server] " << username << " (" << client->getRemoteAddress() << ", Player " << dec << int(NewPlayerNumber) << ") Timed out or sent invalid information. Disconnecting." << white << endl;
 			PreparePacket(Header_FailedToConnect);
 			CurrentPacket << latest_error;
