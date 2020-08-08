@@ -226,6 +226,14 @@ static int createParticleHook(lua_State* L)
 	return 0;
 }
 
+static int discordMessageHook(lua_State* L)
+{
+	if (!networking) { return 0; }
+	string text = (string)lua_tostring(L, 1);
+	discord_message(text);
+	return 0;
+}
+
 extern "C" {
 int getPlayerX(lua_State* L)
 {
@@ -302,6 +310,7 @@ void lua_connect_functions(lua_State* L)
 	lua_pushcfunction(L, killPlayer); lua_setglobal(L, "killPlayer");
 	lua_pushcfunction(L, damagePlayer); lua_setglobal(L, "damagePlayer");
 	lua_pushcfunction(L, createParticleHook); lua_setglobal(L, "createParticle");
+	lua_pushcfunction(L, discordMessageHook); lua_setglobal(L, "discordMessage");
 	lua_register(L, "asmRead", lua_get_ram);
 	lua_register(L, "charToSmw", lua_chartosmw);
 	lua_register(L, "getPlayerX", getPlayerX);
