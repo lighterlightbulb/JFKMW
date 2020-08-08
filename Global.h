@@ -383,6 +383,7 @@ string discord_webhook;
 
 void do_d_msg(string msg)
 {
+	replaceAll(msg, "@", "");
 	time_t currentTime;
 	struct tm localTime;
 

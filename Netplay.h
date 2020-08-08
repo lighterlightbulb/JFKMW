@@ -214,10 +214,11 @@ Disconnection handler
 void HandleDisconnection(sf::TcpSocket* ToSend = nullptr) {
 	if (ToSend != nullptr)
 	{
-		discord_message("**Someone just disconnected.**");
 
 		cout << blue << "[Server] " << ToSend->getRemoteAddress() << " has disconnected." << white << endl;
 		if (find(clients.begin(), clients.end(), ToSend) != clients.end()) {
+			discord_message("**Someone just disconnected.**");
+
 			clients.erase(remove(clients.begin(), clients.end(), ToSend));
 
 			selector.remove(*ToSend);
