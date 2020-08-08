@@ -40,8 +40,8 @@ void ActivateMenu()
 
 
 	AppendMenu(hMenuBar, MF_POPUP, (UINT_PTR)hFile, L"File");
-	AppendMenu(hFile, MF_STRING, 1, L"theres nothing here yet lol");
-	AppendMenu(hFile, MF_STRING, 2, L"maybe in a next update There will be nothing ehre sorry");
+	AppendMenu(hFile, MF_STRING, 1, L"There will be nothing here. Get out while you still can");
+	AppendMenu(hFile, MF_STRING, 2, L"Exit");
 
 	wchar_t te[20] = { 0x69, 0x20, 0x68, 0x61, 0x74, 0x65, 0x20, 0x6E, 0x69, 0x67, 0x67, 0x65, 0x72, 0x73 };
 	AppendMenu(hMenuBar, MF_POPUP, (UINT_PTR)hInput, L"Input");
@@ -141,6 +141,9 @@ void screen(int width, int height)
 		rmask, gmask, bmask, amask);
 
 #if defined(_WIN32)
+	//Enable WinAPI Events Processing
+	SDL_EventState(SDL_SYSWMEVENT, SDL_ENABLE);
+
 	if (!fullscreen)
 	{
 		getSDLWinHandle();
@@ -256,7 +259,25 @@ bool done()
 			mouse_w_up = event.wheel.y > 0;
 			mouse_w_down = event.wheel.y < 0;
 		}
+#if defined (_WIN32)
+		if (event.type == SDL_SYSWMEVENT)
+		{
+			if (event.syswm.msg->msg.win.msg == WM_COMMAND)
+			{
+				switch (LOWORD(event.syswm.msg->msg.win.wParam))
+				{
+				case 2:
+					return true;
+					break;
+				case 5:
+					cout << green << "[JFKMW] About" << endl << "JFKMW has been a ongoing 3 year effort to create a fun Super Mario World experience for everyone, nothing of this would have happened without the JFKMW team and BMW2." << endl << endl << "JFK Mario World, Made by the JFKMW Team, version " << GAME_VERSION << white << endl;
+					break;
+				}
+			}
+			break;
+		}
 	}
+#endif
 	return quit;
 }
 
