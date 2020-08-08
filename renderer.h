@@ -291,7 +291,7 @@ void render()
 				for (uint_fast16_t y = 0; y < draw_y; y++)
 				{
 					SrcR.x = (x * m);
-					SrcR.y = (y * m);
+					SrcR.y = 16 + (y * m);
 
 					DestR.x = sp_offset_x + (x * m) * (scale);
 					DestR.y = sp_offset_y + (y * m) * (scale);

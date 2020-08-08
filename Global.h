@@ -352,6 +352,7 @@ int sp_offset_y = 28;
 
 SDL_Surface screen_s_l1;
 SDL_Texture* screen_t_l1;
+SDL_Texture* cached_l3_tiles[8];
 
 int w; //width of the screen
 int h; //height of the screen
@@ -379,9 +380,14 @@ void addSprTexture(uint_fast32_t fl, SDL_Texture* newTex)
 
 void ClearSpriteCache()
 {
+	cout << yellow << "[GFX] Clearing Sprite Cache" << white << endl;
+	for (uint_fast16_t e = 0; e < 8; e++)
+	{
+		SDL_DestroyTexture(cached_l3_tiles[e]);
+	}
+
 	if (SpriteTextures.size() > 0)
 	{
-		cout << yellow << "[GFX] Clearing Sprite Cache" << white << endl;
 		for (unordered_map<uint_fast32_t, SDL_Texture*>::iterator it = SpriteTextures.begin(); it != SpriteTextures.end(); ++it)
 		{
 			SDL_DestroyTexture(it->second);
@@ -493,8 +499,6 @@ void ConvertPalette()
 /*
 	Layer 3 Caching
 */
-SDL_Texture* cached_l3_tiles[8];
-
 void PreloadL3()
 {
 	//This makes palette
@@ -510,6 +514,8 @@ void PreloadL3()
 
 	for (uint_fast16_t e = 0; e < 8; e++)
 	{
+		SDL_DestroyTexture(cached_l3_tiles[e]);
+
 		//Create a surface and lock it
 		SDL_Surface* cached_l3_surf = SDL_CreateRGBSurface(0, 128, 64, 32,
 			rmask, gmask, bmask, amask);
@@ -544,7 +550,6 @@ void PreloadL3()
 
 		//Unlock surface then create texture and destroy the surface to free memory.
 		SDL_UnlockSurface(cached_l3_surf);
-		SDL_DestroyTexture(cached_l3_tiles[e]);
 		cached_l3_tiles[e] = SDL_CreateTextureFromSurface(ren, cached_l3_surf);
 		SDL_FreeSurface(cached_l3_surf);
 	}

@@ -117,10 +117,10 @@ void player_code()
 
 			//we copy it to the renderer, for your program, if you want to have a ingame thing (variable or w/e), you just simply don't do this and render what your game has instead.
 			SDL_Rect DestR;
-			DestR.x = sp_offset_x;
-			DestR.y = sp_offset_y;
-			DestR.w = int_res_x * scale;
-			DestR.h = int_res_y * scale;
+			DestR.x = sp_offset_x - (CameraX & 0xF) * scale;
+			DestR.y = sp_offset_y - (16 * scale) + (CameraY & 0xF) * scale;
+			DestR.w = (int_res_x + 16) * scale;
+			DestR.h = (int_res_y + 16) * scale;
 
 			//Copied from renderer.h
 			drawBackground();
