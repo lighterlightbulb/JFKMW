@@ -270,7 +270,12 @@ bool done()
 					return true;
 					break;
 				case 5:
-					cout << green << "[JFKMW] About" << endl << "JFKMW has been a ongoing 3 year effort to create a fun Super Mario World experience for everyone, nothing of this would have happened without the JFKMW team and BMW2." << endl << endl << "JFK Mario World, Made by the JFKMW Team, version " << GAME_VERSION << white << endl;
+
+					string str = "JFKMW has been a ongoing 3 year effort to create a fun Super Mario World experience for everyone, with lots of modability and options. Nothing of this would have happened without the JFKMW Team.\n\n\nJFK Mario World, Made by the JFKMW Team, Version " + GAME_VERSION;
+					std::wstring stemp = std::wstring(str.begin(), str.end());
+					LPCWSTR sw = stemp.c_str();
+
+					MessageBox(NULL, sw, L"About", MB_OK);
 					break;
 				}
 			}
