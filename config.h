@@ -22,8 +22,8 @@ void load_configuration()
 			if (name == "internal_res_y") { int_res_y = stoi(value) * 16; }
 			if (name == "fullscreen") { fullscreen = value == "true"; }
 			if (name == "opengl") { opengl = value == "true"; }
-			if (name == "network_update_rate") { network_update_rate = stoi(value); network_update_rate_c = network_update_rate; }
-			if (name == "packet_wait_time") { packet_wait_time = stoi(value); packet_wait_time_c = packet_wait_time; }
+			if (name == "network_update_rate") { network_update_rate = max(16, stoi(value)); network_update_rate_c = network_update_rate; }
+			if (name == "packet_wait_time") { packet_wait_time = max(16, stoi(value)); packet_wait_time_c = packet_wait_time; }
 			if (name == "rendering_device") { rendering_device = stoi(value); }
 			if (name == "renderer_accelerated") { renderer_accelerated = value == "true"; }
 			if (name == "v_sync") { v_sync = value == "true"; }

@@ -97,6 +97,10 @@ void server_code(string level = "")
 		}
 		if (getKey(0x71))
 		{
+			RAM[0x3F11] = 0;
+			RAM[0x3F10] = 0;
+			RAM[0x9D] = 1;
+
 			cout << green << "[Network] Syncing RAM to other players.." << endl;
 			Set_Server_RAM();
 			Do_RAM_Change();
