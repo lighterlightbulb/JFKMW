@@ -506,7 +506,7 @@ void PendingConnection()
 		uint_fast8_t NewPlayerNumber = GetAmountOfPlayers() + 1;
 		username = "Unknown";
 
-		cout << blue << "[Server] " << client->getRemoteAddress() << " (assigned to Player " << int(NewPlayerNumber) << ") is trying to connect.. ";
+		cout << blue << "[Server] " << client->getRemoteAddress() << " (assigned to Player " << int(NewPlayerNumber) << ") is trying to connect.. " << white << endl;
 
 
 		PreparePacket(Header_Connection); CurrentPacket << NewPlayerNumber; SendPacket(client);
@@ -520,7 +520,6 @@ void PendingConnection()
 
 			// Add the new client to the clients list
 			clients.push_back(client); selector.add(*client); GetAmountOfPlayers();
-			cout << "connected. " << white << endl;
 
 			PreparePacket(Header_ConnectData);
 			CurrentPacket << PlayerAmount;
