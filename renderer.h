@@ -704,7 +704,7 @@ void render()
 
 		for (uint_fast8_t l = 0; l < 128; l++)
 		{
-			int curr_t = fps_diag[l] / 16;
+			int curr_t = fps_diag[l] / 10;
 
 			rect.x = sp_offset_x + (l) * scale; rect.w = 1 * scale;
 			rect.y = sp_offset_y + (224 - curr_t) * scale; rect.h = curr_t * scale;
