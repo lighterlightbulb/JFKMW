@@ -1,7 +1,25 @@
 #pragma once
 
+#if defined(_WIN32)
+BOOL WINAPI ConsoleHandler(DWORD CEvent)
+{
+	if (CEvent == CTRL_CLOSE_EVENT)
+	{
+		discord_message("Server stopped.");
+	}
+	return TRUE;
+}
+#endif
+
 void server_code(string level = "")
 {
+
+	if(SetConsoleCtrlHandler((PHANDLER_ROUTINE)ConsoleHandler, TRUE) == FALSE)
+	{
+		cout << "The handler is not going to work.";
+	}
+
+
 	SDL_Init(SDL_INIT_TIMER | SDL_INIT_EVENTS);
 
 	game_init();
@@ -31,6 +49,7 @@ void server_code(string level = "")
 	cout << "K = Kick" << white << endl;
 
 	data_size_current = 0;
+	SDL_Delay(5);
 	thread = new sf::Thread(&NetWorkLoop); thread->launch();
 
 	int FPS = 60;
