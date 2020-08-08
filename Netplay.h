@@ -506,7 +506,7 @@ void PendingConnection()
 		uint_fast8_t NewPlayerNumber = GetAmountOfPlayers() + 1;
 		username = "Unknown";
 
-		cout << blue << "[Server] A client (assigned to Player " << int(NewPlayerNumber) << ") is trying to connect... (" << client->getRemoteAddress() << ")" << white << endl;
+		cout << blue << "[Server] " << client->getRemoteAddress() << " (assigned to Player " << int(NewPlayerNumber) << ") is trying to connect.. ";
 
 
 		PreparePacket(Header_Connection); CurrentPacket << NewPlayerNumber; SendPacket(client);
@@ -520,7 +520,7 @@ void PendingConnection()
 
 			// Add the new client to the clients list
 			clients.push_back(client); selector.add(*client); GetAmountOfPlayers();
-			cout << blue << "[Server] " << username << " (" << client->getRemoteAddress() << ", Player " << dec << int(NewPlayerNumber) << ") has connected." << white << endl;
+			cout << "connected. " << white << endl;
 
 			PreparePacket(Header_ConnectData);
 			CurrentPacket << PlayerAmount;
@@ -538,10 +538,11 @@ void PendingConnection()
 		{
 			latest_error = "Invalid information sent";
 
-			cout << blue << "[Server] " << username << " (" << client->getRemoteAddress() << ", Player " << dec << int(NewPlayerNumber) << ") Timed out or sent invalid information. Disconnecting." << white << endl;
+			cout << "Timed out or sent invalid information. Disconnecting." << white << endl;
 			PreparePacket(Header_FailedToConnect);
 			CurrentPacket << latest_error;
 			SendPacket(client);
+
 
 			latest_error = "Unknown";
 			client->disconnect();
