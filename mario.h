@@ -923,15 +923,15 @@ public:
 
 	int Process()
 	{
-		//X_SPEED = 10;
-		if (RAM[0x1493] > 0 && RAM[0x1493] < 8)
-		{
-			CAMERA_X /= 2;
-			CAMERA_Y /= 2;
-			if (!DEAD)
-			{
-				Die(); //This is so we can get warped
-			}
+		if (RAM[0x3F11] == 2) {
+			Respawn();
+			CAMERA_X = x;
+			CAMERA_Y = y;
+			sprite = "";
+		}
+
+		if (!RAM[0x9D]) {
+			return 1;
 		}
 		SLOPE_TYPE = 0;
 
@@ -1413,6 +1413,10 @@ public:
 
 	void ProcessCamera() {
 
+		if (RAM[0x3F11])
+		{
+			return;
+		}
 		if (RAM[0x1411] == 0)
 		{
 			int min_x = RAM[0x1462] + RAM[0x1463] * 256;

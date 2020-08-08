@@ -2,17 +2,36 @@
 
 double tick = 0;
 
-void game_init()
+void game_init() //Called when a level is loaded
 {
 	decode_graphics_file("Graphics/exanimations.bin", 8);
 	decode_graphics_file("Graphics/hud.bin", 11);
 	memset(&RAM[0x1B800], 0xFF, 0x800);
 
-	RAM[0x3F10] = 0xFF;
-	RAM[0x3F11] = 2;
-	RAM[0x9D] = 0;
+	global_frame_counter = 0;
 
 	memset(&RAM[0x200], 0, 0x400); //Clear OAM
+}
+
+void load_level3f08()
+{
+	if (ASM.Get_Ram(0x3f08, 2) != 0)
+	{
+		midway_activated = false;
+		LevelManager.LoadLevel(uint_fast16_t(ASM.Get_Ram(0x3f08, 2)));
+
+		game_init();
+#if not defined(DISABLE_NETWORK)
+		Set_Server_RAM();
+#endif
+		Do_RAM_Change();
+
+		ASM.Write_To_Ram(0x3f08, 0, 2);
+	}
+	else
+	{
+		ASM.Write_To_Ram(0x1DFB, 0, 1);
+	}
 }
 
 void game_loop_code()
@@ -20,46 +39,6 @@ void game_loop_code()
 	if ((!networking || isClient) && gGameController)
 	{
 		check_input();
-	}
-
-	global_frame_counter += 1;
-
-	/* Transitions */
-	uint_fast8_t transition_type = RAM[0x1493] > 0 ? 3 : RAM[0x3F11];
-	uint_fast8_t transition_speed = transition_type == 3 ? 7 : 1;
-	if (!(global_frame_counter & transition_speed))
-	{
-		uint_fast8_t mosaic_val = RAM[0x3F10] >> 4;
-		uint_fast8_t bright_val = RAM[0x3F10] & 0xF;
-		if (transition_type == 1 || transition_type == 3) {
-			if (bright_val < 0xF) {
-				bright_val++;
-			}
-		}
-		if (transition_type == 2) {
-			if (bright_val > 0) {
-				bright_val--;
-			}
-			if (mosaic_val > 0) {
-				mosaic_val--;
-			}
-			if (mosaic_val == 0 && bright_val == 0)
-			{
-				RAM[0x9D] = 1;
-				RAM[0x3F11] = 0;
-			}
-		}
-		if (transition_type == 1) {
-			RAM[0x9D] = 0;
-			if (mosaic_val < 0xF) {
-				mosaic_val++;
-			}
-			else
-			{
-				RAM[0x3F11] = 0;
-			}
-		}
-		RAM[0x3F10] = bright_val + (mosaic_val << 4);
 	}
 
 #if not defined(DISABLE_NETWORK)
@@ -77,6 +56,62 @@ void game_loop_code()
 		}
 	}
 #endif
+
+	global_frame_counter += 1;
+
+	if (global_frame_counter == 2) //Fade in
+	{
+		RAM[0x3F10] = 0xFF;
+		RAM[0x3F11] = 2;
+		RAM[0x9D] = 0;
+	}
+
+	/* Transitions */
+	uint_fast8_t transition_type = RAM[0x1493] > 0 ? 3 : RAM[0x3F11];
+	uint_fast8_t transition_speed = transition_type == 3 ? 7 : 1;
+	if (!(global_frame_counter & transition_speed) && !isClient)
+	{
+		uint_fast8_t mosaic_val = RAM[0x3F10] >> 4;
+		uint_fast8_t bright_val = RAM[0x3F10] & 0xF;
+		if (transition_type > 0 && transition_type != 2) {
+			if (bright_val < 0xF) {
+				bright_val++;
+			}
+			else
+			{
+				RAM[0x3F11] = 0;
+			}
+		}
+		if (transition_type == 2) {
+			if (bright_val > 0) {
+				bright_val--;
+			}
+			if (mosaic_val > 0) {
+				mosaic_val--;
+			}
+			if (mosaic_val == 0 && bright_val == 0)
+			{
+				RAM[0x9D] = 1;
+				RAM[0x3F11] = 0;
+			}
+		}
+		if (transition_type == 1 || transition_type == 4) {
+			RAM[0x9D] = 0;
+			if (mosaic_val < 0xF) {
+				mosaic_val++;
+			}
+			else
+			{
+				RAM[0x3F11] = 0;
+				if (transition_type == 4)
+				{
+					load_level3f08();
+				}
+			}
+		}
+		RAM[0x3F10] = bright_val + (mosaic_val << 4);
+	}
+
 	if (!isClient && RAM[0x1493] > 0)
 	{
 		memset(&RAM[0x2000], 0, 0x80);
@@ -88,31 +123,21 @@ void game_loop_code()
 		{
 			if (ASM.Get_Ram(0x3f08, 2) != 0)
 			{
-				midway_activated = false;
-				LevelManager.LoadLevel(uint_fast16_t(ASM.Get_Ram(0x3f08, 2)));
-
-				game_init();
-#if not defined(DISABLE_NETWORK)
-				Set_Server_RAM();
-#endif
-				Do_RAM_Change();
-
-				ASM.Write_To_Ram(0x3f08, 0, 2);
+				RAM[0x3F11] = 4;
+				RAM[0x3F10] = 0x00;
 			}
 			else
 			{
-				ASM.Write_To_Ram(0x1DFB, 0, 1);
+				RAM[0x3F10] = 0x00;
+				RAM[0x3F11] = 0;
 			}
 		}
 	}
+
 	int total_time_ticks_d = min(65535, int(total_time_ticks.count() * 3584.0));
 	uint_fast16_t count = uint_fast16_t(total_time_ticks_d);
 	RAM[0x4207] = count & 0xFF;
 	RAM[0x4209] = count / 256;
-
-
-
-
 
 	if (!isClient && RAM[0x1887] > 0)
 	{
@@ -128,11 +153,10 @@ void game_loop_code()
 	}
 
 	mapWidth = RAM[0x3F00] + RAM[0x3F01] * 256;
-	if (mapWidth == 0)
-	{
-		mapWidth = 256;
-	}
 	mapHeight = RAM[0x3F02] + RAM[0x3F03] * 256;
+	mapWidth = max(1, mapWidth);
+	mapHeight = max(1, mapHeight);
+
 
 	RAM[0x3F0A] = networking;
 
@@ -215,10 +239,7 @@ void game_loop_code()
 		}
 		CurrPlayer.player_index = player;
 
-		if (RAM[0x9D])
-		{
-			CurrPlayer.Process();
-		}
+		CurrPlayer.Process();
 
 		camera_total_x += max(0, int(CurrPlayer.CAMERA_X - 128.0));
 		camera_total_y += max(0, int(CurrPlayer.CAMERA_Y - 112.0));

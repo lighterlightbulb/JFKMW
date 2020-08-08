@@ -108,7 +108,9 @@ void Chat_ClientSide()
 		{
 			if (getKey(i))
 			{
-				Typing_In_Chat += (i-0x10) + '0';
+				char new_l = i + (state[SDL_SCANCODE_LSHIFT] ? 0x0 : 0x20);
+
+				Typing_In_Chat += new_l;
 			}
 		}
 		//Numbers
@@ -120,6 +122,13 @@ void Chat_ClientSide()
 				{
 					Typing_In_Chat += (i - 0x30) + '0';
 				}
+			}
+		}
+		else
+		{
+			if (getKey(0x31))
+			{
+				Typing_In_Chat += "!";
 			}
 		}
 		//Spaces
@@ -138,7 +147,7 @@ void Chat_ClientSide()
 		if (getKey(0x08) && Typing_In_Chat.size() > 0) { Typing_In_Chat.pop_back(); }
 
 		//Typing in chat limiter
-		Typing_In_Chat = Typing_In_Chat.substr(0, min(50, int(Typing_In_Chat.length())));
+		Typing_In_Chat = Typing_In_Chat.substr(0, min(49, int(Typing_In_Chat.length())));
 	}
 
 	//Da status :flushed:

@@ -36,7 +36,7 @@ uint_fast32_t pctosnes(uint_fast32_t pc) {
 #define player_expected_packet_size 54 //Strings apparently add 4 so we have to make sure of this so it wont crash.
 #define player_name_size 11
 
-#define MAX_L3_TILES 0x4F
+#define MAX_L3_TILES 0x6A
 
 #define level_ram_decay_time 40 //Server ticks before level data RAM becomes invalid to send
 
@@ -261,10 +261,9 @@ uint_fast8_t char_to_smw(char t)
 {
 	uint_fast8_t new_l = uint_fast8_t(t);
 
-	if (new_l < 0x3A) { new_l = new_l - 0x30; }
-
+	if (t < 0x3A) { new_l = new_l - 0x30; }
 	if (t >= 0x41 && t < 0x61) { new_l = new_l - 0x41 + 0xA; }
-	if (t >= 0x61 && t < 0x81) { new_l = new_l - 0x61 + 0xA; }
+	if (t >= 0x61 && t < 0x81) { new_l = new_l - 0x61 + 0x50; }
 
 	if (t == '<') { new_l = 0x2C; }
 	if (t == '>') { new_l = 0x2D; }
@@ -273,9 +272,10 @@ uint_fast8_t char_to_smw(char t)
 	if (t == ',') { new_l = 0x25; }
 	if (t == '-') { new_l = 0x27; }
 	if (t == '+') { new_l = 0x29; }
-	if (t == ' ') { new_l = 0x7F; }
+	if (t == ' ') { new_l = 0xFF; }
 	if (t == '_') { new_l = 0x3D; }
 	if (t == '?') { new_l = 0x38; }
+
 
 	return new_l;
 }

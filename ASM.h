@@ -502,7 +502,11 @@ void Sync_Server_RAM(bool compressed = false)
 		CurrentPacket >> RAM[0x3F10];
 		CurrentPacket >> RAM[0x3F11];
 
-		//recieve level start
+		//recieve level start & Size
+		CurrentPacket >> RAM[0x3F00];
+		CurrentPacket >> RAM[0x3F01];
+		CurrentPacket >> RAM[0x3F02];
+		CurrentPacket >> RAM[0x3F03];
 		CurrentPacket >> RAM[0x3F0B];
 		CurrentPacket >> RAM[0x3F0C];
 		CurrentPacket >> RAM[0x3F0D];
@@ -703,7 +707,11 @@ void Push_Server_RAM(bool compress = false)
 		CurrentPacket << RAM[0x3F10];
 		CurrentPacket << RAM[0x3F11];
 
-		//Send level start
+		//Send level start & Size
+		CurrentPacket << RAM[0x3F00];
+		CurrentPacket << RAM[0x3F01];
+		CurrentPacket << RAM[0x3F02];
+		CurrentPacket << RAM[0x3F03];
 		CurrentPacket << RAM[0x3F0B];
 		CurrentPacket << RAM[0x3F0C];
 		CurrentPacket << RAM[0x3F0D];

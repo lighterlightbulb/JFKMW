@@ -341,7 +341,7 @@ void render()
 	//Draw screen darkening (Level Clear)
 	if (transition_type == 3)
 	{
-		SDL_SetRenderDrawColor(ren, 0, 0, 0, bright_val << 4);
+		SDL_SetRenderDrawColor(ren, 0, 0, 0, bright_val == 0xF ? 255 : (bright_val << 4));
 		SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_BLEND);
 		SDL_RenderFillRect(ren, NULL);
 		SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_NONE);
@@ -415,7 +415,7 @@ void render()
 		draw_number_dec(5, 3, LocalPlayer.WO_counter);
 
 		//Coins
-		draw_number_dec(29, 2, RAM[0x0DBF]);
+		draw_number_dec(29, 2, RAM[0x0DBF] % 100);
 
 		VRAM[0xB800 + (25 * 2) + 128] = 0x2F;
 		VRAM[0xB801 + (25 * 2) + 128] = 0x7;
@@ -765,7 +765,7 @@ void render()
 	//Draw screen darkening (Fades)
 	if (transition_type != 3)
 	{
-		SDL_SetRenderDrawColor(ren, 0, 0, 0, bright_val << 4);
+		SDL_SetRenderDrawColor(ren, 0, 0, 0, bright_val == 0xF ? 255 : (bright_val << 4));
 		SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_BLEND);
 		SDL_RenderFillRect(ren, NULL);
 		SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_NONE);

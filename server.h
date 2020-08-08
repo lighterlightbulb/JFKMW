@@ -71,7 +71,7 @@ void server_code(string level = "")
 
 			doing_write = true;
 			ASM.Write_To_Ram(0x3f08, stoi(level, nullptr, 16), 2);
-			ASM.Write_To_Ram(0x1493, 0x06, 1);
+			RAM[0x3F11] = 4;
 			doing_write = false;
 
 			discord_message("Switched to level " + level);
