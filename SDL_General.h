@@ -277,7 +277,7 @@ bool done()
 
 void read_from_palette(string file)
 {
-	cout << red << "[PAL] Loading File " << file << white << endl;
+	//cout << red << "[PAL] Loading File " << file << white << endl;
 
 	ifstream input(file, ios::binary);
 	vector<unsigned char> buffer(istreambuf_iterator<char>(input), {});
@@ -323,7 +323,7 @@ void decode_graphics_file(string file, int offset = 0)
 	}
 	input.close();
 
-	cout << yellow << "[GFX] Loading File " << file << " at 0x" << int_to_hex(0x10000 + offset) << " " << current_byte << " bytes loaded" << white << endl;
+	//cout << yellow << "[GFX] Loading File " << file << " at 0x" << int_to_hex(0x10000 + offset) << " " << current_byte << " bytes loaded" << white << endl;
 
 
 

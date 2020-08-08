@@ -66,19 +66,18 @@ public:
 			return entry->second;
 		}
 
-		cout << green
+		/*cout << green
 			<< "[Level Manager] Couldn't find entry " << name
-			<< " : not created yet?" << white << endl;
+			<< " : not created yet?" << white << endl;*/
 
 		return 0;
 	}
 
 	void add_entry(string name, uint_fast32_t value)
 	{
-
-		cout << green
+		/*cout << green
 			<< "[Level Manager] Added entry " << name
-			<< " = " << dec << value << white << endl;
+			<< " = " << dec << value << white << endl;*/
 
 
 		level_data.insert(make_pair(name, value));
@@ -251,22 +250,6 @@ public:
 					if (status == "sprite_data")
 					{
 						vector<string> v = split(line.c_str(), ',');
-
-
-						/*RAM[0x2800 + spr_index] = v[0] == "lua" ? 1 : 0;
-
-						RAM[0x2000 + spr_index] = 1;
-						RAM[0x2080 + spr_index] = stoi(v[1], nullptr, 16);
-						RAM[0x2100 + spr_index] = stoi(v[2]) % 256;
-						RAM[0x2180 + spr_index] = stoi(v[2]) / 256;
-						RAM[0x2200 + spr_index] = 0;
-
-						RAM[0x2280 + spr_index] = stoi(v[3]) % 256;
-						RAM[0x2300 + spr_index] = stoi(v[3]) / 256;
-						RAM[0x2380 + spr_index] = 0;
-
-						RAM[0x2680 + spr_index] = stoi(v[4]);
-						RAM[0x2F80 + spr_index] = 0;*/
 
 						LevelSprites.push_back(
 							LevelSprite{
