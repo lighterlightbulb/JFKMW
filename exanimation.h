@@ -7,37 +7,6 @@ void process_ex_animation()
 {
 	if (!networking || (networking && isClient))
 	{
-		/*
-			0x3D00-0x3DFF Palette, low b
-			0x3E00-0x3EFF Palette, high b
-		*/
-		uint_fast8_t b = global_frame_counter;
-		if ((global_frame_counter & 0x1F) > 0x0F)
-		{
-			b = 0x10 - (global_frame_counter - 0x10);
-		}
-		b = b << 4;
-		uint_fast16_t col = 0x3FF + ((b >> 3) << 10);
-		RAM[0x3D64] = col;
-		RAM[0x3E64] = col >> 8;
-
-
-		//Plr Name Color
-		switch (my_skin % 3)
-		{
-		case 0:
-			col = 0x0CFB; break;
-		case 1:
-			col = 0x2FEB; break;
-		case 2:
-			col = 0x294A; break;
-		}
-		RAM[0x3D0E] = col;
-		RAM[0x3E0E] = col >> 8;
-
-		RAM[0x3D0F] = 0xAB;
-		RAM[0x3E0F] = 0x7A;
-
 		//Question block (Corrected)
 		memcpy(&RAM[VRAM_Location + (32 * 0x60)], &RAM[VRAM_Location + 0x8000 + (0xC0 * 32) + (((global_frame_counter >> 3) & 3) << 9)], 128);
 

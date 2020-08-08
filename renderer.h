@@ -175,14 +175,8 @@ void render()
 	/*
 		Convert 16bit palette to 32bit palette (for speed)
 	*/
-	for (uint_fast16_t i = 0; i < 256; i++)
-	{
-		uint_fast16_t c = RAM[0x3D00 + i] + (RAM[0x3E00 + i] << 8);
-		palette_array[i] =
-			0xFF000000 + (((c & 0x1F) << 3)) +
-			((((c >> 5) & 0x1F) << 3) << 8) +
-			(((c >> 10) << 3) << 16);
-	}
+	ConvertPalette();
+
 	memcpy(VRAM, &RAM[VRAM_Location], VRAM_Size * sizeof(uint_fast8_t));
 
 
@@ -341,9 +335,14 @@ void render()
 	//Draw screen darkening (Level Clear)
 	if (transition_type == 3)
 	{
+		DestR.x = sp_offset_x;
+		DestR.y = sp_offset_y;
+		DestR.w = int_res_x * scale;
+		DestR.h = int_res_y * scale;
+
 		SDL_SetRenderDrawColor(ren, 0, 0, 0, bright_val == 0xF ? 255 : (bright_val << 4));
 		SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_BLEND);
-		SDL_RenderFillRect(ren, NULL);
+		SDL_RenderFillRect(ren, &DestR);
 		SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_NONE);
 	}
 
@@ -634,11 +633,6 @@ void render()
 		}
 	}
 
-	//Start draw to layer 3
-	SDL_LockSurface(&screen_s_l2);
-	SDL_Surface* screen_plane_sequel = &screen_s_l2;
-	SDL_memset(screen_plane_sequel->pixels, 0, screen_plane_sequel->h* screen_plane_sequel->pitch);
-
 	//Draw L3 player names
 	for (list<MPlayer>::iterator item = Mario.begin(); item != Mario.end(); ++item)
 	{
@@ -675,11 +669,12 @@ void render()
 
 	if (drawDiag)
 	{
-
+		SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_BLEND);
 		SDL_Rect rect;
-		rect.x = 0; rect.w = 256;
-		rect.y = 224 - 128; rect.h = 128;
-		SDL_FillRect(&screen_s_l2, &rect, 0x3F000000);
+		rect.x = sp_offset_x; rect.w = 256 * scale;
+		rect.y = sp_offset_y + (224 - 128) * scale; rect.h = 128 * scale;
+		SDL_SetRenderDrawColor(ren, 0, 0, 0, 0x3F);
+		SDL_RenderFillRect(ren, &rect);
 
 		int ping_c = ((abs(latest_server_response) % 3600) % 1000) / 3;
 		int fps = int(1.0 / (total_time_ticks.count() / 1.0));
@@ -709,65 +704,54 @@ void render()
 
 		for (uint_fast8_t l = 0; l < 128; l++)
 		{
-			int curr_t = fps_diag[l] / 8;
+			int curr_t = fps_diag[l] / 16;
 
-			rect.x = l; rect.w = 1;
-			rect.y = 224 - curr_t; rect.h = curr_t;
+			rect.x = sp_offset_x + (l) * scale; rect.w = 1 * scale;
+			rect.y = sp_offset_y + (224 - curr_t) * scale; rect.h = curr_t * scale;
+
 			int g = min(255, curr_t * 4);
 			int r = 255 - g;
-			SDL_FillRect(&screen_s_l2, &rect, 0xBF000000 + r + (g << 8));
+
+			SDL_Rect rect;
+			rect.x = sp_offset_x + (l) * scale; rect.w = 1 * scale;
+			rect.y = sp_offset_y + (224 - curr_t) * scale; rect.h = curr_t * scale;
+			SDL_SetRenderDrawColor(ren, r, g, 0, 0xBF);
+			SDL_RenderFillRect(ren, &rect);
 		}
 
 		for (uint_fast8_t l = 0; l < 16; l++)
 		{
 			int curr_t = ram_diag[l];
+			rect.x = sp_offset_x + (128 + l)*scale; rect.w = 1 * scale;
+			rect.y = sp_offset_y + (224 - curr_t) * scale; rect.h = curr_t * scale;
 
-			rect.x = 128 + l; rect.w = 1;
-			rect.y = 224 - curr_t; rect.h = curr_t;
-
-			SDL_FillRect(&screen_s_l2, &rect, 0xBF7F7FFF);
+			SDL_SetRenderDrawColor(ren, 0xFF, 0x7F, 0x7F, 0xBF);
+			SDL_RenderFillRect(ren, &rect);
 		}
 
 		for (uint_fast8_t l = 0; l < 112; l++)
 		{
 			int curr_t = block_diag[l] / 8;
-			rect.x = 144 + l; rect.w = 1;
-			rect.y = 224 - curr_t; rect.h = curr_t;
-			SDL_FillRect(&screen_s_l2, &rect, 0xBFFF7F7F);
-
-			curr_t = ping_diag[l] / 2;
-			rect.x = 144 + l; rect.w = 1;
-			rect.y = 223 - curr_t; rect.h = 1;
-			SDL_FillRect(&screen_s_l2, &rect, 0xBF0000FF);
-
-			curr_t = kbs_diag[l] / 2;
-			rect.x = 144 + l; rect.w = 1;
-			rect.y = 223 - curr_t; rect.h = 1;
-			SDL_FillRect(&screen_s_l2, &rect, 0xBFFF00FF);
+			rect.x = sp_offset_x + (144 + l) * scale; rect.w = 1 * scale;
+			rect.y = sp_offset_y + (224 - curr_t) * scale; rect.h = curr_t * scale;
+			SDL_SetRenderDrawColor(ren, 0x7F, 0x7F, 0xFF, 0xBF);
+			SDL_RenderFillRect(ren, &rect);
 		}
-
-		draw_string(false, "perflogs fps - ram - rend - net", 3, 96 + 3, &screen_s_l2);
+		SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_NONE);
 	}
 
-
-
-	SDL_UnlockSurface(&screen_s_l2);
-
-	SDL_DestroyTexture(screen_t_l2);
-	screen_t_l2 = SDL_CreateTextureFromSurface(ren, &screen_s_l2);
-
-	DestR.x = sp_offset_x + ((int_res_x - 256) * scale) / 2;
-	DestR.y = sp_offset_y + ((int_res_y - 224) * scale) / 2;
-	DestR.w = 256 * scale;
-	DestR.h = 224 * scale;
-	SDL_RenderCopy(ren, screen_t_l2, nullptr, &DestR);
 
 	//Draw screen darkening (Fades)
 	if (transition_type != 3)
 	{
+		DestR.x = sp_offset_x;
+		DestR.y = sp_offset_y;
+		DestR.w = int_res_x * scale;
+		DestR.h = int_res_y * scale;
+
 		SDL_SetRenderDrawColor(ren, 0, 0, 0, bright_val == 0xF ? 255 : (bright_val << 4));
 		SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_BLEND);
-		SDL_RenderFillRect(ren, NULL);
+		SDL_RenderFillRect(ren, &DestR);
 		SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_NONE);
 	}
 

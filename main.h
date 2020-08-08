@@ -135,7 +135,6 @@ void player_code()
 			DestR.h = 224 * scale;
 
 			render_oam(0x200);
-			SDL_RenderCopy(ren, screen_t_l2, nullptr, &DestR);
 			SDL_RenderCopy(ren, zsnes_ui.texture, NULL, &DestR);
 
 			redraw87();

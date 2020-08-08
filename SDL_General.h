@@ -2,19 +2,6 @@
 
 //ColorRGB
 
-SDL_Surface screen_s_l1;
-SDL_Surface screen_s_l2;
-SDL_Texture *screen_t_l1;
-SDL_Texture *screen_t_l2;
-
-
-int w; //width of the screen
-int h; //height of the screen
-SDL_Window*   win; //The window
-SDL_Renderer* ren; //The renderer
-SDL_Event event = { 0 };
-
-
 ////////////////////////////////////////////////////////////////////////////////
 //BASIC SCREEN FUNCTIONS////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -151,8 +138,6 @@ void screen(int width, int height)
 #endif
 
 	screen_s_l1 = *SDL_CreateRGBSurface(0, int_res_x, int_res_y, 32,
-		rmask, gmask, bmask, amask);
-	screen_s_l2 = *SDL_CreateRGBSurface(0, 256, 224, 32,
 		rmask, gmask, bmask, amask);
 
 #if defined(_WIN32)
@@ -306,7 +291,7 @@ void read_from_palette(string file)
 void decode_graphics_file(string file, int offset = 0)
 {
 	offset *= 4096;
-	if (offset >= 0xc000)
+	if (offset >= 0xC000)
 	{
 		ClearSpriteCache();
 	}
@@ -322,12 +307,14 @@ void decode_graphics_file(string file, int offset = 0)
 		current_byte++;
 	}
 	input.close();
+	if (offset == 0xB000)
+	{
+		PreloadL3();
+	}
 
 	//cout << yellow << "[GFX] Loading File " << file << " at 0x" << int_to_hex(0x10000 + offset) << " " << current_byte << " bytes loaded" << white << endl;
-
-
-
 }
+
 
 /*
 -------------------------------- Colour possibilities 4BPP -------------------------------- 
@@ -404,26 +391,19 @@ void draw8x8_tile(int_fast16_t x, int_fast16_t y, uint_fast16_t tile, uint_fast8
 
 
 
-void draw8x8_tile_2bpp(uint_fast8_t x, uint_fast8_t y, uint_fast16_t tile, uint_fast8_t palette_offs)
+void draw8x8_tile_2bpp(int_fast16_t x, int_fast16_t y, uint_fast16_t tile, uint_fast16_t palette_offs)
 {
+	SDL_Rect DestR;
+	SDL_Rect SrcR;
+	DestR.x = sp_offset_x + x * scale;
+	DestR.y = sp_offset_y + y * scale;
+	DestR.w = 8 * scale;
+	DestR.h = 8 * scale;
 
-	palette_offs = palette_offs << 2;
-	uint_fast8_t color1;
-	uint8_t graphics_array[16];
-	tile = tile << 4;
-	memcpy(graphics_array, &VRAM[0XB000 + tile], 16 * sizeof(uint_fast8_t));
-
-	for (uint_fast8_t index = 0; index < 16; index += 2)
-	{
-		for (uint_fast8_t i = 0; i < 8; i++)
-		{
-			color1 = ((graphics_array[0 + index] >> i) & 1) + (((graphics_array[1 + index] >> i) & 1) << 1);
-			if (color1 != 0) {
-				Uint32* p_screen = (Uint32*)(&screen_s_l2)->pixels + (7 - i + x) + ((y + (index >> 1)) << 8);
-				*p_screen = palette_array[color1 + palette_offs];
-			}
-		}
-	}
+	SrcR.x = (tile & 0xF) << 3;
+	SrcR.y = ((tile >> 4) << 3) + (palette_offs * 64);
+	SrcR.w = 8; SrcR.h = 8;
+	SDL_RenderCopy(ren, cached_l3_tiles, &SrcR, &DestR);
 }
 
 

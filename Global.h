@@ -52,7 +52,11 @@ int spc_buffer_size = 320;
 #define VRAM_Size 0x10000
 #define VRAM_Location 0x10000
 
+bool asm_loaded = false;
 
+uint_fast8_t RAM[RAM_Size];
+uint_fast8_t RAM_old[0x8000];
+uint_fast8_t RAM_decay_time_level[0x4000]; //for multiplayer
 uint_fast16_t hdma_size[8];
 uint_fast32_t palette_array[256]; //These are cached lol
 uint_fast8_t VRAM[VRAM_Size];
@@ -346,6 +350,16 @@ uint_fast8_t scale = 1;
 int sp_offset_x = 32;
 int sp_offset_y = 28;
 
+SDL_Surface screen_s_l1;
+SDL_Texture* screen_t_l1;
+
+int w; //width of the screen
+int h; //height of the screen
+SDL_Window* win; //The window
+SDL_Renderer* ren; //The renderer
+SDL_Event event = { 0 };
+
+
 
 unordered_map<uint_fast32_t, SDL_Texture*> SpriteTextures;
 SDL_Texture* loadSprTexture(uint_fast32_t fl)
@@ -427,3 +441,110 @@ void discord_message(string msg)
 {
 }
 #endif
+/*
+	Palette
+*/
+void ConvertPalette()
+{
+	/*
+		0x3D00-0x3DFF Palette, low b
+		0x3E00-0x3EFF Palette, high b
+	*/
+	uint_fast8_t b = global_frame_counter;
+	if ((global_frame_counter & 0x1F) > 0x0F)
+	{
+		b = 0x10 - (global_frame_counter - 0x10);
+	}
+	b = b << 4;
+	uint_fast16_t col = 0x3FF + ((b >> 3) << 10);
+	RAM[0x3D64] = col;
+	RAM[0x3E64] = col >> 8;
+
+
+	//Plr Name Color
+	switch (my_skin % 3)
+	{
+	case 0:
+		col = 0x0CFB; break;
+	case 1:
+		col = 0x2FEB; break;
+	case 2:
+		col = 0x294A; break;
+	}
+	RAM[0x3D0E] = col;
+	RAM[0x3E0E] = col >> 8;
+
+	RAM[0x3D0F] = 0xAB;
+	RAM[0x3E0F] = 0x7A;
+
+	/*
+		Convert 16-bit palette to 32-bit palette
+	*/
+	for (uint_fast16_t i = 0; i < 256; i++)
+	{
+		uint_fast16_t c = RAM[0x3D00 + i] + (RAM[0x3E00 + i] << 8);
+		palette_array[i] =
+			0xFF000000 + (((c & 0x1F) << 3)) +
+			((((c >> 5) & 0x1F) << 3) << 8) +
+			(((c >> 10) << 3) << 16);
+	}
+}
+
+/*
+	Layer 3 Caching
+*/
+SDL_Texture* cached_l3_tiles;
+
+void PreloadL3()
+{
+	//This makes palette
+	ConvertPalette();
+
+	//Byte masks idk
+	Uint32 rmask, gmask, bmask, amask;
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+	rmask = 0xff000000; gmask = 0x00ff0000; bmask = 0x0000ff00; amask = 0x000000ff;
+#else
+	rmask = 0x000000ff; gmask = 0x0000ff00; bmask = 0x00ff0000; amask = 0xff000000;
+#endif
+
+	//Create a surface and lock it
+	SDL_Surface* cached_l3_surf = SDL_CreateRGBSurface(0, 128, 512, 32,
+		rmask, gmask, bmask, amask);
+	SDL_LockSurface(cached_l3_surf);
+
+	//Draw all L3 tiles
+	uint_fast8_t color1;
+	uint_fast8_t graphics_array[16];
+	for (uint_fast16_t e = 0; e < 8; e++)
+	{
+		uint_fast8_t palette_offs = e << 2;
+		for (uint_fast8_t t = 0; t < 0x80; t++)
+		{
+			uint_fast16_t tile = t;
+			uint_fast16_t x = (tile & 0xF) << 3;
+			uint_fast16_t y = ((tile >> 4) << 3) + (e * 64);
+			tile = tile << 4;
+			memcpy(graphics_array, &RAM[VRAM_Location + 0xB000 + tile], 16 * sizeof(uint_fast8_t));
+
+			for (uint_fast8_t index = 0; index < 16; index += 2)
+			{
+				for (uint_fast8_t i = 0; i < 8; i++)
+				{
+					color1 = ((graphics_array[0 + index] >> i) & 1) + (((graphics_array[1 + index] >> i) & 1) << 1);
+					if (color1 != 0) {
+
+						Uint32* p_screen = (Uint32*)(cached_l3_surf)->pixels + (x + 7 - i) + ((y + (index >> 1)) << 7);
+						*p_screen = palette_array[color1 + palette_offs];
+					}
+				}
+			}
+		}
+	}
+
+	//Unlock surface then create texture and destroy the surface to free memory.
+	SDL_UnlockSurface(cached_l3_surf);
+	SDL_DestroyTexture(cached_l3_tiles);
+	cached_l3_tiles = SDL_CreateTextureFromSurface(ren, cached_l3_surf);
+	SDL_FreeSurface(cached_l3_surf);
+}

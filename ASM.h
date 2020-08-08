@@ -1,12 +1,6 @@
 #pragma once
 //something something this fucking sucks
 
-bool asm_loaded = false;
-
-uint_fast8_t RAM[RAM_Size];
-uint_fast8_t RAM_old[0x8000];
-uint_fast8_t RAM_decay_time_level[0x4000]; //for multiplayer
-
 class JFKASM
 {
 public:
@@ -471,6 +465,7 @@ void Sync_Server_RAM(bool compressed = false)
 		{
 			CurrentPacket >> RAM[i];
 		}
+		PreloadL3();
 	}
 	else
 	{
