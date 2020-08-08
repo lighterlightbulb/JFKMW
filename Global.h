@@ -321,10 +321,15 @@ uint_fast8_t death_timer[256];
 string ip = "127.0.0.1"; int PORT = 0;
 
 #if not defined(DISABLE_NETWORK)
+class JFKMWSocket : public sf::TcpSocket
+{
+public:
+	string username = "";
+	uint_fast8_t latest_sync_p;
+};
 
-sf::TcpSocket socketG; sf::SocketSelector selector; //no idea how this works
-sf::TcpListener listener; vector<sf::TcpSocket*> clients;
-vector<uint_fast8_t> latest_plr_syncs;
+JFKMWSocket socketG; sf::SocketSelector selector; //no idea how this works
+sf::TcpListener listener; vector<JFKMWSocket*> clients;
 uint_fast8_t latest_sync;
 
 uint_fast8_t CurrentPacket_header;

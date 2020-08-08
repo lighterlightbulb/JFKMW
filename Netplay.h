@@ -14,7 +14,7 @@
 string latest_error = "";
 
 sf::Socket::Status last_network_status;
-sf::Socket::Status receiveWithTimeout(sf::TcpSocket& socket, sf::Packet& packet, sf::Time timeout, bool blocking)
+sf::Socket::Status receiveWithTimeout(JFKMWSocket& socket, sf::Packet& packet, sf::Time timeout, bool blocking)
 {
 	sf::SocketSelector selector;
 	selector.add(socket);
@@ -211,13 +211,15 @@ Disconnection handler
 */
 
 
-void HandleDisconnection(sf::TcpSocket* ToSend = nullptr) {
+void HandleDisconnection(JFKMWSocket* ToSend = nullptr) {
 	if (ToSend != nullptr)
 	{
 
-		cout << blue << "[Server] " << ToSend->getRemoteAddress() << " has disconnected." << white << endl;
+		cout << blue << "[Server] " << ToSend->username << " (" << ToSend->getRemoteAddress() << ") has disconnected." << white << endl;
 		if (find(clients.begin(), clients.end(), ToSend) != clients.end()) {
-			discord_message("**Someone just disconnected.**");
+			discord_message("**" + ToSend->username + " just disconnected.**");
+
+			Send_Chat(ToSend->username + " left");
 
 			clients.erase(remove(clients.begin(), clients.end(), ToSend));
 
@@ -245,7 +247,7 @@ Packet Sending
 
 */
 
-void send_not_blocking(sf::TcpSocket* ToSend = nullptr) {
+void send_not_blocking(JFKMWSocket* ToSend = nullptr) {
 	if (ToSend->send(CurrentPacket) == sf::Socket::Disconnected) {
 		if (!isClient) {
 			HandleDisconnection(ToSend);
@@ -256,7 +258,7 @@ void send_not_blocking(sf::TcpSocket* ToSend = nullptr) {
 	}
 }
 
-void SendPacket(sf::TcpSocket* ToSend = nullptr) {
+void SendPacket(JFKMWSocket* ToSend = nullptr) {
 	//Server will send a packet.
 	//Players will receive it.
 	//Client will send a packet to server, server receives it.
@@ -286,7 +288,7 @@ void SendPacket(sf::TcpSocket* ToSend = nullptr) {
 
 
 
-void ReceivePacket(sf::TcpSocket &whoSentThis, bool for_validating = false)
+void ReceivePacket(JFKMWSocket &whoSentThis, bool for_validating = false)
 {
 	//cout << last_network_status << endl;
 	CurrentPacket >> CurrentPacket_header;
@@ -350,11 +352,8 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool for_validating = false)
 		if (CurrentPacket_header == Header_UpdatePlayerData)
 		{
 			uint_fast8_t PlrNum = 1; CurrentPacket >> PlrNum;
-			uint_fast8_t sync; CurrentPacket >> sync;
-			if ((PlrNum - 1) < latest_plr_syncs.size())
-			{
-				latest_plr_syncs[PlrNum - 1] = sync;
-			}
+			uint_fast8_t sync; CurrentPacket >> sync; whoSentThis.latest_sync_p = sync;
+
 			if (PlrNum > (clients.size()+1) || PlrNum == 0)
 			{
 				cout << blue << "[Network] Something's weird, " << whoSentThis.getRemoteAddress() << " sent a invalid player packet. Disconnecting!" << white << endl;
@@ -459,7 +458,7 @@ void ReceivePacket(sf::TcpSocket &whoSentThis, bool for_validating = false)
 	}
 }
 
-bool receive_all_packets(sf::TcpSocket& socket, bool slower = false, bool for_validating = false)
+bool receive_all_packets(JFKMWSocket& socket, bool slower = false, bool for_validating = false)
 {
 	int current_pack = 0;
 
@@ -500,7 +499,7 @@ void PendingConnection()
 	//cout << blue << "[Server] Pending connection..." << white << endl;
 
 
-	sf::TcpSocket* client = new sf::TcpSocket;
+	JFKMWSocket* client = new JFKMWSocket;
 	if (listener.accept(*client) == sf::Socket::Done)
 	{
 		uint_fast8_t NewPlayerNumber = GetAmountOfPlayers() + 1;
@@ -519,6 +518,8 @@ void PendingConnection()
 		{
 
 			// Add the new client to the clients list
+			client->username = username;
+
 			clients.push_back(client); selector.add(*client); GetAmountOfPlayers();
 
 			PreparePacket(Header_ConnectData);
@@ -532,6 +533,8 @@ void PendingConnection()
 
 			//Send msg to discord
 			discord_message("**" + username + " has connected.**");
+
+			Send_Chat(username + " joined");
 		}
 		else
 		{
@@ -568,7 +571,7 @@ void Server_To_Clients()
 		uint_fast8_t PlrNumber = 1;
 
 		for (int i = 0; i < clients.size(); ++i) {
-			sf::TcpSocket& client = *clients[i];
+			JFKMWSocket& client = *clients[i];
 			receive_all_packets(client);
 			
 			if (clients.size() < 1 || last_network_status == sf::Socket::Error || last_network_status == sf::Socket::Disconnected)
@@ -591,7 +594,7 @@ void Server_To_Clients()
 
 			pack_mario_data(PlrNumber);
 
-			bool d_change = latest_plr_syncs[PlrNumber - 1] != latest_sync || recent_big_change;
+			bool d_change = client.latest_sync_p != latest_sync || recent_big_change;
 			CurrentPacket << d_change;
 			Push_Server_RAM(!d_change);
 			CurrentPacket << Curr_PChatString;
@@ -651,11 +654,6 @@ void NetWorkLoop()
 		{
 			if (selector.wait(sf::milliseconds(network_update_rate)))
 			{
-				//Adjust some things
-				if (latest_plr_syncs.size() != clients.size())
-				{
-					latest_plr_syncs.resize(clients.size());
-				}
 				if (clients.size() > 0)
 				{
 					network_update_rate = network_update_rate_c / (unsigned int)clients.size();

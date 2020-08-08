@@ -144,7 +144,7 @@ void server_code(string level = "")
 				cout << green << "[Network] Enabled PVP." << endl;
 			}
 
-			Add_Chat(pvp ? "pvp is now enabled" : "pvp is now off");
+			Send_Chat(pvp ? "pvp is now enabled" : "pvp is now off");
 			discord_message(pvp ? "pvp is now enabled" : "pvp is now off");
 
 		}
@@ -181,7 +181,7 @@ void server_code(string level = "")
 			cin >> plr;
 			if (plr > 0 && plr < (clients.size() + 1))
 			{
-				sf::TcpSocket* t = clients[plr - 1];
+				JFKMWSocket* t = clients[plr - 1];
 				PreparePacket(Header_FailedToConnect);
 				CurrentPacket << "Kicked.";
 				SendPacket(t);

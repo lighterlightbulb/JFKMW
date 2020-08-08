@@ -354,9 +354,9 @@ public:
 	void Reset_ASM_Variables_Server() //This only resets some of the important variables.
 	{
 		//cout << red << "[ASM] Reset variables." << white << endl;
-		Write_To_Ram(0x1DFC, 0, 1);
-		Write_To_Ram(0x1DF9, 0, 1);
-
+		RAM[0x1DFC] = 0;
+		RAM[0x1DF9] = 0;
+		RAM[0x1DFA] = 0;
 	}
 
 };

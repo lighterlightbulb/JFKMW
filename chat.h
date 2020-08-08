@@ -31,6 +31,12 @@ void Add_Chat(string c)
 	Time_ChatString[0] = chat_onscreen_timer;
 }
 
+void Send_Chat(string c)
+{
+	Curr_PChatString = c;
+	Time_ChatString[0] = chat_onscreen_timer;
+}
+
 //Serverside chat handler
 void Chat_ServerSide()
 {
@@ -38,7 +44,7 @@ void Chat_ServerSide()
 	for (list<MPlayer>::iterator item = Mario.begin(); item != Mario.end(); ++item)
 	{
 		MPlayer& CurrPlayer = *item;
-		if (CurrPlayer.last_chat_string != CurrPlayer.curr_chat_string && CurrPlayer.curr_chat_string != "")
+		if (CurrPlayer.last_chat_string != CurrPlayer.curr_chat_string && CurrPlayer.curr_chat_string.length() > 0)
 		{
 			//Update curr pchatstring to send later
 			Curr_PChatString = CurrPlayer.curr_chat_string;
