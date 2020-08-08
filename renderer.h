@@ -31,8 +31,8 @@ void render_oam(uint_fast16_t offset_o = 0, bool pr_only = false)
 		if (bool(flags >> 3) == pr_only)
 		{
 			uint_fast8_t size = RAM[offset_o + i + 1];
-			int_fast16_t size_x = (1 + (size & 0xF)) << 4;
-			int_fast16_t size_y = (1 + ((size >> 4) & 0xF)) << 4;
+			int_fast16_t size_x = (1 + (size & 0xF)) << 3;
+			int_fast16_t size_y = (1 + ((size >> 4) & 0xF)) << 3;
 			int x_position = RAM[offset_o + i + 2] + int_fast8_t(RAM[offset_o + i + 3]) * 256;
 			int y_position = RAM[offset_o + i + 4] + int_fast8_t(RAM[offset_o + i + 5]) * 256;
 			uint_fast16_t tile = RAM[offset_o + i] + ((flags & 1) << 8);
