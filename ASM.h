@@ -433,7 +433,8 @@ void decompressHDMAnet()
 	}
 }
 
-uint_fast16_t sprite_f_send[19] =
+#define spr_ent_net 19
+uint_fast16_t sprite_f_send[spr_ent_net] =
 {
 	0, //Status
 	1, //Num
@@ -575,7 +576,7 @@ void Sync_Server_RAM(bool compressed = false)
 		for (uint_fast8_t i = 0; i < spr_entries; i++) {
 			uint_fast8_t p;
 			CurrentPacket >> p;
-			for (uint_fast16_t n = 0; n < sizeof(sprite_f_send); n++) {
+			for (uint_fast16_t n = 0; n < spr_ent_net; n++) {
 				CurrentPacket >> RAM[0x2000 + (sprite_f_send[n] << 7) + p];
 			}
 			//p++;
@@ -787,7 +788,7 @@ void Push_Server_RAM(bool compress = false)
 		for (uint_fast8_t i = 0; i < 0x80; i++) {
 			if (RAM[0x2000 + i] != 0) {
 				CurrentPacket << i;
-				for (uint_fast16_t n = 0; n < sizeof(sprite_f_send); n++) {
+				for (uint_fast16_t n = 0; n < spr_ent_net; n++) {
 					CurrentPacket << RAM[0x2000 + (sprite_f_send[n] << 7) + i];
 				}
 			}
