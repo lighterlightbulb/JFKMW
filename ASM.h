@@ -497,6 +497,12 @@ void Sync_Server_RAM(bool compressed = false)
 		//HDMA
 		decompressHDMAnet();
 
+		//Receive Sound
+		CurrentPacket >> RAM[0x1DF9];
+		CurrentPacket >> RAM[0x1DFA];
+		CurrentPacket >> RAM[0x1DFB];
+		CurrentPacket >> RAM[0x1DFC];
+
 		//receive Mode 7 stuff
 		CurrentPacket >> RAM[0x36];
 		CurrentPacket >> RAM[0x38];
@@ -612,7 +618,7 @@ bool checkRAMarea_net(uint_fast32_t i)
 	return 
 		((i < 0x200 || i > 0x5FF) && (i < 0x2000 || i >= 0x3000)) && //OAM and SPR
 		((i < 0x5000 || i > 0x5FFF) && (i < 0x1B800 || i >= 0x1C000)) && //PLR ram
-		(i < 0x7000 || i > 0x7FFF) //Free ram
+		((i < 0x7000 || i > 0x7FFF) && (i >= 0x1DF9 && i <= 0x1DFC)) //Sound & Free
 		;
 }
 
@@ -702,6 +708,12 @@ void Push_Server_RAM(bool compress = false)
 
 		//HDMA
 		compressHDMAnet();
+
+		//Send Sound
+		CurrentPacket << RAM[0x1DF9];
+		CurrentPacket << RAM[0x1DFA];
+		CurrentPacket << RAM[0x1DFB];
+		CurrentPacket << RAM[0x1DFC];
 
 		//Send Mode 7 stuff
 		CurrentPacket << RAM[0x36];

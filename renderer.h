@@ -79,6 +79,9 @@ void drawBackground()
 		SrcR.w = 1;
 		SrcR.h = 1;
 
+		DestR.w = (1 * m) * (scale);
+		DestR.h = (1 * m) * (scale);
+
 		uint_fast16_t draw_x = int_res_x / m;
 		uint_fast16_t draw_y = int_res_y / m;
 		draw_x++;
@@ -88,14 +91,11 @@ void drawBackground()
 		{
 			for (uint_fast16_t y = 0; y < draw_y; y++)
 			{
-				SrcR.x = (formula_x + (x * m)) % 512;
+				SrcR.x = (-formula_x + (x * m)) & 0x1FF;
 				SrcR.y = (-formula_y + 272 + (y * m)) % 512;
 
 				DestR.x = sp_offset_x + (x * m) * (scale);
 				DestR.y = sp_offset_y + (y * m) * (scale);
-
-				DestR.w = (1 * m) * (scale);
-				DestR.h = (1 * m) * (scale);
 
 				SDL_RenderCopy(ren, bg_texture, &SrcR, &DestR);
 			}
@@ -284,6 +284,9 @@ void render()
 			SrcR.w = 1;
 			SrcR.h = 1;
 
+			DestR.w = (1 * m) * (scale);
+			DestR.h = (1 * m) * (scale);
+
 			uint_fast16_t draw_x = int_res_x / m;
 			uint_fast16_t draw_y = int_res_y / m;
 			draw_x++;
@@ -298,9 +301,6 @@ void render()
 
 					DestR.x = sp_offset_x + (x * m) * (scale);
 					DestR.y = sp_offset_y + (y * m) * (scale);
-
-					DestR.w = (1 * m) * (scale);
-					DestR.h = (1 * m) * (scale);
 
 					SDL_RenderCopy(ren, screen_t_l1, &SrcR, &DestR);
 				}
