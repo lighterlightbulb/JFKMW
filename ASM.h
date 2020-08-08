@@ -482,6 +482,7 @@ void Sync_Server_RAM(bool compressed = false)
 		CurrentPacket >> RAM[0x1411];
 		CurrentPacket >> RAM[0x1412];
 		CurrentPacket >> RAM[0x40];
+		CurrentPacket >> RAM[0x9D];
 
 		//receive on/off status
 		CurrentPacket >> RAM[0x14AF];
@@ -687,6 +688,7 @@ void Push_Server_RAM(bool compress = false)
 		CurrentPacket << RAM[0x1411];
 		CurrentPacket << RAM[0x1412];
 		CurrentPacket << RAM[0x40];
+		CurrentPacket << RAM[0x9D];
 
 		//Send on/off status
 		CurrentPacket << RAM[0x14AF];
