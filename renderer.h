@@ -69,24 +69,33 @@ void drawBackground()
 
 	int formula_x = (-int(double(CameraX) * (double(RAM[0x3F06]) / 16.0) + ASM.Get_Ram(0x1466, 2))) % 512;
 	int formula_y = (int(double(CameraY) * (double(RAM[0x3F07]) / 16.0) + ASM.Get_Ram(0x1468, 2))) % 512;
-	if (layer2mode_x || layer2mode_y)
+
+	SDL_Rect DestR;
+	SDL_Rect SrcR;
+	uint_fast8_t mosaic_val = RAM[0x3F10] >> 4;
+	if (mosaic_val > 0)
 	{
-		SDL_Rect DestR;
-		SDL_Rect SrcR;
+		uint_fast8_t m = (1 + mosaic_val);
+		SrcR.w = 1;
+		SrcR.h = 1;
 
-		for (int x = -1; x < 3; x++)
+		uint_fast16_t draw_x = int_res_x / m;
+		uint_fast16_t draw_y = int_res_y / m;
+		draw_x++;
+		draw_y++;
+
+		for (uint_fast16_t x = 0; x < draw_x; x++)
 		{
-			for (uint_fast8_t i = 0; i < 224; i++)
+			for (uint_fast16_t y = 0; y < draw_y; y++)
 			{
-				SrcR.x = 0;
-				SrcR.y = (-formula_y + 256 + int(i) + int(layer2_shiftY[i] & 0x1FF)) & 0x1FF;
-				SrcR.w = 512;
-				SrcR.h = 1;
+				SrcR.x = (formula_x + (x * m)) % 512;
+				SrcR.y = (-formula_y + 272 + (y * m)) % 512;
 
-				DestR.x = sp_offset_x + ((layer2_shiftX[i] & 0x1FF) + formula_x + (x * 512)) * scale;
-				DestR.y = sp_offset_y + (((int_res_y - 224)/2) + i) * scale;
-				DestR.w = 512 * scale;
-				DestR.h = 1 * scale;
+				DestR.x = sp_offset_x + (x * m) * (scale);
+				DestR.y = sp_offset_y + (y * m) * (scale);
+
+				DestR.w = (1 * m) * (scale);
+				DestR.h = (1 * m) * (scale);
 
 				SDL_RenderCopy(ren, bg_texture, &SrcR, &DestR);
 			}
@@ -94,20 +103,45 @@ void drawBackground()
 	}
 	else
 	{
+		if (layer2mode_x || layer2mode_y)
+		{
 
-		double bg_scale_x = 32.0 / double(RAM[0x38]);
-		double bg_scale_y = 32.0 / double(RAM[0x39]);
-		int off_x = int(512.0 * bg_scale_x);
-		int off_y = int(512.0 * bg_scale_y);
+			SrcR.x = 0;
+			SrcR.w = 512;
+			SrcR.h = 1;
+			DestR.w = 512 * scale;
+			DestR.h = 1 * scale;
 
-		int am_x = max(1, int(2.0 / bg_scale_x));
-		int am_y = max(1, int(2.0 / bg_scale_y));
-		for (int x = 0; x < am_x; x++) {
-			for (int y = 0; y < am_y; y++) {
-				RenderBackground(
-					formula_x + x * off_x,
-					-272 + (int_res_y - 224) + formula_y + (y * -off_y) + (512 - off_y)
-				);
+			for (int x = -1; x < 3; x++)
+			{
+				for (uint_fast8_t i = 0; i < 224; i++)
+				{
+					SrcR.y = (-formula_y + 256 + int(i) + int(layer2_shiftY[i] & 0x1FF)) & 0x1FF;
+
+					DestR.x = sp_offset_x + ((layer2_shiftX[i] & 0x1FF) + formula_x + (x * 512)) * scale;
+					DestR.y = sp_offset_y + (((int_res_y - 224) / 2) + i) * scale;
+
+					SDL_RenderCopy(ren, bg_texture, &SrcR, &DestR);
+				}
+			}
+		}
+		else
+		{
+
+			double bg_scale_x = 32.0 / double(RAM[0x38]);
+			double bg_scale_y = 32.0 / double(RAM[0x39]);
+			int off_x = int(512.0 * bg_scale_x);
+			int off_y = int(512.0 * bg_scale_y);
+
+			int am_x = max(1, int(2.0 / bg_scale_x));
+			int am_y = max(1, int(2.0 / bg_scale_y));
+			for (int x = 0; x < am_x; x++) {
+				for (int y = 0; y < am_y; y++) {
+					RenderBackground(
+						formula_x + x * off_x,
+						-272 + (int_res_y - 224) + formula_y + (y * -off_y) + (512 - off_y)
+					);
+				}
 			}
 		}
 	}
@@ -134,6 +168,9 @@ void render()
 	/*
 		Sorry for shitcode
 	*/
+	uint_fast8_t transition_type = RAM[0x1493] > 0 ? 3 : RAM[0x3F11];
+	uint_fast8_t mosaic_val = RAM[0x3F10] >> 4;
+	uint_fast8_t bright_val = RAM[0x3F10] & 0xF;
 
 	/*
 		Convert 16bit palette to 32bit palette (for speed)
@@ -241,38 +278,74 @@ void render()
 			SDL_SetTextureBlendMode(screen_t_l1, SDL_BlendMode(RAM[0x40]));
 		}
 
-		if (!layer1mode_y)
+		if (mosaic_val > 0)
 		{
-			DestR.x = sp_offset_x;
-			DestR.y = sp_offset_y;
-			DestR.w = int_res_x * scale;
-			DestR.h = int_res_y * scale;
-			SDL_RenderCopy(ren, screen_t_l1, nullptr, &DestR);
+			uint_fast8_t m = (1 + mosaic_val);
+			SrcR.w = 1;
+			SrcR.h = 1;
+
+			uint_fast16_t draw_x = int_res_x / m;
+			uint_fast16_t draw_y = int_res_y / m;
+			draw_x++;
+			draw_y++;
+
+			for (uint_fast16_t x = 0; x < draw_x; x++)
+			{
+				for (uint_fast16_t y = 0; y < draw_y; y++)
+				{
+					SrcR.x = (x * m);
+					SrcR.y = (y * m);
+
+					DestR.x = sp_offset_x + (x * m) * (scale);
+					DestR.y = sp_offset_y + (y * m) * (scale);
+
+					DestR.w = (1 * m) * (scale);
+					DestR.h = (1 * m) * (scale);
+
+					SDL_RenderCopy(ren, screen_t_l1, &SrcR, &DestR);
+				}
+			}
 		}
 		else
 		{
-			for (uint_fast8_t i = 0; i < 224; i++)
+			if (!layer1mode_y)
+			{
+				DestR.x = sp_offset_x;
+				DestR.y = sp_offset_y;
+				DestR.w = int_res_x * scale;
+				DestR.h = int_res_y * scale;
+				SDL_RenderCopy(ren, screen_t_l1, nullptr, &DestR);
+			}
+			else
 			{
 				SrcR.x = 0;
-				SrcR.y = (i + layer1_shiftY[i]) % 224;
 				SrcR.w = int_res_x;
 				SrcR.h = 1;
-
-				DestR.x = sp_offset_x;
-				DestR.y = sp_offset_y + i * scale;
 				DestR.w = int_res_x * scale;
 				DestR.h = 1 * scale;
 
-				SDL_RenderCopy(ren, screen_t_l1, &SrcR, &DestR);
+				DestR.x = sp_offset_x;
+				for (uint_fast8_t i = 0; i < 224; i++)
+				{
+					SrcR.y = (i + layer1_shiftY[i]) % 224;
+					DestR.y = sp_offset_y + i * scale;
+
+					SDL_RenderCopy(ren, screen_t_l1, &SrcR, &DestR);
+				}
 			}
 		}
+
+		
 	}
 
-	//Draw screen darkening
-	SDL_SetRenderDrawColor(ren, 0, 0, 0, (screen_darken >> 3) << 3);
-	SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_BLEND);
-	SDL_RenderFillRect(ren, NULL);
-	SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_NONE);
+	//Draw screen darkening (Level Clear)
+	if (transition_type == 3)
+	{
+		SDL_SetRenderDrawColor(ren, 0, 0, 0, bright_val << 4);
+		SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_BLEND);
+		SDL_RenderFillRect(ren, NULL);
+		SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_NONE);
+	}
 
 
 	//Draw OAM (under)
@@ -332,8 +405,8 @@ void render()
 		//Status bar code here
 		for (int i = 0; i < 5; i++)
 		{
-			VRAM[0xB804 + (i * 2) + 128] = char_to_smw(LocalPlayer.player_name_cut[i]);
-			VRAM[0xB805 + (i * 2) + 128] = 2;
+			VRAM[0xB804 + (i * 2) + 128] = 0x40 + i + (my_skin % 3) * 5;
+			VRAM[0xB805 + (i * 2) + 128] = 3;
 		}
 
 		//WO's
@@ -405,8 +478,8 @@ void render()
 		//Status bar code here
 		for (int i = 0; i < 5; i++)
 		{
-			VRAM[0xB804 + (i * 2) + 128] = char_to_smw(LocalPlayer.player_name_cut[i]);
-			VRAM[0xB805 + (i * 2) + 128] = 2;
+			VRAM[0xB804 + (i * 2) + 128] = 0x40 + i + (my_skin % 3) * 5;
+			VRAM[0xB805 + (i * 2) + 128] = 3;
 		}
 
 		//WO's
@@ -688,5 +761,14 @@ void render()
 	DestR.w = 256 * scale;
 	DestR.h = 224 * scale;
 	SDL_RenderCopy(ren, screen_t_l2, nullptr, &DestR);
+
+	//Draw screen darkening (Fades)
+	if (transition_type != 3)
+	{
+		SDL_SetRenderDrawColor(ren, 0, 0, 0, bright_val << 4);
+		SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_BLEND);
+		SDL_RenderFillRect(ren, NULL);
+		SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_NONE);
+	}
 
 }

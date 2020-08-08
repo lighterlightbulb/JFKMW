@@ -7,6 +7,12 @@ void game_init()
 	decode_graphics_file("Graphics/exanimations.bin", 8);
 	decode_graphics_file("Graphics/hud.bin", 11);
 	memset(&RAM[0x1B800], 0xFF, 0x800);
+
+	RAM[0x3F10] = 0xFF;
+	RAM[0x3F11] = 2;
+	RAM[0x9D] = 0;
+
+	memset(&RAM[0x200], 0, 0x400); //Clear OAM
 }
 
 void game_loop_code()
@@ -15,18 +21,45 @@ void game_loop_code()
 	{
 		check_input();
 	}
+
 	global_frame_counter += 1;
 
-	if (RAM[0x1493] > 0)
+	/* Transitions */
+	uint_fast8_t transition_type = RAM[0x1493] > 0 ? 3 : RAM[0x3F11];
+	uint_fast8_t transition_speed = transition_type == 3 ? 7 : 1;
+	if (!(global_frame_counter & transition_speed))
 	{
-		if (screen_darken < 255)
-		{
-			screen_darken += 1;
+		uint_fast8_t mosaic_val = RAM[0x3F10] >> 4;
+		uint_fast8_t bright_val = RAM[0x3F10] & 0xF;
+		if (transition_type == 1 || transition_type == 3) {
+			if (bright_val < 0xF) {
+				bright_val++;
+			}
 		}
-	}
-	else
-	{
-		screen_darken = 0;
+		if (transition_type == 2) {
+			if (bright_val > 0) {
+				bright_val--;
+			}
+			if (mosaic_val > 0) {
+				mosaic_val--;
+			}
+			if (mosaic_val == 0 && bright_val == 0)
+			{
+				RAM[0x9D] = 1;
+				RAM[0x3F11] = 0;
+			}
+		}
+		if (transition_type == 1) {
+			RAM[0x9D] = 0;
+			if (mosaic_val < 0xF) {
+				mosaic_val++;
+			}
+			else
+			{
+				RAM[0x3F11] = 0;
+			}
+		}
+		RAM[0x3F10] = bright_val + (mosaic_val << 4);
 	}
 
 #if not defined(DISABLE_NETWORK)
@@ -107,45 +140,49 @@ void game_loop_code()
 	LevelManager.start_y = RAM[0x3F0D] + RAM[0x3F0E] * 256;
 
 	CheckForPlayers();
+	debugging_functions();
 
 	process_ex_animation();
 
-	debugging_functions();
-
-	if (!isClient)
+	if (RAM[0x9D])
 	{
-		for (uint_fast16_t i = 0; i < 256; i++)
+
+		if (!isClient)
 		{
-			if (death_timer[i] > 0) {
-				death_timer[i]--;
-				if (death_timer[i] == 0x80){
-					death_timer[i] = 0;
+			for (uint_fast16_t i = 0; i < 256; i++)
+			{
+				if (death_timer[i] > 0) {
+					death_timer[i]--;
+					if (death_timer[i] == 0x80) {
+						death_timer[i] = 0;
+					}
 				}
 			}
 		}
-	}
-	if (!isClient || !networking) //if we are the server or we are playing locally...
-	{
-		memset(&RAM[0x200], 0, 0x400);
-		Sprites.process_all_sprites(); //we're processing sprites. we're either the server or a player in local mode.
-		for (uint_fast8_t i = 0; i < 128; i++)
+		if (!isClient || !networking) //if we are the server or we are playing locally...
 		{
-			RAM[0x2A80 + i] &= 5;
+			memset(&RAM[0x200], 0, 0x400); //Clear OAM
+			Sprites.process_all_sprites(); //we're processing sprites. we're either the server or a player in local mode.
+			for (uint_fast8_t i = 0; i < 128; i++)
+			{
+				RAM[0x2A80 + i] &= 5;
+			}
 		}
+
+
+
 	}
 
-	uint_fast8_t player = 1;
 	int camera_total_x = 0; int camera_total_y = 0;
-
+	uint_fast8_t player = 1;
 	for (list<MPlayer>::iterator item = Mario.begin(); item != Mario.end(); ++item)
 	{
 		MPlayer& CurrPlayer = *item;
-		//cout << "Player " << dec << int(player) << " location is " << hex << &CurrPlayer << dec << endl;
 		CurrPlayer.PlayerControlled = networking ? (player == SelfPlayerNumber) : true; //Only control myself
 		if (!isClient && networking) {
 			CurrPlayer.PlayerControlled = false;
 		}
-		if (CurrPlayer.PlayerControlled == true){
+		if (CurrPlayer.PlayerControlled == true) {
 			CurrPlayer.mouse_x = mouse_x + CameraX;
 			CurrPlayer.mouse_y = (int_res_y - mouse_y) + CameraY;
 			CurrPlayer.mouse_state[0] = mouse_down;
@@ -177,7 +214,11 @@ void game_loop_code()
 			}
 		}
 		CurrPlayer.player_index = player;
-		CurrPlayer.Process();
+
+		if (RAM[0x9D])
+		{
+			CurrPlayer.Process();
+		}
 
 		camera_total_x += max(0, int(CurrPlayer.CAMERA_X - 128.0));
 		camera_total_y += max(0, int(CurrPlayer.CAMERA_Y - 112.0));
@@ -212,7 +253,7 @@ void game_loop_code()
 		RAM[0x5D00 + player - 1] = m_state_2 >> 8;
 		RAM[0x5E00 + player - 1] = result;
 
-		if (!isClient && RAM[0x1493] == 0)
+		if (RAM[0x9D] && !isClient && RAM[0x1493] == 0)
 		{
 			CheckSpritesInCam(int(max(128.0, CurrPlayer.CAMERA_X)));
 		}
@@ -225,15 +266,14 @@ void game_loop_code()
 	RAM[0x3F0F] = uint_fast8_t(Mario.size());
 
 	PlayerInteraction();
-	ProcessChat();
 
 	camera_total_x /= uint_fast32_t(Mario.size());
 	camera_total_y /= uint_fast32_t(Mario.size());
 
+	ProcessChat();
+
 	if (!isClient)
 	{
-		//cout << "clearing OAM";
-
 		if (RAM[0x1411] != 0)
 		{
 			ASM.Write_To_Ram(0x1462, uint_fast32_t(camera_total_x), 2);
@@ -242,16 +282,19 @@ void game_loop_code()
 		{
 			ASM.Write_To_Ram(0x1464, uint_fast32_t(camera_total_y), 2);
 		}
-		if (asm_loaded) {
-			ASM.start_JFK_thread(); //This runs the ASM.
-		}
-		if (lua_loaded) {
-			lua_run_main();
-		}
-		map16_handler.process_global();
-		processParticles();
+		if (RAM[0x9D])
+		{
+			if (asm_loaded) {
+				ASM.start_JFK_thread(); //This runs the ASM.
+			}
+			if (lua_loaded) {
+				lua_run_main();
+			}
+			map16_handler.process_global();
+			processParticles();
 
-		RAM[0x14] = global_frame_counter & 0xFF;
+			RAM[0x14] = global_frame_counter & 0xFF;
+		}
 	}
 
 	ProcessHDMA();

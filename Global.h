@@ -1,6 +1,6 @@
 #pragma once
 
-string GAME_VERSION = "1.4.5b";
+string GAME_VERSION = "1.5.0b";
 
 #define rom_asm_size 0x008000 //32kb, 1 bank ($00:8000 to $00:FFFF)
 #define location_rom_levelasm 0x008000 //this will put LevelASM on the start of the ROM, this is a SNES PC btw
@@ -36,7 +36,7 @@ uint_fast32_t pctosnes(uint_fast32_t pc) {
 #define player_expected_packet_size 54 //Strings apparently add 4 so we have to make sure of this so it wont crash.
 #define player_name_size 11
 
-#define MAX_L3_TILES 0x3E
+#define MAX_L3_TILES 0x4F
 
 #define level_ram_decay_time 40 //Server ticks before level data RAM becomes invalid to send
 
@@ -296,17 +296,18 @@ bool disconnected = false;
 bool isClient = false;
 
 
+
 //Game
 bool pvp = true;
 bool Chatting = false;
 string Typing_In_Chat = "";
 int_fast16_t CameraX, CameraY;
 uint_fast8_t curr_bg = 0xFF;
-uint_fast8_t screen_darken = 0;
 
 bool showing_player_list;
 bool pressed_select;
 bool pressed_start;
+
 
 bool smooth_camera = false;
 bool midway_activated = false;

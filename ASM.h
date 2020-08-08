@@ -498,6 +498,10 @@ void Sync_Server_RAM(bool compressed = false)
 		//receive grav
 		CurrentPacket >> RAM[0x7C];
 
+		//receive darkness and mosaic
+		CurrentPacket >> RAM[0x3F10];
+		CurrentPacket >> RAM[0x3F11];
+
 		//recieve level start
 		CurrentPacket >> RAM[0x3F0B];
 		CurrentPacket >> RAM[0x3F0C];
@@ -694,6 +698,10 @@ void Push_Server_RAM(bool compress = false)
 
 		//Send grav
 		CurrentPacket << RAM[0x7C];
+
+		//Send darkness and mosaic
+		CurrentPacket << RAM[0x3F10];
+		CurrentPacket << RAM[0x3F11];
 
 		//Send level start
 		CurrentPacket << RAM[0x3F0B];

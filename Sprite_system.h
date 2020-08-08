@@ -32,10 +32,14 @@ public:
 			}
 			if (int_fast8_t(RAM[0x2480 + entry]) > sprgravity)
 			{
-				int grav = RAM[0x2880 + entry] & 0b1000 ? 2 : 3;
+				int grav;
 				if (IN_WT)
 				{
-					grav = 1;
+					grav = RAM[0x2880 + entry] & 0b1000 ? 0 : 1;
+				}
+				else
+				{
+					grav = RAM[0x2880 + entry] & 0b1000 ? 2 : 3;
 				}
 
 				RAM[0x2480 + entry] = max(sprgravity, RAM[0x2480 + entry] - grav);

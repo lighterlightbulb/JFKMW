@@ -76,7 +76,7 @@ public:
 	bool was_jumpin = false;
 
 	bool CAN_SPRINT = false;
-	string sprite = "STAND_0";
+	string sprite = "";
 
 	//Chat strings (THIS IS ONLY SENT. NOT RECEIVED!)
 	string curr_chat_string = "";
