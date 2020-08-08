@@ -44,10 +44,6 @@ void process_ex_animation()
 		//Brown block
 		memcpy(&RAM[VRAM_Location + (32 * 0x58)], &RAM[VRAM_Location + 0x8000 + (0xB4 * 32)], 128);
 
-		//Turnblock def
-		memcpy(&RAM[VRAM_Location + (32 * 0x6)], &RAM[VRAM_Location + 0x8000 + (0xC8 * 32)], 64);
-		memcpy(&RAM[VRAM_Location + (32 * 0x16)], &RAM[VRAM_Location + 0x8000 + (0xCA * 32)], 64);
-
 		//Flippin turnblock
 		memcpy(&RAM[VRAM_Location + (32 * 0xEA)], &RAM[VRAM_Location + 0x8000 + (0xC8 * 32) + (((global_frame_counter >> 3) & 3) << 9)], 128);
 
