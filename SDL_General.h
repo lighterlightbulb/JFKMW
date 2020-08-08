@@ -137,7 +137,7 @@ void screen(int width, int height)
 	amask = 0xff000000;
 #endif
 
-	screen_s_l1 = *SDL_CreateRGBSurface(0, int_res_x, int_res_y, 32,
+	screen_s_l1 = *SDL_CreateRGBSurface(0, int_res_x + 16, int_res_y + 16, 32,
 		rmask, gmask, bmask, amask);
 
 #if defined(_WIN32)
@@ -369,10 +369,6 @@ void draw8x8_tile(int_fast16_t x, int_fast16_t y, uint_fast16_t tile, uint_fast8
 		{
 			uint_fast16_t y_p = y + index;
 			uint_fast16_t x_p = 7 - i + x;
-			if (layer1mode_x && y_p < 224) { x_p += layer1_shiftX[y_p]; }
-			if (y_p >= int_res_y || x_p >= int_res_x) {
-				continue;
-			}
 			color1 =
 				((graphics_array[0 + ind] >> i) & 1) + 
 				(((graphics_array[1 + ind] >> i) & 1) << 1) + 
@@ -382,7 +378,7 @@ void draw8x8_tile(int_fast16_t x, int_fast16_t y, uint_fast16_t tile, uint_fast8
 
 			if (color1 != 0)
 			{
-				Uint32* p_screen = (Uint32*)(&screen_s_l1)->pixels + ((y_p * int_res_x) + x_p);
+				Uint32* p_screen = (Uint32*)(&screen_s_l1)->pixels + ((y_p * (int_res_x + 16)) + x_p);
 				*p_screen = palette_array[color1 + palette];
 			}
 		}

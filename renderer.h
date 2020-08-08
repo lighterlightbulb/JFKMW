@@ -202,10 +202,10 @@ void render()
 		CameraY = (-int_fast16_t(int_res_y) + int_fast16_t(mapHeight) * 16);
 	}
 
-	int_fast16_t offsetX = int_fast16_t(CameraX / 16.0);
-	uint_fast8_t offsetXPixel = uint_fast8_t(CameraX) % 16;
-	int_fast16_t offsetY = int_fast16_t(CameraY / 16.0);
-	uint_fast8_t offsetYPixel = uint_fast8_t(CameraY) % 16;
+	int_fast16_t offsetX = int_fast16_t(CameraX >> 4);
+	uint_fast8_t offsetXPixel = uint_fast8_t(CameraX) & 0xF;
+	int_fast16_t offsetY = int_fast16_t(CameraY >> 4);
+	uint_fast8_t offsetYPixel = uint_fast8_t(CameraY) & 0xF;
 
 	//Draw BG
 	if (drawBg) {
@@ -249,8 +249,8 @@ void render()
 								blocks_on_screen++;
 							}
 							draw8x8_tile(
-								((i << 3) & 0xF) - offsetXPixel + (x << 4),
-								(int_res_y - 16) - (i > 1 ? -8 : 0) + offsetYPixel - (y << 4),
+								((i << 3) & 0xF) + (x << 4),
+								(int_res_y) - (i > 1 ? -8 : 0) - (y << 4),
 								block_index, block_palette
 							);
 						}
@@ -302,27 +302,29 @@ void render()
 		}
 		else
 		{
-			if (!layer1mode_y)
+			if (!layer1mode_y && !layer1mode_x)
 			{
-				DestR.x = sp_offset_x;
-				DestR.y = sp_offset_y;
-				DestR.w = int_res_x * scale;
-				DestR.h = int_res_y * scale;
+				DestR.x = sp_offset_x - offsetXPixel * scale;
+				DestR.y = sp_offset_y - (16 * scale) + offsetYPixel * scale;
+				DestR.w = (int_res_x + 16) * scale;
+				DestR.h = (int_res_y + 16) * scale;
 				SDL_RenderCopy(ren, screen_t_l1, nullptr, &DestR);
 			}
 			else
 			{
 				SrcR.x = 0;
-				SrcR.w = int_res_x;
+				SrcR.w = int_res_x + 16;
 				SrcR.h = 1;
-				DestR.w = int_res_x * scale;
+				DestR.w = (int_res_x + 16) * scale;
 				DestR.h = 1 * scale;
 
-				DestR.x = sp_offset_x;
-				for (uint_fast8_t i = 0; i < 224; i++)
+				
+				for (uint_fast16_t i = 0; i < 256; i++)
 				{
-					SrcR.y = (i + layer1_shiftY[i]) % 224;
-					DestR.y = sp_offset_y + i * scale;
+					SrcR.y = (i + (layer1_shiftY[(-offsetYPixel + i) % 224])) % 256;
+
+					DestR.y = sp_offset_y + ((i + -16 + offsetYPixel) * scale);
+					DestR.x = sp_offset_x + (-offsetXPixel + layer1_shiftX[(offsetYPixel + (i - 16)) % 224]) * scale;
 
 					SDL_RenderCopy(ren, screen_t_l1, &SrcR, &DestR);
 				}
