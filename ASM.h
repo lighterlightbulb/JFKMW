@@ -433,6 +433,29 @@ void decompressHDMAnet()
 	}
 }
 
+uint_fast16_t sprite_f_send[19] =
+{
+	0, //Status
+	1, //Num
+	2, //Xpos
+	3, //Xpos
+	4, //Xpos
+	5, //Ypos
+	6, //Ypos
+	7, //Ypos
+	8, //Xspd
+	9, //Yspd
+	10, //Xsize
+	11, //Ysize
+	12, //FL
+	13, //Dir
+	14, //Inter
+	17, //Flag 2
+	28, //Prop
+	29, //Prop
+	30 //Prop
+};
+
 void Sync_Server_RAM(bool compressed = false)
 {
 	while (doing_write || doing_read) {
@@ -552,8 +575,8 @@ void Sync_Server_RAM(bool compressed = false)
 		for (uint_fast8_t i = 0; i < spr_entries; i++) {
 			uint_fast8_t p;
 			CurrentPacket >> p;
-			for (uint_fast16_t n = 0; n < 0x20; n++) {
-				CurrentPacket >> RAM[0x2000 + (n << 7) + p];
+			for (uint_fast16_t n = 0; n < sizeof(sprite_f_send); n++) {
+				CurrentPacket >> RAM[0x2000 + (sprite_f_send[n] << 7) + p];
 			}
 			//p++;
 		}
@@ -764,8 +787,8 @@ void Push_Server_RAM(bool compress = false)
 		for (uint_fast8_t i = 0; i < 0x80; i++) {
 			if (RAM[0x2000 + i] != 0) {
 				CurrentPacket << i;
-				for (uint_fast16_t n = 0; n < 0x20; n++) {
-					CurrentPacket << RAM[0x2000 + (n << 7) + i];
+				for (uint_fast16_t n = 0; n < sizeof(sprite_f_send); n++) {
+					CurrentPacket << RAM[0x2000 + (sprite_f_send[n] << 7) + i];
 				}
 			}
 		}
