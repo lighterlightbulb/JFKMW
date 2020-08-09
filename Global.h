@@ -36,7 +36,7 @@ uint_fast32_t pctosnes(uint_fast32_t pc) {
 #define player_expected_packet_size 54 //Strings apparently add 4 so we have to make sure of this so it wont crash.
 #define player_name_size 11
 
-#define MAX_L3_TILES 0x6A
+#define MAX_L3_TILES 0x7F
 
 #define level_ram_decay_time 40 //Server ticks before level data RAM becomes invalid to send
 
@@ -466,23 +466,41 @@ void ConvertPalette()
 	switch (my_skin % 3)
 	{
 	case 0:
-		col = 0x0CFB; break;
+		palette_array[0x0E] = 0xFF1838D8; break;
 	case 1:
-		col = 0x2FEB; break;
+		palette_array[0x0E] = 0xFF58F858; break;
 	case 2:
-		col = 0x294A; break;
+		palette_array[0x0E] = 0xFF505050; break;
 	}
-	RAM[0x3D0E] = col;
-	RAM[0x3E0E] = col >> 8;
 
-	RAM[0x3D0F] = 0xAB;
-	RAM[0x3E0F] = 0x7A;
+	//Hud border colors
+	palette_array[0x09] = 0xFF000000;
+	palette_array[0x19] = 0xFF000000;
+	palette_array[0x0D] = 0xFF000000;
+	palette_array[0x1D] = 0xFF000000;
+	palette_array[0x0A] = 0xFF000000;
+	palette_array[0x0B] = 0xFF000000;
+
+	//Itembox
+	palette_array[0x0F] = 0xFFF0A858;
+
+	//Text 1 (White)
+	palette_array[0x1A] = 0xFFBFBFBF;
+	palette_array[0x1B] = 0xFFFFFFFF;
+
+	//Text 2 (Yellow)
+	palette_array[0x1E] = 0xFF70D8F8; //0xFF38A0D8;
+	palette_array[0x1F] = 0xFF70D8F8;
+
 
 	/*
 		Convert 16-bit palette to 32-bit palette
 	*/
 	for (uint_fast16_t i = 0; i < 256; i++)
 	{
+		if ((i >= 0x08 && i < 0x10) || (i >= 0x18 && i < 0x20)) {
+			continue;
+		}
 		uint_fast16_t c = RAM[0x3D00 + i] + (RAM[0x3E00 + i] << 8);
 		palette_array[i] =
 			0xFF000000 + (((c & 0x1F) << 3)) +

@@ -275,26 +275,28 @@ public:
 
 	void Initialize_Level()
 	{
-		ASM.Write_To_Ram(0x1411, 1, 1);
-		ASM.Write_To_Ram(0x1412, 1, 1);
-
 		ASM.Write_To_Ram(0x1462, 0, 2);
 		ASM.Write_To_Ram(0x1464, 0, 2);
 		ASM.Write_To_Ram(0x1466, 0, 2);
 		ASM.Write_To_Ram(0x1468, 0, 2);
 
-		ASM.Write_To_Ram(0x14AF, 0, 1);
+		//Reset some vars
+		RAM[0x14AF] = 0;
+		RAM[0x7C] = 96;
+		RAM[0x85] = 0;
+		RAM[0x36] = 0;
+		RAM[0x38] = 0x20;
+		RAM[0x39] = 0x20;
+		RAM[0x40] = 0;
+		RAM[0x1493] = 0;
+		RAM[0x1411] = 0;
+		RAM[0x1412] = 0;
 
-		ASM.Write_To_Ram(0x7C, 96, 1);
-
-		ASM.Write_To_Ram(0x85, 0, 1);
-
-		ASM.Write_To_Ram(0x36, 0, 1);
-		ASM.Write_To_Ram(0x38, 0x20, 1);
-		ASM.Write_To_Ram(0x39, 0x20, 1);
-
-		ASM.Write_To_Ram(0x40, 0, 1);
-		ASM.Write_To_Ram(0x1493, 0, 1);
+		if (!midway_activated)
+		{
+			RAM[0x1420] = 0;
+			RAM[0x0DBF] = 0;
+		}
 
 		ResetDMAandHDMA();
 	}

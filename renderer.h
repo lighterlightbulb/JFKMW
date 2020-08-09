@@ -10,12 +10,12 @@ void draw_number_hex(uint_fast8_t pos_x, uint_fast8_t pos_y, uint_fast16_t numbe
 
 }
 
-void draw_number_dec(uint_fast8_t pos_x, uint_fast8_t pos_y, int number)
+void draw_number_dec(uint_fast8_t pos_x, uint_fast8_t pos_y, int number, uint_fast8_t off = 0)
 {
 	int length = int(to_string(number).length());
 	for (int i = 0; i < length; i++)
 	{
-		VRAM[0xB800 + (-i * 2) + (pos_x * 2) + pos_y * 64] = int(number / pow(10, i)) % 10;
+		VRAM[0xB800 + (-i * 2) + (pos_x * 2) + pos_y * 64] = off + (int(number / pow(10, i)) % 10);
 		VRAM[0xB801 + (-i * 2) + (pos_x * 2) + pos_y * 64] = 6;
 	}
 
@@ -415,6 +415,21 @@ void render()
 		VRAM[0xB807 + 192] = 0x6;
 		draw_number_dec(5, 3, LocalPlayer.WO_counter);
 
+		//Dragon coins
+		for (uint_fast8_t d_c = 0; d_c < RAM[0x1420]; d_c++)
+		{
+			VRAM[0xB800 + ((d_c + 8) * 2) + 128] = 0x2F;
+			VRAM[0xB801 + ((d_c + 8) * 2) + 128] = 0x7;
+		}
+		VRAM[0xB800 + (9 * 2) + 192] = 0x6A;
+		VRAM[0xB801 + (9 * 2) + 192] = 0x3;
+		VRAM[0xB800 + (10 * 2) + 192] = 0x26;
+		VRAM[0xB801 + (10 * 2) + 192] = 0x6;
+
+		//Bonus stars
+		draw_number_dec(13, 2, 0, 0x6B);
+		draw_number_dec(13, 3, 0, 0x75);
+
 		//Coins
 		draw_number_dec(29, 2, RAM[0x0DBF] % 100);
 
@@ -458,7 +473,23 @@ void render()
 		VRAM[0xB801 + (16 * 2) + 256] = 0x3;
 		VRAM[0xB800 + (17 * 2) + 256] = 0x37;
 		VRAM[0xB801 + (17 * 2) + 256] = 0x3;
-		
+
+		//Time
+		VRAM[0xB800 + (19 * 2) + 128] = 0x2E;
+		VRAM[0xB801 + (19 * 2) + 128] = 0x7;
+		VRAM[0xB800 + (20 * 2) + 128] = 0x3F;
+		VRAM[0xB801 + (20 * 2) + 128] = 0x7;
+		VRAM[0xB800 + (21 * 2) + 128] = 0x4F;
+		VRAM[0xB801 + (21 * 2) + 128] = 0x7;
+		//Change later
+		VRAM[0xB800 + (19 * 2) + 192] = 0x7F;
+		VRAM[0xB801 + (19 * 2) + 192] = 0x7;
+		VRAM[0xB800 + (20 * 2) + 192] = 0x7F;
+		VRAM[0xB801 + (20 * 2) + 192] = 0x7;
+		VRAM[0xB800 + (21 * 2) + 192] = 0x0;
+		VRAM[0xB801 + (21 * 2) + 192] = 0x7;
+
+
 		//KB & Ping
 		if (networking)
 		{
@@ -609,7 +640,7 @@ void render()
 			VRAM[0xB805 + (y << 6)] = 6;
 			for (int i = 0; i < player_name_size; i++)
 			{
-				VRAM[0xB808 + (i * 2) + (y << 6)] = char_to_smw(CurrentMario.player_name_cut[i]);;
+				VRAM[0xB808 + (i * 2) + (y << 6)] = char_to_smw(CurrentMario.player_name_cut[i]);
 				VRAM[0xB809 + (i * 2) + (y << 6)] = 6;
 			}
 
@@ -642,15 +673,12 @@ void render()
 
 		int s_off_x = (int_res_x - 256) / 2;
 		int s_off_y = (int_res_y - 224) / 2;
-		if (!CurrentMario.PlayerControlled && CurrentMario.x > (CameraX + 16 + s_off_x) && CurrentMario.y > (CameraY + s_off_y) && CurrentMario.x < (CameraX + 224 + s_off_x) && CurrentMario.y < (CameraY + 160 + s_off_y)) //!CurrentMario.PlayerControlled && 
+		if (!CurrentMario.PlayerControlled && CurrentMario.x > (CameraX - camBoundX) && CurrentMario.y > (CameraY - camBoundY) && CurrentMario.x < (CameraX + int_res_x + camBoundX) && CurrentMario.y < (CameraY + int_res_y + camBoundY))
 		{
 			for (int i = 0; i < 5; i++)
 			{
-				uint_fast8_t new_l = uint_fast8_t(CurrentMario.player_name_cut[i]);
-				if (new_l == 0x20) { new_l = 0x57 + 0x7F; }
-				if (new_l < 0x3A) { new_l = new_l - 0x30 + 0x57; }
-
-				draw8x8_tile_2bpp(-s_off_x + -12 + int(CurrentMario.x) - int(CameraX) + i * 8, s_off_y + 224 - int(CurrentMario.y + (CurrentMario.STATE ? 40 : 32)) + int(CameraY), new_l - 0x57, 6);
+				uint_fast8_t new_l = char_to_smw(CurrentMario.player_name_cut[i]);
+				draw8x8_tile_2bpp(-s_off_x + -12 + int(CurrentMario.x) - int(CameraX) + i * 8, s_off_y + 224 - int(CurrentMario.y + (CurrentMario.STATE ? 40 : 32)) + int(CameraY), new_l, 6);
 			}
 		}
 	}
