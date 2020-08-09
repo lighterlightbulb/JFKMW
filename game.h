@@ -17,7 +17,10 @@ void load_level3f08()
 {
 	if (ASM.Get_Ram(0x3f08, 2) != 0)
 	{
-		midway_activated = false;
+		if (ASM.Get_Ram(0x3F08, 2) != ASM.Get_Ram(0x010b, 2))
+		{
+			midway_activated = false;
+		}
 		LevelManager.LoadLevel(uint_fast16_t(ASM.Get_Ram(0x3f08, 2)));
 
 		game_init();
@@ -79,6 +82,10 @@ void game_loop_code()
 			}
 			else
 			{
+				if (transition_type == 5)
+				{
+					load_level3f08();
+				}
 				RAM[0x3F11] = 0;
 			}
 		}
@@ -103,7 +110,7 @@ void game_loop_code()
 			else
 			{
 				RAM[0x3F11] = 0;
-				if (transition_type == 4)
+				if (transition_type = 4)
 				{
 					load_level3f08();
 				}

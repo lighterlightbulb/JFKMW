@@ -279,7 +279,6 @@ bool done()
 					break;
 				}
 			}
-			break;
 		}
 	}
 #endif

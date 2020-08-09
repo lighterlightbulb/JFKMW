@@ -307,6 +307,8 @@ public:
 			level_data.erase(level_data.begin());
 		}
 
+		ASM.Write_To_Ram(0x010B, num, 2);
+
 		Initialize_Level();
 		cout << green
 			<< "[Level Manager] Loading level " << int_to_hex(num) << ".."

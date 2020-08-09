@@ -68,7 +68,7 @@ public:
 	int_fast8_t pipe_speed_y = 0;
 
 
-	int_fast8_t DEATH_TIMER = 0;
+	uint_fast8_t DEATH_TIMER = 0;
 
 	bool PlayerControlled = false;
 
@@ -107,13 +107,19 @@ public:
 		{
 			if (!DEAD)
 			{
-				if (RAM[0x1493] == 0)
+				WO_counter += 1;
+				if (networking)
 				{
-					WO_counter += 1;
-					ASM.Write_To_Ram(0x1DFC, 100, 1);
+					RAM[0x1DFC] = 100;
 				}
+				else
+				{
+					RAM[0x9D] = 0;
+					RAM[0x1DFB] = 9;
+				}
+				DEATH_TIMER = y < -16.0 ? 150 : 32;
 				DEAD = true;
-				DEATH_TIMER = 27;
+			
 			}
 		}
 	}
@@ -221,29 +227,44 @@ public:
 		x += X_SPEED;
 		y += Y_SPEED;
 
-		if (y < -16.0)
+		if (networking)
 		{
-			Respawn();
+			if (y < -16.0)
+			{
+				Respawn();
+			}
+		}
+		else
+		{
+			if (y < -496.0)
+			{
+				/*
+					Reload
+				*/
+				RAM[0x3F11] = 5;
+				ASM.Write_To_Ram(0x3F08, ASM.Get_Ram(0x010B, 2), 2);
+			}
 		}
 
-		DEATH_TIMER -= 1;
-
-		if (DEATH_TIMER == 0)
+		if (DEATH_TIMER)
 		{
-			Y_SPEED = Calculate_Speed(1280.0);
+			DEATH_TIMER--;
+			if (!DEATH_TIMER && y > -14.0)
+			{
+				Y_SPEED = Calculate_Speed(1280.0);
+			}
 		}
-		if (DEATH_TIMER <= 0)
+		if (!DEATH_TIMER)
 		{
-			//cout << DEATH_TIMER % 5;
-			if (DEATH_TIMER % 5 == -1)
+			if (!(global_frame_counter % 5))
 			{
 				to_scale *= -1;
 			}
 			Y_SPEED -= Calculate_Speed(48.0);
+			Y_SPEED = max(-4.0, Y_SPEED);
 		}
 		else
 		{
-
 			X_SPEED = 0.0;
 			Y_SPEED = 0.0;
 		}
@@ -931,10 +952,13 @@ public:
 		}
 
 		if (!RAM[0x9D]) {
+			if (DEAD) {
+				return DeathProcess();
+			}
 			return 1;
 		}
 		SLOPE_TYPE = 0;
-
+		
 		getInput();
 		if (pad[button_y] != old_y) {
 			old_y = pad[button_y];
@@ -945,12 +969,12 @@ public:
 
 		height = (STATE > 0 && CROUCH == 0) ? 28.0 : 14.0;
 
-		if (DEAD) {
-			return DeathProcess();
+		if (y < -32.0 && !DEAD) {
+			Die();
 		}
 
-		if (y < -16.0) {
-			Die();
+		if (DEAD) {
+			return DeathProcess();
 		}
 
 		if (INVINCIBILITY_FRAMES > 0) {
@@ -1413,10 +1437,11 @@ public:
 
 	void ProcessCamera() {
 
-		if (RAM[0x3F11])
+		if (RAM[0x3F11] || DEAD)
 		{
 			return;
 		}
+
 		if (RAM[0x1411] == 0)
 		{
 			int min_x = RAM[0x1462] + RAM[0x1463] * 256;

@@ -381,11 +381,6 @@ void addSprTexture(uint_fast32_t fl, SDL_Texture* newTex)
 void ClearSpriteCache()
 {
 	cout << yellow << "[GFX] Clearing Sprite Cache" << white << endl;
-	for (uint_fast16_t e = 0; e < 8; e++)
-	{
-		SDL_DestroyTexture(cached_l3_tiles[e]);
-	}
-
 	if (SpriteTextures.size() > 0)
 	{
 		for (unordered_map<uint_fast32_t, SDL_Texture*>::iterator it = SpriteTextures.begin(); it != SpriteTextures.end(); ++it)
