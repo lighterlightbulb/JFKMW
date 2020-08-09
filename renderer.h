@@ -10,13 +10,13 @@ void draw_number_hex(uint_fast8_t pos_x, uint_fast8_t pos_y, uint_fast16_t numbe
 
 }
 
-void draw_number_dec(uint_fast8_t pos_x, uint_fast8_t pos_y, int number, uint_fast8_t off = 0)
+void draw_number_dec(uint_fast8_t pos_x, uint_fast8_t pos_y, int number, uint_fast8_t off = 0, uint_fast8_t props = 6)
 {
 	int length = int(to_string(number).length());
 	for (int i = 0; i < length; i++)
 	{
 		VRAM[0xB800 + (-i * 2) + (pos_x * 2) + pos_y * 64] = off + (int(number / pow(10, i)) % 10);
-		VRAM[0xB801 + (-i * 2) + (pos_x * 2) + pos_y * 64] = 6;
+		VRAM[0xB801 + (-i * 2) + (pos_x * 2) + pos_y * 64] = props;
 	}
 
 }
@@ -481,14 +481,9 @@ void render()
 		VRAM[0xB801 + (20 * 2) + 128] = 0x7;
 		VRAM[0xB800 + (21 * 2) + 128] = 0x4F;
 		VRAM[0xB801 + (21 * 2) + 128] = 0x7;
-		//Change later
-		VRAM[0xB800 + (19 * 2) + 192] = 0x7F;
-		VRAM[0xB801 + (19 * 2) + 192] = 0x7;
-		VRAM[0xB800 + (20 * 2) + 192] = 0x7F;
-		VRAM[0xB801 + (20 * 2) + 192] = 0x7;
-		VRAM[0xB800 + (21 * 2) + 192] = 0x0;
-		VRAM[0xB801 + (21 * 2) + 192] = 0x7;
 
+		//Change later
+		draw_number_dec(21, 3, -int_fast16_t((global_frame_counter + 60) / 60) & 0x1FF, 0, 7);
 
 		//KB & Ping
 		if (networking)

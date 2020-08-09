@@ -485,7 +485,7 @@ void ConvertPalette()
 	palette_array[0x0F] = 0xFFF0A858;
 
 	//Text 1 (White)
-	palette_array[0x1A] = 0xFFBFBFBF;
+	palette_array[0x1A] = 0xFFFFFFFF;
 	palette_array[0x1B] = 0xFFFFFFFF;
 
 	//Text 2 (Yellow)
