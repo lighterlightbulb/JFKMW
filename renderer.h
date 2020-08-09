@@ -413,7 +413,7 @@ void render()
 		//WO's
 		VRAM[0xB806 + 192] = 0x26;
 		VRAM[0xB807 + 192] = 0x6;
-		draw_number_dec(5, 3, LocalPlayer.WO_counter);
+		draw_number_dec(5, 3, 99 - LocalPlayer.WO_counter);
 
 		//Dragon coins
 		for (uint_fast8_t d_c = 0; d_c < RAM[0x1420]; d_c++)
