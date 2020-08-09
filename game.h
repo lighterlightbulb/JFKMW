@@ -324,6 +324,13 @@ void game_loop_code()
 			RAM[0x14] = global_frame_counter & 0xFF;
 		}
 	}
+	else
+	{
+		if (RAM[0x9D])
+		{
+			RAM[0x14] = global_frame_counter & 0xFF;
+		}
+	}
 
 	ProcessHDMA();
 
