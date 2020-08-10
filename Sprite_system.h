@@ -72,7 +72,7 @@ public:
 					if (
 						x > (t_x - x_size) &&
 						x < (t_x + t_x_size) &&
-						y >(t_y - y_size) &&
+						y > (t_y - y_size) &&
 						y < (t_y + t_y_size)
 						)
 					{
@@ -82,7 +82,7 @@ public:
 						}
 						else
 						{
-							if (RAM[0x2000 + entry] && RAM[0x2000 + entry] < 3 && RAM[0x2600 + entry] & 0b1000000)
+							if (RAM[0x2000 + entry] < 3 && RAM[0x2600 + entry] & 0b1000000)
 							{
 								if (RAM[0x2000 + spr] == 1 && !RAM[0x2980 + spr])
 								{
