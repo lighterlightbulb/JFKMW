@@ -135,6 +135,8 @@ void drawBackground()
 
 			int am_x = max(1, int(2.0 / bg_scale_x));
 			int am_y = max(1, int(2.0 / bg_scale_y));
+
+
 			for (int x = 0; x < am_x; x++) {
 				for (int y = 0; y < am_y; y++) {
 					RenderBackground(
@@ -387,7 +389,11 @@ void render()
 
 			if (!CurrentMario.invisible)
 			{
-				Sprite Mario(path + "Sprites/mario/" + to_string(CurrentMario.skin) + "/" + CurrentMario.sprite + ".png", -8 + int(CurrentMario.x) - int(CameraX), int_res_y - 32 - int(CurrentMario.y) + int(CameraY), int(CurrentMario.to_scale * is_skidding) * 32, 32);
+				CreateSprite(path + "Sprites/mario/" + to_string(CurrentMario.skin) + "/" + CurrentMario.sprite + ".png",
+					-8 + int(CurrentMario.x) - int(CameraX), 
+					int_res_y - 32 - int(CurrentMario.y) + int(CameraY), 
+					int(CurrentMario.to_scale * is_skidding) * 32, 
+					32);
 			}
 		}
 	}
@@ -680,13 +686,13 @@ void render()
 
 
 	//Draw L3
-	for (uint_fast8_t t3_x = 0; t3_x < 32; t3_x++)
+	for (uint_fast16_t t3_x = 0; t3_x < 32; t3_x++)
 	{
-		for (uint_fast8_t t3_y = 0; t3_y < 28; t3_y++)
+		for (uint_fast16_t t3_y = 0; t3_y < 28; t3_y++)
 		{
-			if (VRAM[0xB800 + (t3_x * 2) + t3_y * 64] < MAX_L3_TILES)
+			if (VRAM[0xB800 + (t3_x << 1) + (t3_y << 6)] < MAX_L3_TILES)
 			{
-				draw8x8_tile_2bpp(t3_x * 8, t3_y * 8, VRAM[0xB800 + (t3_x * 2) + t3_y * 64], VRAM[0xB801 + (t3_x * 2) + t3_y * 64]);
+				draw8x8_tile_2bpp(t3_x << 3, t3_y << 3, VRAM[0xB800 + (t3_x << 1) + (t3_y << 6)], VRAM[0xB801 + (t3_x << 1) + (t3_y << 6)]);
 			}
 		}
 	}

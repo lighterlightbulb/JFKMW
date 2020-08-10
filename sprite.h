@@ -46,28 +46,18 @@ TextureManager TexManager;
 
 SDL_Texture *bg_texture;
 
-class Sprite
+void CreateSprite(string sprite, int x, int y, int size_x, int size_y)
 {
-public:
-	Sprite(string sprite, int x, int y, int size_x, int size_y, double angle = 0.0)
-	{
-		SDL_Rect DestR;
+	SDL_Rect DestR;
 
-		DestR.x = sp_offset_x + x * scale;
-		DestR.y = sp_offset_y + y * scale;
-		DestR.w = abs(size_x) * scale;
-		DestR.h = abs(size_y) * scale;
-		SDL_RendererFlip flip = SDL_FLIP_NONE;
-		if (size_x < 0) { flip = SDL_FLIP_HORIZONTAL; }
-
-
-
-		SDL_RenderCopyEx(ren, TexManager.loadTexture(sprite), NULL, &DestR, angle, NULL, flip);
-
-	}
-
-};
-
+	DestR.x = sp_offset_x + x * scale;
+	DestR.y = sp_offset_y + y * scale;
+	DestR.w = abs(size_x) * scale;
+	DestR.h = abs(size_y) * scale;
+	SDL_RendererFlip flip = SDL_FLIP_NONE;
+	if (size_x < 0) { flip = SDL_FLIP_HORIZONTAL; }
+	SDL_RenderCopyEx(ren, TexManager.loadTexture(sprite), NULL, &DestR, 0, NULL, flip);
+}
 
 void RenderBackground(int x, int y)
 {

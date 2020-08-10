@@ -57,42 +57,45 @@ public:
 		double xMove = double(double(int_fast8_t(RAM[0x2400 + entry])) * 16) / ((IN_WT && (RAM[0x2600 + entry] & 0b100000)) ? 384 : 256);
 		double yMove = double(double(int_fast8_t(RAM[0x2480 + entry])) * 16) / 256.0;
 
-		for (uint_fast8_t spr = 0; spr < 0x80; spr++)
+		if (RAM[0x2600 + entry] & 0b1000000)
 		{
-			if (spr != entry && RAM[0x2000 + spr])
+			for (uint_fast8_t spr = 0; spr < 0x80; spr++)
 			{
-				double t_x = double(RAM[0x2100 + spr] + double(RAM[0x2180 + spr]) * 256.0) + double(RAM[0x2200 + spr]) / 256.0;
-				double t_y = double(RAM[0x2280 + spr] + double(RAM[0x2300 + spr]) * 256.0) + double(RAM[0x2380 + spr]) / 256.0;
-
-				double t_x_size = double(RAM[0x2500 + spr]);
-				double t_y_size = double(RAM[0x2580 + spr]);
-
-				if (
-					x > (t_x - x_size) &&
-					x < (t_x + t_x_size) &&
-					y > (t_y - y_size) &&
-					y < (t_y + t_y_size)
-					)
+				if (spr != entry && RAM[0x2000 + spr])
 				{
-					if (RAM[0x2000 + entry] == 4)
-					{
-						RAM[0x2700 + spr] = 0xFF;
-					}
-					else
-					{
-						if (RAM[0x2000 + entry] && RAM[0x2000 + entry] < 3 && RAM[0x2600 + entry] & 0b1000000 && RAM[0x2600 + spr] & 0b1000000)
-						{
-							if (!RAM[0x2980 + spr] && RAM[0x2000 + spr] == 1)
-							{
-								RAM[0x2680 + spr] *= -1;
-								RAM[0x2400 + spr] *= -1;
+					double t_x = double(RAM[0x2100 + spr] + double(RAM[0x2180 + spr]) * 256.0) + double(RAM[0x2200 + spr]) / 256.0;
+					double t_y = double(RAM[0x2280 + spr] + double(RAM[0x2300 + spr]) * 256.0) + double(RAM[0x2380 + spr]) / 256.0;
 
-								RAM[0x2980 + spr] = 24;
+					double t_x_size = double(RAM[0x2500 + spr]);
+					double t_y_size = double(RAM[0x2580 + spr]);
+
+					if (
+						x > (t_x - x_size) &&
+						x < (t_x + t_x_size) &&
+						y >(t_y - y_size) &&
+						y < (t_y + t_y_size)
+						)
+					{
+						if (RAM[0x2000 + entry] == 4)
+						{
+							RAM[0x2700 + spr] = 0xFF;
+						}
+						else
+						{
+							if (RAM[0x2000 + entry] && RAM[0x2000 + entry] < 3 && RAM[0x2600 + entry] & 0b1000000)
+							{
+								if (RAM[0x2000 + spr] == 1 && !RAM[0x2980 + spr])
+								{
+									RAM[0x2680 + spr] *= -1;
+									RAM[0x2400 + spr] *= -1;
+
+									RAM[0x2980 + spr] = 24;
+								}
 							}
 						}
 					}
-				}
 
+				}
 			}
 		}
 
