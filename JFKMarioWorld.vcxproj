@@ -127,12 +127,12 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>E:\code\SDL2-2.0.9\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\code\SDL2-2.0.12\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>E:\code\SDL2-2.0.9\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>E:\code\SDL2-2.0.12\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -146,14 +146,14 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>E:\code\SDL2-2.0.9\include;E:\code\SDL2_image-2.0.4\include;E:\code\SDL2_mixer-2.0.4\include;E:\code\SFML-2.5.1\include;E:\code\LUA\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\code\SDL2-2.0.12\include;E:\code\SDL2_image-2.0.4\include;E:\code\SDL2_mixer-2.0.4\include;E:\code\SFML-2.5.1\include;E:\code\LUA\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>E:\code\SDL2-2.0.9\lib\x64;E:\code\SDL2_image-2.0.4\lib\x64;E:\code\SDL2_mixer-2.0.4\lib\x64;E:\code\SFML-2.5.1\lib;E:\code\LUA;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>E:\code\SDL2-2.0.12\lib\x64;E:\code\SDL2_image-2.0.4\lib\x64;E:\code\SDL2_mixer-2.0.4\lib\x64;E:\code\SFML-2.5.1\lib;E:\code\LUA;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_mixer.lib;SDL2_image.lib;sfml-network-d.lib;sfml-system-d.lib;opengl32.lib;lua53.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -166,13 +166,13 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>E:\code\SDL2-2.0.9\include;E:\code\SDL2_image-2.0.4\include;E:\code\SDL2_mixer-2.0.4\include;E:\code\SFML-2.5.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\code\SDL2-2.0.12\include;E:\code\SDL2_image-2.0.4\include;E:\code\SDL2_mixer-2.0.4\include;E:\code\SFML-2.5.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>E:\code\SDL2-2.0.9\lib\x64;E:\code\SDL2_image-2.0.4\lib\x64;E:\code\SDL2_mixer-2.0.4\lib\x64;E:\code\SFML-2.5.1\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>E:\code\SDL2-2.0.12\lib\x64;E:\code\SDL2_image-2.0.4\lib\x64;E:\code\SDL2_mixer-2.0.4\lib\x64;E:\code\SFML-2.5.1\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_mixer.lib;SDL2_image.lib;sfml-network-d.lib;sfml-system-d.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -187,7 +187,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;CINTERFACE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>E:\code\SDL2-2.0.9\include;E:\code\SDL2_image-2.0.4\include;E:\code\SDL2_mixer-2.0.4\include;E:\code\SFML-2.5.1\include;E:\code\LUA\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\code\SDL2-2.0.12\include;E:\code\SDL2_image-2.0.4\include;E:\code\SDL2_mixer-2.0.4\include;E:\code\SFML-2.5.1\include;E:\code\LUA\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
@@ -196,7 +196,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>E:\code\SDL2-2.0.9\lib\x86;E:\code\SDL2_image-2.0.4\lib\x86;E:\code\SDL2_mixer-2.0.4\lib\x86;E:\code\SFML32\SFML-2.5.1\lib;E:\code\lua32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>E:\code\SDL2-2.0.12\lib\x86;E:\code\SDL2_image-2.0.4\lib\x86;E:\code\SDL2_mixer-2.0.4\lib\x86;E:\code\SFML32\SFML-2.5.1\lib;E:\code\lua32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_mixer.lib;SDL2_image.lib;sfml-network.lib;sfml-system.lib;opengl32.lib;lua53.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -212,7 +212,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>E:\code\SDL2-2.0.9\include;E:\code\SDL2_image-2.0.4\include;E:\code\SDL2_mixer-2.0.4\include;E:\code\SFML-2.5.1\include;E:\code\LUA\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\code\SDL2-2.0.12\include;E:\code\SDL2_image-2.0.4\include;E:\code\SDL2_mixer-2.0.4\include;E:\code\SFML-2.5.1\include;E:\code\LUA\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -224,7 +224,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_mixer.lib;SDL2_image.lib;sfml-network.lib;sfml-system.lib;opengl32.lib;lua53.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>E:\code\SDL2-2.0.9\lib\x64;E:\code\SDL2_image-2.0.4\lib\x64;E:\code\SDL2_mixer-2.0.4\lib\x64;E:\code\SFML-2.5.1\lib;E:\code\LUA;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>E:\code\SDL2-2.0.12\lib\x64;E:\code\SDL2_image-2.0.4\lib\x64;E:\code\SDL2_mixer-2.0.4\lib\x64;E:\code\SFML-2.5.1\lib;E:\code\LUA;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
@@ -238,7 +238,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>E:\code\SDL2-2.0.9\include;E:\code\SDL2_image-2.0.4\include;E:\code\SDL2_mixer-2.0.4\include;E:\code\SFML-2.5.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\code\SDL2-2.0.12\include;E:\code\SDL2_image-2.0.4\include;E:\code\SDL2_mixer-2.0.4\include;E:\code\SFML-2.5.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -249,7 +249,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_mixer.lib;SDL2_image.lib;sfml-network.lib;sfml-system.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>E:\code\SDL2-2.0.9\lib\x64;E:\code\SDL2_image-2.0.4\lib\x64;E:\code\SDL2_mixer-2.0.4\lib\x64;E:\code\SFML-2.5.1\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>E:\code\SDL2-2.0.12\lib\x64;E:\code\SDL2_image-2.0.4\lib\x64;E:\code\SDL2_mixer-2.0.4\lib\x64;E:\code\SFML-2.5.1\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

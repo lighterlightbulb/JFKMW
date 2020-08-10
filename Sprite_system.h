@@ -305,6 +305,10 @@ public:
 					RAM[0x2000 + i] = 0;
 					continue;
 				}
+				if (!(RAM[0x2A80 + i] & 1) && !(RAM[0x2A80 + i] & 2)) //Don't process offscreen, useless.
+				{
+					continue;
+				}
 				if (RAM[0x2F80 + i] == 0)
 				{
 					if (RAM[0x2800 + i])
