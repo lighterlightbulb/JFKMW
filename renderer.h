@@ -483,7 +483,7 @@ void render()
 		VRAM[0xB801 + (21 * 2) + 128] = 0x7;
 
 		//Change later
-		draw_number_dec(21, 3, -int_fast16_t((global_frame_counter + 60) / 60) & 0x1FF, 0, 7);
+		draw_number_dec(21, 3, 999 - ingame_frame_counter / 60, 0, 7);
 
 		//KB & Ping
 		if (networking)

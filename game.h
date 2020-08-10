@@ -9,6 +9,7 @@ void game_init() //Called when a level is loaded
 	memset(&RAM[0x1B800], 0xFF, 0x800);
 
 	global_frame_counter = 0;
+	ingame_frame_counter = 0;
 
 	memset(&RAM[0x200], 0, 0x400); //Clear OAM
 }
@@ -61,6 +62,10 @@ void game_loop_code()
 #endif
 
 	global_frame_counter += 1;
+	if (RAM[0x9D])
+	{
+		ingame_frame_counter += 1;
+	}
 
 	if (global_frame_counter == 2) //Fade in
 	{
@@ -193,6 +198,7 @@ void game_loop_code()
 		if (!isClient || !networking) //if we are the server or we are playing locally...
 		{
 			memset(&RAM[0x200], 0, 0x400); //Clear OAM
+			memset(&RAM[0x2780], 0, 0x80); //Clear sprite coll flags
 			Sprites.process_all_sprites(); //we're processing sprites. we're either the server or a player in local mode.
 			for (uint_fast8_t i = 0; i < 128; i++)
 			{
@@ -320,17 +326,12 @@ void game_loop_code()
 			}
 			map16_handler.process_global();
 			processParticles();
+			
+		}
+	}
 
-			RAM[0x14] = global_frame_counter & 0xFF;
-		}
-	}
-	else
-	{
-		if (RAM[0x9D])
-		{
-			RAM[0x14] = global_frame_counter & 0xFF;
-		}
-	}
+	RAM[0x13] = global_frame_counter & 0xFF;
+	RAM[0x14] = ingame_frame_counter & 0xFF;
 
 	ProcessHDMA();
 

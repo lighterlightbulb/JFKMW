@@ -50,41 +50,65 @@ public:
 			}
 		}
 
+		if (RAM[0x2980 + entry])
+		{
+			RAM[0x2980 + entry]--;
+		}
 		double xMove = double(double(int_fast8_t(RAM[0x2400 + entry])) * 16) / ((IN_WT && (RAM[0x2600 + entry] & 0b100000)) ? 384 : 256);
 		double yMove = double(double(int_fast8_t(RAM[0x2480 + entry])) * 16) / 256.0;
 
 		for (uint_fast8_t spr = 0; spr < 0x80; spr++)
 		{
-			if (spr != entry && RAM[0x2000 + spr] == 4)
+			if (spr != entry && RAM[0x2000 + spr])
 			{
 				double t_x = double(RAM[0x2100 + spr] + double(RAM[0x2180 + spr]) * 256.0) + double(RAM[0x2200 + spr]) / 256.0;
 				double t_y = double(RAM[0x2280 + spr] + double(RAM[0x2300 + spr]) * 256.0) + double(RAM[0x2380 + spr]) / 256.0;
 
+				double t_x_size = double(RAM[0x2500 + spr]);
+				double t_y_size = double(RAM[0x2580 + spr]);
+
 				if (
-					t_x > (x - 16.0) &&
-					t_x < (x + x_size) &&
-					t_y > (y - 16.0) &&
-					t_y < (y + y_size)
+					x > (t_x - x_size) &&
+					x < (t_x + t_x_size) &&
+					y > (t_y - y_size) &&
+					y < (t_y + t_y_size)
 					)
 				{
-					RAM[0x2700 + entry] = 0xFF;
+					if (RAM[0x2000 + entry] == 4)
+					{
+						RAM[0x2700 + spr] = 0xFF;
+					}
+					else
+					{
+						if (RAM[0x2000 + entry] && RAM[0x2000 + entry] < 3 && RAM[0x2600 + entry] & 0b1000000 && RAM[0x2600 + spr] & 0b1000000)
+						{
+							if (!RAM[0x2980 + spr] && RAM[0x2000 + spr] == 1)
+							{
+								RAM[0x2680 + spr] *= -1;
+								RAM[0x2400 + spr] *= -1;
+
+								RAM[0x2980 + spr] = 24;
+							}
+						}
+					}
 				}
+
 			}
 		}
 
 		
 		if (RAM[0x2600 + entry] & 0b1000000) //if solid bit is on
 		{
-			RAM[0x2780 + entry] = 0;
+			
 			bool g = RAM[0x2000 + entry] == 2 || RAM[0x2000 + entry] == 4;
 			if (!Move(xMove, 0.0, x_size, y_size, g, entry))
 			{
-				RAM[0x2780 + entry] |= 0b00000001;
+				RAM[0x2780 + entry] ^= 0b00000001;
 			}
 
 			if (!Move(0.0, yMove, x_size, y_size, g, entry))
 			{
-				RAM[0x2780 + entry] |= 0b00000010;
+				RAM[0x2780 + entry] ^= 0b00000010;
 
 			}
 		}
@@ -165,7 +189,7 @@ public:
 							NewPositionX = RightBlock;
 							finna_return = false;
 
-							RAM[0x2780 + entry] |= 0b00000100;
+							RAM[0x2780 + entry] ^= 0b00000100;
 
 							if (kickedgrabbed)
 							{
@@ -180,7 +204,7 @@ public:
 							NewPositionX = LeftBlock;
 							finna_return = false;
 
-							RAM[0x2780 + entry] |= 0b00001000;
+							RAM[0x2780 + entry] ^= 0b00001000;
 
 							if (kickedgrabbed)
 							{
@@ -197,7 +221,7 @@ public:
 							bound_y += 4;
 						}
 
-						RAM[0x2780 + entry] |= 0b00010000;
+						RAM[0x2780 + entry] ^= 0b00010000;
 
 						if (NewPositionY < AboveBlock && NewPositionY > AboveBlock - bound_y)
 						{
@@ -213,7 +237,7 @@ public:
 							NewPositionY = BelowBlock;
 							finna_return = false;
 
-							RAM[0x2780 + entry] |= 0b00100000;
+							RAM[0x2780 + entry] ^= 0b00100000;
 
 							if (kickedgrabbed)
 							{

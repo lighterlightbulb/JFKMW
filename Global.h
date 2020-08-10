@@ -87,7 +87,8 @@ sf::Thread* thread = 0;
 bool need_sync_music = false;
 bool kill_music = false;
 uint_fast8_t my_skin = 0;
-uint_fast32_t global_frame_counter = 0;
+uint_fast32_t global_frame_counter = 0; //Like 0x13
+uint_fast32_t ingame_frame_counter = 0; //Like 0x14
 
 chrono::duration<double> total_time_ticks;
 int latest_server_response;
