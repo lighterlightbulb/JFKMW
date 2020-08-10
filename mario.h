@@ -261,7 +261,7 @@ public:
 				to_scale *= -1;
 			}
 			Y_SPEED -= Calculate_Speed(48.0);
-			Y_SPEED = max(-4.0, Y_SPEED);
+			Y_SPEED = max(-5.0, Y_SPEED);
 		}
 		else
 		{

@@ -40,22 +40,18 @@ void ActivateMenu()
 
 
 	AppendMenu(hMenuBar, MF_POPUP, (UINT_PTR)hFile, L"File");
-	AppendMenu(hFile, MF_STRING, 1, L"There will be nothing here. Get out while you still can");
+	AppendMenu(hFile, MF_STRING, 1, L"Reload Configuration");
 	AppendMenu(hFile, MF_STRING, 2, L"Exit");
 
-	wchar_t te[20] = { 0x69, 0x20, 0x68, 0x61, 0x74, 0x65, 0x20, 0x6E, 0x69, 0x67, 0x67, 0x65, 0x72, 0x73 };
 	AppendMenu(hMenuBar, MF_POPUP, (UINT_PTR)hInput, L"Input");
-	AppendMenu(hInput, MF_STRING, 3, te);
+	AppendMenu(hInput, MF_STRING, 3, L"Use config for now LOL");
 
 	AppendMenu(hMenuBar, MF_POPUP, (UINT_PTR)hSound, L"Sound");
 
 	AppendMenu(hMenuBar, MF_POPUP, (UINT_PTR)hVideo, L"Video");
 
 	AppendMenu(hMenuBar, MF_POPUP, (UINT_PTR)hHelp, L"Help");
-	string s = "Version: " + GAME_VERSION;
-	wstring stemp = wstring(s.begin(), s.end());
-	LPCWSTR sw = stemp.c_str();
-	AppendMenu(hHelp, MF_STRING, 4, sw);
+	AppendMenu(hHelp, MF_STRING, 4, L"Discord");
 	AppendMenu(hHelp, MF_STRING, 5, L"About");
 
 	SetMenu(sdl_window, hMenuBar);
@@ -266,8 +262,15 @@ bool done()
 			{
 				switch (LOWORD(event.syswm.msg->msg.win.wParam))
 				{
+				case 1:
+					load_configuration();
+					break;
 				case 2:
 					return true;
+					break;
+
+				case 4:
+					ShellExecute(0, 0, L"https://discord.gg/SN56ufT", 0, 0, SW_SHOW);
 					break;
 				case 5:
 
