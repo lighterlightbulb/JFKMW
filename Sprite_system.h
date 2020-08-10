@@ -80,9 +80,9 @@ public:
 						{
 							RAM[0x2700 + spr] = 0xFF;
 						}
-						/*else
+						else
 						{
-							if (RAM[0x2000 + entry] < 3 && RAM[0x2600 + entry] & 0b1000000)
+							if (RAM[0x2000 + entry] < 3 && !(RAM[0x2880 + entry] & 0b00010000) && RAM[0x2600 + entry] & 0b1000000)
 							{
 								if (RAM[0x2000 + spr] == 1 && !RAM[0x2980 + spr])
 								{
@@ -92,7 +92,7 @@ public:
 									RAM[0x2980 + spr] = 24;
 								}
 							}
-						}*/
+						}
 					}
 
 				}
