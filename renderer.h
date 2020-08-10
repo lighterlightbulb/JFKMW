@@ -786,4 +786,15 @@ void render()
 		SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_NONE);
 	}
 
+	SDL_SetRenderDrawColor(ren, 0, 0, 0, 0);
+	SDL_Rect rect;
+	if (w != (scale * int_res_x) || h != (scale * int_res_y))
+	{
+		rect = { 0,0,w, sp_offset_y }; SDL_RenderFillRect(ren, &rect);
+		rect = { 0,h - sp_offset_y,w,sp_offset_y }; SDL_RenderFillRect(ren, &rect);
+		rect = { 0,0,sp_offset_x, h }; SDL_RenderFillRect(ren, &rect);
+		rect = { w - sp_offset_x,0,sp_offset_x,h }; SDL_RenderFillRect(ren, &rect);
+	}
+
+	DrawMouse();	
 }

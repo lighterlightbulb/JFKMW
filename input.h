@@ -2,6 +2,10 @@
 
 void init_input()
 {
+	if (controller < 0)
+	{
+		return;
+	}
 	if (SDL_NumJoysticks() < 1) {
 		cout << cyan << "[SDL] No controllers are plugged in." << endl;
 	}

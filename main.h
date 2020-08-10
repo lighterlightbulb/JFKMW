@@ -2,8 +2,19 @@
 
 void player_code()
 {
-	if (SDL_Init(SDL_INIT_EVERYTHING & ~SDL_INIT_HAPTIC) != 0) {
-		cout << red << "[SDL] SDL initialization failed. SDL Error: " << SDL_GetError() << white << endl; return;
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
+		cout << red << "[SDL] SDL audio/video initialization failed. SDL Error: " << SDL_GetError() << white << endl; return;
+	}
+
+	if (SDL_Init(SDL_INIT_EVENTS) != 0) {
+		cout << red << "[SDL] SDL event initialization failed. SDL Error: " << SDL_GetError() << white << endl; return;
+	}
+
+	if (controller > -1)
+	{
+		if (SDL_Init(SDL_INIT_GAMECONTROLLER) != 0) {
+			cout << red << "[SDL] Controller init failed. SDL Error: " << SDL_GetError() << white << endl; return;
+		}
 	}
 
 	if (haptic > -1)
@@ -241,9 +252,10 @@ void player_code()
 			}
 			game_loop(); SoundLoop();
 			render();
+			doing_write = false;
+
 			t2 = chrono::high_resolution_clock::now();
 			total_time_ticks = chrono::duration_cast<chrono::duration<double>>(t2 - t1);
-			doing_write = false;
 
 			redraw();
 			
