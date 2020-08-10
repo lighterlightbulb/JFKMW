@@ -102,7 +102,6 @@ bool mouse_down;
 bool mouse_down_r;
 bool mouse_w_up;
 bool mouse_w_down;
-bool forced_scale = false;
 
 int data_size_current = 0;
 int data_size_now = 0;
@@ -301,6 +300,15 @@ bool disconnected = false;
 bool isClient = false;
 
 
+//Video
+int sp_offset_x = 0;
+int sp_offset_y = 0;
+double scale = 1.0;
+bool integer_scaling = true;
+bool forced_scale = false;
+string scale_quality = "nearest";
+
+
 
 //Game
 bool pvp = true;
@@ -347,13 +355,11 @@ uint_fast16_t int_res_x = 256;
 uint_fast16_t int_res_y = 224;
 int resolution_x = 320;
 int resolution_y = 240;
-uint_fast8_t scale = 1;
-int sp_offset_x = 32;
-int sp_offset_y = 28;
 
 SDL_Surface screen_s_l1;
 SDL_Texture* screen_t_l1;
 SDL_Texture* cached_l3_tiles[8];
+SDL_Texture* target_texture;
 
 int w; //width of the screen
 int h; //height of the screen

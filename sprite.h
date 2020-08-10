@@ -50,10 +50,10 @@ void CreateSprite(string sprite, int x, int y, int size_x, int size_y)
 {
 	SDL_Rect DestR;
 
-	DestR.x = sp_offset_x + x * scale;
-	DestR.y = sp_offset_y + y * scale;
-	DestR.w = abs(size_x) * scale;
-	DestR.h = abs(size_y) * scale;
+	DestR.x = x;
+	DestR.y = y;
+	DestR.w = abs(size_x);
+	DestR.h = abs(size_y);
 	SDL_RendererFlip flip = SDL_FLIP_NONE;
 	if (size_x < 0) { flip = SDL_FLIP_HORIZONTAL; }
 	SDL_RenderCopyEx(ren, TexManager.loadTexture(sprite), NULL, &DestR, 0, NULL, flip);
@@ -65,10 +65,10 @@ void RenderBackground(int x, int y)
 	double bg_scale_y = 32.0 / double(RAM[0x39]);
 
 	SDL_Rect SourceR;
-	SourceR.x = sp_offset_x + x * scale;
-	SourceR.y = sp_offset_y + y * scale;
-	SourceR.w = int(512.0 * bg_scale_x) * scale;
-	SourceR.h = int(512.0 * bg_scale_y) * scale;
+	SourceR.x = x;
+	SourceR.y = y;
+	SourceR.w = int(512.0 * bg_scale_x);
+	SourceR.h = int(512.0 * bg_scale_y);
 
 	SDL_RenderCopyEx(ren, bg_texture, NULL, &SourceR, (double(ASM.Get_Ram(0x36,1))*360.0)/256.0, NULL, SDL_FLIP_NONE);
 }

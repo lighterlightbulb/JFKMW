@@ -160,6 +160,8 @@ int main(int argc, char* argv[])
 {
 	load_configuration();
 
+	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, scale_quality.c_str());
+
 #if not defined(DISABLE_NETWORK)
 	bool hosting = false;
 	if (argc > 1)

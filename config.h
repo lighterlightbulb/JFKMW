@@ -29,8 +29,10 @@ void load_configuration()
 			if (name == "v_sync") { v_sync = value == "true"; }
 			if (name == "smooth_camera") { smooth_camera = value == "true"; }
 			if (name == "smooth_camera_speed") { smooth_camera_speed = double(stoi(value)); }
-			if (name == "scale") { forced_scale = stoi(value) > 0; scale = stoi(value); }
 			if (name == "monitor_hz") { monitor_hz = stoi(value); }
+			if (name == "scale") { scale = stoi(value); if (scale > 0) { forced_scale = true; }}
+			if (name == "integer_scaling") { integer_scaling = value == "true"; }
+			if (name == "quality") { scale_quality = value; }
 
 			if (name == "spc_delay") { spc_delay = stoi(value); }
 			if (name == "spc_buffer_size") { spc_buffer_size = stoi(value); }

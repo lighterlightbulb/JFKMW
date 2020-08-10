@@ -111,6 +111,8 @@ void screen(int width, int height)
 	}
 	
 	ren = SDL_CreateRenderer(win, rendering_device, flags);
+	target_texture = SDL_CreateTexture(ren, SDL_PIXELFORMAT_BGR555, SDL_TEXTUREACCESS_TARGET, int_res_x, int_res_y);
+
 	if (ren == NULL) { cout << cyan << "[SDL] Renderer error: " << SDL_GetError() << white << endl; SDL_Quit(); exit(1); }
 
 
@@ -150,19 +152,28 @@ void screen(int width, int height)
 
 void PrepareRendering()
 {
+
+	SDL_SetRenderTarget(ren, target_texture);
 	if (!fullscreen)
 	{
 		SDL_GetWindowSize(win, &resolution_x, &resolution_y);
 		w = resolution_x;
 		h = resolution_y;
 	}
+
 	if (!forced_scale)
 	{
-		scale = max(1, resolution_y / int_res_y);
+		if (integer_scaling)
+		{
+			scale = int(max(1, resolution_y / int_res_y));
+		}
+		else
+		{
+			scale = max(1.0, double(resolution_y) / double(int_res_y));
+		}
 	}
-	sp_offset_x = (w / 2) - ((int_res_x/2) * scale);
-	sp_offset_y = (h / 2) - ((int_res_y/2) * scale) + (resolution_y % 2 == 1);
-
+	sp_offset_x = (w / 2) - int(double(int_res_x / 2) * scale);
+	sp_offset_y = (h / 2) - int(double(int_res_y / 2) * scale);
 }
 
 void end_game()
@@ -196,31 +207,16 @@ void DrawMouse()
 	if (gGameController)
 	{
 		SDL_SetRenderDrawColor(ren, 255, 255, 255, 127);
-		SDL_Rect rect = { sp_offset_x + mouse_x * scale, sp_offset_y + mouse_y * scale, scale, scale }; SDL_RenderFillRect(ren, &rect);
+		SDL_Rect rect = { mouse_x, mouse_y, 1, 1 }; SDL_RenderFillRect(ren, &rect);
 	}
 }
 
 void redraw()
 {
-	SDL_RenderPresent(ren);
-}
+	SDL_Rect rect = { sp_offset_x, sp_offset_y, int(int_res_x * scale), int(int_res_y * scale) };
 
-void redraw87()
-{
-	sp_offset_x = (w / 2) - ((256 / 2) * scale);
-	sp_offset_y = (h / 2) - ((224 / 2) * scale);
-
-	SDL_SetRenderDrawColor(ren, 0, 0, 0, 0);
-	int f_x = (w / 2) - (128 * scale);
-	int f_y = (h / 2) - (112 * scale) + (resolution_y % 2 == 1);
-	SDL_Rect rect;
-	rect = { 0,0,w, f_y }; SDL_RenderFillRect(ren, &rect);
-	rect = { 0,h - f_y,w,f_y }; SDL_RenderFillRect(ren, &rect);
-	rect = { 0,0,f_x, h }; SDL_RenderFillRect(ren, &rect);
-	rect = { w - f_x,0,f_x,h }; SDL_RenderFillRect(ren, &rect);
-
-	DrawMouse();
-
+	SDL_SetRenderTarget(ren, NULL);
+	SDL_RenderCopy(ren, target_texture, NULL, &rect);
 	SDL_RenderPresent(ren);
 }
 
@@ -407,10 +403,10 @@ void draw8x8_tile_2bpp(int_fast16_t x, int_fast16_t y, uint_fast16_t tile, uint_
 {
 	SDL_Rect DestR;
 	SDL_Rect SrcR;
-	DestR.x = sp_offset_x + x * scale;
-	DestR.y = sp_offset_y + y * scale;
-	DestR.w = 8 * scale;
-	DestR.h = 8 * scale;
+	DestR.x = x + (int_res_x - 256) / 2;
+	DestR.y = y + (int_res_y - 224) / 2;
+	DestR.w = 8;
+	DestR.h = 8;
 
 	SrcR.x = (tile & 0xF) << 3;
 	SrcR.y = ((tile >> 4) << 3);
@@ -499,9 +495,9 @@ void draw_tile_custom(int_fast16_t x, int_fast16_t y, uint_fast8_t size, double 
 	}
 
 	SDL_Rect SourceR;
-	SourceR.x = (x * scale) + sp_offset_x;
-	SourceR.y = (y * scale) + sp_offset_y;
-	SourceR.w = (size_x << 3) * scale; //Same bs as above.
-	SourceR.h = (size_y << 3) * scale;
+	SourceR.x = x;
+	SourceR.y = y;
+	SourceR.w = size_x << 3; //Same bs as above.
+	SourceR.h = size_y << 3;
 	SDL_RenderCopyEx(ren, drawnTex, NULL, &SourceR, angle, NULL, flip);
 }

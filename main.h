@@ -128,10 +128,10 @@ void player_code()
 
 			//we copy it to the renderer, for your program, if you want to have a ingame thing (variable or w/e), you just simply don't do this and render what your game has instead.
 			SDL_Rect DestR;
-			DestR.x = sp_offset_x - (CameraX & 0xF) * scale;
-			DestR.y = sp_offset_y - (16 * scale) + (CameraY & 0xF) * scale;
-			DestR.w = (int_res_x + 16) * scale;
-			DestR.h = (int_res_y + 16) * scale;
+			DestR.x = -(CameraX & 0xF);
+			DestR.y = -16 + (CameraY & 0xF);
+			DestR.w = int_res_x + 16;
+			DestR.h = int_res_y + 16;
 
 			//Copied from renderer.h
 			drawBackground();
@@ -140,15 +140,15 @@ void player_code()
 			//Copied from renderer.h
 			SDL_RenderCopy(ren, screen_t_l1, nullptr, &DestR);
 
-			DestR.x = sp_offset_x + ((int_res_x - 256) * scale) / 2;
-			DestR.y = sp_offset_y + ((int_res_y - 224) * scale) / 2;
-			DestR.w = 256 * scale;
-			DestR.h = 224 * scale;
+			DestR.x = (int_res_x - 256) / 2;
+			DestR.y = (int_res_y - 224) / 2;
+			DestR.w = 256;
+			DestR.h = 224;
 
 			render_oam(0x200);
 			SDL_RenderCopy(ren, zsnes_ui.texture, NULL, &DestR);
 
-			redraw87();
+			redraw();
 			check_input();
 
 			if (zsnes_ui.button_pressed == "X")

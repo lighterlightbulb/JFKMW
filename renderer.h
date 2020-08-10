@@ -79,8 +79,8 @@ void drawBackground()
 		SrcR.w = 1;
 		SrcR.h = 1;
 
-		DestR.w = (1 * m) * (scale);
-		DestR.h = (1 * m) * (scale);
+		DestR.w = 1 * m;
+		DestR.h = 1 * m;
 
 		uint_fast16_t draw_x = int_res_x / m;
 		uint_fast16_t draw_y = int_res_y / m;
@@ -94,8 +94,8 @@ void drawBackground()
 				SrcR.x = (-formula_x + (x * m)) & 0x1FF;
 				SrcR.y = (-formula_y + 272 + (y * m)) % 512;
 
-				DestR.x = sp_offset_x + (x * m) * (scale);
-				DestR.y = sp_offset_y + (y * m) * (scale);
+				DestR.x = x * m;
+				DestR.y = y * m;
 
 				SDL_RenderCopy(ren, bg_texture, &SrcR, &DestR);
 			}
@@ -109,8 +109,8 @@ void drawBackground()
 			SrcR.x = 0;
 			SrcR.w = 512;
 			SrcR.h = 1;
-			DestR.w = 512 * scale;
-			DestR.h = 1 * scale;
+			DestR.w = 512;
+			DestR.h = 1;
 
 			for (int x = -1; x < 3; x++)
 			{
@@ -118,8 +118,8 @@ void drawBackground()
 				{
 					SrcR.y = (-formula_y + 256 + int(i) + int(layer2_shiftY[i] & 0x1FF)) & 0x1FF;
 
-					DestR.x = sp_offset_x + ((layer2_shiftX[i] & 0x1FF) + formula_x + (x * 512)) * scale;
-					DestR.y = sp_offset_y + (((int_res_y - 224) / 2) + i) * scale;
+					DestR.x = ((layer2_shiftX[i] & 0x1FF) + formula_x + (x * 512));
+					DestR.y = (((int_res_y - 224) / 2) + i);
 
 					SDL_RenderCopy(ren, bg_texture, &SrcR, &DestR);
 				}
@@ -280,8 +280,8 @@ void render()
 			SrcR.w = 1;
 			SrcR.h = 1;
 
-			DestR.w = (1 * m) * (scale);
-			DestR.h = (1 * m) * (scale);
+			DestR.w = 1 * m;
+			DestR.h = 1 * m;
 
 			uint_fast16_t draw_x = int_res_x / m;
 			uint_fast16_t draw_y = int_res_y / m;
@@ -295,8 +295,8 @@ void render()
 					SrcR.x = (x * m);
 					SrcR.y = 16 + (y * m);
 
-					DestR.x = sp_offset_x + (x * m) * (scale);
-					DestR.y = sp_offset_y + (y * m) * (scale);
+					DestR.x = x * m;
+					DestR.y = y * m;
 
 					SDL_RenderCopy(ren, screen_t_l1, &SrcR, &DestR);
 				}
@@ -306,10 +306,10 @@ void render()
 		{
 			if (!layer1mode_y && !layer1mode_x)
 			{
-				DestR.x = sp_offset_x - offsetXPixel * scale;
-				DestR.y = sp_offset_y - (16 * scale) + offsetYPixel * scale;
-				DestR.w = (int_res_x + 16) * scale;
-				DestR.h = (int_res_y + 16) * scale;
+				DestR.x = -offsetXPixel;
+				DestR.y = -16 + offsetYPixel;
+				DestR.w = int_res_x + 16;
+				DestR.h = int_res_y + 16;
 				SDL_RenderCopy(ren, screen_t_l1, nullptr, &DestR);
 			}
 			else
@@ -317,16 +317,16 @@ void render()
 				SrcR.x = 0;
 				SrcR.w = int_res_x + 16;
 				SrcR.h = 1;
-				DestR.w = (int_res_x + 16) * scale;
-				DestR.h = 1 * scale;
+				DestR.w = int_res_x + 16;
+				DestR.h = 1;
 
 				
 				for (uint_fast16_t i = 0; i < 256; i++)
 				{
 					SrcR.y = (i + (layer1_shiftY[(-offsetYPixel + i) % 224])) % 256;
 
-					DestR.y = sp_offset_y + ((i + -16 + offsetYPixel) * scale);
-					DestR.x = sp_offset_x + (-offsetXPixel + layer1_shiftX[(offsetYPixel + (i - 16)) % 224]) * scale;
+					DestR.y = ((i + -16 + offsetYPixel));
+					DestR.x = (-offsetXPixel + layer1_shiftX[(offsetYPixel + (i - 16)) % 224]);
 
 					SDL_RenderCopy(ren, screen_t_l1, &SrcR, &DestR);
 				}
@@ -339,14 +339,9 @@ void render()
 	//Draw screen darkening (Level Clear)
 	if (transition_type == 3)
 	{
-		DestR.x = sp_offset_x;
-		DestR.y = sp_offset_y;
-		DestR.w = int_res_x * scale;
-		DestR.h = int_res_y * scale;
-
 		SDL_SetRenderDrawColor(ren, 0, 0, 0, bright_val == 0xF ? 255 : (bright_val << 4));
 		SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_BLEND);
-		SDL_RenderFillRect(ren, &DestR);
+		SDL_RenderFillRect(ren, nullptr);
 		SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_NONE);
 	}
 
@@ -702,8 +697,8 @@ void render()
 	{
 		SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_BLEND);
 		SDL_Rect rect;
-		rect.x = sp_offset_x; rect.w = 256 * scale;
-		rect.y = sp_offset_y + (224 - 128) * scale; rect.h = 128 * scale;
+		rect.x = 0; rect.w = 256;
+		rect.y = 224 - 128; rect.h = 128;
 		SDL_SetRenderDrawColor(ren, 0, 0, 0, 0x3F);
 		SDL_RenderFillRect(ren, &rect);
 
@@ -737,15 +732,15 @@ void render()
 		{
 			int curr_t = fps_diag[l] / 10;
 
-			rect.x = sp_offset_x + (l) * scale; rect.w = 1 * scale;
-			rect.y = sp_offset_y + (224 - curr_t) * scale; rect.h = curr_t * scale;
+			rect.x = l; rect.w = 1;
+			rect.y = 224 - curr_t; rect.h = curr_t;
 
 			int g = min(255, curr_t * 4);
 			int r = 255 - g;
 
 			SDL_Rect rect;
-			rect.x = sp_offset_x + (l) * scale; rect.w = 1 * scale;
-			rect.y = sp_offset_y + (224 - curr_t) * scale; rect.h = curr_t * scale;
+			rect.x = l; rect.w = 1;
+			rect.y = 224 - curr_t; rect.h = curr_t;
 			SDL_SetRenderDrawColor(ren, r, g, 0, 0xBF);
 			SDL_RenderFillRect(ren, &rect);
 		}
@@ -753,8 +748,8 @@ void render()
 		for (uint_fast8_t l = 0; l < 16; l++)
 		{
 			int curr_t = ram_diag[l];
-			rect.x = sp_offset_x + (128 + l)*scale; rect.w = 1 * scale;
-			rect.y = sp_offset_y + (224 - curr_t) * scale; rect.h = curr_t * scale;
+			rect.x = 128 + l; rect.w = 1;
+			rect.y = 224 - curr_t; rect.h = curr_t;
 
 			SDL_SetRenderDrawColor(ren, 0xFF, 0x7F, 0x7F, 0xBF);
 			SDL_RenderFillRect(ren, &rect);
@@ -763,8 +758,8 @@ void render()
 		for (uint_fast8_t l = 0; l < 112; l++)
 		{
 			int curr_t = block_diag[l] / 8;
-			rect.x = sp_offset_x + (144 + l) * scale; rect.w = 1 * scale;
-			rect.y = sp_offset_y + (224 - curr_t) * scale; rect.h = curr_t * scale;
+			rect.x = 144 + l; rect.w = 1;
+			rect.y = 224 - curr_t; rect.h = curr_t;
 			SDL_SetRenderDrawColor(ren, 0x7F, 0x7F, 0xFF, 0xBF);
 			SDL_RenderFillRect(ren, &rect);
 		}
@@ -775,25 +770,10 @@ void render()
 	//Draw screen darkening (Fades)
 	if (transition_type != 3)
 	{
-		DestR.x = sp_offset_x;
-		DestR.y = sp_offset_y;
-		DestR.w = int_res_x * scale;
-		DestR.h = int_res_y * scale;
-
 		SDL_SetRenderDrawColor(ren, 0, 0, 0, bright_val == 0xF ? 255 : (bright_val << 4));
 		SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_BLEND);
-		SDL_RenderFillRect(ren, &DestR);
+		SDL_RenderFillRect(ren, nullptr);
 		SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_NONE);
-	}
-
-	SDL_SetRenderDrawColor(ren, 0, 0, 0, 0);
-	SDL_Rect rect;
-	if (w != (scale * int_res_x) || h != (scale * int_res_y))
-	{
-		rect = { 0,0,w, sp_offset_y }; SDL_RenderFillRect(ren, &rect);
-		rect = { 0,h - sp_offset_y,w,sp_offset_y }; SDL_RenderFillRect(ren, &rect);
-		rect = { 0,0,sp_offset_x, h }; SDL_RenderFillRect(ren, &rect);
-		rect = { w - sp_offset_x,0,sp_offset_x,h }; SDL_RenderFillRect(ren, &rect);
 	}
 
 	DrawMouse();	
