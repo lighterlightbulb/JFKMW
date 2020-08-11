@@ -110,16 +110,9 @@ int rendering_device = -1;
 int controller = 0;
 int haptic = 0;
 
-#define spawn_bound_x 192 //Sprite spawn bound for camera. This should be good for now.
-
-bool fullscreen = false;
-bool opengl = false;
-bool networking = false;
-bool renderer_accelerated = true;
-bool v_sync = true;
-
 string testing_level = "";
-double monitor_hz = 60.0;
+
+#define spawn_bound_x 192 //Sprite spawn bound for camera. This should be good for now.v
 
 //Stuff hud toggles here and hud stuff
 uint_fast8_t hudMode = 0;
@@ -307,6 +300,15 @@ double scale = 1.0;
 bool integer_scaling = true;
 bool forced_scale = false;
 string scale_quality = "nearest";
+
+bool fullscreen = false;
+bool opengl = false;
+bool networking = false;
+bool renderer_accelerated = true;
+bool v_sync = true;
+double monitor_hz = 60.0;
+
+SDL_GLContext Context;
 
 
 
