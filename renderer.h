@@ -75,7 +75,7 @@ void drawBackground()
 	uint_fast8_t mosaic_val = RAM[0x3F10] >> 4;
 	if (mosaic_val > 0)
 	{
-		uint_fast8_t m = min(16, (2 + mosaic_val));
+		uint_fast8_t m = min(16, (3 + mosaic_val));
 		SrcR.w = 1;
 		SrcR.h = 1;
 
@@ -276,7 +276,7 @@ void render()
 
 		if (mosaic_val > 0)
 		{
-			uint_fast8_t m = (1 + mosaic_val);
+			uint_fast8_t m = min(16, (2 + mosaic_val));
 			SrcR.w = 1;
 			SrcR.h = 1;
 
