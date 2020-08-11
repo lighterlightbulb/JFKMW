@@ -65,8 +65,6 @@ namespace fs = std::filesystem;
 #endif
 
 #include <SDL.h>
-#include <SDL_opengl.h>
-#include <GL/gl.h>
 #if defined(_WIN32)
 #include <SDL_syswm.h>
 #endif

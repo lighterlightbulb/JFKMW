@@ -93,17 +93,6 @@ void screen(int width, int height)
 
 	win = SDL_CreateWindow("JFK Mario World Client", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, w, h, flags);
 
-	if (opengl)
-	{
-		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
-		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);
-		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
-		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
-		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-		Context = SDL_GL_CreateContext(win);
-
-
-	}
 
 	if (win == NULL) { cout << cyan << "[SDL] Window error: " << SDL_GetError() << white << endl; SDL_Quit(); exit(1); }
 	cout << cyan << "[SDL] Window created, initializing renderer..." << endl;
@@ -230,7 +219,7 @@ void redraw()
 
 	SDL_SetRenderTarget(ren, NULL);
 
-	if (opengl)
+	/*if (opengl)
 	{
 		glViewport(0, 0, w, h);
 		glClearColor(0.f, 0.f, 0.f, 1.f);
@@ -238,10 +227,10 @@ void redraw()
 
 
 		// For Ortho mode, of course
-		float X = -1.f + (float(rect.x) / float(w));
-		float Y = -1.f + (float(rect.y) / float(h));
-		float Width = float(rect.w) ;
-		float Height = float(rect.y);
+		float X = -1.f + float(rect.x * 2) / float(w);
+		float Y = -1.f + float(rect.y * 2) / float(h);
+		float XE = 1.f - float(rect.x * 2) / float(w);
+		float YE = 1.f - float(rect.y * 2) / float(h);
 
 		//Bind the SDL_Texture in OpenGL
 		SDL_GL_BindTexture(target_texture, NULL, NULL);
@@ -249,13 +238,15 @@ void redraw()
 		//Draw the SDL_Texture * as a Quad
 		glEnable(GL_TEXTURE_2D);
 		glBegin(GL_QUADS); {
-			glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+			//glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 			glTexCoord2f(0, 0); glVertex3f(X, Y, 0);
-			glTexCoord2f(1, 0); glVertex3f(X + Width, Y, 0);
-			glTexCoord2f(1, 1); glVertex3f(X + Width, Y + Height, 0);
-			glTexCoord2f(0, 1); glVertex3f(X, Y + Height, 0);
+			glTexCoord2f(1, 0); glVertex3f(XE, Y, 0);
+			glTexCoord2f(1, 1); glVertex3f(XE, YE, 0);
+			glTexCoord2f(0, 1); glVertex3f(X, YE, 0);
 		} glEnd();
 		glDisable(GL_TEXTURE_2D);
+
+		SDL_GL_UnbindTexture(target_texture);
 
 		SDL_GL_SwapWindow(win);
 	}
@@ -263,7 +254,9 @@ void redraw()
 	{
 		SDL_RenderCopy(ren, target_texture, NULL, &rect);
 		SDL_RenderPresent(ren);
-	}
+	}*/	
+	SDL_RenderCopy(ren, target_texture, NULL, &rect);
+	SDL_RenderPresent(ren);
 }
 
 bool done()

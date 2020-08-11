@@ -308,8 +308,6 @@ bool renderer_accelerated = true;
 bool v_sync = true;
 double monitor_hz = 60.0;
 
-SDL_GLContext Context;
-
 
 
 //Game
