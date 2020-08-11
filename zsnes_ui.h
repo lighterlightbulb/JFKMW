@@ -1,7 +1,7 @@
 #pragma once
 
 /*
-	the zsnes like UI for jfk mario world (aka JFKMW)
+	the zsnes like UI for jfk mario world
 */
 
 #define snow_size 100 //Amount of snow particles.
