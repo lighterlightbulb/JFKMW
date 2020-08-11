@@ -66,7 +66,7 @@ void check_input()
 		mouse_x -= sp_offset_x; mouse_y -= sp_offset_y;
 
 		mouse_x = int(double(mouse_x) / scale);
-		mouse_x = int(double(mouse_y) / scale);
+		mouse_y = int(double(mouse_y) / scale);
 
 		mouse_x = min(int(int_res_x), max(0, mouse_x));
 		mouse_y = min(int(int_res_y), max(0, mouse_y));
