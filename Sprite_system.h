@@ -78,9 +78,12 @@ public:
 					{
 						if (RAM[0x2000 + entry] == 4 || (RAM[0x2000 + entry] == 2 && (abs(int_fast8_t(RAM[0x2400 + entry])) > 3 || abs(int_fast8_t(RAM[0x2480 + entry])) > 3)))
 						{
-							//2 handlers just incase
-							RAM[0x2B00 + spr] = 0x1;
-							RAM[0x2700 + spr] = 0xFF;
+							if (RAM[0x2000 + spr] != 3)
+							{
+								//2 handlers just incase
+								RAM[0x2B00 + spr] = 0x1;
+								RAM[0x2700 + spr] = 0xFF;
+							}
 						}
 						else
 						{

@@ -856,7 +856,7 @@ public:
 					}
 				}
 				else {
-					NewSprite = "SKID";
+					NewSprite = GRABBED_SPRITE == 0xFF ? "SKID" : "PIPE";
 				}
 			}
 		}

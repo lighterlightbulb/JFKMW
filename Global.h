@@ -234,10 +234,11 @@ bool is_file_exist(const char* fileName)
 	return infile.good();
 }
 
-double Calculate_Speed(double speed)
+#define Calculate_Speed(x) double(x) / 256.0
+/*double Calculate_Speed(double speed)
 {
 	return speed / 256.0;
-}
+}*/
 
 string int_to_hex(int T, bool add_0 = false)
 {

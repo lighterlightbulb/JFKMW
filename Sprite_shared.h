@@ -21,6 +21,9 @@ uint_fast8_t spawnSpriteJFKMarioWorld(uint_fast8_t sprite_num, uint_fast8_t new_
 			RAM[0x2400 + i] = 0;
 			RAM[0x2480 + i] = 0;
 
+			RAM[0x2700 + i] = 0;
+			RAM[0x2780 + i] = 0;
+
 			RAM[0x2680 + i] = direction;
 
 			RAM[0x2700 + i] = 0;

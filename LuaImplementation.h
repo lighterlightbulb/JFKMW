@@ -403,6 +403,9 @@ void lua_run_init()
 {
 	lua_getglobal(LUA_STATE, "Init");
 	lua_pcall(LUA_STATE, 0, 0, 0); // run script
+
+	lua_getglobal(LUA_STATE, "Main");
+	lua_pcall(LUA_STATE, 0, 0, 0); // run script
 }
 
 void lua_run_main()
