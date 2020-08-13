@@ -31,35 +31,21 @@ void InitInstalledSprites()
 {
 	cout << yellow << "[SE] Loading sprite lists.." << endl;
 	installedSprites.clear();
-	installedSprites.push_back({ 0x00, "Shell-less Green Koopa" });
-	installedSprites.push_back({ 0x01, "Shell-less Red Koopa" });
-	installedSprites.push_back({ 0x04, "Green Koopa" });
-	installedSprites.push_back({ 0x05, "Red Koopa" });
-	installedSprites.push_back({ 0x09, "Bouncing Green Koopa" });
-	installedSprites.push_back({ 0x0A, "Red vertical Parakoopa" });
-	installedSprites.push_back({ 0x0B, "Red horizontal Parakoopa" });
-	installedSprites.push_back({ 0x1C, "Projectile Bullet Bill" });
-	installedSprites.push_back({ 0x4A, "Goal Point Question Sphere" });
-	installedSprites.push_back({ 0x53, "Throwblock" });
-	installedSprites.push_back({ 0x55, "Grey Moving Platform (Horizontal)" });
-	installedSprites.push_back({ 0x57, "Grey Moving Platform (Vertical)" });
-	installedSprites.push_back({ 0x74, "Mushroom" });
-	installedSprites.push_back({ 0x9E, "Ball n chain" });
-	installedSprites.push_back({ 0x9F, "Banzai Bill" });
-	installedSprites.push_back({ 0xA5, "Ground Guided Fuzzy" });
-	installedSprites.push_back({ 0xAB, "Rex" });
-	installedSprites.push_back({ 0xB6, "Reflecting Fireball" });
-	installedSprites.push_back({ 0xBA, "Timed Platform (4)" });
-	installedSprites.push_back({ 0xC4, "Grey Falling Platform" });
-	installedSprites.push_back({ 0xC9, "Projectile Bullet Bill Shooter" });
-	installedSprites.push_back({ 0xDA, "Kickable Green Shell" });
-	installedSprites.push_back({ 0xDB, "Kickable Red Shell" });
-	installedSprites.push_back({ 0xFA, "YI Bird" });
-	installedSprites.push_back({ 0xFB, "Noob boss" });
-	installedSprites.push_back({ 0xFC, "CIA Sonic From We Schlee" });
-	installedSprites.push_back({ 0xFD, "Danmaku Clusters" });
-	installedSprites.push_back({ 0xFE, "Morsel Bombs" });
-	installedSprites.push_back({ 0xFF, "Rapping Morsel" });
+	ifstream FE(path + "spritelist.txt");
+	if (FE.is_open())
+	{
+		string line;
+		int i = 0;
+		while (getline(FE, line)) {
+
+			auto delimiterPos = line.find("=");
+			auto name = line.substr(0, delimiterPos);
+			auto value = line.substr(delimiterPos + 1);
+
+			installedSprites.push_back({ uint_fast8_t(stoi(name, nullptr, 16)), value });
+		}
+	}
+	FE.close();
 	cout << "[SE] Loaded " << installedSprites.size() << " sprites." << white << endl;
 }
 
