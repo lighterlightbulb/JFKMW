@@ -151,9 +151,23 @@ void drawBackground()
 
 void render()
 {
-
-
 	PrepareRendering();
+
+	/*
+		Convert 16bit palette to 32bit palette (for speed)
+	*/
+	ConvertPalette();
+	memcpy(VRAM, &RAM[VRAM_Location], VRAM_Size * sizeof(uint_fast8_t));
+
+	/*
+		Overworld rendering
+	*/
+	if (in_Overworld)
+	{
+		overworld.Render();
+		DrawMouse();
+		return;
+	}
 
 	blocks_on_screen = 0;
 	CheckForPlayers();
@@ -161,7 +175,6 @@ void render()
 	{
 		return;
 	}
-
 
 	//Initialize destR variable were gonna use later for rendering
 	SDL_Rect DestR;
@@ -174,18 +187,8 @@ void render()
 	uint_fast8_t mosaic_val = RAM[0x3F10] >> 4;
 	uint_fast8_t bright_val = RAM[0x3F10] & 0xF;
 
-	/*
-		Convert 16bit palette to 32bit palette (for speed)
-	*/
-	ConvertPalette();
-
-	memcpy(VRAM, &RAM[VRAM_Location], VRAM_Size * sizeof(uint_fast8_t));
-
-
-
 	MPlayer& LocalPlayer = get_mario(SelfPlayerNumber);
 	LocalPlayer.ProcessCamera();
-
 	CameraX = int_fast16_t(LocalPlayer.CAMERA_X - ((int_res_x / 2) - 8));
 	CameraY = int_fast16_t(max(0.0, LocalPlayer.CAMERA_Y - (int_res_y / 2)));
 	if (RAM[0x1887] > 0)
@@ -236,14 +239,22 @@ void render()
 				if (tile != 0x25)
 				{
 					uint_fast16_t entry = tile << 4;
+					uint_fast8_t block_palette;
 
 					//Block 8x8 tiles
 					for (uint_fast8_t i = 0; i < 4; i++)
 					{
 						uint_fast16_t block_index = map16_entries[entry + 1 + (i << 1)] + (map16_entries[entry + (i << 1)] << 8);
 						uint_fast8_t index = map16_entries[entry + tile_palette_2 - (i <= 1)];
-						uint_fast8_t block_palette = index >> ((i & 1) << 2) & 0xF; // (i & 1) ? (index & 0xF) : (index >> 4);
 
+						if (tile >= 0x133 && tile <= 0x136)
+						{
+							block_palette = pipe_colors[((x + offsetX) >> 4) & 3];
+						}
+						else
+						{
+							block_palette = index >> ((i & 1) << 2) & 0xF; // (i & 1) ? (index & 0xF) : (index >> 4);
+						}
 						if (block_index != 0xF8)
 						{
 							if (drawDiag)
@@ -550,54 +561,7 @@ void render()
 	}
 	//End hud
 
-	//Render chat
-	if (Chatting || Time_ChatString[0] > 0)
-	{
-		for (int i = 0; i < 32; i++)
-		{
-			for (int e = 16; e < 28; e++)
-			{
-				VRAM[0xB800 + (i << 1) + (e << 6)] = 0x7F;
-				VRAM[0xB801 + (i << 1) + (e << 6)] = 6;
-			}
-		}
-		int y = 27;
-		string Curr_Typing = (Typing_In_Chat + ((global_frame_counter % 20) > 10 ? "_" : ""));
-		int Typing_Len = int(Curr_Typing.length());
-		if (Chatting)
-		{
-			
-			
-			y = (Typing_Len > 31) ? 25 : 26;
-
-			for (int i = 0; i < Curr_Typing.length(); i++)
-			{
-
-				uint_fast8_t new_l = char_to_smw(Curr_Typing.at(i));
-
-				VRAM[0xB802 + (i * 2) + (y << 6)] = new_l;
-				VRAM[0xB803 + (i * 2) + (y << 6)] = 6;
-
-			}
-
-		}
-		for (int cc = 0; cc < 6; cc++)
-		{
-			string C_String = Curr_ChatString[cc];
-			int C_len = int(Curr_ChatString[cc].length());
-			y -= ((C_len > 31) ? 2 : 1);
-			for (int i = 0; i < C_String.length(); i++)
-			{
-
-				uint_fast8_t new_l = char_to_smw(C_String.at(i));
-
-				VRAM[0xB802 + (i * 2) + (y << 6)] = new_l;
-				VRAM[0xB803 + (i * 2) + (y << 6)] = 6;
-
-			}
-		}
-
-	}
+	Render_Chat();
 
 	//Player list logic (shouldn't be here, but oh well)
 	bool stat = (state[input_settings[8]]) || BUTTONS_GAMEPAD[9];
@@ -776,5 +740,5 @@ void render()
 		SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_NONE);
 	}
 
-	DrawMouse();	
+	DrawMouse();
 }

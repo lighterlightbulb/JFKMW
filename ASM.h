@@ -1,14 +1,13 @@
 #pragma once
-//something something this fucking sucks
+/*
+	JFK Mario World ASM implementation
+
+	Below is just a very shitty SNES 65C16 emulator. The global RAM is in global.h. 128kb in total, 64kb for main variables (like $7E0000-$7FFFF) and the rest is just reserved for VRAM.
+*/
 
 class JFKASM
 {
 public:
-	/*
-	
-	This is just a very shitty SNES 65C16 emulator. It can do most stuff fine, but it'll have issues with some things.
-	
-	*/
 	uint_fast16_t x, y, a, temp_, temp__;
 	uint_fast8_t st;
 	uint_fast32_t pointer;
@@ -359,7 +358,9 @@ public:
 JFKASM ASM;
 
 
-
+/*
+	Networking functions
+*/
 
 #if not defined(DISABLE_NETWORK)
 void compressHDMAnet()
@@ -503,17 +504,14 @@ void Sync_Server_RAM(bool compressed = false)
 		CurrentPacket >> RAM[0x38];
 		CurrentPacket >> RAM[0x39];
 
-		//Get screen stuff
-		CurrentPacket >> RAM[0x1411];
-		CurrentPacket >> RAM[0x1412];
-		CurrentPacket >> RAM[0x40];
-		CurrentPacket >> RAM[0x9D];
-
-		//receive on/off status
-		CurrentPacket >> RAM[0x14AF];
-
-		//receive water status
-		CurrentPacket >> RAM[0x85];
+		//Receive flags, This is optimized
+		uint_fast8_t flags; CurrentPacket >> flags;
+		RAM[0x1411] = flags & 1;
+		RAM[0x1412] = (flags >> 1) & 1;
+		RAM[0x9D] = (flags >> 2) & 1;
+		RAM[0x14AF] = (flags >> 3) & 1;
+		RAM[0x85] = (flags >> 4) & 1;
+		RAM[0x40] = flags >> 5;
 
 		//receive clear status & brightness flag
 		CurrentPacket >> RAM[0x1493];
@@ -715,17 +713,15 @@ void Push_Server_RAM(bool compress = false)
 		CurrentPacket << RAM[0x38];
 		CurrentPacket << RAM[0x39];
 
-		//Send screen stuff
-		CurrentPacket << RAM[0x1411];
-		CurrentPacket << RAM[0x1412];
-		CurrentPacket << RAM[0x40];
-		CurrentPacket << RAM[0x9D];
-
-		//Send on/off status
-		CurrentPacket << RAM[0x14AF];
-
-		//send water status
-		CurrentPacket << RAM[0x85];
+		//Send some important flags, This is optimized
+		uint_fast8_t flags = 0;
+		flags += (RAM[0x1411] & 1); //Screen locked X
+		flags += (RAM[0x1412] & 1) << 1; //Screen locked Y
+		flags += (RAM[0x9D] & 1) << 2; //Global Pause Flag
+		flags += (RAM[0x14AF] & 1) << 3; //On/Off
+		flags += (RAM[0x85] & 1) << 4; //Water
+		flags += (RAM[0x40] & 7) << 5; //SDL Related stuff
+		CurrentPacket << flags;
 
 		//Send level clear status
 		CurrentPacket << RAM[0x1493];

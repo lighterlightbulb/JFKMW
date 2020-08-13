@@ -1,5 +1,21 @@
 #pragma once
 
+
+void game_init() //Gamemode init
+{
+	decode_graphics_file("Graphics/exanimations.bin", 8);
+	decode_graphics_file("Graphics/hud.bin", 11);
+	memset(&RAM[0x1B800], 0xFF, 0x800);
+
+	global_frame_counter = 0;
+	ingame_frame_counter = 0;
+
+	in_Overworld = false;
+
+	memset(&RAM[0x200], 0, 0x400); //Clear OAM
+	memset(&RAM[0x6000], 0, 0x2000); //Clear OW/Free part of RAM
+}
+
 class LevelSprite {
 public:
 	bool is_lua = false;
@@ -351,3 +367,29 @@ public:
 };
 
 Level LevelManager;
+
+
+void load_level3f08()
+{
+	if (ASM.Get_Ram(0x3f08, 2) != 0)
+	{
+		in_Overworld = false;
+		if (ASM.Get_Ram(0x3F08, 2) != ASM.Get_Ram(0x010b, 2))
+		{
+			midway_activated = false;
+		}
+		LevelManager.LoadLevel(uint_fast16_t(ASM.Get_Ram(0x3f08, 2)));
+
+		game_init();
+#if not defined(DISABLE_NETWORK)
+		Set_Server_RAM();
+#endif
+		Do_RAM_Change();
+
+		ASM.Write_To_Ram(0x3f08, 0, 2);
+	}
+	else
+	{
+		ASM.Write_To_Ram(0x1DFB, 0, 1);
+	}
+}

@@ -436,6 +436,39 @@ void draw8x8_tile(int_fast16_t x, int_fast16_t y, uint_fast16_t tile, uint_fast8
 	}
 }
 
+void draw8x8_tile_f(int_fast16_t x, int_fast16_t y, uint_fast16_t tile, uint_fast8_t palette, bool flipx, bool flipy)
+{
+	palette = palette << 4;	tile = tile << 5;
+	uint_fast8_t color1 = 0;
+	uint_fast8_t i = 0;
+	uint_fast8_t index = 0;
+
+	uint_fast8_t graphics_array[32];
+	memcpy(graphics_array, &VRAM[tile], 32 * sizeof(uint_fast8_t));
+
+	for (index = 0; index < 8; index++)
+	{
+		uint_fast8_t ind = index << 1;
+		for (i = 0; i < 8; i++)
+		{
+			uint_fast16_t y_p = y + (flipy ? (7 - index) : index);
+			uint_fast16_t x_p = x + (flipx ? (i) : (7 - i));
+			color1 =
+				((graphics_array[0 + ind] >> i) & 1) +
+				(((graphics_array[1 + ind] >> i) & 1) << 1) +
+				(((graphics_array[16 + ind] >> i) & 1) << 2) +
+				(((graphics_array[17 + ind] >> i) & 1) << 3)
+				;
+
+			if (color1 != 0)
+			{
+				Uint32* p_screen = (Uint32*)(&screen_s_l1)->pixels + ((y_p * (int_res_x + 16)) + x_p);
+				*p_screen = palette_array[color1 + palette];
+			}
+		}
+	}
+}
+
 
 
 void draw8x8_tile_2bpp(int_fast16_t x, int_fast16_t y, uint_fast16_t tile, uint_fast16_t palette_offs)

@@ -89,7 +89,7 @@ public:
 									RAM[0x2680 + spr] *= -1;
 									RAM[0x2400 + spr] *= -1;
 
-									RAM[0x2980 + spr] = 24;
+									RAM[0x2980 + spr] = 32;
 								}
 							}
 						}
@@ -305,10 +305,10 @@ public:
 					RAM[0x2000 + i] = 0;
 					continue;
 				}
-				if (!(RAM[0x2A80 + i] & 1) && !(RAM[0x2A80 + i] & 2)) //Don't process offscreen, useless.
+				/*if (!(RAM[0x2A80 + i] & 1) && !(RAM[0x2A80 + i] & 2)) //Don't process offscreen, useless.
 				{
 					continue;
-				}
+				}*/
 				if (RAM[0x2F80 + i] == 0)
 				{
 					if (RAM[0x2800 + i])

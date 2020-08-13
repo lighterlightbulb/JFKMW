@@ -399,7 +399,19 @@ public:
 										{
 											RAM[0x2000 + sprite] = 0;
 										}
-										Y_SPEED = Calculate_Speed(128);
+
+										if (RAM[0x2880 + sprite] & 0x20)
+										{
+											if (pad[button_b] || pad[button_a]) {
+												Y_SPEED = Calculate_Speed(1024+256);
+											}
+											else {
+												Y_SPEED = Calculate_Speed(512);
+											}
+										}
+										else {
+											Y_SPEED = Calculate_Speed(128);
+										}
 										ASM.Write_To_Ram(0x1DF9, 0x8, 1);
 									}
 									else

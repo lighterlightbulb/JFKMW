@@ -193,3 +193,55 @@ void ProcessChat()
 		Chat_ClientSide();
 	}
 }
+
+void Render_Chat()
+{
+	//Render chat
+	if (Chatting || Time_ChatString[0] > 0)
+	{
+		for (int i = 0; i < 32; i++)
+		{
+			for (int e = 16; e < 28; e++)
+			{
+				VRAM[0xB800 + (i << 1) + (e << 6)] = 0x7F;
+				VRAM[0xB801 + (i << 1) + (e << 6)] = 6;
+			}
+		}
+		int y = 27;
+		string Curr_Typing = (Typing_In_Chat + ((global_frame_counter % 20) > 10 ? "_" : ""));
+		int Typing_Len = int(Curr_Typing.length());
+		if (Chatting)
+		{
+
+
+			y = (Typing_Len > 31) ? 25 : 26;
+
+			for (int i = 0; i < Curr_Typing.length(); i++)
+			{
+
+				uint_fast8_t new_l = char_to_smw(Curr_Typing.at(i));
+
+				VRAM[0xB802 + (i * 2) + (y << 6)] = new_l;
+				VRAM[0xB803 + (i * 2) + (y << 6)] = 6;
+
+			}
+
+		}
+		for (int cc = 0; cc < 6; cc++)
+		{
+			string C_String = Curr_ChatString[cc];
+			int C_len = int(Curr_ChatString[cc].length());
+			y -= ((C_len > 31) ? 2 : 1);
+			for (int i = 0; i < C_String.length(); i++)
+			{
+
+				uint_fast8_t new_l = char_to_smw(C_String.at(i));
+
+				VRAM[0xB802 + (i * 2) + (y << 6)] = new_l;
+				VRAM[0xB803 + (i * 2) + (y << 6)] = 6;
+
+			}
+		}
+
+	}
+}

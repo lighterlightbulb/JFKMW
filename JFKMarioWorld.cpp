@@ -125,10 +125,11 @@ istream& getline(istream& stream, string& str)
 
 #include "Global.h"
 #include "SDL_General.h"
+#include "sprite.h"
 
 #include "map16block.h"
 #include "exanimation.h"
-#include "Level.h"
+#include "level_and_load.h"
 
 #include "input.h"
 
@@ -139,6 +140,8 @@ istream& getline(istream& stream, string& str)
 
 #include "debugging.h"
 
+#include "overworld.h"
+#include "transitions.h"
 #include "game.h"
 
 
@@ -146,7 +149,6 @@ istream& getline(istream& stream, string& str)
 #include "Netplay.h"
 #endif
 
-#include "sprite.h"
 #include "zsnes_ui.h"
 #include "renderer.h"
 

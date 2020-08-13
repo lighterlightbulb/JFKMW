@@ -1,6 +1,6 @@
 #pragma once
 
-string GAME_VERSION = "1.6.1b";
+string GAME_VERSION = "2.0.0b";
 
 #define rom_asm_size 0x008000 //32kb, 1 bank ($00:8000 to $00:FFFF)
 #define location_rom_levelasm 0x008000 //this will put LevelASM on the start of the ROM, this is a SNES PC btw
@@ -27,6 +27,7 @@ uint_fast32_t pctosnes(uint_fast32_t pc) {
 #define button_right 4
 #define button_up 5
 #define button_down 6
+#define button_start 7
 
 #define camBoundX 32.0
 #define camBoundY 32.0
@@ -60,6 +61,7 @@ uint_fast8_t RAM_decay_time_level[0x4000]; //for multiplayer
 uint_fast16_t hdma_size[8];
 uint_fast32_t palette_array[256]; //These are cached lol
 uint_fast8_t VRAM[VRAM_Size];
+uint_fast8_t pipe_colors[4] = { 3, 5, 6, 7 };
 
 #define top 8
 #define bottom 4
@@ -84,6 +86,8 @@ sf::Thread* thread = 0;
 #endif
 
 //ASM
+bool in_Overworld = false;
+bool use_Overworld = false;
 bool need_sync_music = false;
 bool kill_music = false;
 uint_fast8_t my_skin = 0;
@@ -458,16 +462,35 @@ void ConvertPalette()
 		0x3D00-0x3DFF Palette, low b
 		0x3E00-0x3EFF Palette, high b
 	*/
-	uint_fast8_t b = global_frame_counter;
-	if ((global_frame_counter & 0x1F) > 0x0F)
+	if (!in_Overworld)
 	{
-		b = 0x10 - (global_frame_counter - 0x10);
+		uint_fast8_t b = global_frame_counter;
+		if ((global_frame_counter & 0x1F) > 0x0F)
+		{
+			b = 0x10 - (global_frame_counter - 0x10);
+		}
+		b = b << 4;
+		uint_fast16_t col = 0x3FF + ((b >> 3) << 10);
+		RAM[0x3D64] = col;
+		RAM[0x3E64] = col >> 8;
 	}
-	b = b << 4;
-	uint_fast16_t col = 0x3FF + ((b >> 3) << 10);
-	RAM[0x3D64] = col;
-	RAM[0x3E64] = col >> 8;
+	else
+	{
+		uint_fast8_t b = global_frame_counter;
+		if ((global_frame_counter & 0x1F) > 0x0F)
+		{
+			b = 0x10 - (global_frame_counter - 0x10);
+		}
+		b = b << 4;
+		uint_fast16_t col = 0x3FF + ((b >> 3) << 10);
+		RAM[0x3D6D] = col;
+		RAM[0x3E6D] = col >> 8;
 
+		col = 0x1F + ((b >> 3) << 5);
+		RAM[0x3D7D] = col;
+		RAM[0x3E7D] = col >> 8;
+
+	}
 
 	//Plr Name Color
 	switch (my_skin % 3)
@@ -496,9 +519,17 @@ void ConvertPalette()
 	palette_array[0x1B] = 0xFFFFFFFF;
 
 	//Text 2 (Yellow)
-	palette_array[0x1E] = 0xFF70D8F8; //0xFF38A0D8;
-	palette_array[0x1F] = 0xFF70D8F8;
-
+	if (in_Overworld)
+	{
+		palette_array[0x1D] = 0x00000000;
+		palette_array[0x1E] = 0xFF000000;
+		palette_array[0x1F] = 0xFF000000;
+	}
+	else
+	{
+		palette_array[0x1E] = 0xFF70D8F8;
+		palette_array[0x1F] = 0xFF70D8F8;
+	}
 
 	/*
 		Convert 16-bit palette to 32-bit palette

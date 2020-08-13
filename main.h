@@ -46,6 +46,7 @@ void player_code()
 
 	while (true)
 	{
+		use_Overworld = false;
 		LevelSprites.clear();
 		particles.clear();
 		zsnes_ui.hint = "";
@@ -85,6 +86,13 @@ void player_code()
 			}
 
 
+			if (state[SDL_SCANCODE_O]) {
+				s_or_c = "t";
+				
+				use_Overworld = true;
+				zsnes_ui.message = "Loading overworld";
+				midway_activated = false;
+			}
 			if (zsnes_ui.hint != "")
 			{
 				if (zsnes_ui.button_pressed == "SINGLEPLAYER" || state[SDL_SCANCODE_Q]) {
@@ -114,6 +122,7 @@ void player_code()
 
 			if ((zsnes_ui.button_pressed == "RELOAD" || state[SDL_SCANCODE_R]) || SDL_GameControllerGetButton(gGameController, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER))
 			{
+
 				if (level != "")
 				{
 					zsnes_ui.message = "Reloading";
@@ -125,25 +134,31 @@ void player_code()
 			zsnes_ui.process();
 			zsnes_ui.finish_processing(ren);
 
-
-			//we copy it to the renderer, for your program, if you want to have a ingame thing (variable or w/e), you just simply don't do this and render what your game has instead.
 			SDL_Rect DestR;
-			DestR.x = -(CameraX & 0xF);
-			DestR.y = -16 + (CameraY & 0xF);
-			DestR.w = int_res_x + 16;
-			DestR.h = int_res_y + 16;
+			if (!in_Overworld)
+			{
+				//we copy it to the renderer, for your program, if you want to have a ingame thing (variable or w/e), you just simply don't do this and render what your game has instead
+				DestR.x = -(CameraX & 0xF);
+				DestR.y = -16 + (CameraY & 0xF);
+				DestR.w = int_res_x + 16;
+				DestR.h = int_res_y + 16;
 
-			//Copied from renderer.h
-			drawBackground();
+				//Copied from renderer.h
+				drawBackground();
 
 
-			//Copied from renderer.h
-			SDL_RenderCopy(ren, screen_t_l1, nullptr, &DestR);
+				//Copied from renderer.h
+				SDL_RenderCopy(ren, screen_t_l1, nullptr, &DestR);
 
-			DestR.x = (int_res_x - 256) / 2;
-			DestR.y = (int_res_y - 224) / 2;
-			DestR.w = 256;
-			DestR.h = 224;
+				DestR.x = (int_res_x - 256) / 2;
+				DestR.y = (int_res_y - 224) / 2;
+				DestR.w = 256;
+				DestR.h = 224;
+			}
+			else
+			{
+				overworld.Render();
+			}
 
 			render_oam(0x200);
 			SDL_RenderCopy(ren, zsnes_ui.texture, NULL, &DestR);
@@ -160,6 +175,10 @@ void player_code()
 			{
 				break;
 			}
+		}
+		if (!use_Overworld)
+		{
+			in_Overworld = false;
 		}
 		global_frame_counter = 0;
 		/* Load Shit */
@@ -190,8 +209,10 @@ void player_code()
 #endif
 		}
 
-		if (s_or_c == "t")
+
+		if (s_or_c == "t" && !use_Overworld)
 		{
+			
 			isClient = false;
 			if (level == "")
 			{
@@ -200,9 +221,14 @@ void player_code()
 			LevelManager.LoadLevel(stoi(level, nullptr, 16));
 		}
 
-		if (!isClient)
+		if (!isClient && !use_Overworld)
 		{
 			game_init();
+		}
+		
+		if (use_Overworld)
+		{
+			overworld.Initialize();
 		}
 
 		//Initialize Singleplayer

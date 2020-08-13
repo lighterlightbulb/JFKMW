@@ -372,6 +372,10 @@ void lua_run_main()
 
 void lua_on_chatted(string message, int plr = 0)
 {
+	if (in_Overworld)
+	{
+		return;
+	}
 	if (lua_getglobal(LUA_STATE, "OnChatted"))
 	{
 		lua_pushstring(LUA_STATE, message.c_str());

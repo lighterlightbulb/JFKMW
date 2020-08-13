@@ -262,12 +262,13 @@
     <ClInclude Include="game.h" />
     <ClInclude Include="HDMA.h" />
     <ClInclude Include="input.h" />
-    <ClInclude Include="Level.h" />
+    <ClInclude Include="level_and_load.h" />
     <ClInclude Include="LuaImplementation.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="map16block.h" />
     <ClInclude Include="mario.h" />
     <ClInclude Include="Netplay.h" />
+    <ClInclude Include="overworld.h" />
     <ClInclude Include="Particle_System.h" />
     <ClInclude Include="renderer.h" />
     <ClInclude Include="SDL_General.h" />
@@ -287,6 +288,7 @@
     <ClInclude Include="sprite.h" />
     <ClInclude Include="Sprite_shared.h" />
     <ClInclude Include="Sprite_system.h" />
+    <ClInclude Include="transitions.h" />
     <ClInclude Include="zsnes_ui.h" />
   </ItemGroup>
   <ItemGroup>
