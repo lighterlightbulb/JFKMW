@@ -114,6 +114,45 @@ static int draw_to_oam(lua_State* L)
 	return 0;
 }
 
+static int slideDeathHandler(lua_State* L)
+{
+	uint_fast8_t sprite_index = (uint_fast8_t)lua_tonumber(L, 1);
+	uint_fast8_t tile = (uint_fast8_t)lua_tonumber(L, 2);
+	uint_fast8_t flags = (uint_fast8_t)lua_tonumber(L, 3);
+	int offset_x = (int)lua_tonumber(L, 4);
+	int offset_y = (int)lua_tonumber(L, 5);
+
+	uint_fast16_t sprite_x_position = uint_fast16_t(int(RAM[0x2100 + sprite_index] + int_fast8_t(RAM[0x2180 + sprite_index]) * 256)) + offset_x;
+	uint_fast16_t sprite_y_position = uint_fast16_t(int(RAM[0x2280 + sprite_index] + int_fast8_t(RAM[0x2300 + sprite_index]) * 256)) + offset_y;
+
+	double sy = Calculate_Speed(512);
+	double sx = -int_fast8_t(RAM[0x2680 + sprite_index]);
+
+	
+	createParticle(tile, 0x11, flags, 0xFF, sprite_x_position, sprite_y_position, sx, sy, Calculate_Speed(48), 0, 0, -4);
+
+	//Hitspark
+	createParticle(0x60, 0x11, 0x88, 5, sprite_x_position, sprite_y_position, 0, 0, 0);
+
+	return 0;
+}
+
+static int spriteDeathParticle(lua_State* L)
+{
+	uint_fast8_t sprite_index = (uint_fast8_t)lua_tonumber(L, 1);
+	uint_fast8_t tile = (uint_fast8_t)lua_tonumber(L, 2);
+	uint_fast8_t flags = (uint_fast8_t)lua_tonumber(L, 3);
+	uint_fast8_t size = (uint_fast8_t)lua_tonumber(L, 4);
+	int offset_x = (int)lua_tonumber(L, 5);
+	int offset_y = (int)lua_tonumber(L, 6);
+
+	uint_fast16_t sprite_x_position = uint_fast16_t(int(RAM[0x2100 + sprite_index] + int_fast8_t(RAM[0x2180 + sprite_index]) * 256)) + offset_x;
+	uint_fast16_t sprite_y_position = uint_fast16_t(int(RAM[0x2280 + sprite_index] + int_fast8_t(RAM[0x2300 + sprite_index]) * 256)) + offset_y;
+
+	createParticle(tile, 0x11, flags, 0xFF, sprite_x_position, sprite_y_position, 0, 0, Calculate_Speed(48), 0, 0, -4);
+
+	return 0;
+}
 
 static int draw_to_oam_direct(lua_State* L)
 {
@@ -310,6 +349,8 @@ void lua_connect_functions(lua_State* L)
 	lua_pushcfunction(L, killPlayer); lua_setglobal(L, "killPlayer");
 	lua_pushcfunction(L, damagePlayer); lua_setglobal(L, "damagePlayer");
 	lua_pushcfunction(L, createParticleHook); lua_setglobal(L, "createParticle");
+	lua_pushcfunction(L, slideDeathHandler); lua_setglobal(L, "deathBySlide");
+	lua_pushcfunction(L, spriteDeathParticle); lua_setglobal(L, "deathByJump");
 	lua_pushcfunction(L, discordMessageHook); lua_setglobal(L, "discordMessage");
 	lua_register(L, "asmRead", lua_get_ram);
 	lua_register(L, "charToSmw", lua_chartosmw);

@@ -29,6 +29,7 @@ uint_fast8_t spawnSpriteJFKMarioWorld(uint_fast8_t sprite_num, uint_fast8_t new_
 			RAM[0x2F00 + i] = 0x00;
 			RAM[0x2A00 + i] = 0x00;
 			RAM[0x2A80 + i] = 0x02;
+			RAM[0x2B00 + i] = 0;
 
 
 			RAM[0x2800 + i] = is_lua;

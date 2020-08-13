@@ -19,6 +19,7 @@ public:
 	int t = 0;
 	bool to_del = false;
 	int time_limit = 0;
+	double max_speed_y = 0;
 
 	void draw()
 	{
@@ -112,6 +113,22 @@ public:
 			}
 
 			break;
+		/*
+			Hit spark
+		*/
+		case 5:
+			pal_props = 0x88;
+			spr_tile = 0x44;
+			spr_size = 0x11;
+
+			pal_props = 0x88 | (((t / 2) % 2) * 0x20);
+
+			if (t > 8)
+			{
+				to_del = true;
+			}
+
+			break;
 		}
 
 		if (time_limit)
@@ -122,6 +139,11 @@ public:
 			}
 		}
 		spr_sy -= spr_grav;
+		if (max_speed_y != 0) {
+			if (spr_sy < max_speed_y) {
+				spr_sy = max_speed_y;
+			}
+		}
 		spr_x += spr_sx;
 		spr_y += spr_sy;
 		t++;
@@ -152,10 +174,10 @@ public:
 };
 vector<Particle> particles;
 
-void createParticle(uint_fast8_t t, uint_fast8_t size, uint_fast8_t prop, uint_fast8_t anim_type, double x, double y, double sx, double sy, double grav, int tt = 0, int t_del = 0)
+void createParticle(uint_fast8_t t, uint_fast8_t size, uint_fast8_t prop, uint_fast8_t anim_type, double x, double y, double sx, double sy, double grav, int tt = 0, int t_del = 0, double max_y_speed = 0)
 {
 	if (isClient) { return; } //Only server and singleplayer can create particles.
-	particles.push_back(Particle{ t, size, prop, anim_type, x, y, sx, sy, grav, tt, false, t_del});
+	particles.push_back(Particle{ t, size, prop, anim_type, x, y, sx, sy, grav, tt, false, t_del, max_y_speed});
 }
 
 void processParticles()

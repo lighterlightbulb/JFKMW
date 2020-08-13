@@ -50,10 +50,6 @@ public:
 	uint_fast16_t mouse_y = 0;
 	bool mouse_state[4]; //left, right, mousewup, mousewdown
 
-	uint_fast8_t flash_t = 0; //xxxxTTTT
-	int_fast16_t flash_x = 0;
-	int_fast16_t flash_y = 0;
-
 	char player_name_cut[player_name_size] = "       ";
 
 	uint_fast8_t GRABBED_SPRITE = 0xFF; //A sprite index from 0 to 7F
@@ -151,7 +147,6 @@ public:
 		y = LevelManager.start_y;
 
 
-		flash_t = 0;
 		DEATH_TIMER = 0;
 		DEAD = false;
 		STATE = 0;
@@ -189,9 +184,8 @@ public:
 
 	void Enemy_Jump()
 	{
-		flash_t = 0x18; //15 time, type 1
-		flash_x = int_fast16_t(x);
-		flash_y = int_fast16_t(y - 24.0);
+		//Hitspark
+		createParticle(0x44, 0x11, 0x8, 5, x, y - 24.0, 0, 0, 0);
 		if (!jump_is_spin)
 		{
 			if (pad[button_b])
@@ -207,9 +201,8 @@ public:
 
 	void Enemy_Jump_Spin()
 	{
-		flash_t = 0x18; //15 time, type 1
-		flash_x = int_fast16_t(x);
-		flash_y = int_fast16_t(y - 24.0);
+		//Hitspark
+		createParticle(0x44, 0x11, 0x8, 5, x, y - 24.0, 0, 0, 0);
 		ASM.Write_To_Ram(0x1DF9, 0x2, 1);
 		if (pad[button_b] || pad[button_a])
 		{
@@ -309,6 +302,8 @@ public:
 					RAM[0x2680 + GRABBED_SPRITE] = int_fast8_t(to_scale);
 					RAM[0x2000 + GRABBED_SPRITE] = 0x04;
 					RAM[0x2480 + GRABBED_SPRITE] = 0x00;
+
+					RAM[0x2400 + GRABBED_SPRITE] = uint_fast8_t(int_fast8_t((-0x2E * to_scale) + (X_SPEED * 8.0)));
 					ASM.Write_To_Ram(0x1DF9, 0x3, 1);
 				}
 				GRABBED_SPRITE = 0xFF;
@@ -426,7 +421,21 @@ public:
 							}
 							else
 							{
-								Hurt();
+								if (SLIDING)
+								{
+									if (RAM[0x2880 + sprite] & 0b100000)
+									{
+										results[2] = true;
+									}
+									else
+									{
+										RAM[0x2B00 + sprite] = 1;
+									}
+								}
+								else
+								{
+									Hurt();
+								}
 							}
 						}
 						else
@@ -540,15 +549,16 @@ public:
 								}
 								else
 								{
-									RAM[0x2680 + sprite] = int_fast8_t(to_scale);
+									RAM[0x2680 + sprite] = uint_fast8_t(X_SPEED > 0 ? 1 : -1);
+									RAM[0x2400 + sprite] = uint_fast8_t((X_SPEED > 0 ? 1 : -1) * 0x40);
+
 									RAM[0x2000 + sprite] = 4;
 									RAM[0x2E00 + sprite] = 0x10;
 
 									ASM.Write_To_Ram(0x1DF9, 3, 1);
 
-									flash_t = 0x18; //15 time, type 1
-									flash_x = int_fast16_t(x + X_SPEED);
-									flash_y = int_fast16_t(y - 16.0);
+									//Hitspark
+									createParticle(0x44, 0x11, 0x8, 5, x + X_SPEED, y - 16.0, 0, 0, 0);
 								}
 							}
 						}
@@ -897,63 +907,6 @@ public:
 
 	}
 
-	void FlashProcess()
-	{
-		uint_fast8_t flash_timer = flash_t & 0xF;
-		uint_fast8_t flash_type = flash_t >> 4;
-
-		if (flash_timer > 0)
-		{
-			uint_fast16_t oam_index = 0;
-			while (oam_index < 0x400)
-			{
-				if (RAM[0x200 + oam_index] == 0 && RAM[0x206 + oam_index] == 0) { //Empty OAM slot found
-					break;
-				}
-				oam_index += 8;
-			}
-
-
-			if (flash_type == 1)
-			{
-				RAM[0x200 + oam_index] = 0x44;
-				RAM[0x201 + oam_index] = 0x11;
-
-				RAM[0x202 + oam_index] = flash_x;
-				RAM[0x203 + oam_index] = flash_x >> 8;
-
-				RAM[0x204 + oam_index] = flash_y;
-				RAM[0x205 + oam_index] = flash_y >> 8;
-
-				RAM[0x206 + oam_index] = 0x08 | (((flash_timer / 2) % 2) * 0x20);
-				RAM[0x207 + oam_index] = 0;
-				flash_timer -= 1;
-			}
-			else
-			{
-				RAM[0x200 + oam_index] = 0x60 + ((15 - flash_timer)/4)*2;
-				RAM[0x201 + oam_index] = 0x11;
-
-				RAM[0x202 + oam_index] = flash_x;
-				RAM[0x203 + oam_index] = flash_x >> 8;
-
-				RAM[0x204 + oam_index] = flash_y;
-				RAM[0x205 + oam_index] = flash_y >> 8;
-
-				RAM[0x206 + oam_index] = 0x08;
-				RAM[0x207 + oam_index] = 0;
-
-				if (!(global_frame_counter % 2))
-				{
-					flash_timer -= 1;
-				}
-			}
-
-			
-		}
-		flash_t = flash_timer + (flash_type << 4);
-	}
-
 	int Process()
 	{
 		if (RAM[0x3F11] == 2) {
@@ -1015,9 +968,8 @@ public:
 				X_SPEED = 0;
 				P_METER = 0;
 
-				flash_t = 0x2F; //15 time, type 1
-				flash_x = int_fast16_t(x);
-				flash_y = int_fast16_t(y - (STATE == 0) * 16.0);
+				//Smoke
+				createParticle(0x60, 0x11, 0x8, 4, x, y - (STATE == 0) * 16.0, 0, 0, 0);
 			}
 		}
 
@@ -1283,6 +1235,7 @@ public:
 
 				if ((SKIDDING || SLIDING) && !(global_frame_counter & 3))
 				{
+					//Slide part
 					createParticle(0x3C, 0x00, 0x8, 3, x + 5.0, y - 27.0, 0, 0, 0, 0);
 				}
 
@@ -1443,7 +1396,6 @@ public:
 		if (x > double(-24 + mapWidth * 16)) { x = double(-24 + mapWidth * 16); }
 
 		ProcessGrabbed();
-		FlashProcess();
 		return 1;
 	}
 
