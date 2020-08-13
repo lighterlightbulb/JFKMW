@@ -165,7 +165,6 @@ void render()
 	if (in_Overworld)
 	{
 		overworld.Render();
-		DrawMouse();
 		return;
 	}
 
@@ -739,6 +738,4 @@ void render()
 		SDL_RenderFillRect(ren, nullptr);
 		SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_NONE);
 	}
-
-	DrawMouse();
 }

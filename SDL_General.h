@@ -209,7 +209,7 @@ void DrawMouse()
 	if (gGameController)
 	{
 		SDL_SetRenderDrawColor(ren, 255, 255, 255, 127);
-		SDL_Rect rect = { mouse_x, mouse_y, 1, 1 }; SDL_RenderFillRect(ren, &rect);
+		SDL_Rect rect = { sp_offset_x + int(double(mouse_x) * scale), sp_offset_y + int(double(mouse_y) * scale), int(scale), int(scale) }; SDL_RenderFillRect(ren, &rect);
 	}
 }
 
@@ -256,6 +256,7 @@ void redraw()
 		SDL_RenderPresent(ren);
 	}*/	
 	SDL_RenderCopy(ren, target_texture, NULL, &rect);
+	DrawMouse();
 	SDL_RenderPresent(ren);
 }
 
