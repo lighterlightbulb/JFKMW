@@ -25,9 +25,9 @@ public:
 	{
 		switch (special_animation_type)
 		{
-		/*
-			Turn Block Tile animation
-		*/
+			/*
+				Turn Block Tile animation
+			*/
 		case 1:
 			switch ((t >> 2) % 6)
 			{
@@ -57,9 +57,9 @@ public:
 				break;
 			}
 			break;
-		/*
-			Coin spark
-		*/
+			/*
+				Coin spark
+			*/
 		case 2:
 			pal_props = 0x88;
 			if (t < 0)
@@ -86,9 +86,9 @@ public:
 				}
 			}
 			break;
-		/*
-			Player skid
-		*/
+			/*
+				Player skid
+			*/
 		case 3:
 			pal_props = 0x88;
 			spr_tile = 0x62 + ((t >> 2) << 1);
@@ -99,9 +99,9 @@ public:
 			}
 
 			break;
-		/*
-			Smoke
-		*/
+			/*
+				Smoke
+			*/
 		case 4:
 			pal_props = 0x88;
 			spr_tile = 0x60 + ((t >> 3) << 1);
@@ -113,9 +113,9 @@ public:
 			}
 
 			break;
-		/*
-			Hit spark
-		*/
+			/*
+				Hit spark
+			*/
 		case 5:
 			pal_props = 0x88;
 			spr_tile = 0x44;
@@ -128,6 +128,39 @@ public:
 				to_del = true;
 			}
 
+			break;
+			/*
+				Throwblock Tile animation
+			*/
+		case 6:
+			switch ((t >> 2) % 6)
+			{
+			case 0:
+				spr_tile = 0x3D;
+				pal_props = 0x80;
+				break;
+			case 1:
+				spr_tile = 0x3C;
+				pal_props = 0x80;
+				break;
+			case 2:
+				spr_tile = 0x3C;
+				pal_props = 0xA0;
+				break;
+			case 3:
+				spr_tile = 0x3C;
+				pal_props = 0xE0;
+				break;
+			case 4:
+				spr_tile = 0x3C;
+				pal_props = 0xC0;
+				break;
+			case 5:
+				spr_tile = 0x3D;
+				pal_props = 0xC0;
+				break;
+			}
+			pal_props += 8 + (t & 7);
 			break;
 		}
 

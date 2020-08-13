@@ -274,8 +274,8 @@ void game_loop_code()
 					lua_run_main();
 				}
 				map16_handler.process_global();
-				processParticles();
 
+				processParticles();
 			}
 		}
 	}

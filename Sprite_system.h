@@ -94,7 +94,9 @@ public:
 									RAM[0x2680 + spr] *= -1;
 									RAM[0x2400 + spr] *= -1;
 
-									RAM[0x2980 + spr] = 32;
+									RAM[0x2980 + spr] = 16;
+									RAM[0x2980 + entry] = 16;
+									RAM[0x2400 + entry] *= -1;
 								}
 							}
 						}
@@ -310,10 +312,10 @@ public:
 					RAM[0x2000 + i] = 0;
 					continue;
 				}
-				/*if (!(RAM[0x2A80 + i] & 1) && !(RAM[0x2A80 + i] & 2)) //Don't process offscreen, useless.
+				if (!(RAM[0x2A80 + i] & 1) && !(RAM[0x2A80 + i] & 2)) //Don't process offscreen, useless.
 				{
 					continue;
-				}*/
+				}
 				if (RAM[0x2F80 + i] == 0)
 				{
 					if (RAM[0x2800 + i])

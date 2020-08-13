@@ -45,7 +45,9 @@ void InitInstalledSprites()
 	installedSprites.push_back({ 0x57, "Grey Moving Platform (Vertical)" });
 	installedSprites.push_back({ 0x74, "Mushroom" });
 	installedSprites.push_back({ 0x9E, "Ball n chain" });
+	installedSprites.push_back({ 0x9F, "Banzai Bill" });
 	installedSprites.push_back({ 0xA5, "Ground Guided Fuzzy" });
+	installedSprites.push_back({ 0xAB, "Rex" });
 	installedSprites.push_back({ 0xB6, "Reflecting Fireball" });
 	installedSprites.push_back({ 0xBA, "Timed Platform (4)" });
 	installedSprites.push_back({ 0xC4, "Grey Falling Platform" });
