@@ -1,5 +1,29 @@
 #pragma once
 
+
+string SPR_CODE[256]; //Cache
+
+void preloadSpriteCache()
+{
+	for (int i = 0; i < 256; i++) {
+		SPR_CODE[i] = "";
+	}
+
+	int sprs = 0;
+	for (int i = 0; i < 256; i++)
+	{
+		ifstream SprCode(path + "Code/Sprites/" + int_to_hex(i, true) + ".lua");
+		if (SprCode.is_open()) {
+			std::stringstream buffer;
+			buffer << SprCode.rdbuf();
+			SPR_CODE[i] = buffer.str();
+			sprs++;
+		}
+		SprCode.close();
+	}
+	cout << lua_color << "[Lua] Preloaded " << sprs << " sprites." << white << endl;
+}
+
 uint_fast8_t spawnSpriteJFKMarioWorld(uint_fast8_t sprite_num, uint_fast8_t new_state, uint_fast16_t x, uint_fast16_t y, uint_fast8_t direction, bool is_lua)
 {
 	for (uint_fast8_t i = 0; i < 128; i++)

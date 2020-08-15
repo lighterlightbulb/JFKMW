@@ -294,11 +294,11 @@ bool done()
 					break;
 
 				case 4:
-					ShellExecute(0, 0, L"https://discord.gg/SN56ufT", 0, 0, SW_SHOW);
+					ShellExecute(0, 0, L"https://discord.gg/ypxQKVd", 0, 0, SW_SHOW);
 					break;
 				case 5:
 
-					string str = "JFKMW has been a ongoing 3 year effort to create a fun Super Mario World experience for everyone, with lots of modability and options. Nothing of this would have happened without the JFKMW Team.\n\n\nJFK Mario World, Made by the JFKMW Team, Version " + GAME_VERSION;
+					string str = "JFKMW has been a ongoing 3 year effort to create a fun Super Mario World experience for everyone, with lots of modability and options.\n\nThanks to all contributors, programmers, and level designers.\n\n\nJFK Mario World, Made by the JFKMW Team, originally programmed by john fortnite kennedy.\n\nVersion " + GAME_VERSION;
 					std::wstring stemp = std::wstring(str.begin(), str.end());
 					LPCWSTR sw = stemp.c_str();
 

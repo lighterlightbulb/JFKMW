@@ -272,7 +272,7 @@ public:
 		lua_pcall(SPR_STATE[index], 1, 0, 0); // run script
 	}
 
-	void init_sprite_lua(int index, string file)
+	void init_sprite_lua(int index, int type)
 	{
 		if (SPR_STATE[index])
 		{
@@ -284,12 +284,10 @@ public:
 		load_lua_libs(SPR_STATE[index]);
 
 
-		int ret = luaL_dofile(SPR_STATE[index], (path + file).c_str());
+		int ret = luaL_dostring(SPR_STATE[index], SPR_CODE[type].c_str());
 		if (ret != 0)
 		{
-			//lua_print("Error occurred when calling luaL_loadfile()");
 			lua_print("Error: " + string(lua_tostring(SPR_STATE[index], -1)));
-			//lua_close(SPR_STATE[index]);
 			RAM[0x2000 + index] = 0;
 			return;
 		}
@@ -320,7 +318,7 @@ public:
 				{
 					if (RAM[0x2800 + i])
 					{
-						init_sprite_lua(int(i), "Code/Sprites/" + int_to_hex(RAM[0x2080 + i], true) + ".lua");
+						init_sprite_lua(int(i), RAM[0x2080 + i]);
 					}
 					RAM[0x2F80 + i] = 1;
 				}

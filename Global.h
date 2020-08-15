@@ -1,6 +1,6 @@
 #pragma once
 
-string GAME_VERSION = "2.0.0b";
+string GAME_VERSION = "2.0.1b";
 
 #define rom_asm_size 0x008000 //32kb, 1 bank ($00:8000 to $00:FFFF)
 #define location_rom_levelasm 0x008000 //this will put LevelASM on the start of the ROM, this is a SNES PC btw
@@ -232,6 +232,21 @@ bool is_file_exist(const char* fileName)
 {
 	ifstream infile(fileName);
 	return infile.good();
+}
+
+int dirExists(const char* const path)
+{
+	struct stat info;
+
+	int statRC = stat(path, &info);
+	if (statRC != 0)
+	{
+		if (errno == ENOENT) { return 0; } // something along the path does not exist
+		if (errno == ENOTDIR) { return 0; } // something in path prefix is not a dir
+		return -1;
+	}
+
+	return (info.st_mode & S_IFDIR) ? 1 : 0;
 }
 
 #define Calculate_Speed(x) double(x) / 256.0

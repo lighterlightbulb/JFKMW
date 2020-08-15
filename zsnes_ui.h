@@ -294,11 +294,16 @@ public:
 		draw_string(false, "Option: " + hint + ((global_frame_counter % 64) > 32 ? "_" : ""), 5, 224 - 22, surface);
 		draw_string(false, "Type a option then press a button.", 5, 224 - 10, surface);
 
+		if (dirExists((path + "Overworld").c_str()))
+		{
+			draw_string(false, "Overworld detected,\nPress O to go to it.", 96, 20, surface);
+		}
+
 
 		draw_string(false, "Levels Found:", 5, 20, surface);
 		for (int i = 0; i < levels_found.size(); i++)
 		{
-			draw_string(false, levels_found[i], 5, 30 + i * 6, surface);
+			draw_string(false, levels_found[i] + " - unnamed", 5, 30 + i * 6, surface);
 		}
 	}
 

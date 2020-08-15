@@ -315,6 +315,8 @@ public:
 		}
 
 		ResetDMAandHDMA();
+
+		preloadSpriteCache();
 	}
 
 	void LoadLevel(uint_fast16_t num)
