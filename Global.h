@@ -116,7 +116,7 @@ int haptic = 0;
 
 string testing_level = "";
 
-#define spawn_bound_x 192 //Sprite spawn bound for camera. This should be good for now.v
+#define spawn_bound_x 256 //Sprite spawn bound for camera. This should be good for now.
 
 //Stuff hud toggles here and hud stuff
 uint_fast8_t hudMode = 0;

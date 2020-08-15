@@ -309,8 +309,11 @@ public:
 				GRABBED_SPRITE = 0xFF;
 
 
-				//Hitspark
-				createParticle(0x44, 0x11, 0x8, 5, x_position, y_position - 16.0, 0, 0, 0);
+				if (!pad[button_down])
+				{
+					//Hitspark
+					createParticle(0x44, 0x11, 0x8, 5, x_position, y_position - 16.0, 0, 0, 0);
+				}
 			}
 		}
 	}

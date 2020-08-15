@@ -228,12 +228,12 @@ public:
 						uint_fast8_t new_s = map16_handler.get_slope(xB, yB);
 						if (new_s != 0)
 						{
-							bound_y += 4;
+							bound_y += 8;
 						}
 
 						RAM[0x2780 + entry] ^= 0b00010000;
 
-						if (NewPositionY < AboveBlock && NewPositionY > AboveBlock - bound_y)
+						if (NewPositionY < AboveBlock && NewPositionY > (AboveBlock - bound_y))
 						{
 							NewPositionY = AboveBlock;
 							finna_return = false;
