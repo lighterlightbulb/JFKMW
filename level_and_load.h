@@ -361,8 +361,10 @@ public:
 			start_x = RAM[0x3F0B] + RAM[0x3F0C] * 256;
 			start_y = RAM[0x3F0D] + RAM[0x3F0E] * 256;
 		}
-		Do_RAM_Change();
+#if not defined(DISABLE_NETWORK)
 		Set_Server_RAM();
+		Do_RAM_Change();
+#endif
 	}
 };
 
@@ -383,8 +385,8 @@ void load_level3f08()
 		game_init();
 #if not defined(DISABLE_NETWORK)
 		Set_Server_RAM();
-#endif
 		Do_RAM_Change();
+#endif
 
 		ASM.Write_To_Ram(0x3f08, 0, 2);
 	}
