@@ -99,12 +99,12 @@ public:
 
 	void Die()
 	{
-		if (PlayerControlled || (networking && !isClient))
+		if ((PlayerControlled || splitscreen) || (networking && !isClient))
 		{
 			if (!DEAD)
 			{
 				WO_counter += 1;
-				if (networking)
+				if (networking || splitscreen)
 				{
 					RAM[0x1DFC] = 100;
 				}
@@ -220,7 +220,7 @@ public:
 		x += X_SPEED;
 		y += Y_SPEED;
 
-		if (networking)
+		if (networking || splitscreen)
 		{
 			if (y < -16.0)
 			{

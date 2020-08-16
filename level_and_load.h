@@ -53,7 +53,10 @@ void CheckSpritesInCam(int x_pos)
 		int x = RAM[0x2100 + i] + RAM[0x2180 + i] * 256;
 		if (x > (x_pos - spawn_bound_x) && x < (x_pos + spawn_bound_x))
 		{
-			RAM[0x2A80 + i] ^= 0b00000010;
+			if (!(RAM[0x2A80 + i] & 0b00000010))
+			{
+				RAM[0x2A80 + i] |= 0b00000010;
+			}
 		}
 	}
 }

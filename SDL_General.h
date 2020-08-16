@@ -112,7 +112,14 @@ void screen(int width, int height)
 	}
 	
 	ren = SDL_CreateRenderer(win, rendering_device, flags);
-	target_texture = SDL_CreateTexture(ren, SDL_PIXELFORMAT_BGR555, SDL_TEXTUREACCESS_TARGET, int_res_x, int_res_y);
+
+	global_texture_s = SDL_CreateTexture(ren, SDL_PIXELFORMAT_BGR555, SDL_TEXTUREACCESS_TARGET, int_res_x, int_res_y);
+	if (splitscreen)
+	{
+		target_texture_p1 = SDL_CreateTexture(ren, SDL_PIXELFORMAT_BGR555, SDL_TEXTUREACCESS_TARGET, int_res_x, int_res_y/2);
+		target_texture_p2 = SDL_CreateTexture(ren, SDL_PIXELFORMAT_BGR555, SDL_TEXTUREACCESS_TARGET, int_res_x, int_res_y/2);
+	}
+
 
 	if (ren == NULL) { cout << cyan << "[SDL] Renderer error: " << SDL_GetError() << white << endl; SDL_Quit(); exit(1); }
 
@@ -138,7 +145,6 @@ void screen(int width, int height)
 
 	screen_s_l1 = *SDL_CreateRGBSurface(0, int_res_x + 16, int_res_y + 16, 32,
 		rmask, gmask, bmask, amask);
-
 #if defined(_WIN32)
 	//Enable WinAPI Events Processing
 	SDL_EventState(SDL_SYSWMEVENT, SDL_ENABLE);
@@ -154,7 +160,13 @@ void screen(int width, int height)
 void PrepareRendering()
 {
 
-	SDL_SetRenderTarget(ren, target_texture);
+	if (show_full_screen || !splitscreen)
+	{
+		uint_fast16_t c = RAM[0x3D00] + (RAM[0x3E00] << 8);
+		SDL_SetRenderDrawColor(ren, (c & 0x1F) << 3, ((c >> 5) & 0x1F) << 3, (c >> 10) << 3, 255);
+		SDL_SetRenderTarget(ren, global_texture_s);
+		SDL_RenderClear(ren);
+	}
 	if (!fullscreen)
 	{
 		SDL_GetWindowSize(win, &resolution_x, &resolution_y);
@@ -201,10 +213,6 @@ void cls()
 	SDL_RenderClear(ren);
 
 	PrepareRendering();
-
-	uint_fast16_t c = RAM[0x3D00] + (RAM[0x3E00] << 8);
-	SDL_SetRenderDrawColor(ren, (c & 0x1F) << 3, ((c >> 5) & 0x1F) << 3, (c >> 10) << 3, 255);
-	SDL_RenderClear(ren);
 }
 
 void DrawMouse()
@@ -218,47 +226,20 @@ void DrawMouse()
 
 void redraw()
 {
-	SDL_Rect rect = { sp_offset_x, sp_offset_y, int(int_res_x * scale), int(int_res_y * scale) };
-
 	SDL_SetRenderTarget(ren, NULL);
 
-	/*if (opengl)
+	SDL_Rect rect = { sp_offset_x, sp_offset_y, int(int_res_x * scale), int(int_res_y * scale) };
+	if (show_full_screen || !splitscreen)
 	{
-		glViewport(0, 0, w, h);
-		glClearColor(0.f, 0.f, 0.f, 1.f);
-		glClear(GL_COLOR_BUFFER_BIT);
-
-
-		// For Ortho mode, of course
-		float X = -1.f + float(rect.x * 2) / float(w);
-		float Y = -1.f + float(rect.y * 2) / float(h);
-		float XE = 1.f - float(rect.x * 2) / float(w);
-		float YE = 1.f - float(rect.y * 2) / float(h);
-
-		//Bind the SDL_Texture in OpenGL
-		SDL_GL_BindTexture(target_texture, NULL, NULL);
-
-		//Draw the SDL_Texture * as a Quad
-		glEnable(GL_TEXTURE_2D);
-		glBegin(GL_QUADS); {
-			//glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-			glTexCoord2f(0, 0); glVertex3f(X, Y, 0);
-			glTexCoord2f(1, 0); glVertex3f(XE, Y, 0);
-			glTexCoord2f(1, 1); glVertex3f(XE, YE, 0);
-			glTexCoord2f(0, 1); glVertex3f(X, YE, 0);
-		} glEnd();
-		glDisable(GL_TEXTURE_2D);
-
-		SDL_GL_UnbindTexture(target_texture);
-
-		SDL_GL_SwapWindow(win);
+		SDL_RenderCopy(ren, global_texture_s, NULL, &rect);
 	}
 	else
 	{
-		SDL_RenderCopy(ren, target_texture, NULL, &rect);
-		SDL_RenderPresent(ren);
-	}*/	
-	SDL_RenderCopy(ren, target_texture, NULL, &rect);
+		rect.h = int((int_res_y / 2) * scale);
+		SDL_RenderCopy(ren, target_texture_p1, NULL, &rect);
+		rect.y += int((int_res_y / 2) * scale);
+		SDL_RenderCopy(ren, target_texture_p2, NULL, &rect);
+	}
 	DrawMouse();
 	SDL_RenderPresent(ren);
 }
@@ -480,7 +461,8 @@ void draw8x8_tile_2bpp(int_fast16_t x, int_fast16_t y, uint_fast16_t tile, uint_
 	SDL_Rect DestR;
 	SDL_Rect SrcR;
 	DestR.x = x + (int_res_x - 256) / 2;
-	DestR.y = y + (int_res_y - 224) / 2;
+	DestR.y = y + (show_full_screen ? (int_res_y - 224) / 2 : 0);
+
 	DestR.w = 8;
 	DestR.h = 8;
 

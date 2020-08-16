@@ -21,11 +21,10 @@ void draw_number_dec(uint_fast8_t pos_x, uint_fast8_t pos_y, int number, uint_fa
 
 }
 
-void render_oam(uint_fast16_t offset_o = 0, bool pr_only = false)
+void render_oam(uint_fast16_t offset_o = 0, bool pr_only = false, int_fast16_t res_x = 256, int_fast16_t res_y = 224)
 {
 	for (uint_fast16_t i = 0; i < 0x400; i += 8) //Tile, Size, XY (4 bytes), PAL, ANG, in total 8 bytes per entry. 0 to 7.
 	{
-
 		uint_fast8_t flags = RAM[offset_o + i + 6] >> 4;
 
 		if (bool(flags >> 3) == pr_only)
@@ -38,8 +37,8 @@ void render_oam(uint_fast16_t offset_o = 0, bool pr_only = false)
 			uint_fast16_t tile = RAM[offset_o + i] + ((flags & 1) << 8);
 
 			if (tile != 0x0 &&
-				(x_position - CameraX) > (-size_x) && (x_position - CameraX) < (int(int_res_x) + size_x) &&
-				(y_position - CameraY) > (-16 - size_y) && (y_position - CameraY) < (int(int_res_y) + size_y)
+				(x_position - CameraX) > (-size_x) && (x_position - CameraX) < (res_x + size_x) &&
+				(y_position - CameraY) > (-16 - size_y) && (y_position - CameraY) < (res_y + size_y)
 				)
 			{
 				if (drawDiag)
@@ -48,7 +47,7 @@ void render_oam(uint_fast16_t offset_o = 0, bool pr_only = false)
 				}
 				uint_fast8_t pal = RAM[offset_o + i + 6] & 0xF;
 				double angle = (double(RAM[offset_o + i + 7]) / 256.0) * 360.0;
-				draw_tile_custom(x_position - CameraX, int_res_y - 32 - y_position + CameraY, size, angle, tile, pal,
+				draw_tile_custom(x_position - CameraX, res_y - 32 - y_position + CameraY, size, angle, tile, pal,
 					SDL_RendererFlip(
 						((flags >> 1) & 1) +
 						(((flags >> 2) & 1) << 1)
@@ -59,7 +58,7 @@ void render_oam(uint_fast16_t offset_o = 0, bool pr_only = false)
 	}
 }
 
-void drawBackground()
+void drawBackground(uint_fast16_t res_x = 256, uint_fast16_t res_y = 224)
 {
 	if (RAM[0x3F05] != curr_bg)
 	{
@@ -82,8 +81,8 @@ void drawBackground()
 		DestR.w = 1 * m;
 		DestR.h = 1 * m;
 
-		uint_fast16_t draw_x = int_res_x / m;
-		uint_fast16_t draw_y = int_res_y / m;
+		uint_fast16_t draw_x = res_x / m;
+		uint_fast16_t draw_y = res_y / m;
 		draw_x++;
 		draw_y++;
 
@@ -92,7 +91,7 @@ void drawBackground()
 			for (uint_fast16_t y = 0; y < draw_y; y++)
 			{
 				SrcR.x = (-formula_x + (x * m)) & 0x1FF;
-				SrcR.y = (-formula_y + 272 + (y * m)) % 512;
+				SrcR.y = (-formula_y + (272 + (224-res_y)) + (y * m)) % 512;
 
 				DestR.x = x * m;
 				DestR.y = y * m;
@@ -119,7 +118,7 @@ void drawBackground()
 					SrcR.y = (-formula_y + 256 + int(i) + int(layer2_shiftY[i] & 0x1FF)) & 0x1FF;
 
 					DestR.x = ((layer2_shiftX[i] & 0x1FF) + formula_x + (x * 512));
-					DestR.y = (((int_res_y - 224) / 2) + i);
+					DestR.y = (((res_y - 224) / 2) + i);
 
 					SDL_RenderCopy(ren, bg_texture, &SrcR, &DestR);
 				}
@@ -141,7 +140,7 @@ void drawBackground()
 				for (int y = 0; y < am_y; y++) {
 					RenderBackground(
 						formula_x + x * off_x,
-						-272 + (int_res_y - 224) + formula_y + (y * -off_y) + (512 - off_y)
+						-272 + (res_y - 224) + formula_y + (y * -off_y) + (512 - off_y)
 					);
 				}
 			}
@@ -149,28 +148,11 @@ void drawBackground()
 	}
 }
 
-void render()
+void handleRenderingForPlayer(int player, uint_fast16_t res_x = 256, uint_fast16_t res_y = 224)
 {
-	PrepareRendering();
-
-	/*
-		Convert 16bit palette to 32bit palette (for speed)
-	*/
-	ConvertPalette();
-	memcpy(VRAM, &RAM[VRAM_Location], VRAM_Size * sizeof(uint_fast8_t));
-
-	/*
-		Overworld rendering
-	*/
-	if (in_Overworld)
-	{
-		overworld.Render();
-		return;
-	}
-
 	blocks_on_screen = 0;
 	CheckForPlayers();
-	if (Mario.size() < 1 || SelfPlayerNumber < 1)
+	if (Mario.size() < player)
 	{
 		return;
 	}
@@ -186,10 +168,10 @@ void render()
 	uint_fast8_t mosaic_val = RAM[0x3F10] >> 4;
 	uint_fast8_t bright_val = RAM[0x3F10] & 0xF;
 
-	MPlayer& LocalPlayer = get_mario(SelfPlayerNumber);
+	MPlayer& LocalPlayer = get_mario(player);
 	LocalPlayer.ProcessCamera();
-	CameraX = int_fast16_t(LocalPlayer.CAMERA_X - ((int_res_x / 2) - 8));
-	CameraY = int_fast16_t(max(0.0, LocalPlayer.CAMERA_Y - (int_res_y / 2)));
+	CameraX = int_fast16_t(LocalPlayer.CAMERA_X - ((res_x / 2) - 8));
+	CameraY = int_fast16_t(max(0.0, LocalPlayer.CAMERA_Y - (res_y / 2)));
 	if (RAM[0x1887] > 0)
 	{
 		CameraY += (global_frame_counter % 3);
@@ -197,13 +179,13 @@ void render()
 
 	if (CameraX < 0) { CameraX = 0; }
 	if (CameraY < 0) { CameraY = 0; }
-	if (CameraX > (-int_fast16_t(int_res_x) + int_fast16_t(mapWidth) * 16))
+	if (CameraX > (-int_fast16_t(res_x) + int_fast16_t(mapWidth) * 16))
 	{
-		CameraX = (-int_fast16_t(int_res_x) + int_fast16_t(mapWidth) * 16);
+		CameraX = (-int_fast16_t(res_x) + int_fast16_t(mapWidth) * 16);
 	}
-	if (CameraY > (-int_fast16_t(int_res_y) + int_fast16_t(mapHeight) * 16))
+	if (CameraY > (-int_fast16_t(res_y) + int_fast16_t(mapHeight) * 16))
 	{
-		CameraY = (-int_fast16_t(int_res_y) + int_fast16_t(mapHeight) * 16);
+		CameraY = (-int_fast16_t(res_y) + int_fast16_t(mapHeight) * 16);
 	}
 
 	int_fast16_t offsetX = int_fast16_t(CameraX >> 4);
@@ -213,7 +195,7 @@ void render()
 
 	//Draw BG
 	if (drawBg) {
-		drawBackground();
+		drawBackground(res_x, res_y);
 	}
 
 	if (drawL1)
@@ -225,8 +207,8 @@ void render()
 
 
 		//Draw scenery
-		uint_fast8_t int_b_x = uint_fast8_t(int_res_x / 16) + 1;
-		uint_fast8_t int_b_y = uint_fast8_t(int_res_y / 16) + 1;
+		uint_fast8_t int_b_x = uint_fast8_t(res_x / 16) + 1;
+		uint_fast8_t int_b_y = uint_fast8_t(res_y / 16) + 1;
 
 
 		for (uint_fast8_t x = 0; x < int_b_x; x++)
@@ -262,7 +244,7 @@ void render()
 							}
 							draw8x8_tile(
 								((i << 3) & 0xF) + (x << 4),
-								(int_res_y) - (i > 1 ? -8 : 0) - (y << 4),
+								(res_y) - (i > 1 ? -8 : 0) - (y << 4),
 								block_index, block_palette
 							);
 						}
@@ -293,8 +275,8 @@ void render()
 			DestR.w = 1 * m;
 			DestR.h = 1 * m;
 
-			uint_fast16_t draw_x = int_res_x / m;
-			uint_fast16_t draw_y = int_res_y / m;
+			uint_fast16_t draw_x = res_x / m;
+			uint_fast16_t draw_y = res_y / m;
 			draw_x++;
 			draw_y++;
 
@@ -316,18 +298,23 @@ void render()
 		{
 			if (!layer1mode_y && !layer1mode_x)
 			{
+				SrcR.x = 0;
+				SrcR.y = 0;
+				SrcR.w = res_x + 16;
+				SrcR.h = res_y + 16;
+
 				DestR.x = -offsetXPixel;
 				DestR.y = -16 + offsetYPixel;
-				DestR.w = int_res_x + 16;
-				DestR.h = int_res_y + 16;
-				SDL_RenderCopy(ren, screen_t_l1, nullptr, &DestR);
+				DestR.w = res_x + 16;
+				DestR.h = res_y + 16;
+				SDL_RenderCopy(ren, screen_t_l1, &SrcR, &DestR);
 			}
 			else
 			{
 				SrcR.x = 0;
-				SrcR.w = int_res_x + 16;
+				SrcR.w = res_x + 16;
 				SrcR.h = 1;
-				DestR.w = int_res_x + 16;
+				DestR.w = res_x + 16;
 				DestR.h = 1;
 
 				
@@ -359,7 +346,7 @@ void render()
 	//Draw OAM (under)
 	if (drawSprites)
 	{
-		render_oam(0x200, false);
+		render_oam(0x200, false, res_x, res_y);
 	}
 
 	//Draw Mario
@@ -369,7 +356,7 @@ void render()
 
 		MPlayer& CurrentMario = *item;
 
-		if (CurrentMario.x > (CameraX - camBoundX) && CurrentMario.y > (CameraY - camBoundY) && CurrentMario.x < (CameraX + int_res_x + camBoundX) && CurrentMario.y < (CameraY + int_res_y + camBoundY))
+		if (CurrentMario.x > (CameraX - camBoundX) && CurrentMario.y > (CameraY - camBoundY) && CurrentMario.x < (CameraX + res_x + camBoundX) && CurrentMario.y < (CameraY + res_y + camBoundY))
 		{
 			float is_skidding = 1.f - (float(abs(CurrentMario.SKIDDING)) * 2.f);
 
@@ -388,7 +375,7 @@ void render()
 					uint_fast8_t pal = uint_fast8_t(ASM.Get_Ram(0x2E80 + CurrentMario.GRABBED_SPRITE, 1) & 0xF);
 
 					double angle = 0.0;
-					draw_tile_custom(x_position - CameraX, int_res_y - 32 - y_position + CameraY, size, angle, tile, pal, SDL_FLIP_NONE);
+					draw_tile_custom(x_position - CameraX, res_y - 32 - y_position + CameraY, size, angle, tile, pal, SDL_FLIP_NONE);
 				}
 			}
 
@@ -396,7 +383,7 @@ void render()
 			{
 				CreateSprite(path + "Sprites/mario/" + to_string(CurrentMario.skin) + "/" + CurrentMario.sprite + ".png",
 					-8 + int(CurrentMario.x) - int(CameraX), 
-					int_res_y - 32 - int(CurrentMario.y) + int(CameraY), 
+					res_y - 32 - int(CurrentMario.y) + int(CameraY), 
 					int(CurrentMario.to_scale * is_skidding) * 32, 
 					32);
 			}
@@ -406,7 +393,7 @@ void render()
 	//Draw OAM (priority)
 	if (drawSprites)
 	{
-		render_oam(0x200, true);
+		render_oam(0x200, true, res_x, res_y);
 	}
 
 	/*
@@ -630,9 +617,9 @@ void render()
 	{
 		MPlayer& CurrentMario = *item;
 
-		int s_off_x = (int_res_x - 256) / 2;
-		int s_off_y = (int_res_y - 224) / 2;
-		if (!CurrentMario.PlayerControlled && CurrentMario.x > (CameraX - camBoundX) && CurrentMario.y > (CameraY - camBoundY) && CurrentMario.x < (CameraX + int_res_x + camBoundX) && CurrentMario.y < (CameraY + int_res_y + camBoundY))
+		int s_off_x = (res_x - 256) / 2;
+		int s_off_y = (res_y - 224) / 2;
+		if (!CurrentMario.PlayerControlled && CurrentMario.x > (CameraX - camBoundX) && CurrentMario.y > (CameraY - camBoundY) && CurrentMario.x < (CameraX + res_x + camBoundX) && CurrentMario.y < (CameraY + res_y + camBoundY))
 		{
 			for (int i = 0; i < 5; i++)
 			{
@@ -644,19 +631,17 @@ void render()
 
 
 	//Draw L3
-	for (uint_fast16_t t3_x = 0; t3_x < 32; t3_x++)
-	{
-		for (uint_fast16_t t3_y = 0; t3_y < 28; t3_y++)
-		{
-			if (VRAM[0xB800 + (t3_x << 1) + (t3_y << 6)] < MAX_L3_TILES)
-			{
-				draw8x8_tile_2bpp(t3_x << 3, t3_y << 3, VRAM[0xB800 + (t3_x << 1) + (t3_y << 6)], VRAM[0xB801 + (t3_x << 1) + (t3_y << 6)]);
+	uint_fast16_t rows = splitscreen ? 5 : 28;
+	for (uint_fast16_t t3_x = 0; t3_x < 32; t3_x++) {
+		for (uint_fast16_t t3_y = 0; t3_y < rows; t3_y++) {
+			if (VRAM[0xB800 + (t3_x << 1) + (t3_y << 6)] < MAX_L3_TILES) {
+				draw8x8_tile_2bpp(t3_x << 3, (t3_y > 5 ? int_res_y - 224 : 0) + (t3_y << 3), VRAM[0xB800 + (t3_x << 1) + (t3_y << 6)], VRAM[0xB801 + (t3_x << 1) + (t3_y << 6)]);
 			}
 		}
 	}
 
 
-	if (drawDiag)
+	if (drawDiag && !splitscreen)
 	{
 		SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_BLEND);
 		SDL_Rect rect;
@@ -737,5 +722,45 @@ void render()
 		SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_BLEND);
 		SDL_RenderFillRect(ren, nullptr);
 		SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_NONE);
+	}
+}
+
+
+void render()
+{
+	PrepareRendering();
+
+	/*
+		Convert 16bit palette to 32bit palette (for speed)
+	*/
+	ConvertPalette();
+	memcpy(VRAM, &RAM[VRAM_Location], VRAM_Size * sizeof(uint_fast8_t));
+
+	/*
+		Overworld rendering
+	*/
+	if (in_Overworld)
+	{
+		overworld.Render();
+		return;
+	}
+
+	if (splitscreen)
+	{
+		uint_fast16_t c = RAM[0x3D00] + (RAM[0x3E00] << 8);
+
+		SDL_SetRenderTarget(ren, target_texture_p1);
+		SDL_SetRenderDrawColor(ren, (c & 0x1F) << 3, ((c >> 5) & 0x1F) << 3, (c >> 10) << 3, 255);
+		SDL_RenderClear(ren);
+		handleRenderingForPlayer(1, int_res_x, int_res_y / 2);
+
+		SDL_SetRenderTarget(ren, target_texture_p2);
+		SDL_SetRenderDrawColor(ren, (c & 0x1F) << 3, ((c >> 5) & 0x1F) << 3, (c >> 10) << 3, 255);
+		SDL_RenderClear(ren);
+		handleRenderingForPlayer(2, int_res_x, int_res_y / 2);
+	}
+	else
+	{
+		handleRenderingForPlayer(1, int_res_x, int_res_y);
 	}
 }

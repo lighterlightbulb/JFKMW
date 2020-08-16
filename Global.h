@@ -379,13 +379,17 @@ int resolution_y = 240;
 SDL_Surface screen_s_l1;
 SDL_Texture* screen_t_l1;
 SDL_Texture* cached_l3_tiles[8];
-SDL_Texture* target_texture;
+SDL_Texture* target_texture_p1;
+SDL_Texture* target_texture_p2;
+SDL_Texture* global_texture_s;
 
 int w; //width of the screen
 int h; //height of the screen
 SDL_Window* win; //The window
 SDL_Renderer* ren; //The renderer
 SDL_Event event = { 0 };
+bool splitscreen = false;
+bool show_full_screen = true;
 
 
 

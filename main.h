@@ -46,6 +46,7 @@ void player_code()
 
 	while (true)
 	{
+		show_full_screen = true;
 		use_Overworld = false;
 		LevelSprites.clear();
 		particles.clear();
@@ -135,32 +136,10 @@ void player_code()
 			zsnes_ui.finish_processing(ren);
 
 			SDL_Rect DestR;
-			if (!in_Overworld)
-			{
-				//we copy it to the renderer, for your program, if you want to have a ingame thing (variable or w/e), you just simply don't do this and render what your game has instead
-				DestR.x = -(CameraX & 0xF);
-				DestR.y = -16 + (CameraY & 0xF);
-				DestR.w = int_res_x + 16;
-				DestR.h = int_res_y + 16;
-
-				//Copied from renderer.h
-				drawBackground();
-
-
-				//Copied from renderer.h
-				SDL_RenderCopy(ren, screen_t_l1, nullptr, &DestR);
-
-				DestR.x = (int_res_x - 256) / 2;
-				DestR.y = (int_res_y - 224) / 2;
-				DestR.w = 256;
-				DestR.h = 224;
-			}
-			else
-			{
-				overworld.Render();
-			}
-
-			render_oam(0x200);
+			DestR.x = (int_res_x - 256) / 2;
+			DestR.y = (int_res_y - 224) / 2;
+			DestR.w = 256;
+			DestR.h = 224;
 			SDL_RenderCopy(ren, zsnes_ui.texture, NULL, &DestR);
 
 			redraw();
@@ -233,7 +212,7 @@ void player_code()
 
 		//Initialize Singleplayer
 		if (s_or_c == "t") {
-			PlayerAmount = 1; SelfPlayerNumber = 1; CheckForPlayers();
+			PlayerAmount = 1 + splitscreen; SelfPlayerNumber = 1; CheckForPlayers();
 		}
 
 #if not defined(DISABLE_NETWORK)

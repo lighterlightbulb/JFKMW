@@ -18,6 +18,7 @@ void game_loop_code()
 	/*
 		TO-DO: Implement 0x100 properly
 	*/
+	show_full_screen = in_Overworld;
 	if (in_Overworld && !networking)
 	{
 		/*
@@ -166,7 +167,7 @@ void game_loop_code()
 		for (list<MPlayer>::iterator item = Mario.begin(); item != Mario.end(); ++item)
 		{
 			MPlayer& CurrPlayer = *item;
-			CurrPlayer.PlayerControlled = networking ? (player == SelfPlayerNumber) : true; //Only control myself
+			CurrPlayer.PlayerControlled = networking ? (player == SelfPlayerNumber) : (player == 1); //Only control myself
 			if (!isClient && networking) {
 				CurrPlayer.PlayerControlled = false;
 			}
