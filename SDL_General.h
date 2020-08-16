@@ -197,6 +197,9 @@ void drawRect(int_fast16_t x1, int_fast16_t y1, uint_fast8_t color, SDL_Surface 
 
 void cls()
 {
+	SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
+	SDL_RenderClear(ren);
+
 	PrepareRendering();
 
 	uint_fast16_t c = RAM[0x3D00] + (RAM[0x3E00] << 8);

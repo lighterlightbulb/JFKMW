@@ -285,7 +285,7 @@ public:
 				RAM[0x2280 + GRABBED_SPRITE] = uint_fast8_t(y_position & 0xFF);
 				RAM[0x2300 + GRABBED_SPRITE] = uint_fast8_t(y_position >> 8);
 				RAM[0x2380 + GRABBED_SPRITE] = 0x00;
-				RAM[0x2E00 + GRABBED_SPRITE] = 0x10;
+				RAM[0x2E00 + GRABBED_SPRITE] = 0x08;
 				RAM[0x2780 + GRABBED_SPRITE] = 0;
 
 				RAM[0x2000 + GRABBED_SPRITE] = 0x02;
@@ -381,13 +381,12 @@ public:
 
 				if (NewPositionX < RightSprite && NewPositionX > LeftSprite && NewPositionY < AboveSprite && NewPositionY > BelowSprite)
 				{
-					if (RAM[0x2600 + sprite] & 0b10000000)
+					if (RAM[0x2600 + sprite] & 0b10000000) //sprite is solid
 					{
-						if (RAM[0x2600 + sprite] & 0b10000)
+						if (RAM[0x2600 + sprite] & 0b10000) //can jump on sprite
 						{
 							if (NewPositionY > (AboveSprite - bounds_y))
 							{
-								Enemy_Jump();
 								NewPositionY += 1;
 								if (jump_is_spin)
 								{
@@ -402,10 +401,13 @@ public:
 											RAM[0x2000 + sprite] = 0;
 										}
 
+										/*
+											High jumps
+										*/
 										if (RAM[0x2880 + sprite] & 0x20)
 										{
 											if (pad[button_b] || pad[button_a]) {
-												Y_SPEED = Calculate_Speed(1024+256);
+												Y_SPEED = Calculate_Speed(1280);
 											}
 											else {
 												Y_SPEED = Calculate_Speed(512);
@@ -423,6 +425,7 @@ public:
 								}
 								else
 								{
+									Enemy_Jump();
 									results[2] = true;
 								}
 							}
@@ -445,7 +448,7 @@ public:
 								}
 							}
 						}
-						else
+						else //we cant jump on this sprite
 						{
 							if (jump_is_spin && NewPositionY > (AboveSprite - bounds_y))
 							{

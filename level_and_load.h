@@ -35,7 +35,8 @@ vector<LevelSprite> LevelSprites; //U know what they say. All toasters toast.
 
 void CheckSpritesInCam(int x_pos)
 {
-	for (int i = 0; i < LevelSprites.size(); i++)
+
+	for (uint_fast16_t i = 0; i < LevelSprites.size(); i++)
 	{
 		LevelSprite& CSprite = LevelSprites[i];
 		int x = int(CSprite.x_pos);
@@ -52,10 +53,7 @@ void CheckSpritesInCam(int x_pos)
 		int x = RAM[0x2100 + i] + RAM[0x2180 + i] * 256;
 		if (x > (x_pos - spawn_bound_x) && x < (x_pos + spawn_bound_x))
 		{
-			if (!(RAM[0x2A80 + i] & 0b00000010))
-			{
-				RAM[0x2A80 + i] |= 0b00000010;
-			}
+			RAM[0x2A80 + i] ^= 0b00000010;
 		}
 	}
 }

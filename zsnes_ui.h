@@ -15,16 +15,12 @@ void draw_pixel_to_surface(uint_fast8_t x1, uint_fast8_t y1, uint_fast8_t r, uin
 	}
 }
 
-class ZSNES_letter
-{
-public:
-	bool bits[8][5];
-};
-ZSNES_letter zsnes_font[0xC0];
+Uint8 zsnes_font[0x3C0];
+
 void load_zsnes_font()
 {
 	cout << cyan << "[ZUI] Loading zfont.txt" << endl;
-	uint_fast8_t current_letter = 0;
+	uint_fast16_t current_letter = 0;
 	uint_fast8_t current_offset = 0;
 	ifstream cFile(path + "zfont.txt");
 	if (cFile.is_open())
@@ -35,10 +31,9 @@ void load_zsnes_font()
 			if (line.empty()) { continue; } 
 
 
-			ZSNES_letter& curr_l = zsnes_font[current_letter];
 			for (uint_fast8_t i = 0; i < 8; i++)
 			{
-				curr_l.bits[i][current_offset] = line.at(i) == '1';
+				zsnes_font[(current_letter * 5) + current_offset ] ^= (uint_fast8_t(line.at(i) == '1') << i);
 			}
 
 			current_offset += 1;
@@ -66,7 +61,7 @@ void draw_string(bool dark, string str, int_fast16_t x, int_fast16_t y, SDL_Surf
 {
 	int_fast16_t orig_x = x;
 	for (int i = 0; i < str.size(); i++) {
-		uint_fast8_t arr_l = char_to_zsnes_font_letter(str.at(i));
+		uint_fast16_t arr_l = char_to_zsnes_font_letter(str.at(i));
 		if (str.at(i) == '\n')
 		{
 			y += 6;
@@ -74,11 +69,9 @@ void draw_string(bool dark, string str, int_fast16_t x, int_fast16_t y, SDL_Surf
 		}
 		else
 		{
-			ZSNES_letter& curr_l = zsnes_font[arr_l];
-
 			for (uint_fast8_t x_l = 0; x_l < 8; x_l++) {
 				for (uint_fast8_t y_l = 0; y_l < 5; y_l++) {
-					if (curr_l.bits[x_l][y_l])
+					if ((zsnes_font[(arr_l * 5) + y_l] >> x_l) & 1)
 					{
 						if (dark)
 						{
@@ -303,7 +296,7 @@ public:
 		draw_string(false, "Levels Found:", 5, 20, surface);
 		for (int i = 0; i < levels_found.size(); i++)
 		{
-			draw_string(false, levels_found[i] + " - unnamed", 5, 30 + i * 6, surface);
+			draw_string(false, levels_found[i], 5 + (i / 27) * 15, 30 + (i % 27) * 6, surface);
 		}
 	}
 

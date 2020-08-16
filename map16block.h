@@ -347,7 +347,8 @@ public:
 	*/
 	uint_fast16_t get_tile(uint_fast16_t x, uint_fast16_t y)
 	{
-		uint_fast32_t index = (x % mapWidth) + (y % mapHeight) * mapWidth;
+		if (x >= mapWidth || y >= mapHeight) { return 0x25; }
+		uint_fast32_t index = x + y * mapWidth;
 		return RAM[ram_level_low + index] + (RAM[ram_level_high + index] << 8);
 	}
 
