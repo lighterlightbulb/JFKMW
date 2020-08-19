@@ -236,7 +236,6 @@ public:
 		}
 
 		snow_s = min(1.f, snow_s + 0.001f);
-
 		draw_rectangle(0, 230, 0, 15, 0, 44, 136);
 		draw_rectangle(0, 230, 1, 14, 0, 48, 152);
 		draw_rectangle(0, 230, 2, 13, 0, 52, 168);
