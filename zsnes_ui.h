@@ -73,15 +73,18 @@ void draw_string(bool dark, string str, int_fast16_t x, int_fast16_t y, SDL_Surf
 				for (uint_fast8_t y_l = 0; y_l < 5; y_l++) {
 					if ((zsnes_font[(arr_l * 5) + y_l] >> x_l) & 1)
 					{
-						if (dark)
+						if ((x + x_l) < surface->w && (y + y_l) < surface->h && (x + x_l) >= 0 && (y + y_l) >= 0)
 						{
-							uint_fast8_t formula = 16 + y_l * 16;
-							draw_pixel_to_surface(x + x_l, y + y_l, formula, formula, formula, surface);
-						}
-						else
-						{
-							uint_fast8_t formula = 255 - y_l * 16;
-							draw_pixel_to_surface(x + x_l, y + y_l, formula, formula, formula, surface);
+							if (dark)
+							{
+								uint_fast8_t formula = 16 + y_l * 16;
+								draw_pixel_to_surface(x + x_l, y + y_l, formula, formula, formula, surface);
+							}
+							else
+							{
+								uint_fast8_t formula = 255 - y_l * 16;
+								draw_pixel_to_surface(x + x_l, y + y_l, formula, formula, formula, surface);
+							}
 						}
 					}
 				}
@@ -124,6 +127,8 @@ public:
 	float snow_y[snow_size];
 	float snow_s;
 	float snow_x_s[snow_size];
+	double changelog_x = 256;
+	double level_x = -256;
 	vector<string> levels_found;
 
 	//initializer. done always
@@ -256,6 +261,9 @@ public:
 			draw_string(false, b.name, b.x_s + 3, b.y_s + 3, surface);
 		}
 
+		changelog_x = changelog_x + (0 - changelog_x) / 10.0;
+		level_x = level_x + (5 - level_x) / 10.0;
+
 
 
 		//Numbers (HOw to otpimize please help)
@@ -283,20 +291,23 @@ public:
 
 		hint = hint.substr(0, 15);
 
-		draw_string(false, "JFKMW " + GAME_VERSION + " - " + message, 5, 224 - 16, surface);
+		draw_string(false, "JFKMW - " + message, 5, 224 - 16, surface);
 		draw_string(false, "Option: " + hint + ((global_frame_counter % 64) > 32 ? "_" : ""), 5, 224 - 22, surface);
 		draw_string(false, "Type a option then press a button.", 5, 224 - 10, surface);
 
+		string t = "Changelog V" + GAME_VERSION + ": \n\n" + CHANGELOG;
+		t += "\n\n\n--------------------\n\nPlease remember to\nread the documentation!";
 		if (dirExists((path + "Overworld").c_str()))
 		{
-			draw_string(false, "Overworld detected,\nPress O to go to it.", 96, 20, surface);
+			t += "\n\n--------------------\n\nOverworld detected,\nPress O to go to it.";
 		}
+		draw_string(false, t, int_fast16_t(changelog_x) + 96, 20, surface);
 
 
-		draw_string(false, "Levels Found:", 5, 20, surface);
+		draw_string(false, "Levels Found:", int_fast16_t(level_x), 20, surface);
 		for (int i = 0; i < levels_found.size(); i++)
 		{
-			draw_string(false, levels_found[i], 5 + (i / 27) * 15, 30 + (i % 27) * 6, surface);
+			draw_string(false, levels_found[i], int_fast16_t(level_x) + (i / 27) * 15, 30 + (i % 27) * 6, surface);
 		}
 	}
 

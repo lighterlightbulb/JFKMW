@@ -37,7 +37,7 @@ void player_code()
 	init_input();
 	init_audio();
 	Mix_HaltMusic();
-	string file = path + "Sounds/music/_boot.ogg"; music = Mix_LoadMUS(file.c_str()); Mix_PlayMusic(music, 1);
+	string file = path + "Sounds/music/_boot.ogg"; music = Mix_LoadMUS(file.c_str()); Mix_PlayMusic(music, -1);
 
 	string level = "";
 	global_frame_counter = 0;

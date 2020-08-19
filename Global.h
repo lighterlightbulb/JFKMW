@@ -1,6 +1,7 @@
 #pragma once
 
-string GAME_VERSION = "2.0.5b";
+string GAME_VERSION = "2.0.8b";
+string CHANGELOG = "-Removed some sound effects\nto free space\n-Better perfomance\n-Some multiplayer fixes\n-Improved level 7\n-Improved readme\n-Documentation is better\nnow\n-OW Changes";
 
 #define rom_asm_size 0x008000 //32kb, 1 bank ($00:8000 to $00:FFFF)
 #define location_rom_levelasm 0x008000 //this will put LevelASM on the start of the ROM, this is a SNES PC btw
