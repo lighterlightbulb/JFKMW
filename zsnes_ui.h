@@ -78,13 +78,13 @@ void draw_string(bool dark, string str, int_fast16_t x, int_fast16_t y, SDL_Surf
 							if (dark)
 							{
 								uint_fast8_t formula = 16 + y_l * 16;
-								draw_pixel_to_surface(x + x_l, y + y_l, formula, formula, formula, surface);
 							}
 							else
 							{
 								uint_fast8_t formula = 255 - y_l * 16;
-								draw_pixel_to_surface(x + x_l, y + y_l, formula, formula, formula, surface);
 							}
+							
+							draw_pixel_to_surface(x + x_l, y + y_l, formula, formula, formula, surface);
 						}
 					}
 				}
