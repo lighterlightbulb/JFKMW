@@ -53,6 +53,7 @@ void handleTransitions()
 				RAM[0x3F11] = 0;
 				if (transition_type == 4)
 				{
+					RAM[0x1DFB] = 0;
 					load_level3f08();
 				}
 			}

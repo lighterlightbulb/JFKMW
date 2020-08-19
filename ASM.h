@@ -350,6 +350,7 @@ public:
 		RAM[0x1DFC] = 0;
 		RAM[0x1DF9] = 0;
 		RAM[0x1DFA] = 0;
+
 	}
 
 };
@@ -512,6 +513,12 @@ void Sync_Server_RAM(bool compressed = false)
 		RAM[0x14AF] = (flags >> 3) & 1;
 		RAM[0x85] = (flags >> 4) & 1;
 		RAM[0x40] = flags >> 5;
+		
+		//Window flags
+		CurrentPacket >> RAM[0x1B89];
+		uint_fast8_t window_and_message; CurrentPacket >> window_and_message;
+		RAM[0x1426] = window_and_message & 0xF;
+		RAM[0x1B88] = window_and_message >> 4;
 
 		//receive clear status & brightness flag
 		CurrentPacket >> RAM[0x1493];
@@ -722,6 +729,10 @@ void Push_Server_RAM(bool compress = false)
 		flags += (RAM[0x85] & 1) << 4; //Water
 		flags += (RAM[0x40] & 7) << 5; //SDL Related stuff
 		CurrentPacket << flags;
+
+		//Window flags
+		CurrentPacket << RAM[0x1B89];
+		uint_fast8_t window_and_message = (RAM[0x1426] & 0xF) + (RAM[0x1B88] << 4); CurrentPacket << window_and_message;
 
 		//Send level clear status
 		CurrentPacket << RAM[0x1493];

@@ -50,40 +50,40 @@ button buttons[9];
 #define color_69 0xFF000000
 #define color_BG 0xFF3D2525
 
+void FillRect(SDL_Rect rect, uint_fast32_t c)
+{
+	SDL_SetRenderDrawColor(ren, c & 0xFF, (c >> 8) & 0xFF, (c >> 16) & 0xFF, (c >> 24) & 0xFF);
+	SDL_RenderFillRect(ren, &rect);
+}
 
 void draw_button(int x, int b, bool pressed)
 {
 	SDL_Rect rect;
 	rect.x = x; rect.w = 23;
 	rect.y = 6; rect.h = 22;
-	SDL_FillRect(screen_s, &rect, pressed ? color_FF : color_69);
+	FillRect(rect, pressed ? color_FF : color_69);
 
 	rect.x = x; rect.w = 22;
 	rect.y = 6; rect.h = 21;
-	SDL_FillRect(screen_s, &rect, pressed ? color_69 : color_FF);
+	FillRect(rect, pressed ? color_69 : color_FF);
 
 	rect.x = x + 1; rect.w = 21;
 	rect.y = 7; rect.h = 20;
-	SDL_FillRect(screen_s, &rect, pressed ? color_E3 : color_A0);
+	FillRect(rect, pressed ? color_E3 : color_A0);
 
 	rect.x = x + 1; rect.w = 20;
 	rect.y = 7; rect.h = 19;
-	SDL_FillRect(screen_s, &rect, pressed ? color_A0 : color_E3);
+	FillRect(rect, pressed ? color_A0 : color_E3);
 
 
-	for (int px = 1; px < 17; px++) {
-		for (int py = 1; py < 17; py++) {
+	SDL_Rect SRC;
+	SRC.x = 256 + b * 16; SRC.y = 32;
+	SRC.w = 16; SRC.h = 16;
 
-			Color& C = MAP16_IMG[256 + px + b * 16][py + 32];
-			if (!(C.r == 0 && C.g == 255 && C.b == 255))
-			{
-				draw_pixel_to_surface(
-					3 + x + px - 1,
-					-23 + py - 1,
-					C.r, C.g, C.b);
-			}
-		}
-	}
+	rect.x = 3 + x; rect.y = 9;
+	rect.w = 16; rect.h = 16;
+
+	SDL_RenderCopy(ren, MAP16_TEX, &SRC, &rect);
 }
 
 void draw_to_screen()
@@ -92,16 +92,16 @@ void draw_to_screen()
 	DRAW_SIZE_Y = (p_h - 32) / 16;
 	DRAW_SIZE_Y++;
 	frame++;
-	SDL_UnlockSurface(screen_s);
 
 	SDL_Rect rect;
+	SDL_Rect SRC;
 
 
 	if (current_file != "")
 	{
 		rect.x = 0; rect.w = p_w;
 		rect.y = 0; rect.h = p_h;
-		SDL_FillRect(screen_s, &rect, 0xff000000);
+		FillRect(rect, 0xff000000);
 
 
 		int bound_x = DRAW_SIZE_X - 16;
@@ -111,7 +111,7 @@ void draw_to_screen()
 		rect.x = 0; rect.w = (L_SIZE_X > bound_x ? bound_x : L_SIZE_X) * 16;
 		rect.y = p_h - size_y; rect.h = size_y;
 
-		SDL_FillRect(screen_s, &rect, 0xff2D1A00);
+		FillRect(rect, 0xff2D1A00);
 
 		for (int x = 0; x < DRAW_SIZE_X; x++) {
 			for (int y = 0; y < DRAW_SIZE_Y; y++) {
@@ -165,29 +165,18 @@ void draw_to_screen()
 					updates += 1;
 					uint_fast16_t map16_x = ((map16tile & 0xF) << 4) + (map16tile / 0x200) * 0x100;
 					uint_fast16_t map16_y = ((map16tile % 0x200) >> 4) << 4;
-					for (int px = 1; px < 17; px++) {
-						for (int py = 1; py < 17; py++) {
 
-							Color& C = MAP16_IMG[map16_x + px][map16_y + py];
-							if (!(C.r == 0 && C.g == 255 && C.b == 255))
-							{
-								if (x >= (DRAW_SIZE_X-16) && map16real == picked_tile)
-								{
-									draw_pixel_to_surface(
-										spx + px - 1,
-										spy + py - 1,
-										255 - C.r, 255 - C.g, 255 - C.b);
-								}
-								else
-								{
-									draw_pixel_to_surface(
-										spx + px - 1,
-										spy + py - 1,
-										C.r, C.g, C.b);
-								}
-							}
-						}
+					rect.x = spx; rect.y = spy + 32;
+					rect.w = 16; rect.h = 16;
+
+					SRC.x = map16_x; SRC.y = map16_y;
+					SRC.w = 16; SRC.h = 16;
+
+					if (x >= (DRAW_SIZE_X - 16) && map16real == picked_tile)
+					{
+						SRC.x += 512;
 					}
+					SDL_RenderCopy(ren, MAP16_TEX, &SRC, &rect);
 				}
 			}
 		}
@@ -204,25 +193,22 @@ void draw_to_screen()
 				}
 
 				int x_pos = 16 + Sprite_data[i].x - camera_x * 16;
-				int y_pos = -32 + (p_h - 32) - Sprite_data[i].y + camera_y * 16;
-				for (int px = 0; px < 16; px++) {
-					for (int py = 1; py < 17; py++) {
+				int y_pos = (p_h - 32) - Sprite_data[i].y + camera_y * 16;
 
-						if ((x_pos + px) < (p_w - 256))
-						{
-							Color& C = MAP16_IMG[256 + px + (Sprite_data[i].type ? 16 : 0)][py + (i == picked_sprite ? 16 : 0)];
-							draw_pixel_to_surface(
-								x_pos + px,
-								y_pos + py - 1,
-								C.r, C.g, C.b);
-						}
-					}
-				}
 				if (x_pos < (p_w - 256) && x_pos > 0)
 				{
-					draw_string((Sprite_data[i].type ? "Lua" : "ASM"), x_pos, y_pos, false);
-					draw_string(int_to_hex(Sprite_data[i].num, true), x_pos, y_pos + 5, false);
-					draw_string(to_string(Sprite_data[i].dir), x_pos, y_pos + 10, false);
+
+					rect.x = x_pos; rect.y = y_pos;
+					rect.w = 16; rect.h = 16;
+
+					SRC.x = 256 + (Sprite_data[i].type ? 16 : 0);
+					SRC.y = (i == picked_sprite ? 16 : 0);
+					SRC.w = 16; SRC.h = 16;
+
+					SDL_RenderCopy(ren, MAP16_TEX, &SRC, &rect);
+					draw_string((Sprite_data[i].type ? "Lua" : "ASM"), x_pos, y_pos);
+					draw_string(int_to_hex(Sprite_data[i].num, true), x_pos, y_pos + 5);
+					draw_string(to_string(Sprite_data[i].dir), x_pos, y_pos + 10);
 				}
 			}
 		}
@@ -233,20 +219,12 @@ void draw_to_screen()
 			int x = (mouse_x >> 4) << 4;
 			int y = (((mouse_y - (p_h % 16)) >> 4) << 4) + (p_h % 16);
 
+			rect.x = x - 48; rect.y = y - 16;
+			rect.w = 112; rect.h = 112;
 
-			for (int px = 1; px < 113; px++) {
-				for (int py = 1; py < 113; py++) {
-
-					Color& C = MAP16_IMG[400 + px][py + 112 * block_size];
-					if (!(C.r == 0 && C.g == 255 && C.b == 255))
-					{
-						draw_pixel_to_surface(
-							x + px - 49,
-							y + py - 49,
-							C.r, C.g, C.b);
-					}
-				}
-			}
+			SRC.x = 400; SRC.y = 112 * block_size;
+			SRC.w = 112; SRC.h = 112;
+			SDL_RenderCopy(ren, MAP16_TEX, &SRC, &rect);
 		}
 
 
@@ -255,10 +233,8 @@ void draw_to_screen()
 
 		if ((!snap && keyboard_or_controller) && (mouse_x < 512))
 		{
-			draw_pixel_to_surface(
-				mouse_x,
-				mouse_y,
-				255, 255, 255);
+			SDL_SetRenderDrawColor(ren, 255, 255, 255, 255);
+			SDL_RenderDrawPoint(ren, mouse_x, mouse_y);
 		}
 		if (s_x >= 0 && s_y >= 0 && s_x < 32 && s_y < 32)
 		{
@@ -266,34 +242,34 @@ void draw_to_screen()
 			SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_ADD);
 			rect.x = s_x << 4; rect.w = 16;
 			rect.y = 32 + (s_y << 4); rect.h = 1;
-			SDL_FillRect(screen_s, &rect, 0xFF00FFFF);
+			FillRect(rect, 0xFF00FFFF);
 
 			rect.x = s_x << 4; rect.w = 1;
 			rect.y = 32 + (s_y << 4); rect.h = 16;
-			SDL_FillRect(screen_s, &rect, 0xFF00FFFF);
+			FillRect(rect, 0xFF00FFFF);
 
 			rect.x = s_x << 4; rect.w = 16;
 			rect.y = 47 + (s_y << 4); rect.h = 1;
-			SDL_FillRect(screen_s, &rect, 0xFF00FFFF);
+			FillRect(rect, 0xFF00FFFF);
 
 			rect.x = 15 + (s_x << 4); rect.w = 1;
 			rect.y = 32 + (s_y << 4); rect.h = 16;
-			SDL_FillRect(screen_s, &rect, 0xFF00FFFF);
+			FillRect(rect, 0xFF00FFFF);
 			SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_NONE);
 		}
 
 		string display1 = "Mouse: " + to_string(mouse_x) + ", " + to_string(mouse_y) + " Camera: " + to_string(camera_x) + ", " + to_string(camera_y);
 		string display2 = "FPS " + to_string(int(fps));
 
-		draw_string(display1, 0, 0);
-		draw_string(display2, 0, 10);
+		draw_string(display1, 0, 0 + 32);
+		draw_string(display2, 0, 5 + 32);
 
 	}
 	else
 	{
 		rect.x = 0; rect.w = p_w;
 		rect.y = 0; rect.h = p_h;
-		SDL_FillRect(screen_s, &rect, color_BG);
+		FillRect(rect, color_BG);
 	}
 	/*
 		Draw toolbar
@@ -301,23 +277,23 @@ void draw_to_screen()
 
 	rect.x = 0; rect.w = p_w;
 	rect.y = 0; rect.h = 32;
-	SDL_FillRect(screen_s, &rect, color_F0);
+	FillRect(rect, color_F0);
 
 	rect.x = 0; rect.w = p_w;
 	rect.y = 2; rect.h = 1;
-	SDL_FillRect(screen_s, &rect, color_A0);
+	FillRect(rect, color_A0);
 
 	rect.x = 0; rect.w = p_w;
 	rect.y = 3; rect.h = 1;
-	SDL_FillRect(screen_s, &rect, color_FF);
+	FillRect(rect, color_FF);
 
 	rect.x = 0; rect.w = p_w;
 	rect.y = 30; rect.h = 1;
-	SDL_FillRect(screen_s, &rect, color_A0);
+	FillRect(rect, color_A0);
 
 	rect.x = 0; rect.w = p_w;
 	rect.y = 31; rect.h = 1;
-	SDL_FillRect(screen_s, &rect, color_69);
+	FillRect(rect, color_69);
 
 	/*
 	
@@ -330,10 +306,4 @@ void draw_to_screen()
 		draw_button(buttons[i].x, buttons[i].b, buttons[i].pressed_look);
 	}
 
-	SDL_LockSurface(screen_s);
-	if (screen_s)
-	{
-		SDL_DestroyTexture(screen_texture);
-	}
-	screen_texture = SDL_CreateTextureFromSurface(ren, screen_s);
 }

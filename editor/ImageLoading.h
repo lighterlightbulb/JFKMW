@@ -1,12 +1,24 @@
 #pragma once
 
-struct Color {
-	uint_fast8_t r, g, b;
-};
-
-Color MAP16_IMG[520][520];
+SDL_Surface* MAP16_SURF;
+SDL_Texture* MAP16_TEX;
 
 void readBMP(char* filename) {
+	uint_fast32_t rmask, gmask, bmask, amask;
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+	rmask = 0xff000000;
+	gmask = 0x00ff0000;
+	bmask = 0x0000ff00;
+	amask = 0x000000ff;
+#else
+	rmask = 0x000000ff;
+	gmask = 0x0000ff00;
+	bmask = 0x00ff0000;
+	amask = 0xff000000;
+#endif
+
+	MAP16_SURF = SDL_CreateRGBSurface(0, 1024, 512, 32,
+		rmask, gmask, bmask, amask);
 	FILE* f = fopen(filename, "rb");
 
 	//std::cout << "Putting into array" << std::endl;
@@ -32,10 +44,26 @@ void readBMP(char* filename) {
 			uint_fast8_t g = data[index + 1];
 			uint_fast8_t b = data[index];
 
-			MAP16_IMG[1 + k][512 - j] = Color{ r, g, b };
+			if (r == 0 && g == 255 && b == 255)
+			{
+				continue;
+			}
+			else
+			{
+				Uint32* p_screen = (Uint32*)(MAP16_SURF)->pixels + (k + (511 - j) * 1024);
+				*p_screen = r + (g << 8) + (b << 16) + 0xFF000000;
+
+				r = 255 - r; g = 255 - g; b = 255 - b;
+				p_screen = (Uint32*)(MAP16_SURF)->pixels + (512 + k + (511 - j) * 1024);
+				*p_screen = r + (g << 8) + (b << 16) + 0xFF000000;
+			}
+
 		}
 	}
 	delete[]data;
+
+	SDL_LockSurface(MAP16_SURF);
+	MAP16_TEX = SDL_CreateTextureFromSurface(ren, MAP16_SURF);
 }
 
 void InitializeMap16()

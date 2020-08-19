@@ -506,9 +506,7 @@ public:
 					//Death kick
 					if (RAM[0x2880 + sprite] & 4)
 					{
-						RAM[0x2000 + sprite] = 0;
-
-						ASM.Write_To_Ram(0x1DF9, 3, 1);
+						RAM[0x2B00 + sprite] = 1;
 					}
 
 					//Powerups
@@ -755,7 +753,7 @@ public:
 						}
 					}
 
-					if (spawned_grabbable != 0xFF && !isClient)
+					if (spawned_grabbable != 0xFF && !isClient && GRABBED_SPRITE == 0xFF)
 					{
 						GRABBED_SPRITE = spawned_grabbable;
 						RAM[0x2000 + GRABBED_SPRITE] = 0x03;

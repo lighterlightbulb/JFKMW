@@ -62,14 +62,14 @@ int main()
 
 	cout << cyan << "[SDL] SDL Initialized." << white << endl;
 
+
+	screen(768, 544, "Solar Energy V1.3.0");
 	load_zsnes_font();
 	InitializeMap16();
 	InitializeConsole();
 	InitializeLevel();
 	init_controls();
 	InitInstalledSprites();
-
-	screen(768, 544, "Solar Energy V1.2.0");
 
 	frame = 0;
 
@@ -79,7 +79,6 @@ int main()
 		SDL_GetWindowSize(win, &p_w, &p_h);
 		if (p_w != old_p_w || p_h != old_p_h)
 		{
-			initialize_surface();
 			old_p_w = p_w;
 			old_p_h = p_h;
 		}
@@ -91,6 +90,9 @@ int main()
 
 		if (SDL_GetWindowFlags(win) & SDL_WINDOW_INPUT_FOCUS)
 		{
+			SDL_SetRenderDrawColor(ren, 0, 0, 0, 0);
+			SDL_RenderClear(ren);
+			
 			frm_counter++;
 			chrono::high_resolution_clock::time_point t1 = chrono::high_resolution_clock::now();
 			handle_controls();
@@ -99,12 +101,9 @@ int main()
 			chrono::high_resolution_clock::time_point t2 = chrono::high_resolution_clock::now();
 			chrono::duration<double> total_time_ticks = chrono::duration_cast<chrono::duration<double>>(t2 - t1);
 			fps = double(1.0 / (total_time_ticks.count() / 1.0));
-		}
-		SDL_Rect dest;
-		dest.x = 0; dest.y = 0; dest.w = p_w; dest.h = p_h;
-		SDL_RenderCopy(ren, screen_texture, NULL, &dest);
-		SDL_RenderPresent(ren);
 
+			SDL_RenderPresent(ren);
+		}
 	}
 	return 1;
 }

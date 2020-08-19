@@ -111,14 +111,15 @@ void drawBackground(uint_fast16_t res_x = 256, uint_fast16_t res_y = 224)
 			DestR.w = 512;
 			DestR.h = 1;
 
+			uint_fast8_t l_s = min(224, res_y);
 			for (int x = -1; x < 3; x++)
 			{
-				for (uint_fast8_t i = 0; i < 224; i++)
+				for (uint_fast8_t i = 0; i < l_s; i++)
 				{
 					SrcR.y = (-formula_y + 256 + int(i) + int(layer2_shiftY[i] & 0x1FF)) & 0x1FF;
 
 					DestR.x = ((layer2_shiftX[i] & 0x1FF) + formula_x + (x * 512));
-					DestR.y = (((res_y - 224) / 2) + i);
+					DestR.y = i;
 
 					SDL_RenderCopy(ren, bg_texture, &SrcR, &DestR);
 				}
@@ -635,7 +636,7 @@ void handleRenderingForPlayer(int player, uint_fast16_t res_x = 256, uint_fast16
 	for (uint_fast16_t t3_x = 0; t3_x < 32; t3_x++) {
 		for (uint_fast16_t t3_y = 0; t3_y < rows; t3_y++) {
 			if (VRAM[0xB800 + (t3_x << 1) + (t3_y << 6)] < MAX_L3_TILES) {
-				draw8x8_tile_2bpp(t3_x << 3, (t3_y > 5 ? int_res_y - 224 : 0) + (t3_y << 3), VRAM[0xB800 + (t3_x << 1) + (t3_y << 6)], VRAM[0xB801 + (t3_x << 1) + (t3_y << 6)]);
+				draw8x8_tile_2bpp(t3_x << 3, (t3_y > 5 ? int_res_y - 224 : (splitscreen * -8)) + (t3_y << 3), VRAM[0xB800 + (t3_x << 1) + (t3_y << 6)], VRAM[0xB801 + (t3_x << 1) + (t3_y << 6)]);
 			}
 		}
 	}

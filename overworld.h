@@ -366,11 +366,12 @@ public:
 					RAM[0x1DFC] = 0x23;
 				}
 				string text = level_strings[old_level];
+				int y = 31 - (int(text.length())/19) * 8;
 				for (int i = 0; i < text.length(); i++)
 				{
 					uint_fast8_t t = char_to_smw(text.at(i));
 
-					draw8x8_tile_2bpp((11 + i) << 3, 31, t, 7);
+					draw8x8_tile_2bpp((11 + (i % 19)) << 3, y + (i / 19) * 8, t, 7);
 				}
 			}
 
