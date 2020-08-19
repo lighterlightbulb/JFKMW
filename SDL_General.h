@@ -278,7 +278,7 @@ bool done()
 					break;
 
 				case 4:
-					ShellExecute(0, 0, L"https://discord.gg/ypxQKVd", 0, 0, SW_SHOW);
+					ShellExecute(0, 0, L"https://discord.gg/xg2P2Am", 0, 0, SW_SHOW);
 					break;
 				case 5:
 
